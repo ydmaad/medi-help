@@ -1,3 +1,4 @@
+"use client";
 import { supabase } from "@/utils/supabase/client";
 import React from "react";
 
@@ -19,3 +20,4 @@ export default function page() {
     </div>
   );
 }
+// 카카오 로그인 테스트
