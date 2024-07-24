@@ -1,9 +1,11 @@
-import Post from "@/components/templates/community/Post";
+import List from "@/components/templates/community/List";
 
 const DetailPost = ({ params }: { params: { id: string } }) => {
   return (
     <>
-      <div>{/* <Post id={params.id} /> */}</div>
+      <div>
+        <List id={params.id} />
+      </div>
     </>
   );
 };

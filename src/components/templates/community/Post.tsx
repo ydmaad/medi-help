@@ -27,7 +27,18 @@ const Post = () => {
   return (
     <>
       <div>글쓰기 하는데야!!!</div>
-      <input type="text" />
+      <input
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <input
+        type="text"
+        value={contents}
+        onChange={(e) => setContents(e.target.value)}
+        width={500}
+        height={500}
+      />
     </>
   );
 };

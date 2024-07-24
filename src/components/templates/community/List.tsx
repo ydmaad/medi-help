@@ -3,9 +3,13 @@
 import { Tables } from "@/types/supabase";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type Post = Tables<"test_posts">;
+
+interface ListProps {
+  id?: string;
+}
 
 const fetchGet = async () => {
   const res = await fetch(`/api/community/`);
@@ -13,7 +17,7 @@ const fetchGet = async () => {
   return data;
 };
 
-const List = () => {
+const List: React.FC<ListProps> = ({ id }) => {
   // route.ts에 불러온 데이터를 이용하여 게시글을 보여주는 컴포넌트
 
   const [post, setPost] = useState<Post[]>([]);
@@ -34,10 +38,13 @@ const List = () => {
 
   return (
     <>
+      <Link href={`/community/post`}></Link>
+      <Link href={`/community/${id}`}></Link>
       <h1 className="text-3xl font-bold mb-6">게시글 목록</h1>
       <ul className="flex flex-wrap">
         {post.map((item) => (
           <li key={item.id}>
+            {/* 상세페이지로 이동 */}
             <Link
               href={`/community/${item.id}`}
               className="block hover:bg-gray-50 transition duration-150 ease-in-out w-[300px] h-[300px] border-4 p-4 m-4 "

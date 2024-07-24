@@ -1,13 +1,13 @@
 import List from "@/components/templates/community/List";
 import React from "react";
 
-const Community = () => {
+const CommunityPage = () => {
   return (
     <>
-      <div>Community</div>
+      <div>CommunityPage</div>
       <List />
     </>
   );
 };
 
-export default Community;
+export default CommunityPage;
