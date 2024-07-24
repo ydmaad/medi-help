@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 type Post = Tables<"test_posts">;
 
-const fetchPost = async () => {
+const fetchGet = async () => {
   const res = await fetch(`/api/community/`);
   const data = await res.json();
   return data;
@@ -21,7 +21,7 @@ const List = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const reponse = await fetchPost();
+        const reponse = await fetchGet();
         setPost(reponse.data);
       } catch (error) {
         console.log("에러가 났네요 =>", error);
@@ -35,25 +35,40 @@ const List = () => {
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">게시글 목록</h1>
-      <ul>
+      <ul className="flex flex-wrap">
         {post.map((item) => (
           <li key={item.id}>
             <Link
               href={`/community/${item.id}`}
-              className="block hover:bg-gray-50 transition duration-150 ease-in-out"
+              className="block hover:bg-gray-50 transition duration-150 ease-in-out w-[300px] h-[300px] border-4 p-4 m-4 "
             >
-              <h2> {item.title}</h2>
-              <p>{item.contents}</p>
-              <div>
-                <Image
-                  src={item?.avatar}
-                  alt="user_img"
-                  width={20}
-                  height={20}
-                />
+              <h2 className="text-xl font-semibold mb-2"> {item.title}</h2>
+              <p className="text-gray-600 mb-4 line-clamp-6">{item.contents}</p>
+              <div className="flex items-center space-x-2">
+                <div className="w-5 h-5 overflow-hidden">
+                  <Image
+                    src={item?.avatar}
+                    alt="user_img"
+                    width={20}
+                    height={20}
+                    className="rounded-full object-cover w-full h-full"
+                  />
+                </div>
+                <div>{item.nickname}</div>
               </div>
-              <span>{item.nickname}</span>
-              <span>{item.created_at}</span>
+              <div>
+                {(() => {
+                  const date = new Date(item.created_at);
+                  const koreaTime = new Date(
+                    date.getTime() + 9 * 60 * 60 * 1000
+                  );
+                  const formattedDate = koreaTime
+                    .toISOString()
+                    .slice(0, 16)
+                    .replace("T", " ");
+                  return formattedDate;
+                })()}
+              </div>
             </Link>
           </li>
         ))}
