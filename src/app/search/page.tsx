@@ -10,15 +10,15 @@ interface Item {
 }
 
 const SearchPage: React.FC = () => {
-  const [allItems, setAllItems] = useState<Item[]>([]); // 전체 데이터 저장
-  const [displayedItems, setDisplayedItems] = useState<Item[]>([]); // 현재 페이지에 보여줄 데이터
+  const [allItems, setAllItems] = useState<Item[]>([]);
+  const [displayedItems, setDisplayedItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 20;
-  const totalItems = 15000; // 예시로 전체 아이템 수를 설정
-  const totalPages = Math.ceil(totalItems / itemsPerPage); // 총 페이지 수
+  const totalItems = 15000;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const fetchData = async (pageNo: number) => {
     setLoading(true);
@@ -56,7 +56,7 @@ const SearchPage: React.FC = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // 검색 시 첫 페이지로 리셋
+    setCurrentPage(1);
   };
 
   const handleNextPage = () => {
