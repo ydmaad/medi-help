@@ -1,14 +1,13 @@
-// pages/api/search.ts
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { pageNo = 1, numOfRows = 100, type = "json" } = req.query; // numOfRows를 더 큰 값으로 설정
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const pageNo = searchParams.get("pageNo") || "1"; // 페이지 번호를 URL 파라미터로 받음
+  const numOfRows = searchParams.get("numOfRows") || "20"; // 한 페이지에 가져올 아이템 수
+  const type = searchParams.get("type") || "json";
 
   try {
-    const apiUrl = `${process.env.BASE_URL}?serviceKey=${process.env.API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&type=${type}`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_E_MEDI_URL}?serviceKey=${process.env.NEXT_PUBLIC_E_MEDI_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&type=${type}`;
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
@@ -16,16 +15,21 @@ export default async function handler(
     }
 
     const data = await response.json();
+    const items = data.body.items || [];
 
-    const items = data.response.body.items || [];
     const formattedItems = items.map((item: any) => ({
       itemName: item.itemName,
       entpName: item.entpName,
+      effect: item.efcyQesitm || "효능 정보 없음",
+      itemImage: item.itemImage || null,
     }));
 
-    res.status(200).json(formattedItems);
+    return NextResponse.json(formattedItems);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "데이터를 가져오는 데 실패했습니다." });
+    return NextResponse.json(
+      { error: "데이터를 가져오는 데 실패했습니다." },
+      { status: 500 }
+    );
   }
 }
