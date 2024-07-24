@@ -42,7 +42,7 @@ const Alerts = () => {
     };
 
     try {
-      const response = await fetch('/api/mypage/alerts/scheduleNotification', {
+      const response = await fetch('/api/mypage/alerts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,6 +60,26 @@ const Alerts = () => {
       setDescription('');
     } catch (error) {
       console.error('Failed to schedule alert:', error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch('/api/mypage/alerts', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      setAlerts(alerts.filter(alert => alert.id !== id));
+    } catch (error) {
+      console.error('Failed to delete alert:', error);
     }
   };
 
@@ -94,6 +114,7 @@ const Alerts = () => {
           <div key={alert.id}>
             <p>Time: {alert.time}</p>
             <p>Description: {alert.description}</p>
+            <button onClick={() => handleDelete(alert.id)}>Delete</button>
           </div>
         ))}
       </div>

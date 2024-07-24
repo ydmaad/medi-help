@@ -37,3 +37,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { id } = await req.json();
+    const { error } = await supabase.from('alarm').delete().eq('id', id);
+
+    if (error) {
+      console.error('Failed to delete alert:', error);
+      return NextResponse.json({ error: 'Failed to delete alert' }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: 'Alert deleted' }, { status: 200 });
+  } catch (error: unknown) {
+    console.error('Failed to process request:', error);
+    return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
+  }
+}
