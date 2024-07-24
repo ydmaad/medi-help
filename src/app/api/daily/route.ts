@@ -6,7 +6,6 @@ export async function GET(req: NextRequest) {
   try {
     // const { data, error } = await supabase.from("daily_test").select("*");
     console.log("hi");
-    return NextResponse.json("hi");
   } catch (error) {
     console.log("supabase error", error);
   }
