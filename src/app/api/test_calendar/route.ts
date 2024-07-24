@@ -3,7 +3,7 @@ import { supabase } from "@/utils/supabase/client";
 
 export async function GET(req: NextRequest) {
   try {
-    const { data, error } = await supabase.from("calendar").select("*");
+    const { data, error } = await supabase.from("test_calendar").select("*");
 
     if (error) {
       NextResponse.json(error);
