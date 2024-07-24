@@ -1,5 +1,3 @@
-// app/auth/login/page.tsx
-
 "use client";
 
 import { supabase } from "@/utils/supabase/client";
