@@ -12,7 +12,7 @@ type DataUpdate = TablesUpdate<"test_posts">; //수정
 export async function GET() {
   try {
     const { data, error } = await supabase.from("test_posts").select("*");
-    console.log("된다!!", data);
+    // console.log("된다!!", data);
 
     if (error) {
       return NextResponse.json(
