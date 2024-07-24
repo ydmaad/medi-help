@@ -85,12 +85,12 @@ const Alerts = () => {
 
   return (
     <div>
-      <button onClick={() => setShowModal(true)}>Add Alert</button>
+      <button onClick={() => setShowModal(true)}> 복약 알람 추가</button>
       <Modal isOpen={showModal} onRequestClose={() => setShowModal(false)}>
-        <h2>Set Alert</h2>
+        <h2>복약 알람</h2>
         <form onSubmit={handleSubmit}>
           <label>
-            Time:
+            시간 :
             <input
               type="time"
               value={time}
@@ -99,22 +99,22 @@ const Alerts = () => {
             />
           </label>
           <label>
-            Description:
+            약 설명 :
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </label>
-          <button type="submit">Set Alert</button>
+          <button type="submit">알람 설정하기</button>
         </form>
       </Modal>
       <div>
         {alerts.map(alert => (
           <div key={alert.id}>
-            <p>Time: {alert.time}</p>
-            <p>Description: {alert.description}</p>
-            <button onClick={() => handleDelete(alert.id)}>Delete</button>
+            <p>시간 : {alert.time}</p>
+            <p>약 설명: {alert.description}</p>
+            <button onClick={() => handleDelete(alert.id)}>알람 삭제</button>
           </div>
         ))}
       </div>
