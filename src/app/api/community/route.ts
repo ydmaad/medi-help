@@ -1,20 +1,18 @@
+import { TablesInsert, TablesUpdate } from "./../../../types/supabase";
+import { Tables } from "@/types/supabase";
 import { supabase } from "@/utils/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
-interface Post {
-  avatar: string;
-  contents: string;
-  created_at: string;
-  id: string;
-  img_url: string;
-  nickname: string;
-  title: string;
-  user_id: string;
-}
+type Post = Tables<"test_posts">; // 테이블을 읽어올때
+
+type DataInsert = TablesInsert<"test_posts">; // 추가
+
+type DataUpdate = TablesUpdate<"test_posts">; //수정
 
 export async function GET() {
   try {
-    const { data, error } = await supabase.from("posts").select("*");
+    const { data, error } = await supabase.from("test_posts").select("*");
+    console.log("된다!!", data);
 
     if (error) {
       return NextResponse.json(
@@ -33,10 +31,13 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body: Post = await request.json();
+  const body: DataInsert = await request.json();
 
   try {
-    const { data, error } = await supabase.from("posts").insert(body).select();
+    const { data, error } = await supabase
+      .from("test_posts")
+      .insert(body)
+      .select();
 
     if (error) {
       return NextResponse.json(

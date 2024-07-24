@@ -1,4 +1,4 @@
-import List from "@/components/molecules/community/List";
+import List from "@/components/templates/community/List";
 import React from "react";
 
 const Community = () => {
