@@ -24,7 +24,7 @@ export type Database = {
           medi_name: string
           medi_time: string
           side_effect: string
-          user_id?: string
+          user_id: string
         }
         Update: {
           created_at?: string
@@ -34,7 +34,22 @@ export type Database = {
           side_effect?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "calendar_medi_name_fkey"
+            columns: ["medi_name"]
+            isOneToOne: true
+            referencedRelation: "medicine"
+            referencedColumns: ["medi_name"]
+          },
+          {
+            foreignKeyName: "calendar_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       column: {
         Row: {
@@ -76,7 +91,15 @@ export type Database = {
           medi_description?: string
           medi_name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "medicine_medi_name_fkey"
+            columns: ["medi_name"]
+            isOneToOne: true
+            referencedRelation: "pill_alarm"
+            referencedColumns: ["medi_name"]
+          },
+        ]
       }
       pill_alarm: {
         Row: {
@@ -94,8 +117,8 @@ export type Database = {
           alarm_time: string
           created_at?: string
           id?: string
-          medi_name: string
-          user_id?: string
+          medi_name?: string
+          user_id: string
         }
         Update: {
           alarm_description?: string
@@ -106,7 +129,15 @@ export type Database = {
           medi_name?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "pill_alarm_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       posts: {
         Row: {
@@ -141,6 +172,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "posts_nickname_fkey"
+            columns: ["nickname"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["nickname"]
+          },
+          {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -149,6 +187,85 @@ export type Database = {
           },
         ]
       }
+      test_posts: {
+        Row: {
+          avatar: string
+          contents: string
+          created_at: string
+          id: number
+          img_url: string
+          nickname: string
+          title: string
+          user_id: number
+        }
+        Insert: {
+          avatar: string
+          contents: string
+          created_at?: string
+          id?: number
+          img_url: string
+          nickname: string
+          title: string
+          user_id: number
+        }
+        Update: {
+          avatar?: string
+          contents?: string
+          created_at?: string
+          id?: number
+          img_url?: string
+          nickname?: string
+          title?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_posts_avatar_fkey"
+            columns: ["avatar"]
+            isOneToOne: false
+            referencedRelation: "test_user"
+            referencedColumns: ["avatar"]
+          },
+          {
+            foreignKeyName: "test_posts_nickname_fkey"
+            columns: ["nickname"]
+            isOneToOne: false
+            referencedRelation: "test_user"
+            referencedColumns: ["nickname"]
+          },
+          {
+            foreignKeyName: "test_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "test_user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_user: {
+        Row: {
+          avatar: string
+          created_at: string
+          email: string
+          id: number
+          nickname: string
+        }
+        Insert: {
+          avatar: string
+          created_at?: string
+          email: string
+          id?: number
+          nickname: string
+        }
+        Update: {
+          avatar?: string
+          created_at?: string
+          email?: string
+          id?: number
+          nickname?: string
+        }
+        Relationships: []
+      }
       user_medicine: {
         Row: {
           medicine_id: string
@@ -156,13 +273,28 @@ export type Database = {
         }
         Insert: {
           medicine_id?: string
-          user_id?: string
+          user_id: string
         }
         Update: {
           medicine_id?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_medicine_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicine"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_medicine_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -186,7 +318,22 @@ export type Database = {
           id?: string
           nickname?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_avatar_fkey"
+            columns: ["avatar"]
+            isOneToOne: true
+            referencedRelation: "posts"
+            referencedColumns: ["avatar"]
+          },
+          {
+            foreignKeyName: "users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
