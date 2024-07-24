@@ -31,12 +31,31 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body: DataInsert = await request.json();
-
   try {
+    const body: DataInsert = await request.json();
+
+    const hardCodeId = 123;
+    const bodyWithUserId = {
+      ...body,
+      user_id: hardCodeId,
+      nickname: "미내미",
+      avatar:
+        "https://images.unsplash.com/photo-1718839932371-7adaf5edc96a?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      img_url:
+        "https://images.unsplash.com/photo-1721631024252-212d160c8639?q=80&w=2547&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    };
+    // avatar: string;
+    // contents: string;
+    // created_at?: string;
+    // id?: number;
+    // img_url: string;
+    // nickname: string;
+    // title: string;
+    // user_id: number
+
     const { data, error } = await supabase
       .from("test_posts")
-      .insert(body)
+      .insert(bodyWithUserId)
       .select();
 
     if (error) {

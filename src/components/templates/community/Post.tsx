@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const fetchPost = async ({
@@ -15,7 +16,7 @@ const fetchPost = async ({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title: title, contents: contents }),
+      body: JSON.stringify({ title, contents }),
     });
 
     if (!response.ok) {
@@ -25,12 +26,18 @@ const fetchPost = async ({
     return data;
   } catch (error) {
     console.error("게시글 등록 오류 =>", error);
+    alert("노노 등록 실패");
   }
 };
 
 const Post = () => {
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
+
+  const onhandleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault;
+    await fetchPost({ title, contents });
+  };
 
   return (
     <>
@@ -66,10 +73,16 @@ const Post = () => {
           />
         </div>
         <div className="flex space-x-4">
-          <button className="bg-gray-300  px-4 py-2 rounded-md shadow-sm hover:bg-gray-400">
+          <Link
+            href={`/community/`}
+            className="bg-gray-300  px-4 py-2 rounded-md shadow-sm hover:bg-gray-400"
+          >
             취소
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600">
+          </Link>
+          <button
+            onClick={onhandleAddPost}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
+          >
             게시하기
           </button>
         </div>
