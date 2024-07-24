@@ -28,6 +28,13 @@ export async function POST(req: NextRequest) {
 
     const timeUntilAlert = alertTime.getTime() - now.getTime();
 
+    // 알림 데이터를 Supabase에 저장
+    const { error: insertError } = await supabase.from('alarm').insert([{ time, description }]);
+    if (insertError) {
+      console.error('Failed to insert alert:', insertError);
+      return NextResponse.json({ error: 'Failed to insert alert' }, { status: 500 });
+    }
+
     setTimeout(async () => {
       const { data: subscriptions, error } = await supabase.from('subscriptions').select('*');
 
@@ -55,14 +62,7 @@ export async function POST(req: NextRequest) {
       }
     }, timeUntilAlert);
 
-    const { error: insertError } = await supabase.from('alarm').insert([{ time, description }]);
-
-    if (insertError) {
-      console.error('Failed to save alert:', insertError);
-      return NextResponse.json({ error: 'Failed to save alert' }, { status: 500 });
-    }
-
-    return NextResponse.json({ message: 'Alert scheduled' });
+    return NextResponse.json({ message: 'Alert scheduled and saved to Supabase' });
   } catch (error: unknown) {
     console.error('Failed to process request:', error);
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });

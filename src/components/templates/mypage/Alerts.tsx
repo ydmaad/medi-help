@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 
 interface Alert {
-  id: string; // 고유한 ID를 추가합니다.
+  id: string;
   time: string;
   description: string;
 }
@@ -36,13 +36,13 @@ const Alerts = () => {
     event.preventDefault();
 
     const newAlert = {
-      id: `${alerts.length + 1}`, // 간단한 고유 ID를 생성합니다.
+      id: `${alerts.length + 1}`,
       time,
       description,
     };
 
     try {
-      const response = await fetch('/api/mypage/alerts', {
+      const response = await fetch('/api/mypage/alerts/scheduleNotification', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
