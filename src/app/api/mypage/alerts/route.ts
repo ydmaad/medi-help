@@ -1,13 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-const alerts: { time: string; description: string }[] = [];
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
-  const path = url.pathname;
+  try {
+    const { data, error } = await supabase.from('alarm').select('*');
 
-  if (path.endsWith('/alerts')) {
-    return NextResponse.json({ alerts });
+    if (error) {
+      console.error('Error fetching alerts:', error);
+      return NextResponse.json({ error: 'Failed to fetch alerts' }, { status: 500 });
+    }
+
+    return NextResponse.json({ alerts: data });
+  } catch (error: unknown) {
+    console.error('Error fetching alerts:', error);
+    return NextResponse.json({ error: 'Failed to fetch alerts' }, { status: 500 });
   }
-  return NextResponse.json({ error: 'Invalid endpoint' }, { status: 404 });
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const { time, description } = await req.json();
+    const { error } = await supabase.from('alarm').insert([{ time, description }]);
+
+    if (error) {
+      console.error('Failed to save alert:', error);
+      return NextResponse.json({ error: 'Failed to save alert' }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: 'Alert saved' }, { status: 201 });
+  } catch (error: unknown) {
+    console.error('Failed to process request:', error);
+    return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
+  }
 }

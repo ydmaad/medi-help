@@ -55,6 +55,13 @@ export async function POST(req: NextRequest) {
       }
     }, timeUntilAlert);
 
+    const { error: insertError } = await supabase.from('alarm').insert([{ time, description }]);
+
+    if (insertError) {
+      console.error('Failed to save alert:', insertError);
+      return NextResponse.json({ error: 'Failed to save alert' }, { status: 500 });
+    }
+
     return NextResponse.json({ message: 'Alert scheduled' });
   } catch (error: unknown) {
     console.error('Failed to process request:', error);
