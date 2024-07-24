@@ -1,66 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import webpush from 'web-push';
-import { getSubscriptions, updateSubscriptions } from '@/lib/supabaseClient';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const vapidKeys = {
   publicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
   privateKey: process.env.VAPID_PRIVATE_KEY!,
 };
 
-webpush.setVapidDetails(
-  'mailto:your-email@example.com',
-  vapidKeys.publicKey,
-  vapidKeys.privateKey
-);
+webpush.setVapidDetails('mailto:your-email@example.com', vapidKeys.publicKey, vapidKeys.privateKey);
 
 export async function POST(req: NextRequest) {
   try {
-    const { time, description, weekday } = await req.json();
-    const subscriptions = await getSubscriptions();
+    const data = await req.json();
+    const { time, description } = data;
 
     const now = new Date();
     const [hours, minutes] = time.split(':').map(Number);
-    let alertTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
+    const alertTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
 
-    if (weekday !== undefined) {
-      const dayDifference = (weekday + 7 - now.getDay()) % 7;
-      alertTime.setDate(alertTime.getDate() + dayDifference);
-    } else if (alertTime < now) {
+    if (alertTime < now) {
       alertTime.setDate(alertTime.getDate() + 1);
     }
 
     const timeUntilAlert = alertTime.getTime() - now.getTime();
 
-    console.log(`Alert scheduled for ${alertTime}. Time until alert: ${timeUntilAlert}ms`);
-
     setTimeout(async () => {
+      const { data: subscriptions, error } = await supabase.from('subscriptions').select('*');
+
+      if (error) {
+        console.error('Error fetching subscriptions:', error);
+        return;
+      }
+
       const payload = JSON.stringify({
         title: 'Test Alert',
         body: description || 'This is a test notification.',
         icon: '/default-icon.png',
         badge: '/default-badge.png',
-        url: 'http://localhost:3000/'
+        url: 'http://localhost:3000/',
       });
 
-      console.log(`Sending notification to ${subscriptions.length} subscriptions`);
-
-      for (const subscription of subscriptions) {
-        try {
-          await webpush.sendNotification(subscription, payload);
-          console.log('Notification sent:', subscription);
-        } catch (error: any) {
-          console.error('Error sending notification:', error);
-          if (error.statusCode === 410 || error.statusCode === 404) {
-            // 구독이 만료되거나 유효하지 않은 경우 제거
-            console.log('Removing invalid subscription:', subscription);
-            await updateSubscriptions(subscriptions.filter(sub => sub.endpoint !== subscription.endpoint));
-          }
-        }
+      if (subscriptions) {
+        subscriptions.forEach((subscription: any) => {
+          webpush.sendNotification(subscription, payload).then(response => {
+            console.log('Notification sent:', response);
+          }).catch((error: any) => {
+            console.error('Error sending notification:', error);
+          });
+        });
       }
     }, timeUntilAlert);
 
     return NextResponse.json({ message: 'Alert scheduled' });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to process request:', error);
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }

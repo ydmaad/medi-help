@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-const VAPID_PUBLIC_KEY = 'BOT5P-kFzd-jSIqEN3kqfVJ-2b-xDYqGbS_iJALJLpS6jhO61jYRyDAVC6WnTZDv-6_XefSMVJhTO9Jsp6X9QcA';
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
 
 const ServiceWorkerRegister = () => {
   useEffect(() => {
