@@ -15,14 +15,17 @@ webpush.setVapidDetails(
 
 export async function POST(req: NextRequest) {
   try {
-    const { time, description } = await req.json();
+    const { time, description, weekday } = await req.json();
     const subscriptions = await getSubscriptions();
 
     const now = new Date();
     const [hours, minutes] = time.split(':').map(Number);
-    const alertTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
+    let alertTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0, 0);
 
-    if (alertTime < now) {
+    if (weekday !== undefined) {
+      const dayDifference = (weekday + 7 - now.getDay()) % 7;
+      alertTime.setDate(alertTime.getDate() + dayDifference);
+    } else if (alertTime < now) {
       alertTime.setDate(alertTime.getDate() + 1);
     }
 

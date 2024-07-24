@@ -5,10 +5,16 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 
 export async function POST(req: NextRequest) {
   try {
-    const subscription = await req.json();
+    const { subscription, weekday } = await req.json();
+    
     const { data, error } = await supabase
       .from('subscriptions')
-      .insert(subscription);
+      .insert({
+        endpoint: subscription.endpoint,
+        keys: subscription.keys,
+        expirationTime: subscription.expirationTime,
+        weekday: weekday // 추가된 요일 필드
+      });
 
     if (error) {
       console.error('Failed to save subscription:', error);
