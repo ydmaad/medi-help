@@ -1,36 +1,49 @@
 "use client";
 
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const AddModal = ({
-  openModal,
-  setOpenModal,
-  calendarId,
-}: {
+interface Props {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   calendarId: string;
-}) => {
-  console.log(calendarId);
+}
+
+const AddModal = ({ openModal, setOpenModal, calendarId }: Props) => {
+  const router = useRouter();
+
   const [values, setValues] = useState<test_calendar>({
-    id: "",
     name: "",
     user_id: "test@test.com",
     medi_time: "",
     sideEffect: "",
+    time: "2024-07-25 00:00:00+00",
   });
 
+  // Route Handler 통해서 POST 하는 함수
   const postCalendar = async (value: test_calendar) => {
     try {
       const res = await axios.post("/api/test_calendar", value);
       console.log(res);
       return res;
     } catch (error) {
-      console.log("Axios error", error);
+      console.log("Post Error", error);
     }
   };
 
+  // Route Handler 통해서 UPDATE 하는 함수
+  const updateCalendar = async (id: string, value: test_calendar) => {
+    try {
+      const res = await axios.patch(`/api/test_calendar/${id}`, value);
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Patch Error", error);
+    }
+  };
+
+  // Input 값 OnChange 함수
   const handleContentChange = (
     event:
       | React.ChangeEvent<HTMLSelectElement>
@@ -43,15 +56,23 @@ const AddModal = ({
     console.log(values);
   };
 
+  // 추가하기 버튼 onClick 함수
   const handleAddButtonClick = (
     event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
     postCalendar(values);
   };
 
+  // 수정하기 버튼 onClick 함수
+  const handleUpdateButtonClick = () => {
+    updateCalendar(calendarId, values);
+    setOpenModal(false);
+    router.push("/");
+  };
+
   return (
     <div
-      className={`absolute w-full h-full bg-black/[0.6] pt-32 flex justify-center z-10 backdrop-blur-sm ${
+      className={`absolute w-full h-full min-h-screen bg-black/[0.6] pt-32 flex justify-center z-10 backdrop-blur-sm ${
         openModal ? "block" : "hidden"
       }`}
     >
@@ -112,7 +133,7 @@ const AddModal = ({
             } w-full flex items-center justify-center gap-4`}
           >
             <button
-              onClick={() => {}}
+              onClick={handleUpdateButtonClick}
               className={` w-4/12 h-4/12 min-w-24 min-h-10 border border-gray-400 bg-gray-200 my-auto rounded-lg drop-shadow-md hover:scale-105 ease-in duration-300`}
             >
               수정하기

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Calendar } from "@fullcalendar/core";
+import { Calendar, EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, {
   Draggable,
@@ -12,24 +12,26 @@ import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
 import AddModal from "../calendarModal/AddModal";
 
+type eventsType = {
+  id: string;
+  title: string;
+  start: string;
+  backgroundColor: string;
+  borderColor: string;
+  textColor: string;
+};
+
 const CalendarView = () => {
-  const [events, setEvents] = useState<
-    {
-      id: string;
-      title: string;
-      start: string;
-      backgroundColor: string;
-      borderColor: string;
-      textColor: string;
-    }[]
-  >([]);
+  const [events, setEvents] = useState<eventsType[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [calendarId, setCalendarId] = useState<string>("");
+
   const colorForTime: { [key: string]: string } = {
     "아침 복용": "#FFD9D9",
     "점심 복용": "#FEE6C9",
     "저녁 복용": "#D2F0FF",
   };
+
   useEffect(() => {
     const getCalendarData = async () => {
       try {
@@ -43,7 +45,7 @@ const CalendarView = () => {
                 {
                   id: el.id,
                   title: el.name,
-                  start: el.time.split("T")[0],
+                  start: el.time?.split("T")[0],
                   backgroundColor: colorForTime[el.medi_time],
                   borderColor: colorForTime[el.medi_time],
                   textColor: "gray",
@@ -60,7 +62,11 @@ const CalendarView = () => {
     getCalendarData();
   }, []);
 
-  const handleEventClick = (event: React.MouseEvent) => {};
+  const handleEventClick = (event: EventClickArg) => {
+    console.log(event.event._def.publicId);
+    setCalendarId(event.event._def.publicId);
+    setOpenModal(true);
+  };
 
   return (
     <>
@@ -69,16 +75,12 @@ const CalendarView = () => {
         setOpenModal={setOpenModal}
         calendarId={calendarId}
       />
-      <div className="p-8 w-10/12 h-11/12">
+      <div className="p-8 w-8/12 h-7/12">
         <FullCalendar
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
           events={events}
-          eventClick={(event) => {
-            console.log(event.event._def.publicId);
-            setCalendarId(event.event._def.publicId);
-            setOpenModal(true);
-          }}
+          eventClick={handleEventClick}
           headerToolbar={{
             left: "prev",
             center: "title",
