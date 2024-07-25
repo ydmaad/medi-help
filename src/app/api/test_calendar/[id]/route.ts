@@ -26,3 +26,28 @@ export async function PATCH(
     console.log(error);
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    const { data, error } = await supabase
+      .from("test_calendar")
+      .delete()
+      .eq("id", id);
+
+    console.log(data);
+    if (!id) {
+      NextResponse.json("ID is required.");
+    }
+
+    if (error) {
+      NextResponse.json({ error: error.message });
+    }
+    return NextResponse.json(data);
+  } catch (error) {
+    console.log("supabase delete error", error);
+  }
+}

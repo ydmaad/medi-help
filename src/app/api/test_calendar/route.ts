@@ -8,7 +8,6 @@ export async function GET(req: NextRequest) {
     if (error) {
       NextResponse.json({ error: error.message });
     }
-    console.log(data);
     return NextResponse.json(data);
   } catch (error) {
     console.log("supabase error", error);

@@ -43,6 +43,17 @@ const AddModal = ({ openModal, setOpenModal, calendarId }: Props) => {
     }
   };
 
+  // Route Handler 통해서 DELETE 하는 함수
+  const deleteCalendar = async (id: string) => {
+    try {
+      const res = await axios.delete(`/api/test_calendar/${id}`);
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Delete Error", error);
+    }
+  };
+
   // Input 값 OnChange 함수
   const handleContentChange = (
     event:
@@ -67,7 +78,12 @@ const AddModal = ({ openModal, setOpenModal, calendarId }: Props) => {
   const handleUpdateButtonClick = () => {
     updateCalendar(calendarId, values);
     setOpenModal(false);
-    router.push("/");
+  };
+
+  // 삭제하기 버튼 onClick 함수
+  const handleDeleteButtonClick = () => {
+    deleteCalendar(calendarId);
+    setOpenModal(false);
   };
 
   return (
@@ -139,7 +155,7 @@ const AddModal = ({ openModal, setOpenModal, calendarId }: Props) => {
               수정하기
             </button>
             <button
-              onClick={() => {}}
+              onClick={handleDeleteButtonClick}
               className={` w-4/12 h-4/12 min-w-24 min-h-10 border border-gray-400 bg-gray-200 my-auto rounded-lg drop-shadow-md hover:scale-105 ease-in duration-300`}
             >
               삭제하기
