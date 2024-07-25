@@ -7,11 +7,13 @@ interface Alert {
   id: string;
   time: string;
   description: string;
+  days: string[];
 }
 
 const Alerts = () => {
   const [time, setTime] = useState("");
   const [description, setDescription] = useState("");
+  const [days, setDays] = useState<string[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -32,6 +34,12 @@ const Alerts = () => {
       });
   }, []);
 
+  const handleDayChange = (day: string) => {
+    setDays((prevDays) =>
+      prevDays.includes(day) ? prevDays.filter((d) => d !== day) : [...prevDays, day]
+    );
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -39,6 +47,7 @@ const Alerts = () => {
       id: `${alerts.length + 1}`,
       time,
       description,
+      days,
     };
 
     try {
@@ -58,6 +67,7 @@ const Alerts = () => {
       setShowModal(false);
       setTime("");
       setDescription("");
+      setDays([]);
     } catch (error) {
       console.error("Failed to schedule alert:", error);
     }
@@ -97,7 +107,7 @@ const Alerts = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                알람 시간 :
+                알람 시간:
               </label>
               <input
                 type="time"
@@ -109,7 +119,7 @@ const Alerts = () => {
             </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
-                약 설명 :
+                약 설명:
               </label>
               <input
                 type="text"
@@ -117,6 +127,25 @@ const Alerts = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                요일 선택:
+              </label>
+              <div className="flex flex-wrap">
+                {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
+                  <label key={day} className="mr-4">
+                    <input
+                      type="checkbox"
+                      value={day}
+                      checked={days.includes(day)}
+                      onChange={() => handleDayChange(day)}
+                      className="mr-2"
+                    />
+                    {day}
+                  </label>
+                ))}
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <button
@@ -143,8 +172,9 @@ const Alerts = () => {
             className="bg-gray-100 p-4 rounded shadow mb-2 flex justify-between items-center"
           >
             <div>
-              <p className="text-lg font-semibold">시간 : {alert.time}</p>
+              <p className="text-lg font-semibold">시간: {alert.time}</p>
               <p className="text-sm">약 설명: {alert.description}</p>
+              <p className="text-sm">요일: {alert.days?.join(", ")}</p>
             </div>
             <button
               onClick={() => handleDelete(alert.id)}

@@ -11,12 +11,12 @@ const vapidKeys = {
   privateKey: process.env.VAPID_PRIVATE_KEY!,
 };
 
-webpush.setVapidDetails('mailto:your-email@example.com', vapidKeys.publicKey, vapidKeys.privateKey);
+webpush.setVapidDetails('mailto:rla1eh2dus3@naver.com', vapidKeys.publicKey, vapidKeys.privateKey);
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
-    const { time, description } = data;
+    const { time, description, days } = data;
 
     const now = new Date();
     const [hours, minutes] = time.split(':').map(Number);
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const timeUntilAlert = alertTime.getTime() - now.getTime();
 
     // 알림 데이터를 Supabase에 저장
-    const { error: insertError } = await supabase.from('alarm').insert([{ time, description }]);
+    const { error: insertError } = await supabase.from('alarm').insert([{ time, description, days }]);
     if (insertError) {
       console.error('Failed to insert alert:', insertError);
       return NextResponse.json({ error: 'Failed to insert alert' }, { status: 500 });
@@ -43,22 +43,26 @@ export async function POST(req: NextRequest) {
         return;
       }
 
-      const payload = JSON.stringify({
-        title: '약 먹을 시간이에요 💌',
-        body: description || '이번 알람은 따로 설명이 없어요 :)',
-        icon: 'https://example.com/default-icon.png',
-        badge: 'https://example.com/default-badge.png',
-        url: 'http://localhost:3000/',
-      });
+      const currentDay = new Date().toLocaleString('ko-KR', { weekday: 'short' });
 
-      if (subscriptions) {
-        subscriptions.forEach((subscription: any) => {
-          webpush.sendNotification(subscription, payload).then(response => {
-            console.log('Notification sent:', response);
-          }).catch((error: any) => {
-            console.error('Error sending notification:', error);
-          });
+      if (days.includes(currentDay)) {
+        const payload = JSON.stringify({
+          title: '약 먹을 시간이에요 💌',
+          body: description || '이번 알람은 따로 설명이 없어요 :)',
+          icon: 'https://example.com/default-icon.png',
+          badge: 'https://example.com/default-badge.png',
+          url: 'http://localhost:3000/',
         });
+
+        if (subscriptions) {
+          subscriptions.forEach((subscription: any) => {
+            webpush.sendNotification(subscription, payload).then(response => {
+              console.log('Notification sent:', response);
+            }).catch((error: any) => {
+              console.error('Error sending notification:', error);
+            });
+          });
+        }
       }
     }, timeUntilAlert);
 
