@@ -3,9 +3,11 @@
 import { Tables } from "@/types/supabase";
 import React, { useEffect, useState } from "react";
 import Comments from "./Comments";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // 나중에 테이블 이름 바꿔 넣어야!!
-type Post = Tables<"test_posts">;
+type Post = Tables<"posts">;
 
 interface PostDetailProps {
   id?: string;
@@ -17,7 +19,7 @@ const deletePost = async () => {
   });
 
   if (!response.ok) {
-    throw new Error("게시글 삭제에 실패했습니다.");
+    throw Error("게시글 삭제에 실패했습니다.");
   }
 };
 
@@ -25,26 +27,31 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const route = useRouter();
 
   useEffect(() => {
     const fetchDetailPost = async () => {
       try {
-        const res = await fetch(`/api/community/${id}`);
-        if (!res.ok) {
+        const response = await fetch(`/api/community/${id}`);
+        if (!response.ok) {
           throw new Error("게시글 불러오는데 실패했");
         }
-        const data = await res.json();
+        const data = await response.json();
         setPost(data);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchDetailPost();
   }, [id]);
+  console.log(post);
 
-  const onhandleDelete = () => {
-    deletePost();
+  const onhandleDelete = async () => {
+    await deletePost();
+    route.push(`/community/`);
   };
 
   if (loading) return <div>로딩 중...</div>;
@@ -62,6 +69,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
         <div>{post.contents}</div>
       </div>
       <button onClick={onhandleDelete}>삭제하기</button>
+      // 폴더구조 확인하고 수정하기
+      <Link href={`/community/${id}/edit`}>수정하기</Link>
       <Comments />
     </>
   );

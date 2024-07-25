@@ -3,15 +3,15 @@ import { Tables } from "@/types/supabase";
 import { supabase } from "@/utils/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
-type Post = Tables<"test_posts">; // 테이블을 읽어올때
+type Post = Tables<"posts">; // 테이블을 읽어올때
 
-type DataInsert = TablesInsert<"test_posts">; // 추가
+type DataInsert = TablesInsert<"posts">; // 추가
 
-type DataUpdate = TablesUpdate<"test_posts">; //수정
+type DataUpdate = TablesUpdate<"posts">; //수정
 
 export async function GET() {
   try {
-    const { data, error } = await supabase.from("test_posts").select("*");
+    const { data, error } = await supabase.from("posts").select("*");
     console.log("된다!!", data);
 
     if (error) {
@@ -36,19 +36,13 @@ export async function POST(request: NextRequest) {
 
     // 하드코딩한 부분.
     // 나중에 auth 부분 성공시 수정하기!!
-    const hardCodeId = 123;
+    const hardCodeId = "9b4cceb9-98bb-4742-8ce0-a7576edc0609";
     const bodyWithUserId = {
       ...body,
       user_id: hardCodeId,
-      nickname: "미내미",
-      avatar:
-        "https://images.unsplash.com/photo-1718839932371-7adaf5edc96a?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      img_url:
-        "https://images.unsplash.com/photo-1721631024252-212d160c8639?q=80&w=2547&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     };
-
     const { data, error } = await supabase
-      .from("test_posts") // 나중에 테이블 수정!!
+      .from("posts")
       .insert(bodyWithUserId)
       .select();
     console.log(error);
@@ -76,7 +70,7 @@ export async function DELETE(
   const { id } = params;
   try {
     const { data, error } = await supabase
-      .from("test_posts") // 나중에 테이블 수정!!
+      .from("posts") // 나중에 테이블 수정!!
       .delete()
       .eq("id", id)
       .select();
@@ -92,6 +86,34 @@ export async function DELETE(
   } catch (error) {
     console.error(error);
     return NextResponse.json({
+      message: (error as Error).message,
+    });
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  try {
+    const body: DataUpdate = await request.json();
+
+    const { data, error } = await supabase
+      .from("posts")
+      .update(body)
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      return NextResponse.json({ error: "수정 실패", message: error.message });
+    }
+
+    return NextResponse.json({ message: "수정 성공", data });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({
+      error: "Internal Server Error",
       message: (error as Error).message,
     });
   }

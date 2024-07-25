@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import "react-quill/dist/quill.snow.css";
 
 const fetchPost = async ({
   title,

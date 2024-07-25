@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-type Post = Tables<"test_posts">;
+type Post = Tables<"posts">;
 
 interface ListProps {
   id?: string;
