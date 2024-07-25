@@ -8,6 +8,11 @@ interface Alert {
   time: string;
   description: string;
   days: string[];
+  medicine: string;
+}
+
+interface Medicine {
+  itemName: string;
 }
 
 const Alerts = () => {
@@ -16,6 +21,8 @@ const Alerts = () => {
   const [days, setDays] = useState<string[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [medicines, setMedicines] = useState<Medicine[]>([]);
+  const [selectedMedicine, setSelectedMedicine] = useState("");
 
   useEffect(() => {
     Modal.setAppElement("body");
@@ -31,6 +38,20 @@ const Alerts = () => {
       })
       .catch((error) => {
         console.error("Failed to fetch alerts:", error);
+      });
+
+    fetch("/api/mypage/alerts/getMedicineNames")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setMedicines(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch medicine names:", error);
       });
   }, []);
 
@@ -48,6 +69,7 @@ const Alerts = () => {
       time,
       description,
       days,
+      medicine: selectedMedicine,
     };
 
     try {
@@ -68,6 +90,7 @@ const Alerts = () => {
       setTime("");
       setDescription("");
       setDays([]);
+      setSelectedMedicine("");
     } catch (error) {
       console.error("Failed to schedule alert:", error);
     }
@@ -105,6 +128,23 @@ const Alerts = () => {
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
           <h2 className="text-2xl mb-4">복약 알람</h2>
           <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                약 이름 선택:
+              </label>
+              <select
+                value={selectedMedicine}
+                onChange={(e) => setSelectedMedicine(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              >
+                <option value="">약을 선택하세요</option>
+                {medicines.map((medicine, index) => (
+                  <option key={index} value={medicine.itemName}>
+                    {medicine.itemName}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">
                 알람 시간:
@@ -172,9 +212,11 @@ const Alerts = () => {
             className="bg-gray-100 p-4 rounded shadow mb-2 flex justify-between items-center"
           >
             <div>
-              <p className="text-lg font-semibold">시간: {alert.time}</p>
+              <p className="text-lg font-semibold">{alert.time}시에 알람이 설정되었어요.</p>
+              <p className="text-sm">약 이름: {alert.medicine}</p>
               <p className="text-sm">약 설명: {alert.description}</p>
               <p className="text-sm">요일: {alert.days?.join(", ")}</p>
+
             </div>
             <button
               onClick={() => handleDelete(alert.id)}

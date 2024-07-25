@@ -19,6 +19,7 @@ export async function GET(req: Request) {
       itemName: item.itemName,
     }));
 
+
     return NextResponse.json(medicineNames);
   } catch (error) {
     console.error("Error fetching medicine names:", error);
