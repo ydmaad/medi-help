@@ -1,14 +1,16 @@
+"use client";
+
+import { Tables } from "@/types/supabase";
 import React from "react";
 
-const PostDetail = async ({ id }: { id: string }) => {
-  const reponse = await fetch(`http://localhost:3000/community/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const data = await reponse.json();
-  console.log(data);
+// 나중에 테이블 이름 바꿔 넣어야!!
+type Post = Tables<"test_posts">;
 
+interface PostDetailProps {
+  id?: string;
+}
+const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
+  console.log(id);
   return <div>PostDetail</div>;
 };
 

@@ -1,13 +1,13 @@
-import List from "@/components/templates/community/List";
+import PostDetail from "@/components/templates/community/PostDetail";
 
-const DetailPost = ({ params }: { params: { id: string } }) => {
+const PostDetailPage = ({ params }: { params: { id: string } }) => {
   return (
     <>
       <div>
-        <List id={params.id} />
+        <PostDetail id={params.id} />
       </div>
     </>
   );
 };
 
-export default DetailPost;
+export default PostDetailPage;

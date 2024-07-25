@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+// import "../styles/globals.css";
 
 const fetchPost = async ({
   title,
@@ -15,7 +19,7 @@ const fetchPost = async ({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title: title, contents: contents }),
+      body: JSON.stringify({ title, contents }),
     });
 
     if (!response.ok) {
@@ -25,12 +29,56 @@ const fetchPost = async ({
     return data;
   } catch (error) {
     console.error("게시글 등록 오류 =>", error);
+    alert("노노 등록 실패");
   }
 };
 
 const Post = () => {
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
+
+  const onhandleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault;
+    await fetchPost({ title, contents });
+  };
+
+  const formats = [
+    "font",
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "align",
+    "color",
+    "background",
+    "size",
+    "h1",
+  ];
+
+  const modules = useMemo(() => {
+    return {
+      toolbar: {
+        container: [
+          [{ size: ["small", false, "large", "huge"] }],
+          [{ align: [] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [
+            {
+              color: [],
+            },
+            { background: [] },
+          ],
+        ],
+      },
+    };
+  }, []);
 
   return (
     <>
@@ -58,18 +106,31 @@ const Post = () => {
           >
             내용
           </label>
-          <textarea
+          <ReactQuill
+            theme="snow"
+            value={contents}
+            onChange={setContents}
+            modules={modules}
+            formats={formats}
+          />
+          {/* <textarea
             placeholder="내용을 입력하세요"
             value={contents}
             onChange={(e) => setContents(e.target.value)}
             className="w-full h-[500px] px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          /> */}
         </div>
         <div className="flex space-x-4">
-          <button className="bg-gray-300  px-4 py-2 rounded-md shadow-sm hover:bg-gray-400">
+          <Link
+            href={`/community/`}
+            className="bg-gray-300  px-4 py-2 rounded-md shadow-sm hover:bg-gray-400"
+          >
             취소
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600">
+          </Link>
+          <button
+            onClick={onhandleAddPost}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
+          >
             게시하기
           </button>
         </div>
