@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
+import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
 
 interface Alert {
   id: string;
@@ -10,25 +10,25 @@ interface Alert {
 }
 
 const Alerts = () => {
-  const [time, setTime] = useState('');
-  const [description, setDescription] = useState('');
+  const [time, setTime] = useState("");
+  const [description, setDescription] = useState("");
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    Modal.setAppElement('body');
-    fetch('/api/mypage/alerts')
-      .then(response => {
+    Modal.setAppElement("body");
+    fetch("/api/mypage/alerts")
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         setAlerts(data.alerts);
       })
-      .catch(error => {
-        console.error('Failed to fetch alerts:', error);
+      .catch((error) => {
+        console.error("Failed to fetch alerts:", error);
       });
   }, []);
 
@@ -42,81 +42,126 @@ const Alerts = () => {
     };
 
     try {
-      const response = await fetch('/api/mypage/alerts', {
-        method: 'POST',
+      const response = await fetch("/api/mypage/alerts", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newAlert),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       setAlerts([...alerts, newAlert]);
       setShowModal(false);
-      setTime('');
-      setDescription('');
+      setTime("");
+      setDescription("");
     } catch (error) {
-      console.error('Failed to schedule alert:', error);
+      console.error("Failed to schedule alert:", error);
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch('/api/mypage/alerts', {
-        method: 'DELETE',
+      const response = await fetch("/api/mypage/alerts", {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ id }),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
-      setAlerts(alerts.filter(alert => alert.id !== id));
+      setAlerts(alerts.filter((alert) => alert.id !== id));
     } catch (error) {
-      console.error('Failed to delete alert:', error);
+      console.error("Failed to delete alert:", error);
     }
   };
 
   return (
-    <div>
-      <button onClick={() => setShowModal(true)}> 복약 알람 추가</button>
-      <Modal isOpen={showModal} onRequestClose={() => setShowModal(false)}>
-        <h2>복약 알람</h2>
-        <form onSubmit={handleSubmit}>
-          <label>
-            시간 :
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            약 설명 :
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </label>
-          <button type="submit">알람 설정하기</button>
-        </form>
+    <div className="p-4">
+      <Modal
+        isOpen={showModal}
+        onRequestClose={() => setShowModal(false)}
+        contentLabel="Set Alert"
+        className="fixed inset-0 flex items-center justify-center z-50"
+        overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-50"
+      >
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
+          <h2 className="text-2xl mb-4">복약 알람</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                알람 시간 :
+              </label>
+              <input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                required
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                약 설명 :
+              </label>
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                알람 설정하기
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                취소
+              </button>
+            </div>
+          </form>
+        </div>
       </Modal>
-      <div>
-        {alerts.map(alert => (
-          <div key={alert.id}>
-            <p>시간 : {alert.time}</p>
-            <p>약 설명: {alert.description}</p>
-            <button onClick={() => handleDelete(alert.id)}>알람 삭제</button>
+      <div className="mt-4">
+        {alerts.map((alert) => (
+          <div
+            key={alert.id}
+            className="bg-gray-100 p-4 rounded shadow mb-2 flex justify-between items-center"
+          >
+            <div>
+              <p className="text-lg font-semibold">시간 : {alert.time}</p>
+              <p className="text-sm">약 설명: {alert.description}</p>
+            </div>
+            <button
+              onClick={() => handleDelete(alert.id)}
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              알람 삭제
+            </button>
           </div>
         ))}
+        <div className="flex justify-center items-center">
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => setShowModal(true)}
+          >
+            복약 알람 추가
+          </button>
+        </div>
       </div>
     </div>
   );

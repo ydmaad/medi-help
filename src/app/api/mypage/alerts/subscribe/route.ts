@@ -16,7 +16,7 @@ webpush.setVapidDetails('mailto:your-email@example.com', vapidKeys.publicKey, va
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
-
+    console.log(data);
     const { error } = await supabase.from('subscriptions').insert([data]);
 
     if (error) {

@@ -6,8 +6,8 @@ self.addEventListener('push', function(event) {
     console.log('Push data:', data);
     const options = {
       body: data.body,
-      icon: data.icon || '/default-icon.png',
-      badge: data.badge || '/default-badge.png',
+      icon: data.icon || 'https://example.com/default-icon.png',
+      badge: data.badge || 'https://example.com/default-badge.png',
       data: {
         url: data.url || 'http://localhost:3000/'
       }

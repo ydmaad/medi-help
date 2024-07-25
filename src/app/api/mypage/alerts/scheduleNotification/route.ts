@@ -44,10 +44,10 @@ export async function POST(req: NextRequest) {
       }
 
       const payload = JSON.stringify({
-        title: 'Test Alert',
-        body: description || 'This is a test notification.',
-        icon: '/default-icon.png',
-        badge: '/default-badge.png',
+        title: '약 먹을 시간이에요 💌',
+        body: description || '이번 알람은 따로 설명이 없어요 :)',
+        icon: 'https://example.com/default-icon.png',
+        badge: 'https://example.com/default-badge.png',
         url: 'http://localhost:3000/',
       });
 
