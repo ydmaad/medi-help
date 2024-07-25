@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import ReactQuill from "react-quill";
+import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
 const fetchPost = async ({
@@ -41,48 +40,11 @@ const Post = () => {
     await fetchPost({ title, contents });
   };
 
-  const formats = [
-    "font",
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "align",
-    "color",
-    "background",
-    "size",
-    "h1",
-  ];
-
-  const modules = useMemo(() => {
-    return {
-      toolbar: {
-        container: [
-          [{ size: ["small", false, "large", "huge"] }],
-          [{ align: [] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ list: "ordered" }, { list: "bullet" }],
-          [
-            {
-              color: [],
-            },
-            { background: [] },
-          ],
-        ],
-      },
-    };
-  }, []);
-
   return (
     <>
       <div className="w-[700px] mx-auto p-4 bg-white shadow-md rounded-lg">
         <h1 className="text-2xl font-bold mb-4">글쓰기 하는데야!!!</h1>
+
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-semibold mb-2"
@@ -98,6 +60,7 @@ const Post = () => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-semibold mb-2"
@@ -105,20 +68,14 @@ const Post = () => {
           >
             내용
           </label>
-          <ReactQuill
-            theme="snow"
-            value={contents}
-            onChange={setContents}
-            modules={modules}
-            formats={formats}
-          />
-          {/* <textarea
+          <textarea
             placeholder="내용을 입력하세요"
             value={contents}
             onChange={(e) => setContents(e.target.value)}
             className="w-full h-[500px] px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          /> */}
+          />
         </div>
+
         <div className="flex space-x-4">
           <Link
             href={`/community/`}
