@@ -72,8 +72,7 @@ export default function SignUpPage() {
     }
     const { data: users, error: insertError } = await supabase
       .from("users")
-      .insert({ email, nickname: "", avatar: "" })
-      .select();
+      .insert({ email });
     // console.log(users, insertError);
 
     alert("회원가입이 완료되었습니다.");
