@@ -11,6 +11,16 @@ interface PostDetailProps {
   id?: string;
 }
 
+const deletePost = async () => {
+  const response = await fetch("/api/community/${postId}", {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("게시글 삭제에 실패했습니다.");
+  }
+};
+
 const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,17 +37,20 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
         setPost(data);
       } catch (error) {
         console.log(error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchDetailPost();
   }, [id]);
 
+  const onhandleDelete = () => {
+    deletePost();
+  };
+
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
+
   return (
     <>
       <h1 className="text-2xl font-bold mb-4 p-5">{post.title}</h1>
@@ -48,6 +61,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       <div className="p-5">
         <div>{post.contents}</div>
       </div>
+      <button onClick={onhandleDelete}>삭제하기</button>
       <Comments />
     </>
   );
