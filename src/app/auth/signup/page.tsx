@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignUpPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [passwordConfirm, setPasswordConfirm] = useState<string>("");
   const [error, setError] = useState({
     password: "",
     passwordConfirm: "",
@@ -70,6 +70,7 @@ export default function SignUpPage() {
     if (error) {
       return alert(error.message);
     }
+    // public.users 에 사용자 데이터 담기는 로직
     const { data: users, error: insertError } = await supabase
       .from("users")
       .insert({ email });
@@ -78,7 +79,15 @@ export default function SignUpPage() {
     alert("회원가입이 완료되었습니다.");
     // router.push("/")
     // router.replace("/"); // 뒤로가기 시 회원가입 페이지로 이동 X
+
+    const response = await fetch("http://localhost:3000/api/auth/signup", {
+      method: "POST",
+    });
+    const data2 = await response.json();
+
+    console.log("data2", data2);
   };
+
   return (
     <form
       onSubmit={onSubmit}
