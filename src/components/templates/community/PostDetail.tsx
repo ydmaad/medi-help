@@ -2,6 +2,7 @@
 
 import { Tables } from "@/types/supabase";
 import React, { useEffect, useState } from "react";
+import Comments from "./Comments";
 
 // 나중에 테이블 이름 바꿔 넣어야!!
 type Post = Tables<"test_posts">;
@@ -47,6 +48,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       <div className="p-5">
         <div>{post.contents}</div>
       </div>
+      <Comments />
     </>
   );
 };
