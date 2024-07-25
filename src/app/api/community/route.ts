@@ -34,6 +34,8 @@ export async function POST(request: NextRequest) {
   try {
     const body: DataInsert = await request.json();
 
+    // 하드코딩한 부분.
+    // 나중에 auth 부분 성공시 수정하기!!
     const hardCodeId = 123;
     const bodyWithUserId = {
       ...body,
@@ -46,7 +48,7 @@ export async function POST(request: NextRequest) {
     };
 
     const { data, error } = await supabase
-      .from("test_posts")
+      .from("test_posts") // 나중에 테이블 수정!!
       .insert(bodyWithUserId)
       .select();
     console.log(error);
@@ -67,12 +69,30 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// export async function DELETE(request : Request) {
-//     const {id} = await request.json
-//   const { data, error } = await supabase.from("posts").delete().eq("id", id);
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  try {
+    const { data, error } = await supabase
+      .from("test_posts") // 나중에 테이블 수정!!
+      .delete()
+      .eq("id", id)
+      .select();
 
-//   if (error) {
-//     return NextResponse.json(error.message);
-//   }
-//   return NextResponse.json(data);
-// }
+    if (error) {
+      return NextResponse.json({ error: "삭제 실패", message: error.message });
+    }
+
+    if (data.length === 0) {
+      return NextResponse.json({ error: "게시글을 찾을 수 없습니다." });
+    }
+    return NextResponse.json({ message: "삭제 성공" });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({
+      message: (error as Error).message,
+    });
+  }
+}
