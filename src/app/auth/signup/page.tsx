@@ -70,9 +70,14 @@ export default function SignUpPage() {
     if (error) {
       return alert(error.message);
     }
+    const { data: users, error: insertError } = await supabase
+      .from("users")
+      .insert({ email });
+    // console.log(users, insertError);
+
     alert("회원가입이 완료되었습니다.");
     // router.push("/")
-    router.replace("/"); // 뒤로가기 시 회원가입 페이지로 이동 X
+    // router.replace("/"); // 뒤로가기 시 회원가입 페이지로 이동 X
   };
   return (
     <form
