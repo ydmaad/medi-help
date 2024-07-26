@@ -13,7 +13,7 @@ interface ListProps {
 }
 
 const fetchPosts = async () => {
-  const res = await fetch(`/api/community`);
+  const res = await fetch(`/api/community/`);
   const data = await res.json();
   return data;
 };

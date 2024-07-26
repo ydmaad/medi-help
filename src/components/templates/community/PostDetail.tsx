@@ -12,8 +12,8 @@ interface PostDetailProps {
   id?: string;
 }
 
-const deletePost = async () => {
-  const response = await fetch("/api/community/${postId}", {
+const deletePost = async (id: string) => {
+  const response = await fetch(`/api/community/${id}`, {
     method: "DELETE",
   });
 
@@ -36,7 +36,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
           throw new Error("게시글 불러오는데 실패했");
         }
         const { data } = await response.json();
-        console.log(1, data);
+        // console.log(1, data);
         setPost(data[0]);
       } catch (error) {
         console.log(error);
@@ -49,9 +49,18 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   }, [id]);
   // console.log(post);
 
-  const onhandleDelete = async () => {
-    await deletePost();
-    route.push(`/community/`);
+  const handleDelete = async () => {
+    if (id) {
+      try {
+        await deletePost(id);
+        route.push(`/community/`);
+      } catch (error) {
+        console.error("삭제 중 오류 발생:", error);
+        setError("게시글 삭제에 실패했습니다.");
+      }
+    } else {
+      setError("게시글 ID가 없습니다.");
+    }
   };
 
   if (loading) return <div>로딩 중...</div>;
@@ -69,10 +78,19 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       <div className="p-5">
         <div>{post.contents}</div>
       </div>
-      <button onClick={onhandleDelete}>삭제하기</button>
+      <button
+        onClick={handleDelete}
+        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out"
+      >
+        삭제하기
+      </button>
       {/* // 폴더구조 확인하고 수정하기 */}
-      <Link href={`/community/${id}/edit`}>수정하기</Link>
-
+      <Link
+        href={`/community/${id}/edit`}
+        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded inline-flex items-center transition duration-300 ease-in-out"
+      >
+        수정하기
+      </Link>
       <Comments />
     </>
   );
