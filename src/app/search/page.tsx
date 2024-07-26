@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 
-interface Item {
+type Item = {
   itemName: string;
   entpName: string;
   effect: string;
   itemImage: string | null;
-}
+};
 
 const SearchPage: React.FC = () => {
   const [allItems, setAllItems] = useState<Item[]>([]);
