@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
+const VAPID_PUBLIC_KEY = 'BCz6MmO4s5w9arfyIj08dZC2mdGVP5CZdmlJt5FXh4N49HLCphlqvIM3nnKN0OmuTz3R4ykh-UCSlY0BCuxym4w';
 
 const ServiceWorkerRegister = () => {
   useEffect(() => {

@@ -22,10 +22,20 @@ self.addEventListener('push', function(event) {
 
 self.addEventListener('notificationclick', function(event) {
   console.log('Notification click:', event);
-  if (event.notification.data) {
-    event.notification.close();
-    event.waitUntil(
-      clients.openWindow(event.notification.data.url)
-    );
-  }
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      const urlToOpen = new URL(event.notification.data.url, self.location.origin).href;
+
+      const matchingClient = windowClients.find(windowClient => {
+        return windowClient.url === urlToOpen;
+      });
+
+      if (matchingClient) {
+        return matchingClient.focus();
+      } else {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
 });

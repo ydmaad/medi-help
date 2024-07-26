@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
 
     const timeUntilAlert = alertTime.getTime() - now.getTime();
 
-    // 알림 데이터를 Supabase에 저장
     const { error: insertError } = await supabase.from('alarm').insert([{ time, description, days }]);
     if (insertError) {
       console.error('Failed to insert alert:', insertError);

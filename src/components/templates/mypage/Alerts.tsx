@@ -212,7 +212,7 @@ const Alerts = () => {
             className="bg-gray-100 p-4 rounded shadow mb-2 flex justify-between items-center"
           >
             <div>
-              <p className="text-lg font-semibold">{alert.time}시에 알람이 설정되었어요.</p>
+              <p className="text-lg font-semibold">{alert.time}에 알람이 설정되었어요.</p>
               <p className="text-sm">약 이름: {alert.medicine}</p>
               <p className="text-sm">약 설명: {alert.description}</p>
               <p className="text-sm">요일: {alert.days?.join(", ")}</p>
