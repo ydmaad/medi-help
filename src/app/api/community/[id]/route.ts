@@ -37,6 +37,31 @@ export async function GET(
   }
 }
 
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  try {
+    const { data, error } = await supabase
+      .from("posts") // 나중에 테이블 수정!!
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      return NextResponse.json({ error: "삭제 실패", message: error.message });
+    }
+
+    return NextResponse.json({ message: "삭제 성공" });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({
+      error: "서버 오류",
+      message: (error as Error).message,
+    });
+  }
+}
+
 // export async function POST(request: NextRequest) {
 //   try {
 //     const body: PostInsert = await request.json();

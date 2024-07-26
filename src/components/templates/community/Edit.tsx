@@ -61,7 +61,7 @@ const PostEditPage: React.FC<PostEditProps> = ({ id }) => {
 
   console.log(post);
 
-  const onhandleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       if (!id) throw new Error("게시글 ID가 없습니다.");
@@ -121,7 +121,7 @@ const PostEditPage: React.FC<PostEditProps> = ({ id }) => {
         <div>{post.contents}</div>
       </div> */}
       <Link href={`/community/${id}`}>취소</Link>
-      <button onClick={onhandleEdit}>완료</button>
+      <button onClick={handleEdit}>완료</button>
     </>
   );
 };

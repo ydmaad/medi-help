@@ -36,7 +36,7 @@ const Post = () => {
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
 
-  const onhandleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault;
     await fetchPost({ title, contents });
   };
@@ -85,7 +85,7 @@ const Post = () => {
             취소
           </Link>
           <button
-            onClick={onhandleAddPost}
+            onClick={handleAddPost}
             className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
           >
             게시하기
