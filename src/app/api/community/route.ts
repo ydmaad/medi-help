@@ -5,14 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 type Post = Tables<"posts">; // 테이블을 읽어올때
 
-type DataInsert = TablesInsert<"posts">; // 추가
+type PostInsert = TablesInsert<"posts">; // 추가
 
-type DataUpdate = TablesUpdate<"posts">; //수정
+type PostUpdate = TablesUpdate<"posts">; //수정
 
 export async function GET() {
   try {
     const { data, error } = await supabase.from("posts").select("*");
-    console.log("된다!!", data);
+    // console.log("된다!!", data);
 
     if (error) {
       return NextResponse.json(
@@ -32,7 +32,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: DataInsert = await request.json();
+    const body: PostInsert = await request.json();
 
     // 하드코딩한 부분.
     // 나중에 auth 부분 성공시 수정하기!!
@@ -97,7 +97,7 @@ export async function PUT(
 ) {
   const { id } = params;
   try {
-    const body: DataUpdate = await request.json();
+    const body: PostUpdate = await request.json();
 
     const { data, error } = await supabase
       .from("posts")
