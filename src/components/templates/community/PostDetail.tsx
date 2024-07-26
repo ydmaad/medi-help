@@ -6,7 +6,6 @@ import Comments from "./Comments";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-// 나중에 테이블 이름 바꿔 넣어야!!
 type Post = Tables<"posts">;
 
 interface PostDetailProps {
@@ -48,7 +47,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
 
     fetchDetailPost();
   }, [id]);
-  console.log(post);
+  // console.log(post);
 
   const onhandleDelete = async () => {
     await deletePost();
