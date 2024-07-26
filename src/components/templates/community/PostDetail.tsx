@@ -73,6 +73,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       <button onClick={onhandleDelete}>삭제하기</button>
       {/* // 폴더구조 확인하고 수정하기 */}
       <Link href={`/community/${id}/edit`}>수정하기</Link>
+
       <Comments />
     </>
   );

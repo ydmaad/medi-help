@@ -1,3 +1,4 @@
+import PostEditPage from "@/components/templates/community/Edit";
 import List from "@/components/templates/community/List";
 import Search from "@/components/templates/community/Search";
 
@@ -6,7 +7,7 @@ const CommunityPage = () => {
     <>
       <div>CommunityPage</div>
       {/* <Search /> */}
-      <List />
+      <PostEditPage />
     </>
   );
 };
