@@ -9,6 +9,9 @@ type Item = {
   itemImage: string | null;
 };
 
+const ITEMS_PER_PAGE: number = 20;
+const TOTAL_ITEMS: number = 750;
+
 const SearchPage: React.FC = () => {
   const [allItems, setAllItems] = useState<Item[]>([]);
   const [displayedItems, setDisplayedItems] = useState<Item[]>([]);
@@ -16,9 +19,8 @@ const SearchPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 20;
-  const totalItems = 15000;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const totalPages = Math.ceil(TOTAL_ITEMS / ITEMS_PER_PAGE);
 
   const fetchData = async (pageNo: number) => {
     setLoading(true);
@@ -31,7 +33,7 @@ const SearchPage: React.FC = () => {
       }
       const data = await response.json();
       setAllItems((prevItems) => [...prevItems, ...data]);
-      setDisplayedItems(data.slice(0, itemsPerPage));
+      setDisplayedItems(data.slice(0, ITEMS_PER_PAGE));
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -49,8 +51,8 @@ const SearchPage: React.FC = () => {
         item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.effect.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
     setDisplayedItems(filteredItems.slice(startIndex, endIndex));
   }, [searchTerm, currentPage, allItems]);
 
