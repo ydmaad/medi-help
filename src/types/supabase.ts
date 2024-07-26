@@ -51,7 +51,7 @@ export type Database = {
           }
         ];
       };
-      column: {
+      magazine: {
         Row: {
           descriptions: string;
           id: string;
