@@ -1,35 +1,37 @@
-import { Tables, TablesInsert } from "@/types/supabase";
+import { TablesInsert, TablesUpdate } from "../../../../types/supabase";
+import { Tables } from "@/types/supabase";
 import { supabase } from "@/utils/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
-type Comments = Tables<"comments">; // 읽어올때
+type Post = Tables<"posts">; // 테이블을 읽어올때
 
-type CommentInsert = TablesInsert<"comments">; // 추가
+type PostInsert = TablesInsert<"posts">; // 추가
 
-type CommentUpdate = TablesInsert<"comments">; // 수정
+type PostUpdate = TablesUpdate<"posts">; //수정
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
-
   try {
+    const { id } = params;
     const { data, error } = await supabase
-      .from("comments")
+      .from("posts")
       .select("*")
-      .eq("id", id)
-      .single();
+      .eq("id", id);
+    // console.log("된다!!", data);
 
     if (error) {
-      throw new Error(`에러 : ${error}`);
+      return NextResponse.json(
+        { error: "데이터 조회 실패", message: error.message },
+        { status: 400 }
+      );
     }
-
-    return NextResponse.json(data);
+    return NextResponse.json({ message: "조회 성공", data }, { status: 200 });
   } catch (error) {
-    console.error("댓글을 가져올 수 없습니다. :", error);
+    console.error(error);
     return NextResponse.json(
-      { error: "Failed to fetch post" },
+      { error: "Internal Server Error", message: (error as Error).message },
       { status: 500 }
     );
   }
@@ -37,7 +39,7 @@ export async function GET(
 
 // export async function POST(request: NextRequest) {
 //   try {
-//     const body: CommentInsert = await request.json();
+//     const body: PostInsert = await request.json();
 
 //     // 하드코딩한 부분.
 //     // 나중에 auth 부분 성공시 수정하기!!
@@ -75,7 +77,7 @@ export async function GET(
 //   const { id } = params;
 //   try {
 //     const { data, error } = await supabase
-//       .from("comments") // 나중에 테이블 수정!!
+//       .from("posts") // 나중에 테이블 수정!!
 //       .delete()
 //       .eq("id", id)
 //       .select();
@@ -85,7 +87,7 @@ export async function GET(
 //     }
 
 //     if (data.length === 0) {
-//       return NextResponse.json({ error: "댓글을 찾을 수 없습니다." });
+//       return NextResponse.json({ error: "게시글을 찾을 수 없습니다." });
 //     }
 //     return NextResponse.json({ message: "삭제 성공" });
 //   } catch (error) {
@@ -102,7 +104,7 @@ export async function GET(
 // ) {
 //   const { id } = params;
 //   try {
-//     const body: CommentUpdate = await request.json();
+//     const body: PostUpdate = await request.json();
 
 //     const { data, error } = await supabase
 //       .from("posts")

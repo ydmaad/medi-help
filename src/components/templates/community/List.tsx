@@ -12,7 +12,7 @@ interface ListProps {
 }
 
 const fetchGet = async () => {
-  const res = await fetch(`/api/community/`);
+  const res = await fetch(`/api/community`);
   const data = await res.json();
   return data;
 };
@@ -53,13 +53,13 @@ const List: React.FC<ListProps> = ({ id }) => {
               <p className="text-gray-600 mb-4 line-clamp-6">{item.contents}</p>
               <div className="flex items-center space-x-2">
                 <div className="w-5 h-5 overflow-hidden">
-                  <Image
+                  {/* <Image
                     src={item?.avatar}
                     alt="user_img"
                     width={20}
                     height={20}
                     className="rounded-full object-cover w-full h-full"
-                  />
+                  /> */}
                 </div>
                 <div>{item.nickname}</div>
               </div>

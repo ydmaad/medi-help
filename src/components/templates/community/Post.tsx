@@ -23,6 +23,8 @@ const fetchPost = async ({
       throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
+    alert("게시글이 등록되었습니다!");
+    window.location.href = "/community";
     return data;
   } catch (error) {
     console.error("게시글 등록 오류 =>", error);

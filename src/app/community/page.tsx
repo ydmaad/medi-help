@@ -5,7 +5,7 @@ const CommunityPage = () => {
   return (
     <>
       <div>CommunityPage</div>
-      <Search />
+      {/* <Search /> */}
       <List />
     </>
   );

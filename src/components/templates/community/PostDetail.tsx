@@ -36,8 +36,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
         if (!response.ok) {
           throw new Error("게시글 불러오는데 실패했");
         }
-        const data = await response.json();
-        setPost(data);
+        const { data } = await response.json();
+        console.log(1, data);
+        setPost(data[0]);
       } catch (error) {
         console.log(error);
       } finally {
@@ -58,18 +59,19 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
+  // console.log(new Date(post.data[0].created_at));
   return (
     <>
       <h1 className="text-2xl font-bold mb-4 p-5">{post.title}</h1>
       <p className="text-sm text-gray-500 px-5">작성자: {post.nickname}</p>
       <p className="text-sm text-gray-500 px-5">
-        작성일: {new Date(post.created_at).toLocaleDateString()}
+        작성일: {new Date(post.created_at).toLocaleString()}
       </p>
       <div className="p-5">
         <div>{post.contents}</div>
       </div>
       <button onClick={onhandleDelete}>삭제하기</button>
-      // 폴더구조 확인하고 수정하기
+      {/* // 폴더구조 확인하고 수정하기 */}
       <Link href={`/community/${id}/edit`}>수정하기</Link>
       <Comments />
     </>

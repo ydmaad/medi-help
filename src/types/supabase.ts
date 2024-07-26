@@ -72,7 +72,28 @@ export type Database = {
           },
         ]
       }
-      column: {
+      comments: {
+        Row: {
+          created_at: string
+          id: number
+          post_id: number
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          post_id: number
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          post_id?: number
+          user_id?: number
+        }
+        Relationships: []
+      }
+      magazine: {
         Row: {
           descriptions: string
           id: string
@@ -96,45 +117,24 @@ export type Database = {
         }
         Relationships: []
       }
-      comments: {
-        Row: {
-          created_at: string
-          id: number
-          post_id: number
-          user_id: number
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          post_id: number
-          user_id: number
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          post_id?: number
-          user_id?: number
-        }
-        Relationships: []
-      }
       medi: {
         Row: {
           id: string
           medi_name: string
           notes: string | null
-          time: string | null
+          time: string
         }
         Insert: {
           id?: string
           medi_name: string
           notes?: string | null
-          time?: string | null
+          time: string
         }
         Update: {
           id?: string
           medi_name?: string
           notes?: string | null
-          time?: string | null
+          time?: string
         }
         Relationships: []
       }
@@ -190,32 +190,32 @@ export type Database = {
       }
       posts: {
         Row: {
-          avatar: string
+          avatar: string | null
           contents: string
           created_at: string
           id: string
-          img_url: string
-          nickname: string
+          img_url: string | null
+          nickname: string | null
           title: string
           user_id: string
         }
         Insert: {
-          avatar: string
+          avatar?: string | null
           contents: string
           created_at?: string
           id?: string
-          img_url: string
-          nickname: string
+          img_url?: string | null
+          nickname?: string | null
           title: string
           user_id?: string
         }
         Update: {
-          avatar?: string
+          avatar?: string | null
           contents?: string
           created_at?: string
           id?: string
-          img_url?: string
-          nickname?: string
+          img_url?: string | null
+          nickname?: string | null
           title?: string
           user_id?: string
         }
