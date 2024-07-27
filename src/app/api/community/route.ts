@@ -9,6 +9,7 @@ type PostInsert = TablesInsert<"posts">; // 추가
 
 type PostUpdate = TablesUpdate<"posts">; //수정
 
+// 게시글 불러오는 요청
 export async function GET() {
   try {
     const { data, error } = await supabase.from("posts").select("*");
@@ -30,6 +31,7 @@ export async function GET() {
   }
 }
 
+// 게시글 등록하는 요청
 export async function POST(request: NextRequest) {
   try {
     const body: PostInsert = await request.json();
@@ -63,31 +65,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// export async function DELETE(
-//   request: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   const { id } = params;
-//   try {
-//     const { data, error } = await supabase
-//       .from("posts") // 나중에 테이블 수정!!
-//       .delete()
-//       .eq("id", id);
-
-//     if (error) {
-//       return NextResponse.json({ error: "삭제 실패", message: error.message });
-//     }
-
-//     return NextResponse.json({ message: "삭제 성공" });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json({
-//       error: "서버 오류",
-//       message: (error as Error).message,
-//     });
-//   }
-// }
-
+// 게시글 수정하는 요청
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }

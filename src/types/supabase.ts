@@ -74,24 +74,42 @@ export type Database = {
       }
       comments: {
         Row: {
+          comment: string
           created_at: string
-          id: number
-          post_id: number
-          user_id: number
+          id: string
+          post_id: string
+          user_id: string
         }
         Insert: {
+          comment: string
           created_at?: string
-          id?: number
-          post_id: number
-          user_id: number
+          id?: string
+          post_id: string
+          user_id: string
         }
         Update: {
+          comment?: string
           created_at?: string
-          id?: number
-          post_id?: number
-          user_id?: number
+          id?: string
+          post_id?: string
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       magazine: {
         Row: {

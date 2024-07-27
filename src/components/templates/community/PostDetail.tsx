@@ -9,7 +9,7 @@ import Link from "next/link";
 type Post = Tables<"posts">;
 
 interface PostDetailProps {
-  id?: string;
+  id: string;
 }
 
 const deletePost = async (id: string) => {
@@ -22,6 +22,7 @@ const deletePost = async (id: string) => {
   }
 };
 
+// 게시글 아이디를 프롭스로 받음
 const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +54,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
     if (id) {
       try {
         await deletePost(id);
+        alert("게시글을 삭제하였습니다.");
         route.push(`/community/`);
       } catch (error) {
         console.error("삭제 중 오류 발생:", error);
@@ -75,7 +77,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       <p className="text-sm text-gray-500 px-5">
         작성일: {new Date(post.created_at).toLocaleString()}
       </p>
-      <div className="p-5">
+      <div className="p-5 w-[500px] ">
         <div>{post.contents}</div>
       </div>
       <button
@@ -91,7 +93,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       >
         수정하기
       </Link>
-      <Comments />
+      <Comments id={id} />
     </>
   );
 };

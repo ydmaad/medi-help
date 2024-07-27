@@ -9,6 +9,7 @@ type PostInsert = TablesInsert<"posts">; // 추가
 
 type PostUpdate = TablesUpdate<"posts">; //수정
 
+// 게시글 상세페이지 불러오는 요청
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -37,6 +38,7 @@ export async function GET(
   }
 }
 
+// 게시글 삭제하는 요청
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -92,34 +94,6 @@ export async function DELETE(
 //       { error: "Internal Server Error", message: (error as Error).message },
 //       { status: 500 }
 //     );
-//   }
-// }
-
-// export async function DELETE(
-//   request: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   const { id } = params;
-//   try {
-//     const { data, error } = await supabase
-//       .from("posts") // 나중에 테이블 수정!!
-//       .delete()
-//       .eq("id", id)
-//       .select();
-
-//     if (error) {
-//       return NextResponse.json({ error: "삭제 실패", message: error.message });
-//     }
-
-//     if (data.length === 0) {
-//       return NextResponse.json({ error: "게시글을 찾을 수 없습니다." });
-//     }
-//     return NextResponse.json({ message: "삭제 성공" });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json({
-//       message: (error as Error).message,
-//     });
 //   }
 // }
 
