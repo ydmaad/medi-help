@@ -1,5 +1,5 @@
 import Post from "@/components/templates/community/Post";
-import React from "react";
+// import "../styles/globals.css";
 
 const RegisterPostPage = () => {
   return (
