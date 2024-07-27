@@ -42,7 +42,13 @@ const editComment = async (
   postId: string,
   commentId: string
 ) => {
-  const response = await fetch(`/api/community/${postId}/comments`);
+  const response = await fetch(`/api/community/${postId}/comments`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ commentId }),
+  });
   const data = response.json();
   if (!response.ok) {
     throw new Error("댓글 수정에 실패했습니다.");
