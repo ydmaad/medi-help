@@ -39,6 +39,7 @@ export async function GET(
 }
 
 // 게시글 삭제하는 요청
+// 해당 게시글을 삭제하는 유저가 게시글을 쓴 유저가 맞는지 확인하는 코드 필요
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
