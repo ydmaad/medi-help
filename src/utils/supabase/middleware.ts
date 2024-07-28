@@ -38,17 +38,20 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // 나중에 쓸때 주석 해제 (리다이렉트 오류 발생 추후 수정해야함)
-  // if (
-  //   !user &&
-  //   request.nextUrl.pathname !== "/" &&
-  //   !request.nextUrl.pathname.startsWith("/api") &&
-  //   !request.nextUrl.pathname.startsWith("/login")
-  // ) {
-  //   // no user, potentially respond by redirecting the user to the login page
-  //   const url = request.nextUrl.clone();
-  //   url.pathname = "/signup";
-  //   return NextResponse.redirect(url);
-  // }
+  // 1 로그인 안됨 2 루트가 아니면(가장 먼저보이는 페이지) 3 api로 시작하지 않으면 4 auth로 시작하지 않으면
+  // 이렇게 하면 로그인페이지 이동시킨다
+  // 로그인 되어 있거나, 루트거나, api로 시작하거나, auth로 시작하면 리다이렉트 되지 않는다. 즉, 통과된다.
+  if (
+    !user &&
+    request.nextUrl.pathname !== "/" &&
+    !request.nextUrl.pathname.startsWith("/api") &&
+    !request.nextUrl.pathname.startsWith("/auth")
+  ) {
+    // no user, potentially respond by redirecting the user to the login page
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
