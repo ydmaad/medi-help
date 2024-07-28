@@ -12,7 +12,7 @@ type Item = {
 const ITEMS_PER_PAGE: number = 20;
 const TOTAL_ITEMS: number = 750;
 
-const SearchPage: React.FC = () => {
+const SearchPage = () => {
   const [allItems, setAllItems] = useState<Item[]>([]);
   const [displayedItems, setDisplayedItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

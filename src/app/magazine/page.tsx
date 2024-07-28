@@ -6,6 +6,9 @@ import SmCard from "@/components/molecules/SmCard";
 type Magazine = {
   title: string;
   imgs_url: string;
+  subtitle: string;
+  written_by: string;
+  reporting_date: string;
 };
 
 const MagazinePage = () => {
@@ -32,7 +35,7 @@ const MagazinePage = () => {
   return (
     <div>
       <h1>매거진</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
       <div className="grid grid-cols-3 gap-4">
         {magazines.map((magazine, index) => (
           <SmCard
@@ -40,6 +43,9 @@ const MagazinePage = () => {
             src={magazine.imgs_url}
             alt={magazine.title}
             title={magazine.title}
+            subtitle={magazine.subtitle}
+            leftText={magazine.written_by}
+            rightText={magazine.reporting_date}
           />
         ))}
       </div>

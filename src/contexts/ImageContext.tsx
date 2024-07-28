@@ -2,8 +2,9 @@ import React, { createContext, ReactNode } from "react";
 
 type ImageContextType = {
   src: string;
-  title: string;
   alt?: string;
+  title: string;
+  subtitle: string;
 };
 
 interface ImageProviderProps {
