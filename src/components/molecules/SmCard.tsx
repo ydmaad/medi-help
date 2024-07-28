@@ -31,7 +31,7 @@ const SmCard = ({
   return (
     <ImageProvider value={{ src, alt, title, subtitle }}>
       <BarTextProvider value={barTextValue}>
-        <div className="p-4 border border-gray-300 rounded-lg">
+        <div className="mb-[56px]">
           <SmImage />
           <CardTitle />
           <CardSubTitle />

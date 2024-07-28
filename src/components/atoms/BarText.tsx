@@ -5,16 +5,9 @@ const BarText = () => {
   const { leftText, rightText } = useBarText();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        color: "gray",
-        fontSize: "14px",
-      }}
-    >
+    <div className="flex items-center text-gray-500 text-sm mt-4">
       <span>{leftText}</span>
-      <span style={{ margin: "0 8px" }}>|</span>
+      <span className="mx-2">|</span>
       <span>{rightText}</span>
     </div>
   );

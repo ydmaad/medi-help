@@ -33,8 +33,8 @@ const MagazinePage = () => {
   }, []);
 
   return (
-    <div>
-      <h1>매거진</h1>
+    <div className="flex flex-col items-center">
+      <h1 className="mb-4">매거진</h1>
       {error && <p className="text-red-500">{error}</p>}
       <div className="grid grid-cols-3 gap-4">
         {magazines.map((magazine, index) => (
