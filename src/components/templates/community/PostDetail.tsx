@@ -93,7 +93,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       >
         수정하기
       </Link>
-      <Comments id={id} />
+      <Comments postId={id} />
     </>
   );
 };

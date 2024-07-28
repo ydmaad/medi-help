@@ -36,26 +36,50 @@ export async function POST(request: NextRequest) {
   try {
     const body: PostInsert = await request.json();
 
-    // 하드코딩한 부분.
+    // POST 요청시 만든 formData
+    const formData = await request.formData();
+
+    // 이미지 파일 처리
+    let img_url = null;
+    const file = formData.get("image0") as File;
+    if (file) {
+      const fileName = `${Date.now()}_${file.name}`;
+      const { data: imgUploadData, error: imgUploadError } =
+        await supabase.storage.from("posts_image_url").upload(fileName, file);
+      if (imgUploadError) {
+        throw imgUploadError;
+      }
+      const { data: urlData } = supabase.storage
+        .from("posts_image_url")
+        .getPublicUrl(fileName);
+      img_url = urlData.publicUrl;
+    }
+
+    // 하드코딩한 부분
     // 나중에 auth 부분 성공시 수정하기!!
-    const hardCodeId = "9b4cceb9-98bb-4742-8ce0-a7576edc0609";
+    const hardCodeId = "dffc930c-0be8-47ac-91e8-18c437e5a70a";
     const bodyWithUserId = {
       ...body,
       user_id: hardCodeId,
+      img_url,
     };
-    const { data, error } = await supabase
-      .from("posts")
-      .insert(bodyWithUserId)
-      .select();
-    console.log(error);
 
-    if (error) {
+    // 게시글 데이터 삽입
+    const { data: postData, error: postError } = await supabase
+      .from("posts")
+      .insert(bodyWithUserId);
+    console.log(postError);
+
+    if (postError) {
       return NextResponse.json(
-        { error: "등록실패", message: error.message },
+        { error: "등록실패", message: postError.message },
         { status: 500 }
       );
     }
-    return NextResponse.json({ message: "등록성공", data }, { status: 201 });
+    return NextResponse.json(
+      { message: "등록성공", data: postData },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

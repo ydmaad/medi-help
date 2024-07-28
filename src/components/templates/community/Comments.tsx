@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface CommentsProps {
-  id: string;
+  postId: string;
 }
 
 type Comment = Tables<"comments">;
@@ -14,8 +14,8 @@ type User = Tables<"users">;
 
 type CommentWithUser = Comment & { user: Pick<User, "avatar" | "nickname"> };
 
-const fetchComment = async (id: string) => {
-  const response = await fetch(`/api/community/${id}/comments`);
+const fetchComment = async (postId: string) => {
+  const response = await fetch(`/api/community/${postId}/comments`);
   const data = await response.json();
   if (!response.ok) {
     throw new Error("댓글을 불러오는데 실패했습니다.");
@@ -56,30 +56,65 @@ const editComment = async (
   return data;
 };
 
-const Comments: React.FC<CommentsProps> = ({ id }) => {
+const postComment = async (postId: string, comment: string) => {
+  const response = await fetch(`/api/community/${postId}/comments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ post_id: postId, comment }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`오류 : ${response.status} ${response.statusText}`);
+  }
+  const data = await response.json();
+  // console.log(data);
+  return data;
+};
+
+const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const [comment, setComment] = useState<CommentWithUser[]>([]);
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
     const getComment = async () => {
       try {
-        const getData = await fetchComment(id);
+        const getData = await fetchComment(postId);
         setComment(getData.data);
       } catch (error) {
         console.log((error as Error).message);
       }
     };
     getComment();
-  }, [id]);
+  }, [postId]);
 
   const handleDelete = async (commentId: string) => {
     try {
-      await deleteComment(id, commentId);
+      await deleteComment(postId, commentId);
       alert("댓글을 삭제하였습니다.");
       // 댓글 목록 새로고침
-      const updateComments = await fetchComment(id);
+      const updateComments = await fetchComment(postId);
       setComment(updateComments.data);
     } catch (error) {
       console.log((error as Error).message);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) {
+      alert("댓글을 입력해주세요.");
+      return;
+    }
+    try {
+      await postComment(postId, newComment);
+      setNewComment("");
+      const updateComments = await fetchComment(postId);
+      setComment(updateComments.data);
+      alert("댓글이 추가되었습니다.");
+    } catch (error) {
+      console.error("댓글 추가 실패 :", (error as Error).message);
+      alert("댓글 추가에 실패했습니다. 다시 시도해 주세요.");
     }
   };
 
@@ -95,10 +130,15 @@ const Comments: React.FC<CommentsProps> = ({ id }) => {
           <textarea
             className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder={`댓글을 입력해주세요.\n게시글과 무관한 악성 댓글은 삭제될 수 있습니다.`}
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
           ></textarea>
         </div>
 
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button
+          onClick={handleAddComment}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
           댓글 달기
         </button>
       </div>
@@ -113,7 +153,7 @@ const Comments: React.FC<CommentsProps> = ({ id }) => {
               <div className="flex flex-col">
                 <div className="flex items-center mb-2">
                   <Image
-                    src={ment.user?.avatar || "/default-avatar.png"}
+                    src={ment.user?.avatar || "/default-avatar.jpg"}
                     alt={"유저 이미지"}
                     width={40}
                     height={40}

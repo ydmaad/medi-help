@@ -72,31 +72,70 @@ export async function DELETE(
   }
 }
 
-// 댓글 수정하는 요청
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  try {
-    const body: CommentUpdate = await request.json();
+// // 댓글 수정하는 요청
+// export async function PUT(
+//   request: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   const { id } = params;
+//   try {
+//     const body: CommentUpdate = await request.json();
 
+//     const { data, error } = await supabase
+//       .from("posts")
+//       .update(body)
+//       .eq("id", commentId)
+//       .eq("post_id", id);
+
+//     if (error) {
+//       return NextResponse.json({ error: "수정 실패", message: error.message });
+//     }
+
+//     return NextResponse.json({ message: "수정 성공", data });
+//   } catch (error) {
+//     console.error(error);
+//     return NextResponse.json({
+//       error: "Internal Server Error",
+//       message: (error as Error).message,
+//     });
+//   }
+// }
+
+// 댓글 등록하는 요청
+export async function POST(request: NextRequest) {
+  try {
+    const body: CommentInsert = await request.json();
+
+    // 하드코딩한 부분!!
+    // 나중에 auth 부분 성공시 수정하기!!
+    // zustand로 유저 전역상태관리 예정!!
+    const hardCodeId = "dffc930c-0be8-47ac-91e8-18c437e5a70a";
+    const commentData = {
+      post_id: body.post_id,
+      user_id: hardCodeId,
+      comment: body.comment,
+    };
     const { data, error } = await supabase
-      .from("posts")
-      .update(body)
-      .eq("id", commentId)
-      .eq("post_id", id);
+      .from("comments")
+      .insert(commentData)
+      .select();
+    console.log(error);
 
     if (error) {
-      return NextResponse.json({ error: "수정 실패", message: error.message });
+      return NextResponse.json(
+        { error: "댓글 등록 실패", message: error.message },
+        { status: 500 }
+      );
     }
-
-    return NextResponse.json({ message: "수정 성공", data });
+    return NextResponse.json(
+      { message: "댓글 등록 성공", data },
+      { status: 201 }
+    );
   } catch (error) {
     console.error(error);
-    return NextResponse.json({
-      error: "Internal Server Error",
-      message: (error as Error).message,
-    });
+    return NextResponse.json(
+      { error: "Internal Server Error", message: (error as Error).message },
+      { status: 500 }
+    );
   }
 }

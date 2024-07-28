@@ -1,22 +1,29 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 const fetchPost = async ({
   title,
   contents,
+  image,
 }: {
   title: string;
   contents: string;
+  image: File[];
 }) => {
   try {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("contents", contents);
+    image.forEach((image, index) => {
+      formData.append(`image${index}`, image);
+    });
+
     const response = await fetch(`/api/community/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, contents }),
+      body: formData,
     });
 
     if (!response.ok) {
@@ -35,10 +42,16 @@ const fetchPost = async ({
 const Post = () => {
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
+  const [image, setImage] = useState<File[]>([]);
 
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault;
     await fetchPost({ title, contents });
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImage(files);
   };
 
   return (
@@ -61,7 +74,30 @@ const Post = () => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">
+            이미지 첨부
+          </label>
+          <input
+            type="file"
+            multiple
+            onChange={handleImageChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
 
+        <div className="mb-4 flex flex-wrap">
+          {image.map((img, index) => (
+            <div key={index} className="w-24 h-24 m-2 relative">
+              <Image
+                src={URL.createObjectURL(img)}
+                alt={`Preview ${index}`}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          ))}
+        </div>
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-semibold mb-2"

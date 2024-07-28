@@ -15,18 +15,21 @@ export type Database = {
           description: string | null
           id: string
           time: string
+          user_id: string
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: string
           time: string
+          user_id?: string
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: string
           time?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -116,22 +119,28 @@ export type Database = {
           descriptions: string
           id: string
           imgs_url: string
+          reporting_date: string | null
           subtitle: string
           title: string
+          written_by: string | null
         }
         Insert: {
           descriptions: string
           id?: string
           imgs_url: string
+          reporting_date?: string | null
           subtitle: string
           title: string
+          written_by?: string | null
         }
         Update: {
           descriptions?: string
           id?: string
           imgs_url?: string
+          reporting_date?: string | null
           subtitle?: string
           title?: string
+          written_by?: string | null
         }
         Relationships: []
       }
@@ -208,32 +217,26 @@ export type Database = {
       }
       posts: {
         Row: {
-          avatar: string | null
           contents: string
           created_at: string
           id: string
           img_url: string | null
-          nickname: string | null
           title: string
           user_id: string
         }
         Insert: {
-          avatar?: string | null
           contents: string
           created_at?: string
           id?: string
           img_url?: string | null
-          nickname?: string | null
           title: string
           user_id?: string
         }
         Update: {
-          avatar?: string | null
           contents?: string
           created_at?: string
           id?: string
           img_url?: string | null
-          nickname?: string | null
           title?: string
           user_id?: string
         }
