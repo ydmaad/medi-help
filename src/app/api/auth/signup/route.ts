@@ -2,28 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/utils/supabase/client";
 
 export async function POST(request: NextRequest) {
-  const { email, password, nickname } = await request.json();
-
   try {
+    const { email, password } = await request.json();
+
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
       { email, password }
     );
-
     if (signUpError) {
-      throw signUpError;
+      return NextResponse.json({ error: signUpError.message }, { status: 500 });
     }
 
     const { error: insertError } = await supabase.from("users").insert([
       {
         id: signUpData.user?.id,
         email,
-        nickname,
         avatar: "",
       },
     ]);
-
     if (insertError) {
-      throw insertError;
+      return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
     return NextResponse.json({ message: "회원가입이 완료되었습니다." });
