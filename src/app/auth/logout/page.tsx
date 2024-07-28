@@ -11,7 +11,7 @@ export default function LogoutPage() {
   useEffect(() => {
     const logout = async () => {
       await fetch("/api/auth/logout", {
-        method: "POST",
+        method: "DELETE",
       });
 
       clearUser();
@@ -23,3 +23,5 @@ export default function LogoutPage() {
 
   return <p>로그아웃 중...</p>;
 }
+
+// method : post가 아닌 delete로 변경
