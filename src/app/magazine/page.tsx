@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SmCard from "@/components/molecules/SmCard";
 
 type Magazine = {
   title: string;
-  subtitle: string;
   imgs_url: string;
-  descriptions: string;
 };
 
 const MagazinePage = () => {
@@ -34,14 +33,16 @@ const MagazinePage = () => {
     <div>
       <h1>매거진</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <ul>
+      <div className="grid grid-cols-3 gap-4">
         {magazines.map((magazine, index) => (
-          <li key={index}>
-            <h2>{magazine.title}</h2>
-            <img src={magazine.imgs_url} alt={magazine.title} />
-          </li>
+          <SmCard
+            key={index}
+            src={magazine.imgs_url}
+            alt={magazine.title}
+            title={magazine.title}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
