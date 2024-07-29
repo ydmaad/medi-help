@@ -1,4 +1,7 @@
 import type { Config } from "tailwindcss";
+import { PluginAPI } from "tailwindcss/types/config";
+
+const plugin = require("tailwindcss/plugin");
 
 const config: Config = {
   content: [
@@ -15,6 +18,16 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addUtilities }: { addUtilities: any }) {
+      const newUtilities = {
+        [".fc-button"]: {
+          backgroundColor: "transparent",
+        },
+      };
+
+      addUtilities(newUtilities, ["responsive", "hover"]);
+    }),
+  ],
 };
 export default config;

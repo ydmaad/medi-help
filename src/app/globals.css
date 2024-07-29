@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* calendar */
+
+.fc-button {
+  background-color: transparent !important;
+  border: transparent !important;
+  color: black !important;
+}
+
+.fc-toolbar-title {
+  font-size: 18px !important;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.fc-toolbar-chunk {
+  display: flex;
+}

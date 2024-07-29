@@ -62,6 +62,15 @@ const CalendarView = () => {
     getCalendarData();
   }, []);
 
+  const handleDayContent = () => {
+    let date = document.querySelectorAll(".fc-daygrid-day-number");
+    console.log(typeof date);
+    const dateArr = Array.from(date).filter((item) => true);
+    return dateArr.map((day) => day.innerHTML?.replace("일", ""));
+  };
+
+  // handleDayContent();
+
   const handleEventClick = (event: EventClickArg) => {
     console.log(event.event._def.publicId);
     setCalendarId(event.event._def.publicId);
@@ -75,17 +84,18 @@ const CalendarView = () => {
         setOpenModal={setOpenModal}
         calendarId={calendarId}
       />
-      <div className="p-8 w-8/12 h-7/12">
+      <div className="p-8 w-8/12 h-7/12 fc-button ">
         <FullCalendar
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
           events={events}
           eventClick={handleEventClick}
           headerToolbar={{
-            left: "prev",
-            center: "title",
-            right: "next",
+            left: "prev title next",
+            center: "",
+            right: "",
           }}
+          locale="en"
         />
       </div>
     </>
