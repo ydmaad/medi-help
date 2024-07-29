@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import SmCard from "@/components/molecules/SmCard";
+import Title from "@/components/atoms/Title";
 
 type Magazine = {
   title: string;
@@ -33,23 +34,25 @@ const MagazinePage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="mb-4">매거진</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <div className="grid grid-cols-3 gap-4">
-        {magazines.map((magazine, index) => (
-          <SmCard
-            key={index}
-            src={magazine.imgs_url}
-            alt={magazine.title}
-            title={magazine.title}
-            subtitle={magazine.subtitle}
-            leftText={magazine.written_by}
-            rightText={magazine.reporting_date}
-          />
-        ))}
+    <>
+      <Title>매거진</Title>
+      <div className="flex flex-col items-center">
+        {error && <p className="text-red-500">{error}</p>}
+        <div className="grid grid-cols-3 gap-4">
+          {magazines.map((magazine, index) => (
+            <SmCard
+              key={index}
+              src={magazine.imgs_url}
+              alt={magazine.title}
+              title={magazine.title}
+              subtitle={magazine.subtitle}
+              leftText={magazine.written_by}
+              rightText={magazine.reporting_date}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

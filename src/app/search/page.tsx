@@ -88,8 +88,17 @@ const SearchPage = () => {
       <ul>
         {displayedItems.length > 0 ? (
           displayedItems.map((item, index) => (
-            <li key={index}>
-              {item.itemName} - {item.entpName}
+            <li key={index} className="flex items-center mb-4">
+              {item.itemImage && (
+                <img
+                  src={item.itemImage}
+                  alt={item.itemName}
+                  className="w-16 h-16 object-cover mr-4"
+                />
+              )}
+              <div>
+                <strong>{item.itemName}</strong> - {item.entpName}
+              </div>
             </li>
           ))
         ) : (
