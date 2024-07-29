@@ -3,10 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, {
-  Draggable,
-  DropArg,
-} from "@fullcalendar/interaction";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
@@ -75,7 +72,7 @@ const CalendarView = () => {
         setOpenModal={setOpenModal}
         calendarId={calendarId}
       />
-      <div className="p-8 w-8/12 h-7/12">
+      <div className="p-8 w-full h-full">
         <FullCalendar
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
