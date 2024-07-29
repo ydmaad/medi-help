@@ -6,7 +6,12 @@ import AddMediModal from '../calendarModal/AddMediModal';
 interface MediRecord {
   id: string;
   medi_name: string;
-  time: string;
+  times: {
+    morning: boolean;
+    afternoon: boolean;
+    evening: boolean;
+  };
+  alarm_time: string;
   notes: string;
 }
 
@@ -56,16 +61,20 @@ const MediRecords: React.FC = () => {
     fetchMediRecords();
   }, []);
 
+  const handleAdd = (newMediRecord: MediRecord) => {
+    setMediRecords([...mediRecords, newMediRecord]);
+  };
+
   return (
     <div className="w-full">
       <h2 className="text-2xl mb-4">복약 기록</h2>
       <div className="mb-4">
         <h3 className="text-lg font-semibold">오늘의 복약 알림</h3>
-        {mediRecords.filter(record => record.time === '아침').map(record => (
+        {mediRecords.map(record => (
           <div key={record.id} className="bg-white p-4 rounded shadow mb-4 flex justify-between items-center">
             <div>
               <span className="font-semibold">{record.medi_name}</span>
-              <div className="text-sm">{record.notes}</div>
+              <div className="text-sm">{record.alarm_time}</div>
             </div>
             <button
               onClick={() => handleDelete(record.id)}
@@ -76,6 +85,12 @@ const MediRecords: React.FC = () => {
           </div>
         ))}
       </div>
+      <h3 className="text-lg font-semibold">복용 중인 약</h3>
+      {mediRecords.map(record => (
+        <div key={record.id} className="bg-white p-4 rounded shadow mb-4">
+          <span className="font-semibold">{record.medi_name}</span>
+        </div>
+      ))}
       <button onClick={() => setShowModal(true)} className="bg-blue-500 text-white px-4 py-2 rounded">
         나의 약 등록
       </button>
@@ -83,7 +98,7 @@ const MediRecords: React.FC = () => {
         <AddMediModal
           isOpen={showModal}
           onRequestClose={() => setShowModal(false)}
-          onAdd={fetchMediRecords}
+          onAdd={handleAdd}
         />
       )}
     </div>

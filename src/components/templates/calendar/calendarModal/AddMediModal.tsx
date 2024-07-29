@@ -3,14 +3,29 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 
+interface MediRecord {
+  id: string;
+  medi_name: string;
+  times: {
+    morning: boolean;
+    afternoon: boolean;
+    evening: boolean;
+  };
+  alarm_time: string;
+  notes: string;
+}
+
 interface AddMediModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  onAdd: () => void;
+  onAdd: (mediRecord: MediRecord) => void;
 }
 
 const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onAdd }) => {
   const [mediName, setMediName] = useState('');
+  const [morning, setMorning] = useState(false);
+  const [afternoon, setAfternoon] = useState(false);
+  const [evening, setEvening] = useState(false);
   const [time, setTime] = useState('');
   const [notes, setNotes] = useState('');
   const [mediNames, setMediNames] = useState<string[]>([]);
@@ -35,10 +50,15 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const newMediRecord = {
+    const newMediRecord: MediRecord = {
       id: crypto.randomUUID(),
       medi_name: mediName,
-      time,
+      times: {
+        morning,
+        afternoon,
+        evening,
+      },
+      alarm_time: time,
       notes,
     };
 
@@ -59,9 +79,12 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
       console.log('POST response:', result);
 
       // 데이터가 성공적으로 저장되면, 부모 컴포넌트에서 상태를 업데이트합니다.
-      onAdd();
+      onAdd(newMediRecord);
       onRequestClose();
       setMediName('');
+      setMorning(false);
+      setAfternoon(false);
+      setEvening(false);
       setTime('');
       setNotes('');
     } catch (error) {
@@ -95,19 +118,39 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
             </select>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">시간:</label>
-            <select
+            <label className="block text-gray-700 text-sm font-bold mb-2">복용 시간:</label>
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                onClick={() => setMorning(!morning)}
+                className={`py-2 px-4 rounded ${morning ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              >
+                아침
+              </button>
+              <button
+                type="button"
+                onClick={() => setAfternoon(!afternoon)}
+                className={`py-2 px-4 rounded ${afternoon ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              >
+                점심
+              </button>
+              <button
+                type="button"
+                onClick={() => setEvening(!evening)}
+                className={`py-2 px-4 rounded ${evening ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              >
+                저녁
+              </button>
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">알림 시간 설정:</label>
+            <input
+              type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              required
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            >
-              <option value="">시간을 선택하세요</option>
-              <option value="아침">아침</option>
-              <option value="점심">점심</option>
-              <option value="저녁">저녁</option>
-              <option value="해당없음">해당없음</option>
-            </select>
+            />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">메모:</label>

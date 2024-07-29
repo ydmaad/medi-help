@@ -1,33 +1,32 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/utils/supabase/client";
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
-export async function GET(req: NextRequest) {
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export async function GET() {
   try {
-    const { data, error } = await supabase.from("medi").select("*");
-
+    const { data, error } = await supabase.from('medi').select('*');
     if (error) {
-      return NextResponse.json(error);
+      console.error('Error fetching medi records:', error);
+      return NextResponse.json({ error: 'Failed to fetch medi records' }, { status: 500 });
     }
-    console.log(data);
     return NextResponse.json({ mediRecords: data });
   } catch (error) {
-    console.log("supabase error", error);
-    return NextResponse.json({ error: "Failed to fetch medi records" }, { status: 500 });
+    console.error('Error fetching medi records:', error);
+    return NextResponse.json({ error: 'Failed to fetch medi records' }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { medi_name, time, notes } = await req.json();
-    console.log('Received data:', { medi_name, time, notes });
-
-    const { data, error } = await supabase.from('medi').insert([{ medi_name, time, notes }]);
+    const { medi_name, times, alarm_time, notes } = await req.json();
+    const { error } = await supabase.from('medi').insert([{ medi_name, times, alarm_time, notes }]);
     if (error) {
       console.error('Failed to save medi record:', error);
       return NextResponse.json({ error: 'Failed to save medi record' }, { status: 500 });
     }
-
-    console.log('Medi record saved successfully:', data);
     return NextResponse.json({ message: 'Medi record saved' }, { status: 201 });
   } catch (error) {
     console.error('Failed to process request:', error);
