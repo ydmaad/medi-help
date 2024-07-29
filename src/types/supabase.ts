@@ -15,18 +15,21 @@ export type Database = {
           description: string | null
           id: string
           time: string
+          user_id: string
         }
         Insert: {
           created_at?: string | null
           description?: string | null
           id?: string
           time: string
+          user_id?: string
         }
         Update: {
           created_at?: string | null
           description?: string | null
           id?: string
           time?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -64,6 +67,17 @@ export type Database = {
             referencedColumns: ["medi_name"]
           },
           {
+
+            foreignKeyName: "calendar_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      magazine: {
+
             foreignKeyName: "calendar_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -73,47 +87,72 @@ export type Database = {
         ]
       }
       comments: {
+
         Row: {
+          comment: string
           created_at: string
-          id: number
-          post_id: number
-          user_id: number
+          id: string
+          post_id: string
+          user_id: string
         }
         Insert: {
+          comment: string
           created_at?: string
-          id?: number
-          post_id: number
-          user_id: number
+          id?: string
+          post_id: string
+          user_id: string
         }
         Update: {
+          comment?: string
           created_at?: string
-          id?: number
-          post_id?: number
-          user_id?: number
+          id?: string
+          post_id?: string
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       magazine: {
         Row: {
           descriptions: string
           id: string
           imgs_url: string
+          reporting_date: string | null
           subtitle: string
           title: string
+          written_by: string | null
         }
         Insert: {
           descriptions: string
           id?: string
           imgs_url: string
+          reporting_date?: string | null
           subtitle: string
           title: string
+          written_by?: string | null
         }
         Update: {
           descriptions?: string
           id?: string
           imgs_url?: string
+          reporting_date?: string | null
           subtitle?: string
           title?: string
+          written_by?: string | null
         }
         Relationships: []
       }
@@ -190,32 +229,26 @@ export type Database = {
       }
       posts: {
         Row: {
-          avatar: string | null
           contents: string
           created_at: string
           id: string
           img_url: string | null
-          nickname: string | null
           title: string
           user_id: string
         }
         Insert: {
-          avatar?: string | null
           contents: string
           created_at?: string
           id?: string
           img_url?: string | null
-          nickname?: string | null
           title: string
           user_id?: string
         }
         Update: {
-          avatar?: string | null
           contents?: string
           created_at?: string
           id?: string
           img_url?: string | null
-          nickname?: string | null
           title?: string
           user_id?: string
         }

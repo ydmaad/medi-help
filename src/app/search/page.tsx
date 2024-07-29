@@ -9,16 +9,18 @@ type Item = {
   itemImage: string | null;
 };
 
-const SearchPage: React.FC = () => {
+const ITEMS_PER_PAGE: number = 20;
+const TOTAL_ITEMS: number = 750;
+
+const SearchPage = () => {
   const [allItems, setAllItems] = useState<Item[]>([]);
   const [displayedItems, setDisplayedItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 20;
-  const totalItems = 15000;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const totalPages = Math.ceil(TOTAL_ITEMS / ITEMS_PER_PAGE);
 
   const fetchData = async (pageNo: number) => {
     setLoading(true);
@@ -31,7 +33,7 @@ const SearchPage: React.FC = () => {
       }
       const data = await response.json();
       setAllItems((prevItems) => [...prevItems, ...data]);
-      setDisplayedItems(data.slice(0, itemsPerPage));
+      setDisplayedItems(data.slice(0, ITEMS_PER_PAGE));
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -49,8 +51,8 @@ const SearchPage: React.FC = () => {
         item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.effect.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
     setDisplayedItems(filteredItems.slice(startIndex, endIndex));
   }, [searchTerm, currentPage, allItems]);
 
@@ -86,8 +88,17 @@ const SearchPage: React.FC = () => {
       <ul>
         {displayedItems.length > 0 ? (
           displayedItems.map((item, index) => (
-            <li key={index}>
-              {item.itemName} - {item.entpName}
+            <li key={index} className="flex items-center mb-4">
+              {item.itemImage && (
+                <img
+                  src={item.itemImage}
+                  alt={item.itemName}
+                  className="w-16 h-16 object-cover mr-4"
+                />
+              )}
+              <div>
+                <strong>{item.itemName}</strong> - {item.entpName}
+              </div>
             </li>
           ))
         ) : (
