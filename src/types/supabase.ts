@@ -64,6 +64,17 @@ export type Database = {
             referencedColumns: ["medi_name"]
           },
           {
+
+            foreignKeyName: "calendar_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      magazine: {
+
             foreignKeyName: "calendar_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -73,6 +84,7 @@ export type Database = {
         ]
       }
       comments: {
+
         Row: {
           created_at: string
           id: number
