@@ -1,170 +1,169 @@
 "use client";
 
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
 
-interface Props {
-  openModal: boolean;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  calendarId: string;
+interface MediRecord {
+  id: string;
+  medi_name: string;
+  times: {
+    morning: boolean;
+    afternoon: boolean;
+    evening: boolean;
+  };
+  alarm_time: string;
+  notes: string;
 }
 
-const AddModal = ({ openModal, setOpenModal, calendarId }: Props) => {
-  const router = useRouter();
+interface AddMediModalProps {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  onAdd: (newMediRecord: MediRecord) => void;
+}
 
-  const [values, setValues] = useState<test_calendar>({
-    name: "",
-    user_id: "test@test.com",
-    medi_time: "",
-    sideEffect: "",
-    time: "2024-07-25 00:00:00+00",
+const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onAdd }) => {
+  const [mediName, setMediName] = useState("");
+  const [mediNames, setMediNames] = useState<string[]>([]);
+  const [times, setTimes] = useState({
+    morning: false,
+    afternoon: false,
+    evening: false,
   });
+  const [alarmTime, setAlarmTime] = useState("");
+  const [notes, setNotes] = useState("");
 
-  // Route Handler 통해서 POST 하는 함수
-  const postCalendar = async (value: test_calendar) => {
+  useEffect(() => {
+    const fetchMediNames = async () => {
+      try {
+        const response = await axios.get("/api/calendar/medi/names");
+        setMediNames(response.data.map((item: { itemName: string }) => item.itemName));
+      } catch (error) {
+        console.error("Failed to fetch medi names:", error);
+      }
+    };
+
+    fetchMediNames();
+  }, []);
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTimes({ ...times, [e.target.name]: e.target.checked });
+  };
+
+  const handleAdd = async () => {
+    const newMediRecord: MediRecord = {
+      id: crypto.randomUUID(),
+      medi_name: mediName,
+      times,
+      alarm_time: alarmTime,
+      notes,
+    };
+
     try {
-      const res = await axios.post("/api/test_calendar", value);
-      console.log(res);
-      return res;
+      const response = await axios.post("/api/calendar/medi", newMediRecord);
+      if (response.status === 201) {
+        onAdd(newMediRecord);
+        onRequestClose();
+      } else {
+        console.error("Failed to add medi record:", response.statusText);
+      }
     } catch (error) {
-      console.log("Post Error", error);
+      console.error("Failed to add medi record:", error);
     }
-  };
-
-  // Route Handler 통해서 UPDATE 하는 함수
-  const updateCalendar = async (id: string, value: test_calendar) => {
-    try {
-      const res = await axios.patch(`/api/test_calendar/${id}`, value);
-      console.log(res);
-      return res;
-    } catch (error) {
-      console.log("Patch Error", error);
-    }
-  };
-
-  // Route Handler 통해서 DELETE 하는 함수
-  const deleteCalendar = async (id: string) => {
-    try {
-      const res = await axios.delete(`/api/test_calendar/${id}`);
-      console.log(res);
-      return res;
-    } catch (error) {
-      console.log("Delete Error", error);
-    }
-  };
-
-  // Input 값 OnChange 함수
-  const handleContentChange = (
-    event:
-      | React.ChangeEvent<HTMLSelectElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setValues((prev) => {
-      return { ...prev, [name]: value };
-    });
-    console.log(values);
-  };
-
-  // 추가하기 버튼 onClick 함수
-  const handleAddButtonClick = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    postCalendar(values);
-  };
-
-  // 수정하기 버튼 onClick 함수
-  const handleUpdateButtonClick = () => {
-    updateCalendar(calendarId, values);
-    setOpenModal(false);
-  };
-
-  // 삭제하기 버튼 onClick 함수
-  const handleDeleteButtonClick = () => {
-    deleteCalendar(calendarId);
-    setOpenModal(false);
   };
 
   return (
-    <div
-      className={`absolute w-full h-full min-h-screen bg-black/[0.6] pt-32 flex justify-center z-10 backdrop-blur-sm ${
-        openModal ? "block" : "hidden"
-      }`}
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      contentLabel="Add Medication"
+      className="fixed inset-0 flex items-center justify-center z-50"
+      overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
-      <div className="sticky w-2/6 h-4/6 my-0 mx-auto bg-[#F8FBFE] rounded-lg z-20 drop-shadow-xl ">
-        <div className="flex align-items p-4 gap-2">
-          <button
-            onClick={() => setOpenModal(false)}
-            className="w-3 h-3 rounded-full bg-red-500 flex items-center justify-center text-xs text-red-500 hover:text-black"
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
+        <h2 className="text-2xl mb-4">나의 약 등록</h2>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">약 이름:</label>
+          <select
+            value={mediName}
+            onChange={(e) => setMediName(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
-            x
-          </button>
+            <option value="">약 이름을 선택하세요</option>
+            {mediNames.map((name, index) => (
+              <option key={index} value={name}>{name}</option>
+            ))}
+          </select>
         </div>
-        <div className="w-full h-4/6 px-8 py-2 flex flex-col gap-3">
-          {/* 작은 타이틀 atom화하기 */}
-          <div className="w-full text-sm text-gray-500 ">약 이름</div>
-          <select
-            name="name"
-            value={values.name}
-            onChange={handleContentChange}
-            className="w-full py-2 outline-0 rounded-md border border-gray-500 drop-shadow-md "
-          >
-            <option value="아스피린">아스피린</option>
-            <option value="이브프로펜">이브프로펜</option>
-            <option value="머시론">머시론</option>
-          </select>
-          <div className="w-full text-sm text-gray-500 ">복용 시간</div>
-          <select
-            name="medi_time"
-            value={values.medi_time}
-            onChange={handleContentChange}
-            className="w-full py-2 outline-0 rounded-md border border-gray-500 drop-shadow-md"
-          >
-            <option value="아침 복용">아침 복용</option>
-            <option value="점심 복용">점심 복용</option>
-            <option value="저녁 복용">저녁 복용</option>
-          </select>
-          <div className="w-full text-sm text-gray-500 ">부작용 기입하기</div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">복용 시간:</label>
+          <div className="flex space-x-4">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                name="morning"
+                checked={times.morning}
+                onChange={handleCheckboxChange}
+                className="form-checkbox"
+              />
+              <span className="ml-2">아침</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                name="afternoon"
+                checked={times.afternoon}
+                onChange={handleCheckboxChange}
+                className="form-checkbox"
+              />
+              <span className="ml-2">점심</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                name="evening"
+                checked={times.evening}
+                onChange={handleCheckboxChange}
+                className="form-checkbox"
+              />
+              <span className="ml-2">저녁</span>
+            </label>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">알람 시간:</label>
+          <input
+            type="time"
+            value={alarmTime}
+            onChange={(e) => setAlarmTime(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">메모:</label>
           <textarea
-            name="sideEffect"
-            value={values.sideEffect}
-            onChange={handleContentChange}
-            placeholder="오늘 느꼈던 부작용을 기록해두세요!"
-            className="w-full h-3/5 p-2 rounded-md border border-gray-500 drop-shadow-md"
-          ></textarea>
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
         </div>
-        <div className="h-1/4 flex place-items-center">
+        <div className="flex items-center justify-between">
           <button
-            onClick={handleAddButtonClick}
-            className={`${
-              calendarId ? "hidden" : "block"
-            } w-4/12 h-4/12 min-w-24 min-h-10 border border-gray-400 bg-gray-200 m-auto rounded-lg drop-shadow-md hover:scale-105 ease-in duration-300`}
+            onClick={handleAdd}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             추가하기
           </button>
-          <div
-            className={`${
-              calendarId ? "block" : "hidden"
-            } w-full flex items-center justify-center gap-4`}
+          <button
+            onClick={onRequestClose}
+            className="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            <button
-              onClick={handleUpdateButtonClick}
-              className={` w-4/12 h-4/12 min-w-24 min-h-10 border border-gray-400 bg-gray-200 my-auto rounded-lg drop-shadow-md hover:scale-105 ease-in duration-300`}
-            >
-              수정하기
-            </button>
-            <button
-              onClick={handleDeleteButtonClick}
-              className={` w-4/12 h-4/12 min-w-24 min-h-10 border border-gray-400 bg-gray-200 my-auto rounded-lg drop-shadow-md hover:scale-105 ease-in duration-300`}
-            >
-              삭제하기
-            </button>
-          </div>
+            취소
+          </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 
-export default AddModal;
+export default AddMediModal;

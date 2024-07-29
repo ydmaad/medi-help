@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AddMediModal from '../calendarModal/AddMediModal';
+import EditMediModal from '../calendarModal/EditMediModal';
 
 interface MediRecord {
   id: string;
@@ -16,24 +17,41 @@ interface MediRecord {
 }
 
 const MediRecords: React.FC = () => {
+  const [alarmRecords, setAlarmRecords] = useState<MediRecord[]>([]);
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<MediRecord | null>(null);
 
-  const fetchMediRecords = async () => {
+  const fetchAlarmRecords = async () => {
     try {
-      const response = await fetch('/api/calendar/medi');
+      const response = await fetch('/api/calendar/medi/today');
       if (!response.ok) {
-        throw new Error('Failed to fetch medi records');
+        throw new Error('Failed to fetch alarm records');
       }
       const data = await response.json();
-      console.log('Fetched medi records:', data.mediRecords);
-      setMediRecords(data.mediRecords || []);
+      console.log('Fetched alarm records:', data.alarmRecords);
+      setAlarmRecords(data.alarmRecords || []);
     } catch (error) {
-      console.error('Error fetching medi records:', error);
+      console.error('Error fetching alarm records:', error);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const fetchMediRecords = async () => {
+    try {
+      const response = await fetch('/api/calendar/medi/all');
+      if (!response.ok) {
+        throw new Error('Failed to fetch medication records');
+      }
+      const data = await response.json();
+      console.log('Fetched medication records:', data.medicationRecords);
+      setMediRecords(data.medicationRecords || []);
+    } catch (error) {
+      console.error('Error fetching medication records:', error);
+    }
+  };
+
+  const handleDelete = async (id: string, deleteMedi: boolean) => {
     try {
       const response = await fetch('/api/calendar/medi', {
         method: 'DELETE',
@@ -50,19 +68,54 @@ const MediRecords: React.FC = () => {
       const result = await response.json();
       console.log('DELETE response:', result);
 
-      // 데이터가 성공적으로 삭제되면, 다시 데이터를 불러와 상태를 업데이트합니다.
-      await fetchMediRecords();
+      // 데이터가 성공적으로 삭제되면, 상태를 업데이트합니다.
+      setAlarmRecords(alarmRecords.filter(record => record.id !== id));
+
+      if (deleteMedi) {
+        setMediRecords(mediRecords.filter(record => record.id !== id));
+      }
     } catch (error) {
-      console.error('Failed to delete medi record:', error);
+      console.error('Failed to delete alarm record:', error);
+    }
+  };
+
+  const handleEdit = async (id: string, updatedRecord: Partial<MediRecord>) => {
+    try {
+      const response = await fetch('/api/calendar/medi', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, ...updatedRecord }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      console.log('PATCH response:', result);
+
+      // 데이터가 성공적으로 수정되면, 상태를 업데이트합니다.
+      setAlarmRecords(alarmRecords.map(record => record.id === id ? { ...record, ...updatedRecord } : record));
+    } catch (error) {
+      console.error('Failed to edit alarm record:', error);
     }
   };
 
   useEffect(() => {
+    fetchAlarmRecords();
     fetchMediRecords();
   }, []);
 
   const handleAdd = (newMediRecord: MediRecord) => {
+    setAlarmRecords([...alarmRecords, newMediRecord]);
     setMediRecords([...mediRecords, newMediRecord]);
+  };
+
+  const handleRecordClick = (record: MediRecord) => {
+    setSelectedRecord(record);
+    setShowEditModal(true);
   };
 
   return (
@@ -70,18 +123,12 @@ const MediRecords: React.FC = () => {
       <h2 className="text-2xl mb-4">복약 기록</h2>
       <div className="mb-4">
         <h3 className="text-lg font-semibold">오늘의 복약 알림</h3>
-        {mediRecords.map(record => (
-          <div key={record.id} className="bg-white p-4 rounded shadow mb-4 flex justify-between items-center">
+        {alarmRecords.map(record => (
+          <div key={record.id} onClick={() => handleRecordClick(record)} className="bg-white p-4 rounded shadow mb-4 flex justify-between items-center cursor-pointer">
             <div>
               <span className="font-semibold">{record.medi_name}</span>
               <div className="text-sm">{record.alarm_time}</div>
             </div>
-            <button
-              onClick={() => handleDelete(record.id)}
-              className="bg-red-500 text-white px-4 py-2 rounded"
-            >
-              삭제
-            </button>
           </div>
         ))}
       </div>
@@ -91,14 +138,23 @@ const MediRecords: React.FC = () => {
           <span className="font-semibold">{record.medi_name}</span>
         </div>
       ))}
-      <button onClick={() => setShowModal(true)} className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button onClick={() => setShowAddModal(true)} className="bg-blue-500 text-white px-4 py-2 rounded">
         나의 약 등록
       </button>
-      {showModal && (
+      {showAddModal && (
         <AddMediModal
-          isOpen={showModal}
-          onRequestClose={() => setShowModal(false)}
+          isOpen={showAddModal}
+          onRequestClose={() => setShowAddModal(false)}
           onAdd={handleAdd}
+        />
+      )}
+      {showEditModal && selectedRecord && (
+        <EditMediModal
+          isOpen={showEditModal}
+          onRequestClose={() => setShowEditModal(false)}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          mediRecord={selectedRecord}
         />
       )}
     </div>
