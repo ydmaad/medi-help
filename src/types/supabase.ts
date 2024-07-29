@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      alarm: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          time: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          time: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          time?: string
+        }
+        Relationships: []
+      }
       calendar: {
         Row: {
           created_at: string
@@ -24,7 +45,7 @@ export type Database = {
           medi_name: string
           medi_time: string
           side_effect: string
-          user_id?: string
+          user_id: string
         }
         Update: {
           created_at?: string
@@ -34,9 +55,45 @@ export type Database = {
           side_effect?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_medi_name_fkey"
+            columns: ["medi_name"]
+            isOneToOne: true
+            referencedRelation: "medicine"
+            referencedColumns: ["medi_name"]
+          },
+          {
+            foreignKeyName: "calendar_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          created_at: string
+          id: number
+          post_id: number
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          post_id: number
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          post_id?: number
+          user_id?: number
+        }
         Relationships: []
       }
-      column: {
+      magazine: {
         Row: {
           descriptions: string
           id: string
@@ -60,6 +117,27 @@ export type Database = {
         }
         Relationships: []
       }
+      medi: {
+        Row: {
+          id: string
+          medi_name: string
+          notes: string | null
+          time: string
+        }
+        Insert: {
+          id?: string
+          medi_name: string
+          notes?: string | null
+          time: string
+        }
+        Update: {
+          id?: string
+          medi_name?: string
+          notes?: string | null
+          time?: string
+        }
+        Relationships: []
+      }
       medicine: {
         Row: {
           id: string
@@ -76,66 +154,68 @@ export type Database = {
           medi_description?: string
           medi_name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "medicine_medi_name_fkey"
+            columns: ["medi_name"]
+            isOneToOne: true
+            referencedRelation: "pill_alarm"
+            referencedColumns: ["medi_name"]
+          },
+        ]
       }
       pill_alarm: {
         Row: {
           alarm_description: string
           alarm_name: string
           alarm_time: string
-          created_at: string
           id: string
           medi_name: string
-          user_id: string
         }
         Insert: {
           alarm_description: string
           alarm_name: string
           alarm_time: string
-          created_at?: string
           id?: string
-          medi_name: string
-          user_id?: string
+          medi_name?: string
         }
         Update: {
           alarm_description?: string
           alarm_name?: string
           alarm_time?: string
-          created_at?: string
           id?: string
           medi_name?: string
-          user_id?: string
         }
         Relationships: []
       }
       posts: {
         Row: {
-          avatar: string
+          avatar: string | null
           contents: string
           created_at: string
           id: string
-          img_url: string
-          nickname: string
+          img_url: string | null
+          nickname: string | null
           title: string
           user_id: string
         }
         Insert: {
-          avatar: string
+          avatar?: string | null
           contents: string
           created_at?: string
           id?: string
-          img_url: string
-          nickname: string
+          img_url?: string | null
+          nickname?: string | null
           title: string
           user_id?: string
         }
         Update: {
-          avatar?: string
+          avatar?: string | null
           contents?: string
           created_at?: string
           id?: string
-          img_url?: string
-          nickname?: string
+          img_url?: string | null
+          nickname?: string | null
           title?: string
           user_id?: string
         }
@@ -149,6 +229,57 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          endpoint: string
+          expirationTime: string | null
+          id: string
+          keys: Json | null
+        }
+        Insert: {
+          endpoint: string
+          expirationTime?: string | null
+          id?: string
+          keys?: Json | null
+        }
+        Update: {
+          endpoint?: string
+          expirationTime?: string | null
+          id?: string
+          keys?: Json | null
+        }
+        Relationships: []
+      }
+      test_calendar: {
+        Row: {
+          created_at: string
+          id: string
+          medi_time: string
+          name: string
+          sideEffect: string | null
+          time: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          medi_time: string
+          name: string
+          sideEffect?: string | null
+          time?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          medi_time?: string
+          name?: string
+          sideEffect?: string | null
+          time?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_medicine: {
         Row: {
           medicine_id: string
@@ -156,37 +287,60 @@ export type Database = {
         }
         Insert: {
           medicine_id?: string
-          user_id?: string
+          user_id: string
         }
         Update: {
           medicine_id?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_medicine_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicine"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_medicine_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
-          avatar: string
+          avatar: string | null
           created_at: string
           email: string
           id: string
-          nickname: string
+          nickname: string | null
         }
         Insert: {
-          avatar: string
+          avatar?: string | null
           created_at?: string
           email: string
           id?: string
-          nickname: string
+          nickname?: string | null
         }
         Update: {
-          avatar?: string
+          avatar?: string | null
           created_at?: string
           email?: string
           id?: string
-          nickname?: string
+          nickname?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
