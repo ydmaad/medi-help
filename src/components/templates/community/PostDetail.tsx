@@ -2,11 +2,16 @@
 
 import { Tables } from "@/types/supabase";
 import React, { useEffect, useState } from "react";
-import Comments from "./Comments";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Comments from "./Comments";
+import Image from "next/image";
 
 type Post = Tables<"posts">;
+
+type User = Tables<"users">;
+
+type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
 
 interface PostDetailProps {
   id: string;
@@ -24,7 +29,7 @@ const deletePost = async (id: string) => {
 
 // 게시글 아이디를 프롭스로 받음
 const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<PostWithUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const route = useRouter();
@@ -48,8 +53,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
 
     fetchDetailPost();
   }, [id]);
-  // console.log(post);
+  console.log(post);
 
+  // 게시글 삭제
   const handleDelete = async () => {
     if (id) {
       try {
@@ -65,20 +71,50 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
     }
   };
 
+  // img_url을 배열로 만듦
+  const imageUrl = post?.img_url ? post.img_url.split(",") : [];
+
+  // 내용 표시 - 단락 구분
+  const formatContent = (content: string) => {
+    return content.split("\n").map((paragraph, index) => (
+      <p key={index} className="mb-4">
+        {paragraph}
+      </p>
+    ));
+  };
+
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
+  console.log(post.user?.nickname);
   // console.log(new Date(post.data[0].created_at));
   return (
     <>
       <h1 className="text-2xl font-bold mb-4 p-5">{post.title}</h1>
-      <p className="text-sm text-gray-500 px-5">작성자: {post.nickname}</p>
+      <p className="text-sm text-gray-500 px-5">
+        작성자: {post.user?.nickname}
+      </p>
       <p className="text-sm text-gray-500 px-5">
         작성일: {new Date(post.created_at).toLocaleString()}
       </p>
+
+      {/* 여러 이미지 표시 */}
+      <div className="p-5 flex flex-wrap gap-4">
+        {imageUrl.map((url, index) => (
+          <div key={index}>
+            <Image
+              src={url.trim()}
+              alt={`게시글 이미지 ${index + 1}`}
+              width={300}
+              height={200}
+            />
+          </div>
+        ))}
+      </div>
+
       <div className="p-5 w-[500px] ">
-        <div>{post.contents}</div>
+        <div>{formatContent(post.contents)}</div>
       </div>
       <button
         onClick={handleDelete}
@@ -86,6 +122,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       >
         삭제하기
       </button>
+
       {/* // 폴더구조 확인하고 수정하기 */}
       <Link
         href={`/community/${id}/edit`}

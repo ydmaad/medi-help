@@ -44,16 +44,18 @@ const Post = () => {
   const [contents, setContents] = useState<string>("");
   const [image, setImage] = useState<File[]>([]);
 
+  // 게시글을 전송하는 함수
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log("전송할 데이터!! : ", { title, contents, image });
     await fetchPost({ title, contents, image });
   };
 
+  // 여러 이미지 파일을 처리하는 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setImage(files);
+      setImage((prevImage) => [...prevImage, ...files]);
     }
   };
 
@@ -89,6 +91,7 @@ const Post = () => {
           />
         </div>
 
+        {/* 등록할 이미지 미리보기 */}
         <div className="mb-4 flex flex-wrap">
           {image.map((img, index) => (
             <div key={index} className="w-24 h-24 m-2 relative">

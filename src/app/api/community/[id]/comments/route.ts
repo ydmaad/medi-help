@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     // 하드코딩한 부분!!
     // 나중에 auth 부분 성공시 수정하기!!
     // zustand로 유저 전역상태관리 예정!!
-    const hardCodeId = "dffc930c-0be8-47ac-91e8-18c437e5a70a";
+    const hardCodeId = "5bae80ae-6b5d-45de-ac5d-f1a89d2cc3ba";
     const commentData = {
       post_id: body.post_id,
       user_id: hardCodeId,
