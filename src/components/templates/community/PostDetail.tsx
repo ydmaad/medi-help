@@ -15,6 +15,23 @@ interface PostDetailProps {
   id: string;
 }
 
+// 게시글 id를 받아 게시글 데이터 요청
+// 따로 분리해서 재사용할 수 있는 부분(PostDetail, Edit)
+const fetchDetailPost = async (id: string) => {
+  try {
+    const response = await fetch(`/api/community/${id}`);
+    if (!response.ok) {
+      throw new Error("게시글 불러오는데 실패했습니다");
+    }
+    const { data } = await response.json();
+    return data[0];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+// 게시글 삭제 요청
 const deletePost = async (id: string) => {
   const response = await fetch(`/api/community/${id}`, {
     method: "DELETE",
@@ -33,30 +50,28 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   const route = useRouter();
 
   useEffect(() => {
-    // 따로 분리해서 재사용할 수 있는 부분
-    const fetchDetailPost = async () => {
+    const loadPost = async () => {
       try {
-        const response = await fetch(`/api/community/${id}`);
-        if (!response.ok) {
-          throw new Error("게시글 불러오는데 실패했");
-        }
-        const { data } = await response.json();
-        // console.log(1, data);
-        setPost(data[0]);
+        const data = await fetchDetailPost(id);
+        setPost(data);
       } catch (error) {
-        console.log(error);
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDetailPost();
+    loadPost();
   }, [id]);
 
   // TODO : 콘솔 확인하면서 진행!! - post에 user 정보(avatar, nickname 안 담김)
   // console.log(post);
 
-  // 게시글 삭제
+  // 게시글 삭제 핸들러
   const handleDelete = async () => {
     if (id) {
       try {

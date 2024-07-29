@@ -15,6 +15,7 @@ interface ListProps {
   setPosts: React.Dispatch<React.SetStateAction<PostWithUser[]>>;
 }
 
+// 게시글 불러오는 요청
 const fetchPosts = async () => {
   const res = await fetch(`/api/community/`);
   const data = await res.json();
