@@ -3,16 +3,16 @@ import { Tables } from "@/types/supabase";
 import { supabase } from "@/utils/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
-type Post = Tables<"test_posts">; // 테이블을 읽어올때
+type Post = Tables<"posts">; // 테이블을 읽어올때
 
-type DataInsert = TablesInsert<"test_posts">; // 추가
+type PostInsert = TablesInsert<"posts">; // 추가
 
-type DataUpdate = TablesUpdate<"test_posts">; //수정
+type PostUpdate = TablesUpdate<"posts">; //수정
 
 export async function GET() {
   try {
-    const { data, error } = await supabase.from("test_posts").select("*");
-    console.log("된다!!", data);
+    const { data, error } = await supabase.from("posts").select("*");
+    // console.log("된다!!", data);
 
     if (error) {
       return NextResponse.json(
@@ -31,13 +31,21 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body: DataInsert = await request.json();
-
   try {
+    const body: PostInsert = await request.json();
+
+    // 하드코딩한 부분.
+    // 나중에 auth 부분 성공시 수정하기!!
+    const hardCodeId = "9b4cceb9-98bb-4742-8ce0-a7576edc0609";
+    const bodyWithUserId = {
+      ...body,
+      user_id: hardCodeId,
+    };
     const { data, error } = await supabase
-      .from("test_posts")
-      .insert(body)
+      .from("posts")
+      .insert(bodyWithUserId)
       .select();
+    console.log(error);
 
     if (error) {
       return NextResponse.json(
@@ -55,12 +63,55 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// export async function DELETE(request : Request) {
-//     const {id} = await request.json
-//   const { data, error } = await supabase.from("posts").delete().eq("id", id);
+// export async function DELETE(
+//   request: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   const { id } = params;
+//   try {
+//     const { data, error } = await supabase
+//       .from("posts") // 나중에 테이블 수정!!
+//       .delete()
+//       .eq("id", id);
 
-//   if (error) {
-//     return NextResponse.json(error.message);
+//     if (error) {
+//       return NextResponse.json({ error: "삭제 실패", message: error.message });
+//     }
+
+//     return NextResponse.json({ message: "삭제 성공" });
+//   } catch (error) {
+//     console.error(error);
+//     return NextResponse.json({
+//       error: "서버 오류",
+//       message: (error as Error).message,
+//     });
 //   }
-//   return NextResponse.json(data);
 // }
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+  try {
+    const body: PostUpdate = await request.json();
+
+    const { data, error } = await supabase
+      .from("posts")
+      .update(body)
+      .eq("id", id)
+      .select();
+
+    if (error) {
+      return NextResponse.json({ error: "수정 실패", message: error.message });
+    }
+
+    return NextResponse.json({ message: "수정 성공", data });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({
+      error: "Internal Server Error",
+      message: (error as Error).message,
+    });
+  }
+}
