@@ -14,6 +14,7 @@ const fetchPost = async ({
   image: File[];
 }) => {
   try {
+    // formData로 전송할 데이터 변경
     const formData = new FormData();
     formData.append("title", title);
     formData.append("contents", contents);

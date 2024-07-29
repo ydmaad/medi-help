@@ -3,10 +3,10 @@ import { supabase } from "@/utils/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
 type Comment = Tables<"comments">; // 테이블을 읽어올때
-
 type CommentInsert = TablesInsert<"comments">; // 등록
-
 type CommentUpdate = TablesUpdate<"comments">; //수정
+// 타입 명확하게 지정하여 사용
+type CommentUpdateReal = CommentUpdate & { id: string; comment: string };
 
 // 댓글 불러오는 요청
 export async function GET(
@@ -72,34 +72,36 @@ export async function DELETE(
   }
 }
 
-// // 댓글 수정하는 요청
-// export async function PUT(
-//   request: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   const { id } = params;
-//   try {
-//     const body: CommentUpdate = await request.json();
+// 댓글 수정하는 요청
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  // 게시글 아이디
+  const { id } = params;
+  try {
+    const body: CommentUpdateReal = await request.json();
+    const { id: commentId, comment } = body;
 
-//     const { data, error } = await supabase
-//       .from("posts")
-//       .update(body)
-//       .eq("id", commentId)
-//       .eq("post_id", id);
+    const { data, error } = await supabase
+      .from("comments")
+      .update({ comment })
+      .eq("id", commentId)
+      .eq("post_id", id);
 
-//     if (error) {
-//       return NextResponse.json({ error: "수정 실패", message: error.message });
-//     }
+    if (error) {
+      return NextResponse.json({ error: "수정 실패", message: error.message });
+    }
 
-//     return NextResponse.json({ message: "수정 성공", data });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json({
-//       error: "Internal Server Error",
-//       message: (error as Error).message,
-//     });
-//   }
-// }
+    return NextResponse.json({ message: "수정 성공", data });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({
+      error: "Internal Server Error",
+      message: (error as Error).message,
+    });
+  }
+}
 
 // 댓글 등록하는 요청
 export async function POST(request: NextRequest) {

@@ -8,9 +8,7 @@ import Comments from "./Comments";
 import Image from "next/image";
 
 type Post = Tables<"posts">;
-
 type User = Tables<"users">;
-
 type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
 
 interface PostDetailProps {
@@ -35,6 +33,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   const route = useRouter();
 
   useEffect(() => {
+    // 따로 분리해서 재사용할 수 있는 부분
     const fetchDetailPost = async () => {
       try {
         const response = await fetch(`/api/community/${id}`);
@@ -53,7 +52,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
 
     fetchDetailPost();
   }, [id]);
-  console.log(post);
+
+  // TODO : 콘솔 확인하면서 진행!! - post에 user 정보(avatar, nickname 안 담김)
+  // console.log(post);
 
   // 게시글 삭제
   const handleDelete = async () => {
@@ -87,7 +88,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
-  console.log(post.user?.nickname);
+  // TODO : 닉네임 확인!!
+  // console.log(post.user?.nickname); // undefined 나옴
   // console.log(new Date(post.data[0].created_at));
   return (
     <>
