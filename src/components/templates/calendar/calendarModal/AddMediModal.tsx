@@ -75,9 +75,9 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
       onRequestClose={onRequestClose}
       contentLabel="Add Medication"
       className="fixed inset-0 flex items-center justify-center z-50"
-      overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-50"
+      overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
         <h2 className="text-2xl mb-4">복용 중인 약 추가</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
