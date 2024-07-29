@@ -15,7 +15,8 @@ const fetchDetailPost = async (id: string) => {
   if (!response.ok) {
     throw new Error("게시글 불러오는데 실패했습니다.");
   }
-  return await response.json();
+  const data = response.json();
+  return data;
 };
 
 const editPost = async (title: string, content: string) => {
