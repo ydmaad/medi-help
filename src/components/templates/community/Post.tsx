@@ -17,8 +17,8 @@ const fetchPost = async ({
     const formData = new FormData();
     formData.append("title", title);
     formData.append("contents", contents);
-    image.forEach((image, index) => {
-      formData.append(`image${index}`, image);
+    image.forEach((img) => {
+      formData.append("image", img);
     });
 
     const response = await fetch(`/api/community/`, {
@@ -45,13 +45,16 @@ const Post = () => {
   const [image, setImage] = useState<File[]>([]);
 
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault;
-    await fetchPost({ title, contents });
+    e.preventDefault();
+    console.log("전송할 데이터!! : ", { title, contents, image });
+    await fetchPost({ title, contents, image });
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImage(files);
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setImage(files);
+    }
   };
 
   return (

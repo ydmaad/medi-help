@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 type Comment = Tables<"comments">; // 테이블을 읽어올때
 
-type CommentInsert = TablesInsert<"comments">; // 추가
+type CommentInsert = TablesInsert<"comments">; // 등록
 
 type CommentUpdate = TablesUpdate<"comments">; //수정
 
