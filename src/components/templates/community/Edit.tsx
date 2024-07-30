@@ -105,6 +105,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
+      console.log("Submitting images:", image);
       await editPost(id, title, contents, image);
       alert("게시글이 성공적으로 수정되었습니다.");
       router.push(`/community/${id}`);
@@ -122,6 +123,8 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
       const files = Array.from(e.target.files);
       setImage((prevImage) => {
         const newImage = [...prevImage, ...files];
+        console.log("Updated image state:", newImage);
+        return newImage;
       });
     }
   };
