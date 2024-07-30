@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import EditMediModal from "../calendarModal/EditMediModal";
-import AddMediModal from "../calendarModal/AddMediModal";
 import axios from "axios";
+import AddMediModal from "../calendarModal/AddMediModal";
+import EditMediModal from "../calendarModal/EditMediModal";
 
 interface MediRecord {
   id: string;
@@ -79,7 +79,7 @@ const MediRecords: React.FC = () => {
 
       {selectedMediRecord && (
         <EditMediModal
-          key={selectedMediRecord.id} // 이 줄을 추가하여 모달이 항상 올바른 상태로 초기화되도록 함
+          key={selectedMediRecord.id}
           isOpen={isEditModalOpen}
           onRequestClose={() => setIsEditModalOpen(false)}
           onDelete={handleDeleteMediRecord}
