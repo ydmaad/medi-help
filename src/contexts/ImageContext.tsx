@@ -4,7 +4,7 @@ type ImageContextType = {
   src: string;
   alt?: string;
   title: string;
-  subtitle: string;
+  subtitle: string | null;
 };
 
 interface ImageProviderProps {
