@@ -2,7 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import TertiColum from "@/components/molecules/TertiColum";
+import MainColum from "@/components/molecules/MainColum";
+import SubColum from "@/components/molecules/SubColum";
 import Hero from "@/components/molecules/Hero";
+import LoadMoreButton from "@/components/atoms/LoadMoreButton";
+import MainTitle from "@/components/atoms/MainTitle";
 
 type Magazine = {
   title: string;
@@ -33,13 +37,41 @@ const page = () => {
   }, []);
 
   const limitedMagazines = magazines.slice(0, 3);
+  const limitedMainMagazines = magazines.slice(0, 1);
+  const limitedSubMagazines = magazines.slice(1, 2);
 
   return (
     <>
       <Hero />
+      <div className="flex justify-between mx-20">
+        <MainTitle text="메거진" />
+        <LoadMoreButton targetPage="/magazine" />
+      </div>
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="flex">
+          {limitedMainMagazines.map((magazine, index) => (
+            <MainColum
+              key={index}
+              src={magazine.imgs_url}
+              alt={magazine.title}
+              title={magazine.title}
+              leftText={magazine.written_by}
+              rightText={magazine.reporting_date}
+            />
+          ))}
+          {limitedSubMagazines.map((magazine, index) => (
+            <SubColum
+              key={index}
+              src={magazine.imgs_url}
+              alt={magazine.title}
+              title={magazine.title}
+              leftText={magazine.written_by}
+              rightText={magazine.reporting_date}
+            />
+          ))}
+        </div>
+        <div className="grid grid-cols-3 gap-[26px]">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}

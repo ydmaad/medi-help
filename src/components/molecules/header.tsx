@@ -1,6 +1,6 @@
 import React from "react";
 import LoginNav from "./LoginNav";
-import Navigation from "./Navigation";
+import Navigation from "./navigation";
 import Logo from "../atoms/Logo";
 
 const Header = () => {

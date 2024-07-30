@@ -1,11 +1,11 @@
 import React from "react";
 import { ImageProvider } from "@/contexts/ImageContext";
-import TertiImage from "../atoms/TertiImage";
+import SubImage from "../atoms/SubImage";
 import CardTitle from "../atoms/CardTitle";
 import { BarTextProvider } from "@/contexts/BarTextContext";
 import BarText from "../atoms/BarText";
 
-const TertiColum = ({
+const SubColum = ({
   src,
   alt,
   title,
@@ -28,8 +28,8 @@ const TertiColum = ({
   return (
     <ImageProvider value={{ src, alt, title, subtitle: null }}>
       <BarTextProvider value={barTextValue}>
-        <div className="mb-[56px] ">
-          <TertiImage />
+        <div className="mb-[36px] ">
+          <SubImage />
           <CardTitle />
           <BarText />
         </div>
@@ -38,4 +38,4 @@ const TertiColum = ({
   );
 };
 
-export default TertiColum;
+export default SubColum;
