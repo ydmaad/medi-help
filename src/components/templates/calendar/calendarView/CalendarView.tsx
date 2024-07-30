@@ -3,10 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, {
-  Draggable,
-  DropArg,
-} from "@fullcalendar/interaction";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";

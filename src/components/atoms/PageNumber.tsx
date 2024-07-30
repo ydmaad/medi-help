@@ -11,7 +11,7 @@ const PageNumber = ({ number, onClick, selected }: PageNumberProps) => {
     <button
       onClick={() => onClick(number)}
       className={`page-number ${
-        selected ? "text-[#2390e3]" : "text-[#bcbfc1]"
+        selected ? "text-brand-primary-600" : "text-brand-gray-400"
       }`}
     >
       {number}

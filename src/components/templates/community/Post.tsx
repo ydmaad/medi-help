@@ -1,22 +1,30 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 const fetchPost = async ({
   title,
   contents,
+  image,
 }: {
   title: string;
   contents: string;
+  image: File[];
 }) => {
   try {
+    // formData로 전송할 데이터 변경
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("contents", contents);
+    image.forEach((img) => {
+      formData.append("image", img);
+    });
+
     const response = await fetch(`/api/community/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, contents }),
+      body: formData,
     });
 
     if (!response.ok) {
@@ -35,10 +43,21 @@ const fetchPost = async ({
 const Post = () => {
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
+  const [image, setImage] = useState<File[]>([]);
 
+  // 게시글을 전송하는 함수
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault;
-    await fetchPost({ title, contents });
+    e.preventDefault();
+    console.log("전송할 데이터!! : ", { title, contents, image });
+    await fetchPost({ title, contents, image });
+  };
+
+  // 여러 이미지 파일을 처리하는 함수
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setImage((prevImage) => [...prevImage, ...files]);
+    }
   };
 
   return (
@@ -61,7 +80,31 @@ const Post = () => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">
+            이미지 첨부
+          </label>
+          <input
+            type="file"
+            multiple
+            onChange={handleImageChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
+        </div>
 
+        {/* 등록할 이미지 미리보기 */}
+        <div className="mb-4 flex flex-wrap">
+          {image.map((img, index) => (
+            <div key={index} className="w-24 h-24 m-2 relative">
+              <Image
+                src={URL.createObjectURL(img)}
+                alt={`Preview ${index}`}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          ))}
+        </div>
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-semibold mb-2"
