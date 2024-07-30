@@ -4,6 +4,7 @@ import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -15,6 +16,11 @@ export default function SignUpPage() {
   });
 
   const router = useRouter();
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -52,28 +58,63 @@ export default function SignUpPage() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // setLoading(true);
+
     if (email === "" || password === "" || passwordConfirm === "") {
       alert("모든 항목을 입력해주세요.");
+      // setLoading(false);
       return;
     }
 
     if (password !== passwordConfirm) {
-      alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+      setError((prev) => ({
+        ...prev,
+        passwordConfirm: "비밀번호가 일치하지 않습니다.",
+      }));
+      // setLoading(false);
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      // Supabase를 사용하여 회원가입
+      const { data: signUpData, error: signUpError } =
+        await supabase.auth.signUp({
+          email,
+          password,
+        });
 
-    if (error) {
-      return alert(error.message);
+      if (signUpError) {
+        throw signUpError;
+      }
+
+      if (signUpData.user) {
+        // 사용자 추가 정보를 데이터베이스에 저장
+        const { error: insertError } = await supabase.from("users").insert([
+          {
+            id: signUpData.user.id,
+            email,
+            avatar: "",
+          },
+        ]);
+
+        if (insertError) {
+          throw insertError;
+        }
+
+        alert("회원가입이 완료되었습니다.");
+        router.replace("/auth/signup/complete");
+      }
+    } catch (error: any) {
+      console.error("회원가입 중 에러 발생:", error);
+      setError((prev) => ({
+        ...prev,
+        submit: error.message || "회원가입 중 문제가 발생했습니다.",
+      }));
+    } finally {
+      // setLoading(false);
     }
-    alert("회원가입이 완료되었습니다.");
-    // router.push("/")
-    router.replace("/"); // 뒤로가기 시 회원가입 페이지로 이동 X
   };
+
   return (
     <form
       onSubmit={onSubmit}
