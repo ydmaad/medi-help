@@ -28,7 +28,7 @@ const MainColum = ({
   return (
     <ImageProvider value={{ src, alt, title, subtitle: null }}>
       <BarTextProvider value={barTextValue}>
-        <div className="mb-[56px]">
+        <div className="mb-[36px] mr-[24px]">
           <MainImage />
           <CardTitle />
           <BarText />

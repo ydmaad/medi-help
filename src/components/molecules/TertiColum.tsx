@@ -28,7 +28,7 @@ const TertiColum = ({
   return (
     <ImageProvider value={{ src, alt, title, subtitle: null }}>
       <BarTextProvider value={barTextValue}>
-        <div className="mb-[56px]">
+        <div className="mb-[56px] ">
           <TertiImage />
           <CardTitle />
           <BarText />
