@@ -7,12 +7,15 @@ import Modal from "react-modal";
 interface MediRecord {
   id: string;
   medi_name: string;
+  medi_nickname: string;
   times: {
     morning: boolean;
     afternoon: boolean;
     evening: boolean;
   };
   notes: string;
+  start_date: string;
+  end_date: string;
   created_at: string;
 }
 
@@ -24,13 +27,17 @@ interface AddMediModalProps {
 
 const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onAdd }) => {
   const [mediName, setMediName] = useState("");
+  const [mediNickname, setMediNickname] = useState("");
   const [mediNames, setMediNames] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [times, setTimes] = useState({
     morning: false,
     afternoon: false,
     evening: false,
   });
   const [notes, setNotes] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const fetchMediNames = async () => {
@@ -53,8 +60,11 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
     const newMediRecord: MediRecord = {
       id: crypto.randomUUID(),
       medi_name: mediName,
+      medi_nickname: mediNickname,
       times,
       notes,
+      start_date: startDate,
+      end_date: endDate,
       created_at: new Date().toISOString(),
     };
 
@@ -71,6 +81,12 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
     }
   };
 
+  const filteredMediNames = searchTerm
+    ? mediNames.filter(name =>
+        name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : mediNames;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -82,17 +98,47 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
         <h2 className="text-2xl mb-4">나의 약 등록</h2>
         <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">약 별칭:</label>
+          <input
+            type="text"
+            placeholder="약 별칭을 입력해주세요"
+            value={mediNickname}
+            onChange={(e) => setMediNickname(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">약 이름:</label>
-          <select
+          <input
+            list="mediNames"
+            placeholder="약 이름을 검색하세요"
             value={mediName}
             onChange={(e) => setMediName(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option value="">약 이름을 선택하세요</option>
-            {mediNames.map((name, index) => (
-              <option key={index} value={name}>{name}</option>
+          />
+          <datalist id="mediNames">
+            {filteredMediNames.map((name, index) => (
+              <option key={index} value={name} />
             ))}
-          </select>
+          </datalist>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">복용 시작일:</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">복용 종료일:</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">복용 시간:</label>
