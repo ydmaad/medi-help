@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
     const postData: PostInsert = {
       title,
       contents,
-      user_id: "5bae80ae-6b5d-45de-ac5d-f1a89d2cc3ba",
+      user_id: "b867460c-7e7c-45cb-827c-9fccafdf15de",
       img_url: img_url.join(","),
     };
 
