@@ -105,10 +105,12 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
     ));
   };
 
+  // 사용자 권한 확인 함수
   const modifyUser = () => {
     return user && post && user.id === post.user_id;
   };
 
+  // 수정 링크 클릭 핸들러
   const handleEditClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!modifyUser()) {
       e.preventDefault();
@@ -150,25 +152,21 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       <div className="p-5 w-[500px] ">
         <div>{formatContent(post.contents)}</div>
       </div>
-      {modifyUser() && (
-        <>
-          <button
-            onClick={handleDelete}
-            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out"
-          >
-            삭제하기
-          </button>
 
-          {/* // 폴더구조 확인하고 수정하기 */}
-          <Link
-            href={`/community/${id}/edit`}
-            onClick={handleEditClick}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded inline-flex items-center transition duration-300 ease-in-out"
-          >
-            수정하기
-          </Link>
-        </>
-      )}
+      <button
+        onClick={handleDelete}
+        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out"
+      >
+        삭제하기
+      </button>
+
+      <Link
+        href={`/community/${id}/edit`}
+        onClick={handleEditClick}
+        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded inline-flex items-center transition duration-300 ease-in-out"
+      >
+        수정하기
+      </Link>
 
       <Comments postId={id} />
     </>
