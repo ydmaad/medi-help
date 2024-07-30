@@ -10,12 +10,12 @@ import interactionPlugin, {
 import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
-import AddModal from "../calendarModal/AddModal";
+import TestModal from "../calendarModal/TestModal";
 
 type eventsType = {
   id: string;
   title: string;
-  start: string;
+  start: Date;
   backgroundColor: string;
   borderColor: string;
   textColor: string;
@@ -35,22 +35,31 @@ const CalendarView = () => {
   useEffect(() => {
     const getCalendarData = async () => {
       try {
-        const { data } = await axios.get("/api/test_calendar");
+        const { data } = await axios.get("/api/calendar");
         console.log(data);
         {
-          data.map((el: { [key: string]: string }) => {
-            setEvents((prev) => {
-              return [
-                ...prev,
-                {
-                  id: el.id,
-                  title: el.name,
-                  start: el.time?.split("T")[0],
-                  backgroundColor: colorForTime[el.medi_time],
-                  borderColor: colorForTime[el.medi_time],
-                  textColor: "gray",
-                },
-              ];
+          data.map((el: any) => {
+            let date = new Date(el.created_at);
+            const addMinutes = (date: Date, minutes: number) => {
+              date.setMinutes(date.getMinutes() + minutes);
+              return date;
+            };
+            el.medi_name.map((name: string, idx: number) => {
+              let newDate = addMinutes(date, idx * 2);
+              console.log(newDate);
+              setEvents((prev) => {
+                return [
+                  ...prev,
+                  {
+                    id: el.id,
+                    title: name,
+                    start: newDate,
+                    backgroundColor: colorForTime[el.medi_time],
+                    borderColor: colorForTime[el.medi_time],
+                    textColor: "gray",
+                  },
+                ];
+              });
             });
           });
         }
@@ -62,14 +71,7 @@ const CalendarView = () => {
     getCalendarData();
   }, []);
 
-  const handleDayContent = () => {
-    let date = document.querySelectorAll(".fc-daygrid-day-number");
-    console.log(typeof date);
-    const dateArr = Array.from(date).filter((item) => true);
-    return dateArr.map((day) => day.innerHTML?.replace("일", ""));
-  };
-
-  // handleDayContent();
+  console.log(events);
 
   const handleEventClick = (event: EventClickArg) => {
     console.log(event.event._def.publicId);
@@ -79,23 +81,34 @@ const CalendarView = () => {
 
   return (
     <>
-      <AddModal
+      <TestModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         calendarId={calendarId}
       />
-      <div className="p-8 w-8/12 h-7/12 fc-button ">
+      <div className="relative p-8 w-full h-7/12 fc-button ">
+        <button className="absolute right-20 top-10 px-2 py-1 bg-sky-500 text-white border-sky-500 rounded-md">
+          기록추가 +
+        </button>
         <FullCalendar
           plugins={[dayGridPlugin]}
           initialView="dayGridMonth"
           events={events}
           eventClick={handleEventClick}
+          eventOverlap={false}
+          eventTimeFormat={{
+            hour: "numeric",
+            minute: "2-digit",
+            omitZeroMinute: false,
+            meridiem: false,
+          }}
           headerToolbar={{
             left: "prev title next",
             center: "",
             right: "",
           }}
           locale="en"
+          contentHeight={"auto"}
         />
       </div>
     </>
