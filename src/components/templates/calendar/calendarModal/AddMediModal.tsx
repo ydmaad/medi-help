@@ -69,9 +69,17 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
     };
 
     try {
+      console.log("Sending medi record:", newMediRecord); // 로그 추가
       const response = await axios.post("/api/calendar/medi", newMediRecord);
       if (response.status === 201) {
         onAdd(newMediRecord);
+        // 폼 필드 초기화
+        setMediName("");
+        setMediNickname("");
+        setTimes({ morning: false, afternoon: false, evening: false });
+        setNotes("");
+        setStartDate("");
+        setEndDate("");
         onRequestClose();
       } else {
         console.error("Failed to add medi record:", response.statusText);
@@ -96,19 +104,17 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
-        <h2 className="text-2xl mb-4">나의 약 등록</h2>
+        <h2 className="text-2xl mb-4">나의 약</h2>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">약 별칭:</label>
           <input
             type="text"
-            placeholder="약 별칭을 입력해주세요"
+            placeholder="약 별명(최대 6자)"
             value={mediNickname}
             onChange={(e) => setMediNickname(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">약 이름:</label>
           <input
             list="mediNames"
             placeholder="약 이름을 검색하세요"
@@ -142,43 +148,38 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">복용 시간:</label>
-          <div className="flex space-x-4">
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                name="morning"
-                checked={times.morning}
-                onChange={handleCheckboxChange}
-                className="form-checkbox"
-              />
-              <span className="ml-2">아침</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                name="afternoon"
-                checked={times.afternoon}
-                onChange={handleCheckboxChange}
-                className="form-checkbox"
-              />
-              <span className="ml-2">점심</span>
-            </label>
-            <label className="inline-flex items-center">
-              <input
-                type="checkbox"
-                name="evening"
-                checked={times.evening}
-                onChange={handleCheckboxChange}
-                className="form-checkbox"
-              />
-              <span className="ml-2">저녁</span>
-            </label>
+          <div className="flex space-x-4 justify-between w-full">
+            <button
+              type="button"
+              onClick={() => setTimes({ ...times, morning: !times.morning })}
+              className={`px-4 py-2 rounded-lg ${
+                times.morning ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} w-1/3`}
+            >
+              아침
+            </button>
+            <button
+              type="button"
+              onClick={() => setTimes({ ...times, afternoon: !times.afternoon })}
+              className={`px-4 py-2 rounded-lg ${
+                times.afternoon ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} w-1/3`}
+            >
+              점심
+            </button>
+            <button
+              type="button"
+              onClick={() => setTimes({ ...times, evening: !times.evening })}
+              className={`px-4 py-2 rounded-lg ${
+                times.evening ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} w-1/3`}
+            >
+              저녁
+            </button>
           </div>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">메모:</label>
           <textarea
             value={notes}
+            placeholder="간단한 약 정보를 입력해주세요"
             onChange={(e) => setNotes(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />

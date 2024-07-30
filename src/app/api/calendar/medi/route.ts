@@ -23,15 +23,8 @@ export async function POST(req: NextRequest) {
   try {
     const { medi_name, medi_nickname, times, notes, start_date, end_date, created_at } = await req.json();
 
-    if (!medi_name || !medi_nickname || !times || !start_date || !created_at) {
-      const missingFields = [];
-      if (!medi_name) missingFields.push('medi_name');
-      if (!medi_nickname) missingFields.push('medi_nickname');
-      if (!times) missingFields.push('times');
-      if (!start_date) missingFields.push('start_date');
-      if (!created_at) missingFields.push('created_at');
-      
-      return NextResponse.json({ error: `Missing required fields: ${missingFields.join(', ')}` }, { status: 400 });
+    if (!medi_name || !medi_nickname || !times || !created_at) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const { data, error } = await supabase

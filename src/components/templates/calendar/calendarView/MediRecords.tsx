@@ -1,129 +1,97 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import AddMediModal from '../calendarModal/AddMediModal';
-import ViewMediModal from '../calendarModal/ViewMediModal';
+import React, { useState, useEffect } from "react";
+import EditMediModal from "../calendarModal/EditMediModal";
+import AddMediModal from "../calendarModal/AddMediModal";
+import axios from "axios";
 
 interface MediRecord {
   id: string;
   medi_name: string;
+  medi_nickname: string;
   times: {
     morning: boolean;
     afternoon: boolean;
     evening: boolean;
   };
   notes: string;
+  start_date: string;
+  end_date: string;
   created_at: string;
 }
 
 const MediRecords: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<MediRecord | null>(null);
-
-  const fetchMediRecords = async () => {
-    try {
-      const response = await fetch('/api/calendar/medi/all');
-      if (!response.ok) {
-        throw new Error('Failed to fetch medication records');
-      }
-      const data = await response.json();
-      console.log('Fetched medication records:', data.medicationRecords);
-      setMediRecords(data.medicationRecords || []);
-    } catch (error) {
-      console.error('Error fetching medication records:', error);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      const response = await fetch('/api/calendar/medi', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const result = await response.json();
-      console.log('DELETE response:', result);
-
-      // 데이터가 성공적으로 삭제되면, 상태를 업데이트합니다.
-      setMediRecords(mediRecords.filter(record => record.id !== id));
-    } catch (error) {
-      console.error('Failed to delete medication record:', error);
-    }
-  };
-
-  const handleEdit = async (id: string, updatedRecord: Partial<MediRecord>) => {
-    try {
-      const response = await fetch('/api/calendar/medi', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id, ...updatedRecord }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const result = await response.json();
-      console.log('PATCH response:', result);
-
-      // 데이터가 성공적으로 수정되면, 상태를 업데이트합니다.
-      setMediRecords(mediRecords.map(record => record.id === id ? { ...record, ...updatedRecord } : record));
-    } catch (error) {
-      console.error('Failed to edit medication record:', error);
-    }
-  };
+  const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
+    const fetchMediRecords = async () => {
+      try {
+        const response = await axios.get("/api/calendar/medi");
+        setMediRecords(response.data.medicationRecords);
+      } catch (error) {
+        console.error("Error fetching medication records:", error);
+      }
+    };
+
     fetchMediRecords();
   }, []);
 
-  const handleAdd = (newMediRecord: MediRecord) => {
-    setMediRecords([...mediRecords, newMediRecord]);
+  const handleAddMediRecord = (newMediRecord: MediRecord) => {
+    setMediRecords((prevRecords) => [...prevRecords, newMediRecord]);
   };
 
-  const handleMediRecordClick = (record: MediRecord) => {
-    setSelectedRecord(record);
-    setShowViewModal(true);
+  const handleUpdateMediRecord = (updatedMediRecord: MediRecord) => {
+    setMediRecords((prevRecords) =>
+      prevRecords.map((record) => (record.id === updatedMediRecord.id ? updatedMediRecord : record))
+    );
+  };
+
+  const handleDeleteMediRecord = (id: string) => {
+    setMediRecords((prevRecords) => prevRecords.filter((record) => record.id !== id));
   };
 
   return (
-    <div className="w-full">
-      <h2 className="text-2xl mb-4">복용 중인 약</h2>
-      {mediRecords.map(record => (
-        <div key={record.id} onClick={() => handleMediRecordClick(record)} className="bg-white p-4 rounded shadow mb-4 cursor-pointer">
-          <span className="font-semibold">{record.medi_name}</span>
+    <div className="p-4">
+      <h2 className="text-xl mb-4">복용중인 약 목록</h2>
+      {mediRecords.map((record) => (
+        <div
+          key={record.id}
+          className="bg-gray-100 p-4 rounded shadow mb-2 cursor-pointer"
+          onClick={() => {
+            setSelectedMediRecord(record);
+            setIsEditModalOpen(true);
+          }}
+        >
+          <div>
+            <p className="text-lg font-semibold">{record.medi_nickname}</p>
+          </div>
         </div>
       ))}
-      <button onClick={() => setShowAddModal(true)} className="bg-blue-500 text-white px-4 py-2 rounded">
+      <button
+        onClick={() => setIsAddModalOpen(true)}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
         나의 약 등록
       </button>
-      {showAddModal && (
-        <AddMediModal
-          isOpen={showAddModal}
-          onRequestClose={() => setShowAddModal(false)}
-          onAdd={handleAdd}
+
+      {selectedMediRecord && (
+        <EditMediModal
+          key={selectedMediRecord.id} // 이 줄을 추가하여 모달이 항상 올바른 상태로 초기화되도록 함
+          isOpen={isEditModalOpen}
+          onRequestClose={() => setIsEditModalOpen(false)}
+          onDelete={handleDeleteMediRecord}
+          onUpdate={handleUpdateMediRecord}
+          mediRecord={selectedMediRecord}
         />
       )}
-      {showViewModal && selectedRecord && (
-        <ViewMediModal
-          isOpen={showViewModal}
-          onRequestClose={() => setShowViewModal(false)}
-          mediRecord={selectedRecord}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      )}
+      <AddMediModal
+        isOpen={isAddModalOpen}
+        onRequestClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddMediRecord}
+      />
     </div>
   );
 };
