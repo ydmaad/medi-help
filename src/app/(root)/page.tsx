@@ -5,6 +5,8 @@ import TertiColum from "@/components/molecules/TertiColum";
 import MainColum from "@/components/molecules/MainColum";
 import SubColum from "@/components/molecules/SubColum";
 import Hero from "@/components/molecules/Hero";
+import LoadMoreButton from "@/components/atoms/LoadMoreButton";
+import MainTitle from "@/components/atoms/MainTitle";
 
 type Magazine = {
   title: string;
@@ -35,13 +37,16 @@ const page = () => {
   }, []);
 
   const limitedMagazines = magazines.slice(0, 3);
-
   const limitedMainMagazines = magazines.slice(0, 1);
   const limitedSubMagazines = magazines.slice(1, 2);
 
   return (
     <>
       <Hero />
+      <div className="flex justify-between mx-20">
+        <MainTitle text="메거진" />
+        <LoadMoreButton targetPage="/magazine" />
+      </div>
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
         <div className="flex">
