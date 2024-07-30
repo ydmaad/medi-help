@@ -9,35 +9,43 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      alarm: {
+      alarms: {
         Row: {
+          alarm_medi_name: string | null
+          alarm_time: string
           created_at: string | null
-          description: string | null
           id: string
-          time: string
-          user_id: string
+          medication_id: string | null
         }
         Insert: {
+          alarm_medi_name?: string | null
+          alarm_time: string
           created_at?: string | null
-          description?: string | null
           id?: string
-          time: string
-          user_id?: string
+          medication_id?: string | null
         }
         Update: {
+          alarm_medi_name?: string | null
+          alarm_time?: string
           created_at?: string | null
-          description?: string | null
           id?: string
-          time?: string
-          user_id?: string
+          medication_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "alarms_medication_id_fkey"
+            columns: ["medication_id"]
+            isOneToOne: false
+            referencedRelation: "medications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       calendar: {
         Row: {
           created_at: string
           id: string
-          medi_name: string
+          medi_name: string[]
           medi_time: string
           side_effect: string
           user_id: string
@@ -45,35 +53,20 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          medi_name: string
+          medi_name: string[]
           medi_time: string
           side_effect: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           created_at?: string
           id?: string
-          medi_name?: string
+          medi_name?: string[]
           medi_time?: string
           side_effect?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "calendar_medi_name_fkey"
-            columns: ["medi_name"]
-            isOneToOne: true
-            referencedRelation: "medicine"
-            referencedColumns: ["medi_name"]
-          },
-          {
-            foreignKeyName: "calendar_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       comments: {
         Row: {
@@ -144,74 +137,39 @@ export type Database = {
         }
         Relationships: []
       }
-      medi: {
+      medications: {
         Row: {
+          created_at: string | null
+          end_date: string | null
           id: string
           medi_name: string
+          medi_nickname: string | null
           notes: string | null
-          time: string
+          start_date: string | null
+          times: Json
+          user_id: string | null
         }
         Insert: {
+          created_at?: string | null
+          end_date?: string | null
           id?: string
           medi_name: string
+          medi_nickname?: string | null
           notes?: string | null
-          time: string
+          start_date?: string | null
+          times: Json
+          user_id?: string | null
         }
         Update: {
+          created_at?: string | null
+          end_date?: string | null
           id?: string
           medi_name?: string
+          medi_nickname?: string | null
           notes?: string | null
-          time?: string
-        }
-        Relationships: []
-      }
-      medicine: {
-        Row: {
-          id: string
-          medi_description: string
-          medi_name: string
-        }
-        Insert: {
-          id?: string
-          medi_description: string
-          medi_name: string
-        }
-        Update: {
-          id?: string
-          medi_description?: string
-          medi_name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "medicine_medi_name_fkey"
-            columns: ["medi_name"]
-            isOneToOne: true
-            referencedRelation: "pill_alarm"
-            referencedColumns: ["medi_name"]
-          },
-        ]
-      }
-      pill_alarm: {
-        Row: {
-          alarm_description: string
-          alarm_name: string
-          alarm_time: string
-          id: string
-          medi_name: string
-        }
-        Insert: {
-          alarm_description: string
-          alarm_name: string
-          alarm_time: string
-          id?: string
-          medi_name?: string
-        }
-        Update: {
-          alarm_description?: string
-          alarm_name?: string
-          alarm_time?: string
-          id?: string
-          medi_name?: string
+          start_date?: string | null
+          times?: Json
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -276,27 +234,24 @@ export type Database = {
           created_at: string
           id: string
           medi_time: string
-          name: string
+          name: string[]
           sideEffect: string | null
-          time: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           medi_time: string
-          name: string
+          name: string[]
           sideEffect?: string | null
-          time?: string | null
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
           medi_time?: string
-          name?: string
+          name?: string[]
           sideEffect?: string | null
-          time?: string | null
           user_id?: string
         }
         Relationships: []
@@ -315,13 +270,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "user_medicine_medicine_id_fkey"
-            columns: ["medicine_id"]
-            isOneToOne: false
-            referencedRelation: "medicine"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "user_medicine_user_id_fkey"
             columns: ["user_id"]
