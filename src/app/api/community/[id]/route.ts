@@ -86,7 +86,7 @@ export async function PUT(
 
         if (error) throw error;
 
-        // 업로드된 이미지의 공개 URL 반환
+        // 업로드된 이미지의 URL 반환
         const {
           data: { publicUrl },
         } = supabase.storage

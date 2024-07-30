@@ -22,7 +22,7 @@ const fetchDetailPost = async (id: string) => {
       throw new Error("게시글 불러오는데 실패했습니다");
     }
     const { data } = await response.json();
-    console.log("Fetched post data:", data);
+    console.log("수정하려고 불러온 데이터 :", data);
     return data[0];
   } catch (error) {
     console.error(error);
@@ -73,6 +73,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
         setTitle(data.title);
         setContents(data.contents);
         setCurrentImages(data.img_url ? data.img_url.split(",") : []);
+        console.log("이미지 유알엘:", currentImages);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -101,6 +102,9 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
       setImage(Array.from(e.target.files));
     }
   };
+
+  console.log("현재 게시글:", post);
+  console.log("현재 게시글 이미지:", currentImages);
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;
