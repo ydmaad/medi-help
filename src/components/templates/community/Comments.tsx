@@ -9,20 +9,25 @@ interface CommentsProps {
 }
 
 type Comment = Tables<"comments">;
-
 type User = Tables<"users">;
-
 type CommentWithUser = Comment & { user: Pick<User, "avatar" | "nickname"> };
 
+// 댓글 가져오기 요청
 const fetchComment = async (postId: string) => {
   const response = await fetch(`/api/community/${postId}/comments`);
   const data = await response.json();
   if (!response.ok) {
     throw new Error("댓글을 불러오는데 실패했습니다.");
   }
+  // 날짜를 기준으로 내림차순 정렬
+  data.data.sort(
+    (a: CommentWithUser, b: CommentWithUser) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
   return data;
 };
 
+// 댓글 삭제 요청
 const deleteComment = async (postId: string, commentId: string) => {
   const response = await fetch(`/api/community/${postId}/comments`, {
     method: "DELETE",
@@ -37,6 +42,7 @@ const deleteComment = async (postId: string, commentId: string) => {
   }
 };
 
+// 댓글 수정 요청
 const editComment = async (
   comment: string,
   postId: string,
@@ -47,7 +53,7 @@ const editComment = async (
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ commentId }),
+    body: JSON.stringify({ id: commentId, comment }),
   });
   const data = response.json();
   if (!response.ok) {
@@ -56,6 +62,7 @@ const editComment = async (
   return data;
 };
 
+// 댓글 등록 요청
 const postComment = async (postId: string, comment: string) => {
   const response = await fetch(`/api/community/${postId}/comments`, {
     method: "POST",
@@ -76,6 +83,10 @@ const postComment = async (postId: string, comment: string) => {
 const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const [comment, setComment] = useState<CommentWithUser[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [isEdit, setIsEdit] = useState<{ [key: string]: boolean }>({});
+  const [editedComment, setEditedComment] = useState<{ [key: string]: string }>(
+    {}
+  );
 
   useEffect(() => {
     const getComment = async () => {
@@ -89,6 +100,7 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
     getComment();
   }, [postId]);
 
+  // 댓글 삭제 핸들러
   const handleDelete = async (commentId: string) => {
     try {
       await deleteComment(postId, commentId);
@@ -101,6 +113,7 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
     }
   };
 
+  // 댓글 달기 핸들러
   const handleAddComment = async () => {
     if (!newComment.trim()) {
       alert("댓글을 입력해주세요.");
@@ -118,11 +131,38 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
     }
   };
 
+  // 수정 모드 전환 핸들러
+  const handleEdit = (commentId: string, currentComment: string) => {
+    setIsEdit((prev) => ({ ...prev, [commentId]: true }));
+    setEditedComment((prev) => ({ ...prev, [commentId]: currentComment }));
+  };
+
+  // 수정 취소 핸들러
+  const handleCancelEdit = (commentId: string) => {
+    setIsEdit((prev) => ({ ...prev, [commentId]: false }));
+    setEditedComment((prev) => ({ ...prev, [commentId]: "" }));
+  };
+
+  // 수정 완료 핸들러
+  const handleSaveEdit = async (commentId: string) => {
+    try {
+      await editComment(editedComment[commentId], postId, commentId);
+      const updatedComments = await fetchComment(postId);
+      setComment(updatedComments.data);
+      setIsEdit((prev) => ({ ...prev, [commentId]: false }));
+      setEditedComment((prev) => ({ ...prev, [commentId]: "" }));
+      alert("댓글이 수정되었습니다.");
+    } catch (error) {
+      console.error("댓글 수정 실패:", (error as Error).message);
+      alert("댓글 수정에 실패했습니다. 다시 시도해 주세요.");
+    }
+  };
+
   // console.log(comment);
 
   return (
     <>
-      {/* 여기에 현재 로그인 된 유저의 아바타와 닉네임이 보이도록 할 예정!! */}
+      {/* TODO : 여기에 현재 로그인 된 유저의 아바타와 닉네임이 보이도록 할 예정!! */}
       <div className="max-w-2xl  p-4 bg-white shadow-md rounded-lg">
         <h2 className="text-xl font-semibold mb-4">댓글</h2>
 
@@ -161,22 +201,60 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
                   />
                   <div className="font-semibold">{ment.user.nickname}</div>
                 </div>
-
-                <div className="mt-1">{ment.comment}</div>
+                {/* 수정모드 삼항연산자 */}
+                {isEdit[ment.id] ? (
+                  // 수정모드일때 (true)
+                  <div>
+                    <textarea
+                      value={editedComment[ment.id] || ment.comment}
+                      onChange={(e) =>
+                        setEditedComment((prev) => ({
+                          ...prev,
+                          [ment.id]: e.target.value,
+                        }))
+                      }
+                      className="w-full p-2 border border-gray-300 rounded-lg"
+                    />
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleSaveEdit(ment.id)}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        저장
+                      </button>
+                      <button
+                        onClick={() => handleCancelEdit(ment.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  // 일반 모드일 떼(false) - 원래 댓글 내용 표시
+                  <div className="mt-1">{ment.comment}</div>
+                )}
                 <div className="text-gray-500">
                   {new Date(ment.created_at).toLocaleString()}
                 </div>
               </div>
               <div className="flex space-x-2">
-                <button className="text-blue-500 hover:text-blue-700">
-                  수정
-                </button>
-                <button
-                  onClick={() => handleDelete(ment.id)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  삭제
-                </button>
+                {!isEdit[ment.id] && (
+                  <>
+                    <button
+                      onClick={() => handleEdit(ment.id, ment.comment)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      수정
+                    </button>
+                    <button
+                      onClick={() => handleDelete(ment.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      삭제
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

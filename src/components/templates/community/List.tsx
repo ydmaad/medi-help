@@ -1,17 +1,21 @@
 "use client";
 
 import { Tables } from "@/types/supabase";
-
+import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect } from "react";
 
 type Post = Tables<"posts">;
+type User = Tables<"users">;
+type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
+
 interface ListProps {
   searchTerm: string;
-  posts: Post[];
-  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
+  posts: PostWithUser[];
+  setPosts: React.Dispatch<React.SetStateAction<PostWithUser[]>>;
 }
 
+// 게시글 불러오는 요청
 const fetchPosts = async () => {
   const res = await fetch(`/api/community/`);
   const data = await res.json();
@@ -31,8 +35,9 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
     };
     fetchData();
   }, [searchTerm]);
-  // console.log(posts);
+  console.log(posts);
 
+  // 게시글 검색
   const filteredPosts = posts
     ? posts.filter(
         (post) =>
@@ -41,49 +46,67 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
       )
     : [];
 
+  // img_url을 배열로 만드는 함수
+  const getImageUrls = (urlString: string | null): string[] => {
+    return urlString ? urlString.split(",").map((url) => url.trim()) : [];
+  };
+
   return (
     <>
       <Link href={`/community/post`}></Link>
       {/* <Link href={`/community/${id}`}></Link> */}
       <h1 className="text-3xl font-bold mb-6">게시글 목록</h1>
-      <ul className="flex flex-wrap">
-        {filteredPosts.map((item) => (
-          <li key={item.id}>
-            {/* 상세페이지로 이동 */}
-            <Link
-              href={`/community/${item.id}`}
-              className="block hover:bg-gray-50 transition duration-150 ease-in-out w-[300px] h-[300px] border-4 p-4 m-4 "
-            >
-              <h2 className="text-xl font-semibold mb-2"> {item.title}</h2>
-              <p className="text-gray-600 mb-4 line-clamp-6">{item.contents}</p>
-              <div className="flex items-center space-x-2">
-                {/* <div className="w-5 h-5 overflow-hidden"> */}
-                {/* <Image
-                    src={item?.avatar}
-                    alt="user_img"
-                    width={20}
-                    height={20}
-                    className="rounded-full object-cover w-full h-full"
-                  /> */}
-                {/* </div> */}
-                <div>{item.nickname}</div>
-              </div>
-              <div>
-                {(() => {
-                  const date = new Date(item.created_at);
-                  const koreaTime = new Date(
-                    date.getTime() + 9 * 60 * 60 * 1000
-                  );
-                  const formattedDate = koreaTime
-                    .toISOString()
-                    .slice(0, 16)
-                    .replace("T", " ");
-                  return formattedDate;
-                })()}
-              </div>
-            </Link>
-          </li>
-        ))}
+      <ul className="space-y-4">
+        {filteredPosts.map((item) => {
+          const imageUrls = getImageUrls(item.img_url);
+          return (
+            <li key={item.id} className="border-b p-4 w-[700px]">
+              {/* 상세페이지로 이동 */}
+              <Link
+                href={`/community/${item.id}`}
+                className="block hover:bg-gray-50 transition duration-150 ease-in-out"
+              >
+                <div className="flex justify-between">
+                  <div className="flex-grow pr-4">
+                    <h2 className="text-xl font-semibold mb-2">
+                      {" "}
+                      {item.title}
+                    </h2>
+                    <p className="text-gray-600 mb-4 line-clamp-2">
+                      {item.contents}
+                    </p>
+                    <div className="flex justify-between items-center text-sm text-gray-500">
+                      <div className="flex items-center">
+                        <Image
+                          src={item.user.avatar as string}
+                          alt="user_img"
+                          width={20}
+                          height={20}
+                          className="rounded-full object-cover w-10 h-10 mr-2"
+                        />
+                        <span>{item.user.nickname}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      {new Date(item.created_at).toLocaleString()}
+                    </div>
+                  </div>
+                  {imageUrls.length > 0 && (
+                    <div className="w-24 h-24 flex-shrink-0">
+                      <Image
+                        src={imageUrls[0]}
+                        alt="Post image"
+                        width={96}
+                        height={96}
+                        className="object-cover w-full h-full rounded"
+                      />
+                    </div>
+                  )}
+                </div>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </>
   );

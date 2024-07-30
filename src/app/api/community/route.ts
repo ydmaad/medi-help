@@ -12,7 +12,17 @@ type PostUpdate = TablesUpdate<"posts">; //수정
 // 게시글 불러오는 요청
 export async function GET() {
   try {
-    const { data, error } = await supabase.from("posts").select("*");
+    const { data, error } = await supabase.from("posts").select(`
+        id,
+        title,
+        contents,
+        img_url,
+        created_at,
+        user:user_id (
+          nickname,
+          avatar
+        )
+      `);
     // console.log("된다!!", data);
 
     if (error) {
@@ -37,7 +47,7 @@ export async function POST(request: NextRequest) {
   try {
     // 클라이언트에서 데이터 보내는 형식 : formData (json x)
     const formData = await request.formData();
-    console.log("받은 formData:", Object.fromEntries(formData));
+    // console.log("받은 formData:", Object.fromEntries(formData));
 
     // formData에서 필드 추출
     const title = formData.get("title") as string;
@@ -63,10 +73,10 @@ export async function POST(request: NextRequest) {
               .from("posts_image_url")
               .upload(fileName, file);
 
-          console.log("Supabase 업로드 결과:", {
-            imgUploadData,
-            imgUploadError,
-          });
+          // console.log("Supabase 업로드 결과:", {
+          //   imgUploadData,
+          //   imgUploadError,
+          // });
 
           if (imgUploadError) {
             console.error(`이미지 업로드 실패 : ${file.name}`, imgUploadError);
@@ -76,7 +86,7 @@ export async function POST(request: NextRequest) {
             .from("posts_image_url")
             .getPublicUrl(fileName);
 
-          console.log("생성된 공개 URL:", urlData.publicUrl);
+          // console.log("생성된 공개 URL:", urlData.publicUrl);
           img_url.push(urlData.publicUrl);
         } catch (uploadError) {
           console.error(
@@ -92,7 +102,7 @@ export async function POST(request: NextRequest) {
     const postData: PostInsert = {
       title,
       contents,
-      user_id: "dffc930c-0be8-47ac-91e8-18c437e5a70a",
+      user_id: "5bae80ae-6b5d-45de-ac5d-f1a89d2cc3ba",
       img_url: img_url.join(","),
     };
 
@@ -100,9 +110,9 @@ export async function POST(request: NextRequest) {
     const { data: postUpdateData, error: postUpdateError } = await supabase
       .from("posts")
       .insert(postData);
-    console.log("삽입할 postData:", postData);
-    console.log("최종 img_url 배열:", img_url);
-    console.log("삽입된 데이터?", postUpdateError);
+    // console.log("삽입할 postData:", postData);
+    // console.log("최종 img_url 배열:", img_url);
+    // console.log("삽입된 데이터?", postUpdateError);
 
     if (postUpdateError) {
       return NextResponse.json(
