@@ -72,7 +72,10 @@ export async function PUT(
 ) {
   const { id } = params;
   try {
+    // 클라이언트에서 데이터 보내는 형식 : formData
     const formData = await request.formData();
+
+    // formData에서 필드 추출
     const title = formData.get("title") as string;
     const contents = formData.get("contents") as string;
     const image = formData.getAll("image") as File[];

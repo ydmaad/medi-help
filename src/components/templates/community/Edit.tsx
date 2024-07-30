@@ -63,7 +63,11 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   const [contents, setContents] = useState("");
   const [image, setImage] = useState<File[]>([]);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
+  // TODO : 수파베이스에 저장할 스테이트 생성 (image + currentImages) -> 파일 타입으로!!
+  const [saveImages, setSaveImages] = useState<File[]>([]);
+
   const router = useRouter();
+  // TODO : 수파베이스에 저장할 스테이트 생성 (image + currentImages) -> 파일 타입으로!!
 
   useEffect(() => {
     const getPost = async () => {
@@ -73,7 +77,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
         setTitle(data.title);
         setContents(data.contents);
         setCurrentImages(data.img_url ? data.img_url.split(",") : []);
-        console.log("이미지 유알엘:", currentImages);
+        // console.log("이미지 유알엘:", currentImages);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -84,7 +88,19 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
     getPost();
   }, [id]);
 
-  // console.log(post);
+  // 파일 선택 클릭시 여러 이미지가 배열로 들어가지 않음
+  // 3가지
+
+  //  스티링 배열
+  // 업로드시 미리보기용 배열
+  // 초기값은 수파베이스에 저장된 미리보기용 배열
+  // ㄴ ui에 표시하기 위한 배열
+
+  // 스토리지에 저장하기 위한 파일배열
+
+  // 수파베이스 테이블에 저장할 유알엑 스트링 배열
+
+  // console.log(image);
 
   const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -97,14 +113,21 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
     }
   };
 
+  // TODO : 수파베이스에서 가져온 이미지에 배열로 같이 추가
+  // 수파베이스에서 가져온 이미지 + 현재 추가한 이미지 = 새로운 스테이트(saveImages)에 넣어서 요청 전송
+
+  // 여러 이미지 파일을 처리하는 함수
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setImage(Array.from(e.target.files));
+      const files = Array.from(e.target.files);
+      setImage((prevImage) => {
+        const newImage = [...prevImage, ...files];
+      });
     }
   };
 
-  console.log("현재 게시글:", post);
-  console.log("현재 게시글 이미지:", currentImages);
+  // console.log("현재 게시글:", post);
+  // console.log("현재 게시글 이미지:", currentImages);
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;
@@ -153,6 +176,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
                 layout="fill"
                 objectFit="cover"
               />
+              <button>X</button>
             </div>
           ))}
         </div>
