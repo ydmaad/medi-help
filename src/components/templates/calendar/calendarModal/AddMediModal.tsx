@@ -12,8 +12,8 @@ interface MediRecord {
     afternoon: boolean;
     evening: boolean;
   };
-  alarm_time: string;
   notes: string;
+  created_at: string;
 }
 
 interface AddMediModalProps {
@@ -30,7 +30,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
     afternoon: false,
     evening: false,
   });
-  const [alarmTime, setAlarmTime] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -55,8 +54,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
       id: crypto.randomUUID(),
       medi_name: mediName,
       times,
-      alarm_time: alarmTime,
       notes,
+      created_at: new Date().toISOString(),
     };
 
     try {
@@ -129,15 +128,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
               <span className="ml-2">저녁</span>
             </label>
           </div>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">알람 시간:</label>
-          <input
-            type="time"
-            value={alarmTime}
-            onChange={(e) => setAlarmTime(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">메모:</label>

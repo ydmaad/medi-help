@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AddMediModal from '../calendarModal/AddMediModal';
-import EditMediModal from '../calendarModal/EditMediModal';
+import ViewMediModal from '../calendarModal/ViewMediModal';
 
 interface MediRecord {
   id: string;
@@ -12,30 +12,15 @@ interface MediRecord {
     afternoon: boolean;
     evening: boolean;
   };
-  alarm_time: string;
   notes: string;
+  created_at: string;
 }
 
 const MediRecords: React.FC = () => {
-  const [alarmRecords, setAlarmRecords] = useState<MediRecord[]>([]);
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<MediRecord | null>(null);
-
-  const fetchAlarmRecords = async () => {
-    try {
-      const response = await fetch('/api/calendar/medi/today');
-      if (!response.ok) {
-        throw new Error('Failed to fetch alarm records');
-      }
-      const data = await response.json();
-      console.log('Fetched alarm records:', data.alarmRecords);
-      setAlarmRecords(data.alarmRecords || []);
-    } catch (error) {
-      console.error('Error fetching alarm records:', error);
-    }
-  };
 
   const fetchMediRecords = async () => {
     try {
@@ -51,7 +36,7 @@ const MediRecords: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string, deleteMedi: boolean) => {
+  const handleDelete = async (id: string) => {
     try {
       const response = await fetch('/api/calendar/medi', {
         method: 'DELETE',
@@ -69,13 +54,9 @@ const MediRecords: React.FC = () => {
       console.log('DELETE response:', result);
 
       // 데이터가 성공적으로 삭제되면, 상태를 업데이트합니다.
-      setAlarmRecords(alarmRecords.filter(record => record.id !== id));
-
-      if (deleteMedi) {
-        setMediRecords(mediRecords.filter(record => record.id !== id));
-      }
+      setMediRecords(mediRecords.filter(record => record.id !== id));
     } catch (error) {
-      console.error('Failed to delete alarm record:', error);
+      console.error('Failed to delete medication record:', error);
     }
   };
 
@@ -97,44 +78,30 @@ const MediRecords: React.FC = () => {
       console.log('PATCH response:', result);
 
       // 데이터가 성공적으로 수정되면, 상태를 업데이트합니다.
-      setAlarmRecords(alarmRecords.map(record => record.id === id ? { ...record, ...updatedRecord } : record));
+      setMediRecords(mediRecords.map(record => record.id === id ? { ...record, ...updatedRecord } : record));
     } catch (error) {
-      console.error('Failed to edit alarm record:', error);
+      console.error('Failed to edit medication record:', error);
     }
   };
 
   useEffect(() => {
-    fetchAlarmRecords();
     fetchMediRecords();
   }, []);
 
   const handleAdd = (newMediRecord: MediRecord) => {
-    setAlarmRecords([...alarmRecords, newMediRecord]);
     setMediRecords([...mediRecords, newMediRecord]);
   };
 
-  const handleRecordClick = (record: MediRecord) => {
+  const handleMediRecordClick = (record: MediRecord) => {
     setSelectedRecord(record);
-    setShowEditModal(true);
+    setShowViewModal(true);
   };
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl mb-4">복약 기록</h2>
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">오늘의 복약 알림</h3>
-        {alarmRecords.map(record => (
-          <div key={record.id} onClick={() => handleRecordClick(record)} className="bg-white p-4 rounded shadow mb-4 flex justify-between items-center cursor-pointer">
-            <div>
-              <span className="font-semibold">{record.medi_name}</span>
-              <div className="text-sm">{record.alarm_time}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <h3 className="text-lg font-semibold">복용 중인 약</h3>
+      <h2 className="text-2xl mb-4">복용 중인 약</h2>
       {mediRecords.map(record => (
-        <div key={record.id} className="bg-white p-4 rounded shadow mb-4">
+        <div key={record.id} onClick={() => handleMediRecordClick(record)} className="bg-white p-4 rounded shadow mb-4 cursor-pointer">
           <span className="font-semibold">{record.medi_name}</span>
         </div>
       ))}
@@ -148,13 +115,13 @@ const MediRecords: React.FC = () => {
           onAdd={handleAdd}
         />
       )}
-      {showEditModal && selectedRecord && (
-        <EditMediModal
-          isOpen={showEditModal}
-          onRequestClose={() => setShowEditModal(false)}
+      {showViewModal && selectedRecord && (
+        <ViewMediModal
+          isOpen={showViewModal}
+          onRequestClose={() => setShowViewModal(false)}
+          mediRecord={selectedRecord}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          mediRecord={selectedRecord}
         />
       )}
     </div>

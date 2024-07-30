@@ -5,54 +5,40 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+export async function GET() {
+  try {
+    const { data, error } = await supabase.from('medications').select('*');
+    if (error) {
+      console.error('Error fetching medi records:', error);
+      return NextResponse.json({ error: 'Failed to fetch medi records' }, { status: 500 });
+    }
+    return NextResponse.json({ medicationRecords: data });
+  } catch (error) {
+    console.error('Error fetching medi records:', error);
+    return NextResponse.json({ error: 'Failed to fetch medi records' }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { medi_name, times, alarm_time, notes } = await req.json();
+    const { medi_name, times, notes, created_at } = await req.json();
 
-    // Check if medication already exists
-    const { data: existingMedi, error: existingMediError } = await supabase
+    if (!medi_name || !times || !created_at) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
       .from('medications')
-      .select('id')
-      .eq('medi_name', medi_name)
-      .single();
+      .insert([{ medi_name, times, notes, created_at }]);
 
-    if (existingMediError && existingMediError.code !== 'PGRST116') {
-      console.error('Error checking existing medication:', existingMediError);
-      return NextResponse.json({ error: 'Failed to check existing medication' }, { status: 500 });
+    if (error) {
+      console.error('Error saving medi record:', error);
+      return NextResponse.json({ error: 'Failed to save medi record' }, { status: 500 });
     }
 
-    let medicationId;
-
-    if (existingMedi) {
-      medicationId = existingMedi.id;
-    } else {
-      // Insert new medication
-      const { data, error } = await supabase
-        .from('medications')
-        .insert([{ medi_name, times, notes }])
-        .select();
-
-      if (error) {
-        console.error('Failed to save medi record:', error);
-        return NextResponse.json({ error: 'Failed to save medi record' }, { status: 500 });
-      }
-
-      medicationId = data[0].id;
-    }
-
-    // Insert alarm record
-    const { error: alarmError } = await supabase
-      .from('alarms')
-      .insert([{ medication_id: medicationId, alarm_time, alarm_medi_name: medi_name }]);
-
-    if (alarmError) {
-      console.error('Failed to save alarm record:', alarmError);
-      return NextResponse.json({ error: 'Failed to save alarm record' }, { status: 500 });
-    }
-
-    return NextResponse.json({ message: 'Medi record saved' }, { status: 201 });
+    return NextResponse.json({ message: 'Medi record saved', data }, { status: 201 });
   } catch (error) {
-    console.error('Failed to process request:', error);
+    console.error('Error processing request:', error);
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }
@@ -60,36 +46,49 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const { id } = await req.json();
-    const { error } = await supabase.from('alarms').delete().eq('id', id);
 
-    if (error) {
-      console.error('Failed to delete record:', error);
-      return NextResponse.json({ error: 'Failed to delete record' }, { status: 500 });
+    if (!id) {
+      return NextResponse.json({ error: 'Missing required field: id' }, { status: 400 });
     }
 
-    return NextResponse.json({ message: 'Record deleted' }, { status: 200 });
+    const { data, error } = await supabase
+      .from('medications')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting medi record:', error);
+      return NextResponse.json({ error: 'Failed to delete medi record' }, { status: 500 });
+    }
+
+    return NextResponse.json({ message: 'Medi record deleted', data }, { status: 200 });
   } catch (error) {
-    console.error('Failed to process request:', error);
+    console.error('Error processing request:', error);
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }
 
 export async function PATCH(req: NextRequest) {
   try {
-    const { id, alarm_time } = await req.json();
-    const { error } = await supabase
-      .from('alarms')
-      .update({ alarm_time })
+    const { id, ...updatedFields } = await req.json();
+
+    if (!id) {
+      return NextResponse.json({ error: 'Missing required field: id' }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from('medications')
+      .update(updatedFields)
       .eq('id', id);
 
     if (error) {
-      console.error('Failed to update alarm record:', error);
-      return NextResponse.json({ error: 'Failed to update alarm record' }, { status: 500 });
+      console.error('Error updating medi record:', error);
+      return NextResponse.json({ error: 'Failed to update medi record' }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Alarm record updated' }, { status: 200 });
+    return NextResponse.json({ message: 'Medi record updated', data }, { status: 200 });
   } catch (error) {
-    console.error('Failed to process request:', error);
+    console.error('Error processing request:', error);
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }

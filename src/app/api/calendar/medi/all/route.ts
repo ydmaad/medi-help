@@ -9,7 +9,7 @@ export async function GET() {
   try {
     const { data, error } = await supabase
       .from('medications')
-      .select('id, medi_name');
+      .select('id, medi_name, times, notes, created_at');
     if (error) {
       console.error('Error fetching medication records:', error);
       return NextResponse.json({ error: 'Failed to fetch medication records' }, { status: 500 });
