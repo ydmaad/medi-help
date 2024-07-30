@@ -3,10 +3,10 @@ import { supabase } from "@/utils/supabase/client";
 import { NextRequest, NextResponse } from "next/server";
 
 type Comment = Tables<"comments">; // 테이블을 읽어올때
-
 type CommentInsert = TablesInsert<"comments">; // 등록
-
 type CommentUpdate = TablesUpdate<"comments">; //수정
+// 타입 명확하게 지정하여 사용
+type CommentUpdateReal = CommentUpdate & { id: string; comment: string };
 
 // 댓글 불러오는 요청
 export async function GET(
@@ -72,34 +72,37 @@ export async function DELETE(
   }
 }
 
-// // 댓글 수정하는 요청
-// export async function PUT(
-//   request: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   const { id } = params;
-//   try {
-//     const body: CommentUpdate = await request.json();
+// 댓글 수정하는 요청
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  // 게시글 아이디
+  const { id } = params;
+  try {
+    const body: CommentUpdateReal = await request.json();
+    const { id: commentId, comment } = body;
 
-//     const { data, error } = await supabase
-//       .from("posts")
-//       .update(body)
-//       .eq("id", commentId)
-//       .eq("post_id", id);
+    // TODO : 유저 확인 로직 필요
+    const { data, error } = await supabase
+      .from("comments")
+      .update({ comment })
+      .eq("id", commentId)
+      .eq("post_id", id);
 
-//     if (error) {
-//       return NextResponse.json({ error: "수정 실패", message: error.message });
-//     }
+    if (error) {
+      return NextResponse.json({ error: "수정 실패", message: error.message });
+    }
 
-//     return NextResponse.json({ message: "수정 성공", data });
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json({
-//       error: "Internal Server Error",
-//       message: (error as Error).message,
-//     });
-//   }
-// }
+    return NextResponse.json({ message: "수정 성공", data });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({
+      error: "Internal Server Error",
+      message: (error as Error).message,
+    });
+  }
+}
 
 // 댓글 등록하는 요청
 export async function POST(request: NextRequest) {
@@ -109,7 +112,7 @@ export async function POST(request: NextRequest) {
     // 하드코딩한 부분!!
     // 나중에 auth 부분 성공시 수정하기!!
     // zustand로 유저 전역상태관리 예정!!
-    const hardCodeId = "dffc930c-0be8-47ac-91e8-18c437e5a70a";
+    const hardCodeId = "5bae80ae-6b5d-45de-ac5d-f1a89d2cc3ba";
     const commentData = {
       post_id: body.post_id,
       user_id: hardCodeId,

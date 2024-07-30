@@ -7,10 +7,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 type Post = Tables<"posts">;
+type User = Tables<"users">;
+
+type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
 
 const CommunityPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostWithUser[]>([]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
