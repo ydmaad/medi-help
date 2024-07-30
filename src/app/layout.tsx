@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// header import 추후 삭제(로그인,회원가입 테스트)
-import Header from "./header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,11 +16,7 @@ export default function HtmlLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {/* header 추후 삭제(로그인,회원가입 테스트) */}
-        <Header />
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
