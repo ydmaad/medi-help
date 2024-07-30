@@ -11,9 +11,9 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
 import TestModal from "../calendarModal/TestModal";
+import AddModal from "../calendarModal/AddModal";
 
 type eventsType = {
-  id: string;
   title: string;
   start: Date;
   backgroundColor: string;
@@ -23,6 +23,7 @@ type eventsType = {
 
 const CalendarView = () => {
   const [events, setEvents] = useState<eventsType[]>([]);
+  const [openAddModal, setOpenAddModal] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [calendarId, setCalendarId] = useState<string>("");
 
@@ -39,21 +40,13 @@ const CalendarView = () => {
         console.log(data);
         {
           data.map((el: any) => {
-            let date = new Date(el.created_at);
-            const addMinutes = (date: Date, minutes: number) => {
-              date.setMinutes(date.getMinutes() + minutes);
-              return date;
-            };
             el.medi_name.map((name: string, idx: number) => {
-              let newDate = addMinutes(date, idx * 2);
-              console.log(newDate);
               setEvents((prev) => {
                 return [
                   ...prev,
                   {
-                    id: el.id,
                     title: name,
-                    start: newDate,
+                    start: el.created_at,
                     backgroundColor: colorForTime[el.medi_time],
                     borderColor: colorForTime[el.medi_time],
                     textColor: "gray",
@@ -79,6 +72,10 @@ const CalendarView = () => {
     setOpenModal(true);
   };
 
+  const handleButtonClick = () => {
+    setOpenAddModal(true);
+  };
+
   return (
     <>
       <TestModal
@@ -86,8 +83,12 @@ const CalendarView = () => {
         setOpenModal={setOpenModal}
         calendarId={calendarId}
       />
-      <div className="relative p-8 w-full h-7/12 fc-button ">
-        <button className="absolute right-20 top-10 px-2 py-1 bg-sky-500 text-white border-sky-500 rounded-md">
+      <AddModal openAddModal={openAddModal} setOpenAddModal={setOpenAddModal} />
+      <div className="relative p-8 w-11/12 h-7/12 fc-button ">
+        <button
+          onClick={handleButtonClick}
+          className="absolute right-20 top-10 px-3 py-1 bg-sky-500 text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300"
+        >
           기록추가 +
         </button>
         <FullCalendar

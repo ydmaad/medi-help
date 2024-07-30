@@ -19,14 +19,16 @@ export async function POST(req: NextRequest) {
     const values: any = await req.json();
     console.log(values);
 
-    const { data, error } = await supabase.from("test_calendar").insert(values);
+    const { data, error } = await supabase.from("calendar").insert(values);
 
     if (error) {
       NextResponse.json({ error: error.message });
     }
     return NextResponse.json(data);
-  } catch (error: any) {
-    console.log("post error", error);
-    throw new Error(error.message);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("post error", error);
+      throw new Error(error.message);
+    }
   }
 }
