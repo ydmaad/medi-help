@@ -5,7 +5,7 @@ interface SemiTitleType {
 }
 
 const SemiTitle = ({ children }: SemiTitleType) => {
-  return <div>{children}</div>;
+  return <div className="text-sm text-brand-gray-600">{children}</div>;
 };
 
 export default SemiTitle;
