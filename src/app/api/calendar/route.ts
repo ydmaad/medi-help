@@ -10,11 +10,12 @@ export async function GET(req: NextRequest) {
     const { data, error } = await supabase.from("calendar").select("*");
 
     if (error) {
-      NextResponse.json({ error: error.message });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json(data);
+    return NextResponse.json(data, { status: 200 });
   } catch (error) {
     console.log("supabase error", error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
@@ -26,13 +27,13 @@ export async function POST(req: NextRequest) {
     const { data, error } = await supabase.from("calendar").insert(values);
 
     if (error) {
-      NextResponse.json({ error: error.message });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json(data);
+    return NextResponse.json(data, { status: 201 });
   } catch (error) {
     if (error instanceof Error) {
       console.log("post error", error);
-      throw new Error(error.message);
+      return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
   }
 }

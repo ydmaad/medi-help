@@ -1,42 +1,35 @@
-"use client";
-
-import React from 'react';
-import Modal from 'react-modal';
+import React from "react";
+import Modal from "react-modal";
 
 interface MediRecord {
   id: string;
   medi_name: string;
+  medi_nickname: string;
   times: {
     morning: boolean;
     afternoon: boolean;
     evening: boolean;
   };
   notes: string;
+  start_date: string;
+  end_date: string;
   created_at: string;
+  user_id: string;
 }
 
 interface ViewMediModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
+  onEditClick: () => void;
   mediRecord: MediRecord;
-  onEdit: (id: string, updatedRecord: Partial<MediRecord>) => void;
-  onDelete: (id: string) => void;
 }
 
-const ViewMediModal: React.FC<ViewMediModalProps> = ({ isOpen, onRequestClose, mediRecord, onEdit, onDelete }) => {
-  const handleEdit = () => {
-    onEdit(mediRecord.id, mediRecord);
-    onRequestClose();
-  };
-
-  const handleDelete = () => {
-    const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
-    if (confirmDelete) {
-      onDelete(mediRecord.id);
-    }
-    onRequestClose();
-  };
-
+const ViewMediModal: React.FC<ViewMediModalProps> = ({
+  isOpen,
+  onRequestClose,
+  onEditClick,
+  mediRecord,
+}) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -46,37 +39,35 @@ const ViewMediModal: React.FC<ViewMediModalProps> = ({ isOpen, onRequestClose, m
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
-        <h2 className="text-2xl mb-4">복용 중인 약</h2>
+        <h2 className="text-2xl mb-4">약 정보</h2>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">약 이름:</label>
-          <div className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            {mediRecord.medi_name}
-          </div>
+          <p><strong>약 이름:</strong> {mediRecord.medi_name}</p>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">메모:</label>
-          <div className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            {mediRecord.notes}
-          </div>
+          <p><strong>약 별명:</strong> {mediRecord.medi_nickname}</p>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">먹기 시작한 날짜:</label>
-          <div className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            {new Date(mediRecord.created_at).toLocaleDateString()}
-          </div>
+          <p><strong>복용 시작일:</strong> {mediRecord.start_date}</p>
+        </div>
+        <div className="mb-4">
+          <p><strong>복용 종료일:</strong> {mediRecord.end_date}</p>
+        </div>
+        <div className="mb-4">
+          <p><strong>복용 시간:</strong> {`
+            ${mediRecord.times.morning ? "아침 " : ""}
+            ${mediRecord.times.afternoon ? "점심 " : ""}
+            ${mediRecord.times.evening ? "저녁 " : ""}
+          `}</p>
+        </div>
+        <div className="mb-4">
+          <p><strong>메모:</strong> {mediRecord.notes}</p>
         </div>
         <div className="flex items-center justify-between">
           <button
-            onClick={handleEdit}
+            onClick={onEditClick}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             수정하기
-          </button>
-          <button
-            onClick={handleDelete}
-            className="ml-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            삭제하기
           </button>
           <button
             onClick={onRequestClose}
