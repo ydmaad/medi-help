@@ -4,11 +4,15 @@ import React, { useEffect, useState } from "react";
 import { Calendar, EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
 import TestModal from "../calendarModal/TestModal";
 import AddModal from "../calendarModal/AddModal";
+
+// type 파일 - eventsType, valuesType,
+// constant 폴더 및 파일 만들어서 정리
+// event props 넘겨서 상태관리 해주기
+// react-modal 로 변경
 
 type eventsType = {
   title: string;
@@ -25,9 +29,9 @@ const CalendarView = () => {
   const [calendarId, setCalendarId] = useState<string>("");
 
   const colorForTime: { [key: string]: string } = {
-    "아침 복용": "#FFD9D9",
-    "점심 복용": "#FEE6C9",
-    "저녁 복용": "#D2F0FF",
+    morning: "#FFD9D9",
+    afternoon: "#FEE6C9",
+    evening: "#D2F0FF",
   };
 
   useEffect(() => {
@@ -46,7 +50,7 @@ const CalendarView = () => {
                     start: el.created_at,
                     backgroundColor: colorForTime[el.medi_time],
                     borderColor: colorForTime[el.medi_time],
-                    textColor: "gray",
+                    textColor: "white",
                   },
                 ];
               });
@@ -94,12 +98,7 @@ const CalendarView = () => {
           events={events}
           eventClick={handleEventClick}
           eventOverlap={false}
-          eventTimeFormat={{
-            hour: "numeric",
-            minute: "2-digit",
-            omitZeroMinute: false,
-            meridiem: false,
-          }}
+          displayEventTime={false}
           headerToolbar={{
             left: "prev title next",
             center: "",

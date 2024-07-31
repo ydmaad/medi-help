@@ -1,20 +1,15 @@
 "use client";
+import { ValueType } from "@/types/calendar_values";
 import React, { useEffect, useState } from "react";
 
-type MedicinesType = {
-  name: string;
-  isChecked: boolean;
-  time: { [key: string]: boolean };
-};
-
 interface Props {
-  medicines: MedicinesType[];
-  setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
+  values: ValueType;
+  setValues: React.Dispatch<React.SetStateAction<ValueType>>;
   name: string;
   time: { [key: string]: boolean };
   idx: number;
 }
-const MediCheck = ({ medicines, setMedicines, name, time, idx }: Props) => {
+const MediCheck = ({ values, setValues, name, time, idx }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
 
@@ -36,19 +31,22 @@ const MediCheck = ({ medicines, setMedicines, name, time, idx }: Props) => {
     );
   }, []);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-    const updateMedicines = medicines.map((medi: MedicinesType) => {
-      if (medi.name === name) {
-        return { ...medi, isChecked: event.target.checked };
-      }
-      return medi;
-    });
-    if (updateMedicines.length !== 0) {
-      setMedicines(updateMedicines as []);
-    }
+  useEffect(() => {
+    console.log(values.medi_name.includes(name));
+    setChecked(values.medi_name.includes(name));
+  }, [values.medi_name.length]);
 
-    console.log(medicines);
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setValues((prev) => {
+        return { ...prev, medi_name: [...values.medi_name, name] };
+      });
+    } else {
+      let deletedMediName = values.medi_name.filter((medi) => medi !== name);
+      setValues((prev) => {
+        return { ...prev, medi_name: deletedMediName };
+      });
+    }
   };
 
   return (

@@ -19,10 +19,9 @@ interface Props {
 }
 const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
   const [values, setValues] = useState<ValueType>({
-    user_id: "test@test.com",
     medi_time: "morning",
     medi_name: [],
-    sideEffect: "",
+    side_effect: "",
   });
 
   const [medicines, SetMedicines] = useState<MedicinesType[]>([]);
@@ -50,7 +49,6 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     };
 
     getMedicines();
-    console.log(medicines);
   }, []);
 
   const handleContentChange = (
@@ -60,7 +58,6 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     setValues((prev) => {
       return { ...prev, [name]: value };
     });
-    console.log(values);
   };
 
   const handleCloseButtonClick = () => {
@@ -71,23 +68,30 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
   const handleTimeClick = (time: string) => {
     console.log(time);
     setValues((prev) => {
-      return { ...prev, medi_time: time };
+      return { ...prev, medi_name: [], medi_time: time };
     });
-    console.log(values);
   };
 
   const handleSubmitClick = () => {
-    let mediList = medicines.filter((medicine) => {
-      return medicine.isChecked === true;
-    });
-    let mediNameList = mediList.map((medi) => {
-      return medi.name;
-    });
-    console.log(mediNameList);
-    setValues((prev) => {
-      return { ...prev, medi_name: mediNameList };
-    });
-    console.log(values);
+    const postCalendar = async (value: ValueType) => {
+      try {
+        const res = await axios.post("/api/calendar", value);
+        console.log(res);
+        return res;
+      } catch (error) {
+        console.log("Post Error", error);
+      }
+    };
+
+    if (values.medi_name.length !== 0) {
+      console.log("가랏!");
+      postCalendar(values);
+      setValues({
+        medi_time: "morning",
+        medi_name: [],
+        side_effect: "",
+      });
+    }
   };
 
   return (
@@ -132,8 +136,8 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
             .map((medicine: MedicinesType, idx: number) => {
               return (
                 <MediCheck
-                  medicines={medicines}
-                  setMedicines={SetMedicines}
+                  values={values}
+                  setValues={setValues}
                   name={medicine.name}
                   time={medicine.time}
                   idx={idx}
@@ -144,8 +148,8 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
         </div>
         <SemiTitle>노트</SemiTitle>
         <textarea
-          name="sideEffect"
-          value={values.sideEffect}
+          name="side_effect"
+          value={values.side_effect}
           onChange={handleContentChange}
           placeholder="간단한 약 메모"
           className="h-1/4 p-1 border border-gray-500 outline-none rounded-sm"
