@@ -71,7 +71,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   }, [id]);
 
   // TODO : 콘솔 확인하면서 진행!! - post에 user 정보(avatar, nickname 안 담김)
-  // console.log(post);
+  console.log(post);
 
   // 게시글 삭제 핸들러
   const handleDelete = async () => {

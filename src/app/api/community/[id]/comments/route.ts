@@ -115,10 +115,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "인증되지 않은 사용자입니다." });
     }
 
-    // 하드코딩한 부분!!
-    // 나중에 auth 부분 성공시 수정하기!!
-    // zustand로 유저 전역상태관리 예정!!
-    // const hardCodeId = "5bae80ae-6b5d-45de-ac5d-f1a89d2cc3ba";
     const commentData = {
       post_id: body.post_id,
       user_id: userId,

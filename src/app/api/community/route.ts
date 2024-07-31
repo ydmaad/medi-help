@@ -107,8 +107,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 하드코딩한 부분
-    // TODO : 나중에 auth 부분 성공시 수정하기!!
     const postData: PostInsert = {
       title,
       contents,

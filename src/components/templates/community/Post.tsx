@@ -41,7 +41,7 @@ const fetchPost = async ({
     }
     const data = await response.json();
     alert("게시글이 등록되었습니다!");
-    // window.location.href = "/community";
+    window.location.href = "/community";
     return data;
   } catch (error) {
     console.error("게시글 등록 오류 =>", error);
@@ -67,6 +67,11 @@ const Post = () => {
       const files = Array.from(e.target.files);
       setImage((prevImage) => [...prevImage, ...files]);
     }
+  };
+
+  // 첨부된 이미지 삭제하는 핸들러
+  const handleRemoveImage = (index: number) => {
+    setImage((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   return (
@@ -111,6 +116,13 @@ const Post = () => {
                 layout="fill"
                 objectFit="cover"
               />
+              <button
+                onClick={() => handleRemoveImage(index)}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                style={{ transform: "translate(50%, -50%)" }}
+              >
+                X
+              </button>
             </div>
           ))}
         </div>
