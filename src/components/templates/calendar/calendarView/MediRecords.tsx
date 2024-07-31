@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import EditMediModal from "../calendarModal/EditMediModal";
-import AddMediModal from "../calendarModal/AddMediModal";
 import axios from "axios";
+import AddMediModal from "../calendarModal/AddMediModal";
+import EditMediModal from "../calendarModal/EditMediModal";
+import ViewMediModal from "../calendarModal/ViewMediModal";
+import { useAuthStore } from "@/store/auth";
 
 interface MediRecord {
   id: string;
@@ -18,26 +20,31 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
+  user_id: string;
 }
 
 const MediRecords: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
   const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const fetchMediRecords = async () => {
       try {
-        const response = await axios.get("/api/calendar/medi");
-        setMediRecords(response.data.medicationRecords);
+        if (user) {
+          const response = await axios.get(`/api/calendar/medi?user_id=${user.id}`);
+          setMediRecords(response.data.medicationRecords);
+        }
       } catch (error) {
         console.error("Error fetching medication records:", error);
       }
     };
 
     fetchMediRecords();
-  }, []);
+  }, [user]);
 
   const handleAddMediRecord = (newMediRecord: MediRecord) => {
     setMediRecords((prevRecords) => [...prevRecords, newMediRecord]);
@@ -62,7 +69,7 @@ const MediRecords: React.FC = () => {
           className="bg-gray-100 p-4 rounded shadow mb-2 cursor-pointer"
           onClick={() => {
             setSelectedMediRecord(record);
-            setIsEditModalOpen(true);
+            setIsViewModalOpen(true);
           }}
         >
           <div>
@@ -78,8 +85,21 @@ const MediRecords: React.FC = () => {
       </button>
 
       {selectedMediRecord && (
+        <ViewMediModal
+          key={selectedMediRecord.id}
+          isOpen={isViewModalOpen}
+          onRequestClose={() => setIsViewModalOpen(false)}
+          onEditClick={() => {
+            setIsViewModalOpen(false);
+            setIsEditModalOpen(true);
+          }}
+          mediRecord={selectedMediRecord}
+        />
+      )}
+
+      {selectedMediRecord && (
         <EditMediModal
-          key={selectedMediRecord.id} // 이 줄을 추가하여 모달이 항상 올바른 상태로 초기화되도록 함
+          key={selectedMediRecord.id + "-edit"}
           isOpen={isEditModalOpen}
           onRequestClose={() => setIsEditModalOpen(false)}
           onDelete={handleDeleteMediRecord}
@@ -87,6 +107,7 @@ const MediRecords: React.FC = () => {
           mediRecord={selectedMediRecord}
         />
       )}
+
       <AddMediModal
         isOpen={isAddModalOpen}
         onRequestClose={() => setIsAddModalOpen(false)}

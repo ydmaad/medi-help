@@ -3,6 +3,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
+import { useAuthStore } from "@/store/auth";
 
 interface MediRecord {
   id: string;
@@ -17,6 +18,7 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
+  user_id: string;
 }
 
 interface AddMediModalProps {
@@ -30,6 +32,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
   onRequestClose,
   onAdd,
 }) => {
+  const { user } = useAuthStore();
   const [mediName, setMediName] = useState("");
   const [mediNickname, setMediNickname] = useState("");
   const [mediNames, setMediNames] = useState<string[]>([]);
@@ -55,7 +58,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       }
     };
 
-    // fetchMediNames();
+    fetchMediNames();
   }, []);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +66,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
   };
 
   const handleAdd = async () => {
+    if (!user) return;
+
     const newMediRecord: MediRecord = {
       id: crypto.randomUUID(),
       medi_name: mediName,
@@ -72,14 +77,13 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       start_date: startDate,
       end_date: endDate,
       created_at: new Date().toISOString(),
+      user_id: user.id,
     };
 
     try {
-      console.log("Sending medi record:", newMediRecord); // 로그 추가
       const response = await axios.post("/api/calendar/medi", newMediRecord);
       if (response.status === 201) {
         onAdd(newMediRecord);
-        // 폼 필드 초기화
         setMediName("");
         setMediNickname("");
         setTimes({ morning: false, afternoon: false, evening: false });
@@ -125,7 +129,10 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
             list="mediNames"
             placeholder="약 이름을 검색하세요"
             value={mediName}
-            onChange={(e) => setMediName(e.target.value)}
+            onChange={(e) => {
+              setMediName(e.target.value);
+              setSearchTerm(e.target.value); // 검색어 설정
+            }}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
           <datalist id="mediNames">

@@ -128,6 +128,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
       });
     }
   };
+  console.log(image);
 
   // console.log("현재 게시글:", post);
   // console.log("현재 게시글 이미지:", currentImages);
@@ -176,8 +177,9 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
               <Image
                 src={img}
                 alt={`Preview ${index}`}
-                layout="fill"
-                objectFit="cover"
+                fill
+                sizes="(max-width: 96px) 100vw, 96px"
+                style={{ objectFit: "cover" }}
               />
               <button>X</button>
             </div>
@@ -191,8 +193,9 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
               <Image
                 src={URL.createObjectURL(img)}
                 alt={`Preview ${index}`}
-                layout="fill"
-                objectFit="cover"
+                fill
+                sizes="(max-width: 96px) 100vw, 96px"
+                style={{ objectFit: "cover" }}
               />
             </div>
           ))}

@@ -1,7 +1,9 @@
 import { TablesInsert, TablesUpdate } from "./../../../types/supabase";
 import { Tables } from "@/types/supabase";
 import { supabase } from "@/utils/supabase/client";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 type Post = Tables<"posts">; // 테이블을 읽어올때
 
@@ -44,9 +46,21 @@ export async function GET() {
 // 게시글 등록하는 요청
 export async function POST(request: NextRequest) {
   console.log("포스트 요청 시작");
+  const supabase = createRouteHandlerClient({ cookies });
   try {
+    // 현재 로그인한 사용자 정보 가져오기
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      return NextResponse.json({ error: "인증되지 않은 사용자입니다." });
+    }
+
     // 클라이언트에서 데이터 보내는 형식 : formData (json x)
     const formData = await request.formData();
+
     // console.log("받은 formData:", Object.fromEntries(formData));
 
     // formData에서 필드 추출
@@ -102,7 +116,7 @@ export async function POST(request: NextRequest) {
     const postData: PostInsert = {
       title,
       contents,
-      user_id: "5bae80ae-6b5d-45de-ac5d-f1a89d2cc3ba",
+      user_id: session.user.id,
       img_url: img_url.join(","),
     };
 
