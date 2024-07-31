@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddMediModal from "../calendarModal/AddMediModal";
 import EditMediModal from "../calendarModal/EditMediModal";
+import { useAuthStore } from "@/store/auth";
 
 interface MediRecord {
   id: string;
@@ -18,6 +19,7 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
+  user_id: string;
 }
 
 const MediRecords: React.FC = () => {
@@ -25,19 +27,23 @@ const MediRecords: React.FC = () => {
   const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const fetchMediRecords = async () => {
       try {
-        const response = await axios.get("/api/calendar/medi");
-        setMediRecords(response.data.medicationRecords);
+        if (user) {
+          const response = await axios.get(`/api/calendar/medi?user_id=${user.id}`);
+          console.log('Fetched records:', response.data.medicationRecords); // 추가된 로그
+          setMediRecords(response.data.medicationRecords);
+        }
       } catch (error) {
         console.error("Error fetching medication records:", error);
       }
     };
 
     fetchMediRecords();
-  }, []);
+  }, [user]);
 
   const handleAddMediRecord = (newMediRecord: MediRecord) => {
     setMediRecords((prevRecords) => [...prevRecords, newMediRecord]);

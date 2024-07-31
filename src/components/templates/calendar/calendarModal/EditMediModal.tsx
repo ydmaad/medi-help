@@ -1,8 +1,8 @@
 "use client";
 
-import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
+import axios from "axios";
 
 interface MediRecord {
   id: string;
@@ -17,61 +17,42 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
+  user_id: string; // user_id 필드 추가
 }
 
 interface EditMediModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  onDelete: (id: string) => void;
   onUpdate: (updatedMediRecord: MediRecord) => void;
+  onDelete: (id: string) => void;
   mediRecord: MediRecord;
 }
 
 const EditMediModal: React.FC<EditMediModalProps> = ({
   isOpen,
   onRequestClose,
-  onDelete,
   onUpdate,
+  onDelete,
   mediRecord,
 }) => {
-  const [updatedMediRecord, setUpdatedMediRecord] = useState<MediRecord>(mediRecord);
-
-  useEffect(() => {
-    setUpdatedMediRecord(mediRecord);
-  }, [mediRecord]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      const checked = (e.target as HTMLInputElement).checked;
-      setUpdatedMediRecord((prevRecord) => ({
-        ...prevRecord,
-        times: {
-          ...prevRecord.times,
-          [name]: checked,
-        },
-      }));
-    } else {
-      setUpdatedMediRecord((prevRecord) => ({
-        ...prevRecord,
-        [name]: value,
-      }));
-    }
-  };
-
-  const handleTimeButtonClick = (time: keyof typeof updatedMediRecord.times) => {
-    setUpdatedMediRecord((prevRecord) => ({
-      ...prevRecord,
-      times: {
-        ...prevRecord.times,
-        [time]: !prevRecord.times[time],
-      },
-    }));
-  };
+  const [mediNickname, setMediNickname] = useState(mediRecord.medi_nickname);
+  const [times, setTimes] = useState(mediRecord.times);
+  const [notes, setNotes] = useState(mediRecord.notes);
+  const [startDate, setStartDate] = useState(mediRecord.start_date);
+  const [endDate, setEndDate] = useState(mediRecord.end_date);
 
   const handleUpdate = async () => {
+    const updatedMediRecord: MediRecord = {
+      ...mediRecord,
+      medi_nickname: mediNickname,
+      times,
+      notes,
+      start_date: startDate,
+      end_date: endDate,
+    };
+
     try {
-      const response = await axios.patch(`/api/calendar/medi`, updatedMediRecord);
+      const response = await axios.put(`/api/calendar/medi/${mediRecord.id}`, updatedMediRecord);
       if (response.status === 200) {
         onUpdate(updatedMediRecord);
         onRequestClose();
@@ -83,93 +64,83 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      const response = await axios.delete(`/api/calendar/medi`, { data: { id: mediRecord.id } });
-      if (response.status === 200) {
-        onDelete(mediRecord.id);
-        onRequestClose();
-      } else {
-        console.error("Failed to delete medi record:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Failed to delete medi record:", error);
-    }
-  };
-
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="복용중인 약 정보 수정"
+      contentLabel="Edit Medication"
       className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
-        <h2 className="text-2xl mb-4">복용중인 약 정보 수정</h2>
+        <h2 className="text-2xl mb-4">Edit Medication</h2>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">약 이름:</label>
           <input
             type="text"
-            name="medi_name"
-            value={updatedMediRecord.medi_name}
-            onChange={handleInputChange}
+            placeholder="약 별명(최대 6자)"
+            value={mediNickname}
+            onChange={(e) => setMediNickname(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">약 별명:</label>
-          <input
-            type="text"
-            name="medi_nickname"
-            value={updatedMediRecord.medi_nickname}
-            onChange={handleInputChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">복용 기간:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            복용 시작일:
+          </label>
           <input
             type="date"
-            name="start_date"
-            value={updatedMediRecord.start_date}
-            onChange={handleInputChange}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-          <input
-            type="date"
-            name="end_date"
-            value={updatedMediRecord.end_date}
-            onChange={handleInputChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-2"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">복용 시간:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            복용 종료일:
+          </label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            복용 시간:
+          </label>
           <div className="flex space-x-4 justify-between w-full">
             <button
               type="button"
-              onClick={() => handleTimeButtonClick("morning")}
+              onClick={() => setTimes({ ...times, morning: !times.morning })}
               className={`px-4 py-2 rounded-lg ${
-                updatedMediRecord.times.morning ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
+                times.morning
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
               } w-1/3`}
             >
               아침
             </button>
             <button
               type="button"
-              onClick={() => handleTimeButtonClick("afternoon")}
+              onClick={() =>
+                setTimes({ ...times, afternoon: !times.afternoon })
+              }
               className={`px-4 py-2 rounded-lg ${
-                updatedMediRecord.times.afternoon ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
+                times.afternoon
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
               } w-1/3`}
             >
               점심
             </button>
             <button
               type="button"
-              onClick={() => handleTimeButtonClick("evening")}
+              onClick={() => setTimes({ ...times, evening: !times.evening })}
               className={`px-4 py-2 rounded-lg ${
-                updatedMediRecord.times.evening ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"
+                times.evening
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
               } w-1/3`}
             >
               저녁
@@ -177,11 +148,13 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
           </div>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">메모:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            메모:
+          </label>
           <textarea
-            name="notes"
-            value={updatedMediRecord.notes}
-            onChange={handleInputChange}
+            value={notes}
+            placeholder="간단한 약 정보를 입력해주세요"
+            onChange={(e) => setNotes(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
@@ -190,7 +163,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
             onClick={handleUpdate}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            저장
+            업데이트
           </button>
           <button
             onClick={onRequestClose}
@@ -198,13 +171,13 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
           >
             취소
           </button>
-          <button
-            onClick={handleDelete}
-            className="ml-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            삭제
-          </button>
         </div>
+        <button
+          onClick={() => onDelete(mediRecord.id)}
+          className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          삭제
+        </button>
       </div>
     </Modal>
   );
