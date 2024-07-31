@@ -1,17 +1,14 @@
 "use client";
 
 import { useAuthStore } from "@/store/auth";
-import { Tables } from "@/types/supabase";
 import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRef } from "react";
 
-type User = Tables<"users">;
-
 export default function LoginPage() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const { setUser, setProfile } = useAuthStore();
+  const { setUser } = useAuthStore();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +20,7 @@ export default function LoginPage() {
       return;
     }
 
-    // data 테스트 먼저(성공하면 1번 필요없음 - 성공)
+    // 스키마의 user 정보를 불러오는 로직. try-catch문으로 변경하기
     const { data: authData, error: authError } =
       await supabase.auth.signInWithPassword({
         email: email,
@@ -34,11 +31,8 @@ export default function LoginPage() {
       alert(authError.message);
       return;
     }
-    console.log(authData);
 
-    // Store the auth user data
-    setUser(authData.user);
-
+    // auth스키마의 user테이블의 id 바탕으로 public 스키마의 user테이블에서 유저정보 가져오기
     const { data: userData, error: userError } = await supabase
       .from("users")
       .select("*")
@@ -51,10 +45,8 @@ export default function LoginPage() {
       return;
     }
 
-    console.log(userData.id);
-
-    // Store the user profile data
-    setProfile(userData);
+    // userData를 store에 저장(주스탠드)
+    setUser(userData);
 
     // 1. supabase getUser정보 불러오기 (auth스키마)
     // 2. auth스키마의 user테이블의 id 바탕으로 public 스키마의 user테이블에서 유저정보 가져오기

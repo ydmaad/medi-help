@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -10,7 +11,9 @@ interface CommentsProps {
 
 type Comment = Tables<"comments">;
 type User = Tables<"users">;
-type CommentWithUser = Comment & { user: Pick<User, "avatar" | "nickname"> };
+type CommentWithUser = Comment & {
+  user: Pick<User, "avatar" | "nickname" | "id">;
+};
 
 // 댓글 가져오기 요청
 const fetchComment = async (postId: string) => {
@@ -87,6 +90,7 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const [editedComment, setEditedComment] = useState<{ [key: string]: string }>(
     {}
   );
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const getComment = async () => {
@@ -100,8 +104,17 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
     getComment();
   }, [postId]);
 
+  // 사용자 권한 확인 함수
+  const modifyUser = (commentUserId: string) => {
+    return user && user.id === commentUserId;
+  };
+
   // 댓글 삭제 핸들러
-  const handleDelete = async (commentId: string) => {
+  const handleDelete = async (commentId: string, commentUserId: string) => {
+    if (!modifyUser(commentUserId)) {
+      alert("작성자만 댓글을 삭제할 수 있습니다.");
+      return;
+    }
     try {
       await deleteComment(postId, commentId);
       alert("댓글을 삭제하였습니다.");
@@ -132,7 +145,15 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
   };
 
   // 수정 모드 전환 핸들러
-  const handleEdit = (commentId: string, currentComment: string) => {
+  const handleEdit = (
+    commentId: string,
+    currentComment: string,
+    commentUserId: string
+  ) => {
+    if (!modifyUser(commentUserId)) {
+      alert("작성자만 댓글을 수정할 수 있습니다.");
+      return;
+    }
     setIsEdit((prev) => ({ ...prev, [commentId]: true }));
     setEditedComment((prev) => ({ ...prev, [commentId]: currentComment }));
   };
@@ -242,13 +263,15 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
                 {!isEdit[ment.id] && (
                   <>
                     <button
-                      onClick={() => handleEdit(ment.id, ment.comment)}
+                      onClick={() =>
+                        handleEdit(ment.id, ment.comment, ment.user.id)
+                      }
                       className="text-blue-500 hover:text-blue-700"
                     >
                       수정
                     </button>
                     <button
-                      onClick={() => handleDelete(ment.id)}
+                      onClick={() => handleDelete(ment.id, ment.user.id)}
                       className="text-red-500 hover:text-red-700"
                     >
                       삭제

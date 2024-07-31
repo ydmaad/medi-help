@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Comments from "./Comments";
 import Image from "next/image";
+import { useAuthStore } from "@/store/auth";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
@@ -48,6 +49,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const route = useRouter();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const loadPost = async () => {
@@ -73,6 +75,10 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
 
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
+    if (!user || user.id !== post?.user_id) {
+      alert("게시글을 삭제할 권한이 없습니다.");
+      return;
+    }
     if (id) {
       try {
         await deletePost(id);
@@ -97,6 +103,19 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
         {paragraph}
       </p>
     ));
+  };
+
+  // 사용자 권한 확인 함수
+  const modifyUser = () => {
+    return user && post && user.id === post.user_id;
+  };
+
+  // 수정 링크 클릭 핸들러
+  const handleEditClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!modifyUser()) {
+      e.preventDefault();
+      alert("게시글을 수정할 권한이 없습니다.");
+    }
   };
 
   if (loading) return <div>로딩 중...</div>;
@@ -133,6 +152,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
       <div className="p-5 w-[500px] ">
         <div>{formatContent(post.contents)}</div>
       </div>
+
       <button
         onClick={handleDelete}
         className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out"
@@ -140,13 +160,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
         삭제하기
       </button>
 
-      {/* // 폴더구조 확인하고 수정하기 */}
       <Link
         href={`/community/${id}/edit`}
+        onClick={handleEditClick}
         className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded inline-flex items-center transition duration-300 ease-in-out"
       >
         수정하기
       </Link>
+
       <Comments postId={id} />
     </>
   );

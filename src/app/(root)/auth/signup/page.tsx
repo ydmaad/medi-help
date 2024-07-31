@@ -102,7 +102,7 @@ export default function SignUpPage() {
         }
 
         alert("회원가입이 완료되었습니다.");
-        router.replace("/auth/signup/complete");
+        router.replace("/auth/login");
       }
     } catch (error: any) {
       console.error("회원가입 중 에러 발생:", error);
