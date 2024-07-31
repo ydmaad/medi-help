@@ -25,7 +25,7 @@ const LoginNav: React.FC<LoginNavProps> = ({ onLogout }) => {
 
 export default LoginNav;
 
-// 원래 코드
+// 원래 코드 추후 디자인 맞춰서 수정 예정
 // "use client";
 // import React from "react";
 // import TextButton from "../atoms/Textbutton";

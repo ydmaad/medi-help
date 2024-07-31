@@ -7,6 +7,7 @@ import SubColum from "@/components/molecules/SubColum";
 import Hero from "@/components/molecules/Hero";
 import LoadMoreButton from "@/components/atoms/LoadMoreButton";
 import MainTitle from "@/components/atoms/MainTitle";
+import ContentsCard from "@/components/molecules/ContentsCard";
 
 type Magazine = {
   title: string;
@@ -43,7 +44,7 @@ const page = () => {
   return (
     <>
       <Hero />
-      <div className="flex justify-between mx-20">
+      <div className="flex justify-between mx-20 mb-[10px]">
         <MainTitle text="메거진" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
@@ -84,6 +85,17 @@ const page = () => {
           ))}
         </div>
       </div>
+      <div className="flex justify-between mx-20 mb-[10px]">
+        <MainTitle text="커뮤니티" />
+        <LoadMoreButton targetPage="/community" />
+      </div>
+      <ContentsCard
+        hotTitle="🔥️ HOT"
+        newTitle={null} /*✨ NEW 로 변경해서 사용 가능 */
+        communityTitle="커뮤니티 제목"
+        imageSrc={null}
+        subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+      />
     </>
   );
 };
