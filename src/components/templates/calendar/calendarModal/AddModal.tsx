@@ -6,6 +6,7 @@ import SemiTitle from "@/components/atoms/calendar/SemiTitle";
 import MediCheck from "@/components/atoms/calendar/MediCheck";
 import { ValueType } from "@/types/calendar_values";
 import axios from "axios";
+import ModalFilterButton from "@/components/atoms/calendar/ModalFilterButton";
 
 type MedicinesType = {
   name: string;
@@ -19,7 +20,7 @@ interface Props {
 const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
   const [values, setValues] = useState<ValueType>({
     user_id: "test@test.com",
-    medi_time: "아침",
+    medi_time: "morning",
     medi_name: [],
     sideEffect: "",
   });
@@ -52,17 +53,39 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     console.log(medicines);
   }, []);
 
+  const handleContentChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    setValues((prev) => {
+      return { ...prev, [name]: value };
+    });
+    console.log(values);
+  };
+
   const handleCloseButtonClick = () => {
     setOpenAddModal(false);
     return;
   };
 
-  const handleTimeClick = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    console.log(event.target.value);
+  const handleTimeClick = (time: string) => {
+    console.log(time);
     setValues((prev) => {
-      return { ...prev, medi_time: event.target.value };
+      return { ...prev, medi_time: time };
+    });
+    console.log(values);
+  };
+
+  const handleSubmitClick = () => {
+    let mediList = medicines.filter((medicine) => {
+      return medicine.isChecked === true;
+    });
+    let mediNameList = mediList.map((medi) => {
+      return medi.name;
+    });
+    console.log(mediNameList);
+    setValues((prev) => {
+      return { ...prev, medi_name: mediNameList };
     });
     console.log(values);
   };
@@ -78,42 +101,30 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
           <ModalTitle>하루 약 기록</ModalTitle>
           <ModalCloseButton handleCloseButtonClick={handleCloseButtonClick} />
         </div>
-        <div className="flex align-items py-1 gap-2 text-xs text-gray-400">
-          <button
-            onClick={handleTimeClick}
-            value="morning"
-            className={`w-[34px] h-[34px] flex justify-center items-center rounded-full bg-${
-              values.medi_time === "morning" ? "blue-100" : "transparent"
-            } text-${
-              values.medi_time === "morning" ? "blue-500" : "gray-200"
-            } `}
+        <div className="flex align-items gap-2 text-xs text-gray-400">
+          <ModalFilterButton
+            values={values}
+            handleTimeClick={handleTimeClick}
+            time={"morning"}
           >
             아침
-          </button>
-          <button
-            onClick={handleTimeClick}
-            value="afternoon"
-            className={`w-[34px] h-[34px] flex justify-center items-center rounded-full bg-${
-              values.medi_time === "afternoon" ? "blue-200" : "transparent"
-            } text-${
-              values.medi_time === "afternoon" ? "blue-500" : "gray-200"
-            } `}
+          </ModalFilterButton>
+          <ModalFilterButton
+            values={values}
+            handleTimeClick={handleTimeClick}
+            time={"afternoon"}
           >
             점심
-          </button>
-          <button
-            onClick={handleTimeClick}
-            value="evening"
-            className={`w-[34px] h-[34px] flex justify-center items-center rounded-full bg-${
-              values.medi_time === "evening" ? "blue-200" : "transparent"
-            } text-${
-              values.medi_time === "evening" ? "blue-500" : "gray-200"
-            } `}
+          </ModalFilterButton>
+          <ModalFilterButton
+            values={values}
+            handleTimeClick={handleTimeClick}
+            time={"evening"}
           >
             저녁
-          </button>
+          </ModalFilterButton>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="w-full h-44 grid grid-cols-2 gap-2 overflow-y-auto">
           {medicines
             .filter((medi: MedicinesType) => {
               return medi.time[values.medi_time] === true;
@@ -131,15 +142,19 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
               );
             })}
         </div>
-        <div>노트</div>
+        <SemiTitle>노트</SemiTitle>
         <textarea
           name="sideEffect"
-          id="sideEffect"
+          value={values.sideEffect}
+          onChange={handleContentChange}
           placeholder="간단한 약 메모"
           className="h-1/4 p-1 border border-gray-500 outline-none rounded-sm"
         ></textarea>
         <div className="w-full h-1/5 flex items-center justify-center">
-          <button className="w-24 h-10 bg-blue-500 rounded-md text-white">
+          <button
+            onClick={handleSubmitClick}
+            className="w-24 h-10 bg-blue-500 rounded-md text-white"
+          >
             저장
           </button>
         </div>

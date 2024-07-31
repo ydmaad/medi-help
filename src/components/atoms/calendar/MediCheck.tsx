@@ -53,20 +53,22 @@ const MediCheck = ({ medicines, setMedicines, name, time, idx }: Props) => {
 
   return (
     <div
-      className={`w-full h-5/6 min-h-12 flex bg-${
-        checked ? "brand-primary-50" : "brand-gray-50"
+      className={`w-full h-14 px-3 py-2 flex ${
+        checked ? "bg-brand-primary-50" : "bg-brand-gray-50"
       } rounded-md`}
     >
       <div className="w-3/5 flex flex-col justify-center gap-1 ">
-        <div className="h-full text-xs">{mediTimes.join(", ")}</div>
-        <div className="h-full text-sm truncate">{name}</div>
+        <div className="h-full text-xs text-gray-600">
+          {mediTimes.join(", ")}
+        </div>
+        <div className="h-full text-sm text-gray-1000 truncate">{name}</div>
       </div>
       <div className="w-2/5 flex items-center justify-center ">
         <label
           htmlFor={`medicine ${idx}`}
-          className={`w-[28px] min-w-[28px] h-[28px] min-h-[28px] p-1 flex items-center justify-center rounded-sm text-3xl text-${
-            checked ? "white" : "gray-200"
-          } bg-${checked ? "brand-primary-500" : "transparent"}`}
+          className={`w-[28px] min-w-[28px] h-[28px] min-h-[28px] p-1 flex items-center justify-center rounded-sm text-3xl ${
+            checked ? "text-white" : "text-gray-200"
+          } ${checked ? "bg-brand-primary-500" : "bg-transparent"}`}
         >
           ✓
         </label>
