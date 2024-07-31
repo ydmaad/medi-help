@@ -1,8 +1,7 @@
-"use client";
-
 import React, { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
+import { useAuthStore } from "@/store/auth";
 
 interface MediRecord {
   id: string;
@@ -17,31 +16,38 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
-  user_id: string; // user_id 필드 추가
+  user_id: string;
 }
 
 interface EditMediModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
-  onUpdate: (updatedMediRecord: MediRecord) => void;
   onDelete: (id: string) => void;
+  onUpdate: (updatedMediRecord: MediRecord) => void;
   mediRecord: MediRecord;
 }
 
 const EditMediModal: React.FC<EditMediModalProps> = ({
   isOpen,
   onRequestClose,
-  onUpdate,
   onDelete,
+  onUpdate,
   mediRecord,
 }) => {
+  const { user } = useAuthStore();
   const [mediNickname, setMediNickname] = useState(mediRecord.medi_nickname);
   const [times, setTimes] = useState(mediRecord.times);
   const [notes, setNotes] = useState(mediRecord.notes);
   const [startDate, setStartDate] = useState(mediRecord.start_date);
   const [endDate, setEndDate] = useState(mediRecord.end_date);
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTimes({ ...times, [e.target.name]: e.target.checked });
+  };
+
   const handleUpdate = async () => {
+    if (!user) return;
+
     const updatedMediRecord: MediRecord = {
       ...mediRecord,
       medi_nickname: mediNickname,
@@ -52,7 +58,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
     };
 
     try {
-      const response = await axios.put(`/api/calendar/medi/${mediRecord.id}`, updatedMediRecord);
+      const response = await axios.put(`/api/calendar/medi?id=${mediRecord.id}`, updatedMediRecord);
       if (response.status === 200) {
         onUpdate(updatedMediRecord);
         onRequestClose();
@@ -61,6 +67,20 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       }
     } catch (error) {
       console.error("Failed to update medi record:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(`/api/calendar/medi?id=${mediRecord.id}`);
+      if (response.status === 200) {
+        onDelete(mediRecord.id);
+        onRequestClose();
+      } else {
+        console.error("Failed to delete medi record:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Failed to delete medi record:", error);
     }
   };
 
@@ -73,11 +93,16 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
-        <h2 className="text-2xl mb-4">Edit Medication</h2>
+        <h2 className="text-2xl mb-4">약 정보</h2>
         <div className="mb-4">
+          <p><strong>약 이름:</strong> {mediRecord.medi_name}</p>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            약 별명:
+          </label>
           <input
             type="text"
-            placeholder="약 별명(최대 6자)"
             value={mediNickname}
             onChange={(e) => setMediNickname(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -153,7 +178,6 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
           </label>
           <textarea
             value={notes}
-            placeholder="간단한 약 정보를 입력해주세요"
             onChange={(e) => setNotes(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
@@ -163,21 +187,21 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
             onClick={handleUpdate}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
-            업데이트
+            수정하기
+          </button>
+          <button
+            onClick={handleDelete}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            삭제하기
           </button>
           <button
             onClick={onRequestClose}
-            className="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             취소
           </button>
         </div>
-        <button
-          onClick={() => onDelete(mediRecord.id)}
-          className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          삭제
-        </button>
       </div>
     </Modal>
   );

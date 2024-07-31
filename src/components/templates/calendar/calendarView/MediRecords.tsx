@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddMediModal from "../calendarModal/AddMediModal";
 import EditMediModal from "../calendarModal/EditMediModal";
+import ViewMediModal from "../calendarModal/ViewMediModal";
 import { useAuthStore } from "@/store/auth";
 
 interface MediRecord {
@@ -25,6 +26,7 @@ interface MediRecord {
 const MediRecords: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
   const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { user } = useAuthStore();
@@ -34,7 +36,6 @@ const MediRecords: React.FC = () => {
       try {
         if (user) {
           const response = await axios.get(`/api/calendar/medi?user_id=${user.id}`);
-          console.log('Fetched records:', response.data.medicationRecords); // 추가된 로그
           setMediRecords(response.data.medicationRecords);
         }
       } catch (error) {
@@ -68,7 +69,7 @@ const MediRecords: React.FC = () => {
           className="bg-gray-100 p-4 rounded shadow mb-2 cursor-pointer"
           onClick={() => {
             setSelectedMediRecord(record);
-            setIsEditModalOpen(true);
+            setIsViewModalOpen(true);
           }}
         >
           <div>
@@ -84,8 +85,21 @@ const MediRecords: React.FC = () => {
       </button>
 
       {selectedMediRecord && (
-        <EditMediModal
+        <ViewMediModal
           key={selectedMediRecord.id}
+          isOpen={isViewModalOpen}
+          onRequestClose={() => setIsViewModalOpen(false)}
+          onEditClick={() => {
+            setIsViewModalOpen(false);
+            setIsEditModalOpen(true);
+          }}
+          mediRecord={selectedMediRecord}
+        />
+      )}
+
+      {selectedMediRecord && (
+        <EditMediModal
+          key={selectedMediRecord.id + "-edit"}
           isOpen={isEditModalOpen}
           onRequestClose={() => setIsEditModalOpen(false)}
           onDelete={handleDeleteMediRecord}
@@ -93,6 +107,7 @@ const MediRecords: React.FC = () => {
           mediRecord={selectedMediRecord}
         />
       )}
+
       <AddMediModal
         isOpen={isAddModalOpen}
         onRequestClose={() => setIsAddModalOpen(false)}
