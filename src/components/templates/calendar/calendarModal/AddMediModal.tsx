@@ -55,7 +55,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       }
     };
 
-    // fetchMediNames();
+    fetchMediNames();
   }, []);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +125,10 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
             list="mediNames"
             placeholder="약 이름을 검색하세요"
             value={mediName}
-            onChange={(e) => setMediName(e.target.value)}
+            onChange={(e) => {
+              setMediName(e.target.value);
+              setSearchTerm(e.target.value); // 검색어 설정
+            }}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
           <datalist id="mediNames">
