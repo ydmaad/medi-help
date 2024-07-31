@@ -45,7 +45,7 @@ const fetchPost = async ({
     return data;
   } catch (error) {
     console.error("게시글 등록 오류 =>", error);
-    alert("노노 등록 실패");
+    alert("게시글 등록 실패");
   }
 };
 
