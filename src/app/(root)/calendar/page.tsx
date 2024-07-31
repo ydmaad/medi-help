@@ -10,7 +10,7 @@ const Page = () => {
       <div className="w-1/4 p-4 bg-gray-100 overflow-y-auto">
         <MediRecords />
       </div>
-      <div className="w-3/4 p-4">
+      <div className="w-3/4">
         <CalendarView />
       </div>
     </div>

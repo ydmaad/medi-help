@@ -25,7 +25,11 @@ interface AddMediModalProps {
   onAdd: (newMediRecord: MediRecord) => void;
 }
 
-const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onAdd }) => {
+const AddMediModal: React.FC<AddMediModalProps> = ({
+  isOpen,
+  onRequestClose,
+  onAdd,
+}) => {
   const [mediName, setMediName] = useState("");
   const [mediNickname, setMediNickname] = useState("");
   const [mediNames, setMediNames] = useState<string[]>([]);
@@ -43,13 +47,15 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
     const fetchMediNames = async () => {
       try {
         const response = await axios.get("/api/calendar/medi/names");
-        setMediNames(response.data.map((item: { itemName: string }) => item.itemName));
+        setMediNames(
+          response.data.map((item: { itemName: string }) => item.itemName)
+        );
       } catch (error) {
         console.error("Failed to fetch medi names:", error);
       }
     };
 
-    fetchMediNames();
+    // fetchMediNames();
   }, []);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +96,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
   };
 
   const filteredMediNames = searchTerm
-    ? mediNames.filter(name =>
+    ? mediNames.filter((name) =>
         name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : mediNames;
@@ -129,7 +135,9 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
           </datalist>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">복용 시작일:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            복용 시작일:
+          </label>
           <input
             type="date"
             value={startDate}
@@ -138,7 +146,9 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">복용 종료일:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            복용 종료일:
+          </label>
           <input
             type="date"
             value={endDate}
@@ -147,21 +157,31 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">복용 시간:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            복용 시간:
+          </label>
           <div className="flex space-x-4 justify-between w-full">
             <button
               type="button"
               onClick={() => setTimes({ ...times, morning: !times.morning })}
               className={`px-4 py-2 rounded-lg ${
-                times.morning ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} w-1/3`}
+                times.morning
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              } w-1/3`}
             >
               아침
             </button>
             <button
               type="button"
-              onClick={() => setTimes({ ...times, afternoon: !times.afternoon })}
+              onClick={() =>
+                setTimes({ ...times, afternoon: !times.afternoon })
+              }
               className={`px-4 py-2 rounded-lg ${
-                times.afternoon ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} w-1/3`}
+                times.afternoon
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              } w-1/3`}
             >
               점심
             </button>
@@ -169,14 +189,19 @@ const AddMediModal: React.FC<AddMediModalProps> = ({ isOpen, onRequestClose, onA
               type="button"
               onClick={() => setTimes({ ...times, evening: !times.evening })}
               className={`px-4 py-2 rounded-lg ${
-                times.evening ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} w-1/3`}
+                times.evening
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              } w-1/3`}
             >
               저녁
             </button>
           </div>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">메모:</label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            메모:
+          </label>
           <textarea
             value={notes}
             placeholder="간단한 약 정보를 입력해주세요"
