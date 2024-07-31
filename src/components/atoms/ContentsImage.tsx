@@ -7,17 +7,15 @@ interface ContentsImageProps {
 }
 
 const ContentsImage = ({ src }: ContentsImageProps) => {
+  if (!src) return null;
+
   return (
     <div className="w-[106px] h-[106px]">
-      {src ? (
-        <img
-          src={src}
-          alt="contents"
-          className="w-full h-full rounded-[4px] object-cover"
-        />
-      ) : (
-        <div className="w-full h-full rounded-[4px] bg-transparent" />
-      )}
+      <img
+        src={src}
+        alt="contents"
+        className="w-[106px] h-[106px] rounded-[4px] object-cover"
+      />
     </div>
   );
 };

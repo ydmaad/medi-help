@@ -89,13 +89,56 @@ const page = () => {
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
-      <ContentsCard
-        hotTitle="🔥️ HOT"
-        newTitle={null} /*✨ NEW 로 변경해서 사용 가능 */
-        communityTitle="커뮤니티 제목"
-        imageSrc={null}
-        subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
-      />
+      <div className="flex justify-center items-center">
+        {/* 첫 번째 ContentsCard 3개 세로 정렬 */}
+        <div className="grid grid-cols-1 gap-4">
+          <ContentsCard
+            hotTitle="🔥️ HOT"
+            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
+            communityTitle="커뮤니티 제목 1"
+            imageSrc="https://via.placeholder.com/100"
+            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+          />
+          <ContentsCard
+            hotTitle="🔥️ HOT"
+            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
+            communityTitle="커뮤니티 제목 2"
+            imageSrc={null}
+            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+          />
+          <ContentsCard
+            hotTitle="🔥️ HOT"
+            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
+            communityTitle="커뮤니티 제목 3"
+            imageSrc={null}
+            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+          />
+        </div>
+        {/* 나중에 커뮤니티 데이터 받아오는 로직 작성 이후 변경 최신순과 인기순 정렬로 진행 예정 */}
+        <div className="grid grid-cols-1 gap-4 ">
+          <ContentsCard
+            hotTitle={null}
+            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
+            communityTitle="커뮤니티 제목 A"
+            imageSrc="https://via.placeholder.com/100"
+            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+          />
+          <ContentsCard
+            hotTitle={null}
+            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
+            communityTitle="커뮤니티 제목 B"
+            imageSrc={null}
+            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+          />
+          <ContentsCard
+            hotTitle={null}
+            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
+            communityTitle="커뮤니티 제목 C"
+            imageSrc={null}
+            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+          />
+        </div>
+      </div>
     </>
   );
 };
