@@ -20,3 +20,16 @@
 .fc-toolbar-chunk {
   display: flex;
 }
+
+@font-face {
+  font-family: "Pretendard-Regular";
+  src: url("https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* 전체 애플리케이션에서 사용하기 위한 기본 폰트 설정 */
+body {
+  font-family: "Pretendard-Regular", sans-serif; /* 기본 폰트 설정 */
+}
