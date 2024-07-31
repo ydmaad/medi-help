@@ -37,7 +37,7 @@ const Header = () => {
     };
 
     checkAndSetUser();
-  }, [user, setUser]);
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -48,6 +48,7 @@ const Header = () => {
     <header className="flex flex-row items-center justify-between p-4 bg-brand-gray-100 h-[67px]">
       <Logo />
       <Navigation />
+      {/* onLogout 내에서만 함수만들고 실행하도록. props보다는. 상태관리측면 */}
       <LoginNav onLogout={handleLogout} />
     </header>
   );
