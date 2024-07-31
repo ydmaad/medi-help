@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  webpack: true,
   webpack: (config, options) => {
     config.cache = false;
     return config;

@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalTitle from "@/components/atoms/calendar/ModalTitle";
 import ModalCloseButton from "@/components/atoms/calendar/ModalCloseButton";
 import SemiTitle from "@/components/atoms/calendar/SemiTitle";
 import MediCheck from "@/components/atoms/calendar/MediCheck";
 import { ValueType } from "@/types/calendar_values";
+import axios from "axios";
 
 type MedicinesType = {
   name: string;
@@ -22,9 +23,33 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     sideEffect: "",
   });
 
-  const [medicines, SetMedicines] = useState<MedicinesType[]>([
-    { name: "아스피린", isChecked: false },
-  ]);
+  const [medicines, SetMedicines] = useState<MedicinesType[]>([]);
+
+  useEffect(() => {
+    const getMedicines = async () => {
+      try {
+        const { data } = await axios.get("/api/calendar/medi");
+        console.log(data);
+        data.medicationRecords.map((record: any) => {
+          SetMedicines((prev) => {
+            return [
+              ...prev,
+              {
+                name: record.medi_nickname,
+                time: record.times,
+                isChecked: false,
+              },
+            ];
+          });
+        });
+      } catch (error) {
+        console.log("medi axios =>", error);
+      }
+    };
+
+    getMedicines();
+    console.log(medicines);
+  }, []);
 
   const handleCloseButtonClick = () => {
     setOpenAddModal(false);
@@ -33,7 +58,7 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
 
   return (
     <div
-      className={`absolute w-full h-full min-h-screen bg-black/[0.6] pt-32 flex justify-center z-10 backdrop-blur-sm ${
+      className={`absolute w-3/4 h-full min-h-screen bg-black/[0.6] pt-32 flex justify-center z-10 backdrop-blur-sm ${
         openAddModal ? "block" : "hidden"
       }`}
     >
@@ -54,23 +79,26 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <MediCheck
-            medicines={medicines}
-            setMedicines={SetMedicines}
-            name={"아스피린"}
-          />
-          <MediCheck
-            medicines={medicines}
-            setMedicines={SetMedicines}
-            name={"아스피린"}
-          />
+          {medicines.map((medicine: MedicinesType, idx: number) => {
+            if (medicine) {
+              return (
+                <MediCheck
+                  medicines={medicines}
+                  setMedicines={SetMedicines}
+                  name={medicine.name}
+                  idx={idx}
+                  key={medicine.name}
+                />
+              );
+            }
+          })}
         </div>
         <div>노트</div>
         <textarea
           name="sideEffect"
           id="sideEffect"
           placeholder="간단한 약 메모"
-          className="h-1/4 border border-gray-500 outline-none"
+          className="h-1/4 p-1 border border-gray-500 outline-none rounded-sm"
         ></textarea>
         <div className="w-full h-1/5 flex items-center justify-center">
           <button className="w-24 h-10 bg-blue-500 rounded-md text-white">
