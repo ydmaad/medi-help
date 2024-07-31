@@ -83,7 +83,10 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center">
                         <Image
-                          src={item.user.avatar as string}
+                          src={
+                            (item.user.avatar as string) ||
+                            "/default-avatar.jpg"
+                          }
                           alt="user_img"
                           width={20}
                           height={20}
