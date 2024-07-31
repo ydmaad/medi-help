@@ -10,6 +10,7 @@ import axios from "axios";
 type MedicinesType = {
   name: string;
   isChecked: boolean;
+  time: { [key: string]: boolean };
 };
 interface Props {
   openAddModal: boolean;
@@ -18,7 +19,7 @@ interface Props {
 const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
   const [values, setValues] = useState<ValueType>({
     user_id: "test@test.com",
-    medi_time: "",
+    medi_time: "아침",
     medi_name: [],
     sideEffect: "",
   });
@@ -56,6 +57,16 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     return;
   };
 
+  const handleTimeClick = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
+    console.log(event.target.value);
+    setValues((prev) => {
+      return { ...prev, medi_time: event.target.value };
+    });
+    console.log(values);
+  };
+
   return (
     <div
       className={`absolute w-3/4 h-full min-h-screen bg-black/[0.6] pt-32 flex justify-center z-10 backdrop-blur-sm ${
@@ -68,30 +79,57 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
           <ModalCloseButton handleCloseButtonClick={handleCloseButtonClick} />
         </div>
         <div className="flex align-items py-1 gap-2 text-xs text-gray-400">
-          <div className="w-[34px] h-[34px] flex justify-center items-center rounded-full bg-blue-200 text-blue-800 ">
+          <button
+            onClick={handleTimeClick}
+            value="morning"
+            className={`w-[34px] h-[34px] flex justify-center items-center rounded-full bg-${
+              values.medi_time === "morning" ? "blue-100" : "transparent"
+            } text-${
+              values.medi_time === "morning" ? "blue-500" : "gray-200"
+            } `}
+          >
             아침
-          </div>
-          <div className="w-[34px] h-[34px] flex justify-center items-center bg-blue-200 text-blue-800 rounded-full">
+          </button>
+          <button
+            onClick={handleTimeClick}
+            value="afternoon"
+            className={`w-[34px] h-[34px] flex justify-center items-center rounded-full bg-${
+              values.medi_time === "afternoon" ? "blue-200" : "transparent"
+            } text-${
+              values.medi_time === "afternoon" ? "blue-500" : "gray-200"
+            } `}
+          >
             점심
-          </div>
-          <div className="w-[34px] h-[34px] flex justify-center items-center bg-blue-200 text-blue-800 rounded-full">
+          </button>
+          <button
+            onClick={handleTimeClick}
+            value="evening"
+            className={`w-[34px] h-[34px] flex justify-center items-center rounded-full bg-${
+              values.medi_time === "evening" ? "blue-200" : "transparent"
+            } text-${
+              values.medi_time === "evening" ? "blue-500" : "gray-200"
+            } `}
+          >
             저녁
-          </div>
+          </button>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          {medicines.map((medicine: MedicinesType, idx: number) => {
-            if (medicine) {
+          {medicines
+            .filter((medi: MedicinesType) => {
+              return medi.time[values.medi_time] === true;
+            })
+            .map((medicine: MedicinesType, idx: number) => {
               return (
                 <MediCheck
                   medicines={medicines}
                   setMedicines={SetMedicines}
                   name={medicine.name}
+                  time={medicine.time}
                   idx={idx}
-                  key={medicine.name}
+                  key={idx}
                 />
               );
-            }
-          })}
+            })}
         </div>
         <div>노트</div>
         <textarea

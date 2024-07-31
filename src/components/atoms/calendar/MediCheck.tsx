@@ -1,24 +1,46 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type MedicinesType = {
   name: string;
   isChecked: boolean;
+  time: { [key: string]: boolean };
 };
 
 interface Props {
   medicines: MedicinesType[];
   setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
   name: string;
+  time: { [key: string]: boolean };
   idx: number;
 }
-const MediCheck = ({ medicines, setMedicines, name, idx }: Props) => {
+const MediCheck = ({ medicines, setMedicines, name, time, idx }: Props) => {
   const [checked, setChecked] = useState<boolean>();
+  const [mediTimes, setMediTimes] = useState<string[]>([]);
+
+  const TimeName: { [key: string]: string } = {
+    morning: "아침",
+    afternoon: "점심",
+    evening: "저녁",
+  };
+
+  useEffect(() => {
+    console.log(Object.keys(time));
+    let timeForMedicine = Object.keys(time).filter((times) => {
+      return time[times] === true;
+    });
+    setMediTimes(
+      timeForMedicine.map((time) => {
+        return TimeName[time];
+      })
+    );
+  }, []);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
     const updateMedicines = medicines.map((medi: MedicinesType) => {
       if (medi.name === name) {
-        return { name, isChecked: event.target.checked };
+        return { ...medi, isChecked: event.target.checked };
       }
       return medi;
     });
@@ -36,7 +58,7 @@ const MediCheck = ({ medicines, setMedicines, name, idx }: Props) => {
       } rounded-md`}
     >
       <div className="w-3/5 flex flex-col justify-center gap-1 ">
-        <div className="h-full text-xs">아침</div>
+        <div className="h-full text-xs">{mediTimes.join(", ")}</div>
         <div className="h-full text-sm truncate">{name}</div>
       </div>
       <div className="w-2/5 flex items-center justify-center ">
