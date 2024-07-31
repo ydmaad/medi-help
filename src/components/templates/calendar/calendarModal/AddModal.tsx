@@ -1,27 +1,26 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ModalTitle from "@/components/atoms/calendar/ModalTitle";
-import ModalCloseButton from "@/components/atoms/calendar/ModalCloseButton";
-import SemiTitle from "@/components/atoms/calendar/SemiTitle";
-import MediCheck from "@/components/atoms/calendar/MediCheck";
-import { ValueType } from "@/types/calendar_values";
+import ModalTitle from "@/components/atoms/ModalTitle";
+import ModalCloseButton from "@/components/atoms/ModalCloseButton";
+import SemiTitle from "@/components/atoms/SemiTitle";
+import MediCheck from "@/components/atoms/MediCheck";
+import { ValueType, MedicinesType, EventsType } from "@/types/calendar";
 import axios from "axios";
-import ModalFilterButton from "@/components/atoms/calendar/ModalFilterButton";
+import ModalFilterButton from "@/components/atoms/ModalFilterButton";
+import { COLOR_OF_TIME } from "@/constant/constant";
+import ModalButton from "@/components/atoms/ModalButton";
 
-type MedicinesType = {
-  name: string;
-  isChecked: boolean;
-  time: { [key: string]: boolean };
-};
 interface Props {
   openAddModal: boolean;
   setOpenAddModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setEvents: React.Dispatch<React.SetStateAction<EventsType[]>>;
 }
-const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
+const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
   const [values, setValues] = useState<ValueType>({
     medi_time: "morning",
     medi_name: [],
     side_effect: "",
+    start_date: new Date(),
   });
 
   const [medicines, SetMedicines] = useState<MedicinesType[]>([]);
@@ -38,7 +37,6 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
               {
                 name: record.medi_nickname,
                 time: record.times,
-                isChecked: false,
               },
             ];
           });
@@ -51,6 +49,7 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     getMedicines();
   }, []);
 
+  // side_effect 입력란 onChange 함수
   const handleContentChange = (
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
@@ -60,11 +59,12 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     });
   };
 
+  // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenAddModal(false);
-    return;
   };
 
+  // time Category onClick 함수
   const handleTimeClick = (time: string) => {
     console.log(time);
     setValues((prev) => {
@@ -72,11 +72,26 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
     });
   };
 
+  // 저장 버튼 onClick 함수
   const handleSubmitClick = () => {
     const postCalendar = async (value: ValueType) => {
       try {
         const res = await axios.post("/api/calendar", value);
-        console.log(res);
+
+        value.medi_name.map((name: string) => {
+          setEvents((prev) => {
+            return [
+              ...prev,
+              {
+                title: name,
+                start: value.start_date,
+                backgroundColor: COLOR_OF_TIME[value.medi_time],
+                borderColor: COLOR_OF_TIME[value.medi_time],
+                textColor: "white",
+              },
+            ];
+          });
+        });
         return res;
       } catch (error) {
         console.log("Post Error", error);
@@ -90,6 +105,7 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
         medi_time: "morning",
         medi_name: [],
         side_effect: "",
+        start_date: null,
       });
     }
   };
@@ -155,12 +171,7 @@ const AddModal = ({ openAddModal, setOpenAddModal }: Props) => {
           className="h-1/4 p-1 border border-gray-500 outline-none rounded-sm"
         ></textarea>
         <div className="w-full h-1/5 flex items-center justify-center">
-          <button
-            onClick={handleSubmitClick}
-            className="w-24 h-10 bg-blue-500 rounded-md text-white"
-          >
-            저장
-          </button>
+          <ModalButton handleSubmitClick={handleSubmitClick}>저장</ModalButton>
         </div>
       </div>
     </div>

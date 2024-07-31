@@ -1,4 +1,4 @@
-import { ValueType } from "@/types/calendar_values";
+import { ValueType } from "@/types/calendar";
 import React from "react";
 interface Props {
   values: ValueType;

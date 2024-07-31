@@ -1,6 +1,7 @@
 "use client";
-import { ValueType } from "@/types/calendar_values";
+import { ValueType } from "@/types/calendar";
 import React, { useEffect, useState } from "react";
+import { NAME_OF_TIME } from "@/constant/constant";
 
 interface Props {
   values: ValueType;
@@ -13,20 +14,14 @@ const MediCheck = ({ values, setValues, name, time, idx }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
 
-  const TimeName: { [key: string]: string } = {
-    morning: "아침",
-    afternoon: "점심",
-    evening: "저녁",
-  };
-
   useEffect(() => {
     console.log(Object.keys(time));
-    let timeForMedicine = Object.keys(time).filter((times) => {
+    let timeOfMedicine = Object.keys(time).filter((times) => {
       return time[times] === true;
     });
     setMediTimes(
-      timeForMedicine.map((time) => {
-        return TimeName[time];
+      timeOfMedicine.map((time) => {
+        return NAME_OF_TIME[time];
       })
     );
   }, []);

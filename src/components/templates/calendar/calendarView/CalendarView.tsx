@@ -8,31 +8,14 @@ import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
 import TestModal from "../calendarModal/TestModal";
 import AddModal from "../calendarModal/AddModal";
-
-// type 파일 - eventsType, valuesType,
-// constant 폴더 및 파일 만들어서 정리
-// event props 넘겨서 상태관리 해주기
-// react-modal 로 변경
-
-type eventsType = {
-  title: string;
-  start: Date;
-  backgroundColor: string;
-  borderColor: string;
-  textColor: string;
-};
+import { EventsType } from "@/types/calendar";
+import { COLOR_OF_TIME } from "@/constant/constant";
 
 const CalendarView = () => {
-  const [events, setEvents] = useState<eventsType[]>([]);
+  const [events, setEvents] = useState<EventsType[]>([]);
   const [openAddModal, setOpenAddModal] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [calendarId, setCalendarId] = useState<string>("");
-
-  const colorForTime: { [key: string]: string } = {
-    morning: "#FFD9D9",
-    afternoon: "#FEE6C9",
-    evening: "#D2F0FF",
-  };
 
   useEffect(() => {
     const getCalendarData = async () => {
@@ -41,15 +24,15 @@ const CalendarView = () => {
         console.log(data);
         {
           data.map((el: any) => {
-            el.medi_name.map((name: string, idx: number) => {
+            el.medi_name.map((name: string) => {
               setEvents((prev) => {
                 return [
                   ...prev,
                   {
                     title: name,
-                    start: el.created_at,
-                    backgroundColor: colorForTime[el.medi_time],
-                    borderColor: colorForTime[el.medi_time],
+                    start: el.start_date,
+                    backgroundColor: COLOR_OF_TIME[el.medi_time],
+                    borderColor: COLOR_OF_TIME[el.medi_time],
                     textColor: "white",
                   },
                 ];
@@ -68,9 +51,8 @@ const CalendarView = () => {
   console.log(events);
 
   const handleEventClick = (event: EventClickArg) => {
-    console.log(event.event._def.publicId);
-    setCalendarId(event.event._def.publicId);
-    setOpenModal(true);
+    setOpenAddModal(true);
+    console.log(event.view.calendar.getDate());
   };
 
   const handleButtonClick = () => {
@@ -84,7 +66,11 @@ const CalendarView = () => {
         setOpenModal={setOpenModal}
         calendarId={calendarId}
       />
-      <AddModal openAddModal={openAddModal} setOpenAddModal={setOpenAddModal} />
+      <AddModal
+        openAddModal={openAddModal}
+        setOpenAddModal={setOpenAddModal}
+        setEvents={setEvents}
+      />
       <div className="relative p-8 w-11/12 h-7/12 fc-button ">
         <button
           onClick={handleButtonClick}
@@ -93,10 +79,11 @@ const CalendarView = () => {
           기록추가 +
         </button>
         <FullCalendar
-          plugins={[dayGridPlugin]}
+          plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={events}
-          eventClick={handleEventClick}
+          dateClick={handleEventClick}
+          selectable={true}
           eventOverlap={false}
           displayEventTime={false}
           headerToolbar={{
@@ -106,6 +93,7 @@ const CalendarView = () => {
           }}
           locale="en"
           contentHeight={"auto"}
+          fixedWeekCount={false}
         />
       </div>
     </>
