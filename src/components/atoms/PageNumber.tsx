@@ -10,7 +10,7 @@ const PageNumber = ({ number, onClick, selected }: PageNumberProps) => {
   return (
     <button
       onClick={() => onClick(number)}
-      className={`page-number ${
+      className={`page-number text-[14px] p-4 ${
         selected ? "text-brand-primary-600" : "text-brand-gray-400"
       }`}
     >

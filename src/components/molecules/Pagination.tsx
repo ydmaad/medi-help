@@ -29,36 +29,49 @@ const Pagination = ({
   };
 
   const renderPageNumbers = () => {
-    return [...Array(totalPages)].map((_, index) => {
-      const pageNumber = index + 1;
-      return (
+    const pageNumbers = [];
+    const maxVisiblePages = 5; // 보이는 페이지 숫자 개수
+    const halfVisible = Math.floor(maxVisiblePages / 2);
+
+    let startPage = Math.max(1, currentPage - halfVisible);
+    let endPage = Math.min(totalPages, currentPage + halfVisible);
+
+    // 페이지 범위 조정
+    if (endPage - startPage < maxVisiblePages - 1) {
+      if (startPage === 1) {
+        endPage = Math.min(maxVisiblePages, totalPages);
+      } else {
+        startPage = Math.max(1, endPage - (maxVisiblePages - 1));
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
         <PageNumber
-          key={pageNumber}
-          number={pageNumber}
+          key={i}
+          number={i}
           onClick={onPageChange}
-          selected={currentPage === pageNumber}
+          selected={currentPage === i}
         />
       );
-    });
+    }
+
+    return pageNumbers;
   };
 
   return (
-    <div className="pagination">
+    <div className="pagination flex justify-center items-center space-x-2">
       <PageButton
         onClick={handlePrev}
         disabled={currentPage === 1}
         icon={prevIcon}
-      >
-        이전
-      </PageButton>
+      />
       {renderPageNumbers()}
       <PageButton
         onClick={handleNext}
         disabled={currentPage === totalPages}
         icon={nextIcon}
-      >
-        다음
-      </PageButton>
+      />
     </div>
   );
 };
