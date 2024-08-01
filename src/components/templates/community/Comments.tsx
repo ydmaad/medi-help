@@ -197,31 +197,41 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
   return (
     <>
       {/* TODO : 여기에 현재 로그인 된 유저의 아바타와 닉네임이 보이도록 할 예정!! */}
-      <div className="max-w-2xl  p-4 bg-white shadow-md rounded-lg">
-        <h2 className="text-xl font-semibold mb-4">댓글</h2>
 
-        <div className="mb-4">
-          <textarea
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder={`댓글을 입력해주세요.\n게시글과 무관한 악성 댓글은 삭제될 수 있습니다.`}
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          ></textarea>
+      <div className="max-w-[1000px] p-4 bg-white  border border-gray-300  rounded-lg">
+        <div className="flex items-center mb-3">
+          <Image
+            src={user?.avatar || "/default-avatar.jpg"}
+            alt={"유저 이미지"}
+            width={40}
+            height={40}
+            className="rounded-full mr-3 aspect-square object-cover"
+          />
+          <h2 className="text-l mt-[15px] mb-4">{user?.nickname}</h2>
         </div>
 
-        <button
-          onClick={handleAddComment}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          댓글 달기
-        </button>
+        <textarea
+          className="w-full px-2  focus:outline-none  resize-none"
+          placeholder={`댓글을 입력해주세요.\n게시글과 무관한 악성 댓글은 삭제될 수 있습니다.`}
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        ></textarea>
+
+        <div className="flex justify-end">
+          <button
+            onClick={handleAddComment}
+            className="w-[90px] bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            작성
+          </button>
+        </div>
       </div>
 
       {comment?.map((ment) => {
         return (
           <div
             key={ment.id}
-            className="my-2 p-4 bg-slate-200 rounded-lg shadow-md w-[500px]"
+            className="my-4 p-4 border border-gray-300 rounded-lg  max-w-[1000px]"
           >
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
@@ -268,7 +278,7 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
                   // 일반 모드일 떼(false) - 원래 댓글 내용 표시
                   <div className="mt-1">{ment.comment}</div>
                 )}
-                <div className="text-gray-500">
+                <div className="text-gray-500 mt-4 text-sm">
                   {new Date(ment.created_at).toLocaleString()}
                 </div>
               </div>
@@ -276,18 +286,19 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
                 {!isEdit[ment.id] && (
                   <>
                     <button
+                      onClick={() => handleDelete(ment.id, ment.user.id)}
+                      className="text-sm text-gray-500 pr-2"
+                    >
+                      삭제
+                    </button>
+                    <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
+                    <button
                       onClick={() =>
                         handleEdit(ment.id, ment.comment, ment.user.id)
                       }
-                      className="text-blue-500 hover:text-blue-700"
+                      className="text-sm text-gray-500 pl-2"
                     >
                       수정
-                    </button>
-                    <button
-                      onClick={() => handleDelete(ment.id, ment.user.id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      삭제
                     </button>
                   </>
                 )}
