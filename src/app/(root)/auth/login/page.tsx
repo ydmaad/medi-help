@@ -3,12 +3,14 @@
 import { useAuthStore } from "@/store/auth";
 import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export default function LoginPage() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const { setUser } = useAuthStore();
+  const router = useRouter();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,47 +22,38 @@ export default function LoginPage() {
       return;
     }
 
-    // 스키마의 user 정보를 불러오는 로직. try-catch문으로 변경하기
-    const { data: authData, error: authError } =
-      await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
+    // 스키마의 user 정보를 불러오는 로직
+    try {
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
 
-    if (authError) {
-      alert(authError.message);
-      return;
+      if (authError) throw authError;
+
+      // auth 스키마의 user테이블의 id 바탕으로 public 스키마의 user 테이블에서 유저정보 가져오기
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", authData.user.id)
+        .single();
+
+      if (userError) throw userError;
+
+      // userData를 store에 저장(주스탠드)
+      setUser(userData);
+
+      // 로그인 성공 후 메인 페이지로 리다이렉트
+      router.push("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "로그인 중 오류가 발생했습니다."
+      );
     }
-
-    // auth스키마의 user테이블의 id 바탕으로 public 스키마의 user테이블에서 유저정보 가져오기
-    const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", authData.user.id)
-      .single();
-
-    if (userError) {
-      console.error("User data fetch error:", userError);
-      alert("사용자 정보를 가져오는 데 실패했습니다.");
-      return;
-    }
-
-    // userData를 store에 저장(주스탠드)
-    setUser(userData);
-
-    // 1. supabase getUser정보 불러오기 (auth스키마)
-    // 2. auth스키마의 user테이블의 id 바탕으로 public 스키마의 user테이블에서 유저정보 가져오기
-    // 3. 주스탠드 유저정보 저장해놓을 store 만들기
-    // 4. 1번에서 불러온 정보 넣어주기
-    // 문제점 ? 로그인했을때 주스탠드 넣어주는 로직이다보니 다른페이지 가서 새로고침 됨. 주스탠드 스토어 날라감
-    // 해결점 ? * 공용컴포넌트 있으면 어떤 페이지에서든 사용할 수 있음
-    //           ex.헤더 컴포넌트 렌더링 될때마다 최초에 1~4번 로직 무조건 1번씩 실행시켜주기
-    //           주스탠드 전역상태 관리에서 로그인 안되었을 경우
-    //         * 공용컴포넌트 없으면 1~4번 로직 훅으로 만들기
-    //           - 새로고침시 로그인 유지, 로그인 정보 필요할시 최상단에서 훅 실행
-    //           - 실행되는 컴포넌트 최초 1번은 1~4번 로직 실행되어 전역상태 관리가 됨
-
-    // router.replace("/");
   };
 
   return (
