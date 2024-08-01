@@ -7,10 +7,15 @@ import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 export default function SignUpPage() {
+  const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [error, setError] = useState({
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [validationStatus, setValidationStatus] = useState({
+    nickname: "",
+    email: "",
     password: "",
     passwordConfirm: "",
   });
@@ -22,61 +27,66 @@ export default function SignUpPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-    if (e.target.value.length < 6) {
-      setError({
-        ...error,
-        password: "비밀번호는 최소 6자 이상입니다.",
-      });
+  const validateNickname = (value: string) => {
+    if (value.length >= 2 && value.length <= 6) {
+      setValidationStatus((prev) => ({ ...prev, nickname: "success" }));
     } else {
-      setError({
-        ...error,
-        password: "",
-      });
+      setValidationStatus((prev) => ({ ...prev, nickname: "error" }));
     }
   };
 
-  const onChangePasswordConfirm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordConfirm(e.target.value);
-    if (e.target.value.length < 6) {
-      setError({
-        ...error,
-        passwordConfirm: "비밀번호 확인은 최소 6자 이상입니다.",
-      });
+  const validateEmail = async (value: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(value)) {
+      // 실제로는 서버에 중복 확인 요청을 보내야 합니다.
+      setValidationStatus((prev) => ({ ...prev, email: "success" }));
     } else {
-      setError({
-        ...error,
-        passwordConfirm: "",
-      });
+      setValidationStatus((prev) => ({ ...prev, email: "error" }));
+    }
+  };
+
+  const validatePassword = (value: string) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/;
+    if (passwordRegex.test(value)) {
+      setValidationStatus((prev) => ({ ...prev, password: "success" }));
+    } else {
+      setValidationStatus((prev) => ({ ...prev, password: "error" }));
+    }
+  };
+
+  const validatePasswordConfirm = (value: string) => {
+    if (value === password && value !== "") {
+      setValidationStatus((prev) => ({ ...prev, passwordConfirm: "success" }));
+    } else {
+      setValidationStatus((prev) => ({ ...prev, passwordConfirm: "error" }));
     }
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // setLoading(true);
 
-    if (email === "" || password === "" || passwordConfirm === "") {
+    if (
+      nickname === "" ||
+      email === "" ||
+      password === "" ||
+      passwordConfirm === ""
+    ) {
       alert("모든 항목을 입력해주세요.");
-      // setLoading(false);
       return;
     }
 
     if (password !== passwordConfirm) {
-      setError((prev) => ({
-        ...prev,
-        passwordConfirm: "비밀번호가 일치하지 않습니다.",
-      }));
-      // setLoading(false);
+      setValidationStatus((prev) => ({ ...prev, passwordConfirm: "error" }));
+      return;
+    }
+
+    if (!agreeTerms || !agreePrivacy) {
+      alert("이용약관과 개인정보처리방침에 동의해주세요.");
       return;
     }
 
     try {
-      // Supabase를 사용하여 회원가입
       const { data: signUpData, error: signUpError } =
         await supabase.auth.signUp({
           email,
@@ -88,11 +98,11 @@ export default function SignUpPage() {
       }
 
       if (signUpData.user) {
-        // 사용자 추가 정보를 데이터베이스에 저장
         const { error: insertError } = await supabase.from("users").insert([
           {
             id: signUpData.user.id,
             email,
+            nickname,
             avatar: "",
           },
         ]);
@@ -106,76 +116,162 @@ export default function SignUpPage() {
       }
     } catch (error: any) {
       console.error("회원가입 중 에러 발생:", error);
-      setError((prev) => ({
-        ...prev,
-        submit: error.message || "회원가입 중 문제가 발생했습니다.",
-      }));
-    } finally {
-      // setLoading(false);
+      alert(error.message || "회원가입 중 문제가 발생했습니다.");
     }
   };
 
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col gap-y-2 border-2 w-96 items-center"
+      className="flex flex-col gap-y-4 w-96 mx-auto mt-8"
     >
-      <div className="w-full flex items-center justify-between p-4">
-        <label htmlFor="email" className="mr-2">
-          이메일
-        </label>
+      <h1 className="text-2xl font-bold text-center mb-4">회원 가입</h1>
+
+      <div className="flex flex-col">
+        <label htmlFor="nickname">닉네임</label>
         <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={onChangeEmail}
-          placeholder="이메일을 입력하세요."
-          className="border-2 border-gray-300 rounded-md p-1"
+          type="text"
+          id="nickname"
+          value={nickname}
+          onChange={(e) => {
+            setNickname(e.target.value);
+            validateNickname(e.target.value);
+          }}
+          placeholder="닉네임 설정"
+          className={`border p-2 rounded ${
+            validationStatus.nickname === "error" ? "border-red-500" : ""
+          }`}
         />
+        {validationStatus.nickname === "success" && (
+          <p className="text-green-500 mt-1">사용할 수 있는 닉네임입니다.</p>
+        )}
+        {validationStatus.nickname === "error" && (
+          <p className="text-red-500 mt-1">닉네임은 2~6자 사이여야 합니다.</p>
+        )}
       </div>
-      <div className="w-full flex items-center justify-between p-4">
-        <label htmlFor="password" className="mr-2">
-          비밀번호
-        </label>
+
+      <div className="flex flex-col">
+        <label htmlFor="email">이메일 입력</label>
+        <div className="flex">
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              validateEmail(e.target.value);
+            }}
+            placeholder="example@도메인.com"
+            className={`border p-2 rounded flex-grow ${
+              validationStatus.email === "error" ? "border-red-500" : ""
+            }`}
+          />
+          <button
+            type="button"
+            onClick={() => validateEmail(email)}
+            className="ml-2 bg-brand-gray-50 text-brand-gray-600 px-4 py-2 rounded"
+          >
+            중복확인
+          </button>
+        </div>
+        {validationStatus.email === "success" && (
+          <p className="text-green-500 mt-1">사용할 수 있는 이메일입니다.</p>
+        )}
+        {validationStatus.email === "error" && (
+          <p className="text-red-500 mt-1">올바른 이메일 형식이 아닙니다.</p>
+        )}
+      </div>
+
+      <div className="flex flex-col">
+        <label htmlFor="password">비밀번호 입력</label>
         <input
           type="password"
           id="password"
           value={password}
-          onChange={onChangePassword}
-          placeholder="비밀번호를 입력하세요."
-          className="border-2 border-gray-300 rounded-md p-1"
+          onChange={(e) => {
+            setPassword(e.target.value);
+            validatePassword(e.target.value);
+          }}
+          placeholder="비밀번호를 입력해 주세요."
+          className={`border p-2 rounded ${
+            validationStatus.password === "error" ? "border-red-500" : ""
+          }`}
         />
+        <p className="text-sm text-gray-500 mt-1">
+          알파벳 대,소문자, 숫자, 특수문자 포함 8자 이상
+        </p>
+        {validationStatus.password === "error" && (
+          <p className="text-red-500 mt-1">
+            비밀번호는 알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자
+            이상이어야 합니다.
+          </p>
+        )}
       </div>
-      {error.password && <p className="text-red-500">{error.password}</p>}
-      <div className="w-full flex items-center justify-between p-4">
-        <label htmlFor="passwordConfirm" className="mr-2">
-          비밀번호 확인
-        </label>
+
+      <div className="flex flex-col">
+        <label htmlFor="passwordConfirm">비밀번호 확인</label>
         <input
           type="password"
           id="passwordConfirm"
           value={passwordConfirm}
-          onChange={onChangePasswordConfirm}
-          placeholder="이메일을 입력하세요."
-          className="border-2 border-gray-300 rounded-md p-1"
+          onChange={(e) => {
+            setPasswordConfirm(e.target.value);
+            validatePasswordConfirm(e.target.value);
+          }}
+          placeholder="다시 한번 입력해 주세요."
+          className={`border p-2 rounded ${
+            validationStatus.passwordConfirm === "error" ? "border-red-500" : ""
+          }`}
         />
+        {validationStatus.passwordConfirm === "success" && (
+          <p className="text-green-500 mt-1">비밀번호가 일치합니다.</p>
+        )}
+        {validationStatus.passwordConfirm === "error" &&
+          passwordConfirm !== "" && (
+            <p className="text-red-500 mt-1">비밀번호가 일치하지 않습니다.</p>
+          )}
       </div>
-      {error.passwordConfirm && (
-        <p className="text-red-500">{error.passwordConfirm}</p>
-      )}
-      <div className="w-full p-4 flex flex-col gap-y-2">
-        <button className="w-full bg-blue-500 text-white p-2 rounded-md">
-          회원가입
-        </button>
-        <Link href="/auth/login">
-          <button
-            type="button"
-            className="w-full bg-black text-white p-2 rounded-md"
-          >
-            로그인하러 가기
-          </button>
-        </Link>
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="agreeTerms"
+          checked={agreeTerms}
+          onChange={(e) => setAgreeTerms(e.target.checked)}
+          className="mr-2"
+        />
+        <label htmlFor="agreeTerms" className="text-sm">
+          개인정보처리방침 약관 동의 (필수)
+        </label>
       </div>
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="agreePrivacy"
+          checked={agreePrivacy}
+          onChange={(e) => setAgreePrivacy(e.target.checked)}
+          className="mr-2"
+        />
+        <label htmlFor="agreePrivacy" className="text-sm">
+          메디헬프 서비스 이용약관 동의 (필수)
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        className="bg-brand-primary-500 text-white p-2 rounded mt-4"
+        disabled={
+          validationStatus.nickname !== "success" ||
+          validationStatus.email !== "success" ||
+          validationStatus.password !== "success" ||
+          validationStatus.passwordConfirm !== "success" ||
+          !agreeTerms ||
+          !agreePrivacy
+        }
+      >
+        회원가입
+      </button>
     </form>
   );
 }
