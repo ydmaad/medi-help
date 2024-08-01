@@ -63,9 +63,9 @@ const MediLists: React.FC = () => {
               <Image
                 src={record.itemImage || "/medi.png"}
                 alt={record.medi_name || "기본 이미지"}
-                width={128}
+                width={250}
                 height={128}
-                className="w-32 h-32 mb-2 object-cover"
+                className="w-64 h-60 mb-2 object-containr"
               />
               <p className="text-lg font-semibold">{record.medi_nickname}</p>
               <p className="text-sm text-gray-500">{record.medi_name}</p>
