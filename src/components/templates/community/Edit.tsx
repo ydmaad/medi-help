@@ -4,7 +4,6 @@ import { Tables } from "@/types/supabase";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
 import React, { useEffect, useState } from "react";
 
 type Post = Tables<"posts">;
@@ -31,19 +30,7 @@ const fetchDetailPost = async (id: string) => {
 };
 
 // 게시글 수정 요청
-const editPost = async (
-  id: string,
-  title: string,
-  contents: string,
-  images: File[]
-) => {
-  const formData = new FormData();
-  formData.append("title", title);
-  formData.append("contents", contents);
-  images.forEach((image) => {
-    formData.append("images", image);
-  });
-
+const editPost = async (id: string, formData: FormData) => {
   const response = await fetch(`/api/community/${id}`, {
     method: "PUT",
     body: formData,
@@ -61,10 +48,12 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [contents, setContents] = useState("");
+  // 새로 업로드하려는 이미지 파일
   const [image, setImage] = useState<File[]>([]);
-  const [currentImages, setCurrentImages] = useState<string[]>([]);
-  // TODO : 수파베이스에 저장할 스테이트 생성 (image + currentImages) -> 파일 타입으로!!
-  const [saveImages, setSaveImages] = useState<File[]>([]);
+  // supabase에서 가져온 기존 이미지
+  const [currentImage, setCurrentImage] = useState<string[]>([]);
+  // TODO : 수파베이스에 저장할 스테이트 생성 (image + currentImage) -> 파일 타입으로!!
+  const [saveImage, setSaveImage] = useState<(File | string)[]>([]);
 
   const router = useRouter();
   // TODO : 수파베이스에 저장할 스테이트 생성 (image + currentImages) -> 파일 타입으로!!
@@ -76,8 +65,12 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
         setPost(data);
         setTitle(data.title);
         setContents(data.contents);
-        setCurrentImages(data.img_url ? data.img_url.split(",") : []);
-        // console.log("이미지 유알엘:", currentImages);
+        if (data.img_url) {
+          const imageUrls = data.img_url.split(",");
+          setCurrentImage(imageUrls);
+          setSaveImage(imageUrls);
+          // console.log("설정된 이미지 URL:", imageUrls); // 디버깅용
+        }
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -87,6 +80,10 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
 
     getPost();
   }, [id]);
+
+  console.log(image);
+  console.log(currentImage);
+  console.log(saveImage);
 
   // 파일 선택 클릭시 여러 이미지가 배열로 들어가지 않음
   // 3가지
@@ -105,8 +102,19 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      console.log("Submitting images:", image);
-      await editPost(id, title, contents, image);
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("contents", contents);
+
+      saveImage.forEach((img, index) => {
+        if (typeof img === "string") {
+          formData.append("imageUrl", img);
+        } else if (img instanceof File) {
+          formData.append("imageFile", img);
+        }
+      });
+
+      await editPost(id, formData);
       alert("게시글이 성공적으로 수정되었습니다.");
       router.push(`/community/${id}`);
     } catch (error) {
@@ -117,21 +125,21 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   // TODO : 수파베이스에서 가져온 이미지에 배열로 같이 추가
   // 수파베이스에서 가져온 이미지 + 현재 추가한 이미지 = 새로운 스테이트(saveImages)에 넣어서 요청 전송
 
-  // 여러 이미지 파일을 처리하는 함수
+  // 여러 이미지 파일을 처리하는 핸들러
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setImage((prevImage) => {
-        const newImage = [...prevImage, ...files];
-        console.log("Updated image state:", newImage);
-        return newImage;
-      });
+      setImage((prevImage) => [...prevImage, ...files]);
+      setSaveImage((prev) => [...prev, ...files]);
     }
   };
-  console.log(image);
+
+  // 첨부된 이미지 삭제하는 핸들러
+  const handleRemoveImage = (index: number) => {
+    setSaveImage((prev) => prev.filter((_, i) => i !== index));
+  };
 
   // console.log("현재 게시글:", post);
-  // console.log("현재 게시글 이미지:", currentImages);
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;
@@ -170,33 +178,24 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
           />
         </div>
 
-        {/* 현재 이미지 미리보기 */}
-        <div className="mb-4 flex flex-wrap">
-          {currentImages.map((img, index) => (
-            <div key={index} className="w-24 h-24 m-2 relative">
-              <Image
-                src={img}
-                alt={`Preview ${index}`}
-                fill
-                sizes="(max-width: 96px) 100vw, 96px"
-                style={{ objectFit: "cover" }}
-              />
-              <button>X</button>
-            </div>
-          ))}
-        </div>
-
         {/* 등록할 이미지 미리보기 */}
         <div className="mb-4 flex flex-wrap">
-          {image.map((img, index) => (
+          {saveImage.map((img, index) => (
             <div key={index} className="w-24 h-24 m-2 relative">
               <Image
-                src={URL.createObjectURL(img)}
+                src={typeof img === "string" ? img : URL.createObjectURL(img)}
                 alt={`Preview ${index}`}
                 fill
                 sizes="(max-width: 96px) 100vw, 96px"
                 style={{ objectFit: "cover" }}
               />
+              <button
+                onClick={() => handleRemoveImage(index)}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                style={{ transform: "translate(50%, -50%)" }}
+              >
+                X
+              </button>
             </div>
           ))}
         </div>
