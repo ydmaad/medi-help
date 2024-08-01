@@ -177,7 +177,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
           ))}
         </div>
 
-        <div className="p-5 w-[500px] ">
+        <div className="p-5 max-w-[1000px] ">
           <div>{formatContent(post.contents)}</div>
         </div>
 
