@@ -1,9 +1,11 @@
 "use client";
 
+import { useAuthStore } from "@/store/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+// 게시글 등록 요청
 const fetchPost = async ({
   title,
   contents,
@@ -13,6 +15,12 @@ const fetchPost = async ({
   contents: string;
   image: File[];
 }) => {
+  const user = useAuthStore.getState().user;
+
+  if (!user) {
+    throw new Error("사용자 인증 정보가 없습니다.");
+  }
+
   try {
     // formData로 전송할 데이터 변경
     const formData = new FormData();
@@ -24,6 +32,7 @@ const fetchPost = async ({
 
     const response = await fetch(`/api/community/`, {
       method: "POST",
+      headers: { "User-id": user.id },
       body: formData,
     });
 
@@ -36,7 +45,7 @@ const fetchPost = async ({
     return data;
   } catch (error) {
     console.error("게시글 등록 오류 =>", error);
-    alert("노노 등록 실패");
+    alert("게시글 등록 실패");
   }
 };
 
@@ -45,19 +54,24 @@ const Post = () => {
   const [contents, setContents] = useState<string>("");
   const [image, setImage] = useState<File[]>([]);
 
-  // 게시글을 전송하는 함수
+  // 게시글을 전송을 요청하는 핸들러
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     console.log("전송할 데이터!! : ", { title, contents, image });
     await fetchPost({ title, contents, image });
   };
 
-  // 여러 이미지 파일을 처리하는 함수
+  // 여러 이미지 파일을 처리하는 핸들러
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
       setImage((prevImage) => [...prevImage, ...files]);
     }
+  };
+
+  // 첨부된 이미지 삭제하는 핸들러
+  const handleRemoveImage = (index: number) => {
+    setImage((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   return (
@@ -102,6 +116,13 @@ const Post = () => {
                 layout="fill"
                 objectFit="cover"
               />
+              <button
+                onClick={() => handleRemoveImage(index)}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                style={{ transform: "translate(50%, -50%)" }}
+              >
+                X
+              </button>
             </div>
           ))}
         </div>

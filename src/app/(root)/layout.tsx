@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import Header from "@/components/molecules/header";
+import Header from "@/components/molecules/Header";
 
 const RootLayout = ({ children }: PropsWithChildren) => {
   return (

@@ -49,12 +49,8 @@ export async function POST(request: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
   try {
     // 현재 로그인한 사용자 정보 가져오기
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
+    const userId = request.headers.get("User-Id");
+    if (!userId) {
       return NextResponse.json({ error: "인증되지 않은 사용자입니다." });
     }
 
@@ -111,12 +107,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 하드코딩한 부분
-    // TODO : 나중에 auth 부분 성공시 수정하기!!
     const postData: PostInsert = {
       title,
       contents,
-      user_id: session.user.id,
+      user_id: userId,
       img_url: img_url.join(","),
     };
 
