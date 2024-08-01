@@ -83,7 +83,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center pt-8">
       <div className="w-full max-w-md bg-white rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6">로그인</h2>
         <form onSubmit={onSubmit} className="space-y-4">
@@ -92,7 +92,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="아이디(이메일 주소)"
+              placeholder="이메일"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
@@ -110,10 +110,12 @@ export default function LoginPage() {
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               <Image
-                src="/open_eye_icon.svg"
+                src={
+                  showPassword ? "/close_eye_icon.svg" : "/open_eye_icon.svg"
+                }
                 alt="Toggle password visibility"
-                width={20}
-                height={20}
+                width={18}
+                height={12}
               />
             </button>
           </div>
