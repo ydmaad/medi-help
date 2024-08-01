@@ -7,6 +7,7 @@ import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 export default function SignUpPage() {
+  // 상태 관리: 사용자 입력 및 유효성 검사 상태
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,11 +23,13 @@ export default function SignUpPage() {
 
   const router = useRouter();
 
+  // Supabase 클라이언트 초기화
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+  // 닉네임 유효성 검사 함수
   const validateNickname = (value: string) => {
     if (value.length >= 2 && value.length <= 6) {
       setValidationStatus((prev) => ({ ...prev, nickname: "success" }));
@@ -35,16 +38,18 @@ export default function SignUpPage() {
     }
   };
 
+  // 이메일 유효성 검사 함수
   const validateEmail = async (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(value)) {
-      // 이메일 중복확인 : 서버에 중복 확인 요청을 보내서 구현해야함(추가 구현 사항)
+      // TODO: 실제 서버에 중복 확인 요청을 보내야 함
       setValidationStatus((prev) => ({ ...prev, email: "success" }));
     } else {
       setValidationStatus((prev) => ({ ...prev, email: "error" }));
     }
   };
 
+  // 비밀번호 유효성 검사 함수
   const validatePassword = (value: string) => {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$/;
@@ -55,6 +60,7 @@ export default function SignUpPage() {
     }
   };
 
+  // 비밀번호 확인 유효성 검사 함수
   const validatePasswordConfirm = (value: string) => {
     if (value === password && value !== "") {
       setValidationStatus((prev) => ({ ...prev, passwordConfirm: "success" }));
@@ -63,9 +69,11 @@ export default function SignUpPage() {
     }
   };
 
+  // 폼 제출 처리 함수
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // 모든 필드 입력 확인
     if (
       nickname === "" ||
       email === "" ||
@@ -76,17 +84,20 @@ export default function SignUpPage() {
       return;
     }
 
+    // 비밀번호 일치 확인
     if (password !== passwordConfirm) {
       setValidationStatus((prev) => ({ ...prev, passwordConfirm: "error" }));
       return;
     }
 
+    // 약관 동의 확인
     if (!agreeTerms || !agreePrivacy) {
       alert("이용약관과 개인정보처리방침에 동의해주세요.");
       return;
     }
 
     try {
+      // Supabase를 사용하여 회원가입
       const { data: signUpData, error: signUpError } =
         await supabase.auth.signUp({
           email,
@@ -98,6 +109,7 @@ export default function SignUpPage() {
       }
 
       if (signUpData.user) {
+        // 사용자 추가 정보를 데이터베이스에 저장
         const { error: insertError } = await supabase.from("users").insert([
           {
             id: signUpData.user.id,
@@ -120,6 +132,7 @@ export default function SignUpPage() {
     }
   };
 
+  // UI 렌더링
   return (
     <form
       onSubmit={onSubmit}
@@ -127,6 +140,7 @@ export default function SignUpPage() {
     >
       <h1 className="text-2xl font-bold text-center mb-4">회원 가입</h1>
 
+      {/* 닉네임 입력 필드 */}
       <div className="flex flex-col">
         <label htmlFor="nickname">닉네임</label>
         <input
@@ -150,6 +164,7 @@ export default function SignUpPage() {
         )}
       </div>
 
+      {/* 이메일 입력 필드 */}
       <div className="flex flex-col">
         <label htmlFor="email">이메일 입력</label>
         <div className="flex">
@@ -182,6 +197,7 @@ export default function SignUpPage() {
         )}
       </div>
 
+      {/* 비밀번호 입력 필드 */}
       <div className="flex flex-col">
         <label htmlFor="password">비밀번호 입력</label>
         <input
@@ -208,6 +224,7 @@ export default function SignUpPage() {
         )}
       </div>
 
+      {/* 비밀번호 확인 필드 */}
       <div className="flex flex-col">
         <label htmlFor="passwordConfirm">비밀번호 확인</label>
         <input
@@ -232,6 +249,7 @@ export default function SignUpPage() {
           )}
       </div>
 
+      {/* 약관 동의 체크박스 */}
       <div className="flex items-center">
         <input
           type="checkbox"
@@ -258,6 +276,7 @@ export default function SignUpPage() {
         </label>
       </div>
 
+      {/* 회원가입 버튼 */}
       <button
         type="submit"
         className="bg-brand-primary-500 text-white p-2 rounded mt-4"
