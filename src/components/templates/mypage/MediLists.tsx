@@ -57,22 +57,26 @@ const MediLists: React.FC = () => {
         {displayedMediRecords.map((record) => (
           <div
             key={record.id}
-            className="bg-gray-100 p-4 rounded shadow mb-2 w-1/5"
+            className="bg-gray-100 p-4 rounded shadow mb-2 w-1/5 flex flex-col items-center"
           >
-            <div className="flex flex-col items-center">
+            {record.itemImage ? (
               <Image
-                src={record.itemImage || "/medi.png"}
+                src={record.itemImage}
                 alt={record.medi_name || "기본 이미지"}
-                width={250}
-                height={128}
-                className="w-64 h-60 mb-2 object-containr"
+                width={200}
+                height={200}
+                className="w-40 h-40 mb-2 object-contain"
               />
-              <p className="text-lg font-semibold">{record.medi_nickname}</p>
-              <p className="text-sm text-gray-500">{record.medi_name}</p>
-              <p className="text-sm text-gray-500">
-                {record.start_date} ~ {record.end_date}
-              </p>
-            </div>
+            ) : (
+              <div className="w-40 h-40 mb-2 flex items-center justify-center bg-gray-200">
+                <p className="text-gray-500">이미지 없음</p>
+              </div>
+            )}
+            <p className="text-lg font-semibold">{record.medi_nickname}</p>
+            <p className="text-sm text-gray-500">{record.medi_name}</p>
+            <p className="text-sm text-gray-500">
+              {record.start_date} ~ {record.end_date}
+            </p>
           </div>
         ))}
         {!showAll && mediRecords.length > 5 && (
