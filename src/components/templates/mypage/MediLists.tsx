@@ -1,9 +1,9 @@
 "use client";
 
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import { supabase } from "@/utils/supabase/client";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { supabase } from '@/utils/supabase/client';
 
 interface MediRecord {
   id: string;
@@ -28,21 +28,17 @@ const MediLists: React.FC = () => {
 
   useEffect(() => {
     const fetchMediRecords = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const session = await supabase.auth.getSession();
 
-      if (!session) {
+      if (!session.data.session) {
         console.error("Auth session missing!");
         return;
       }
 
-      const userId = session.user.id;
+      const userId = session.data.session.user.id;
 
       try {
-        const response = await axios.get(
-          `/api/mypage/medi/names?user_id=${userId}`
-        );
+        const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
         setMediRecords(response.data);
       } catch (error) {
         console.error("Error fetching medi records:", error);
@@ -65,11 +61,11 @@ const MediLists: React.FC = () => {
           >
             <div className="flex flex-col items-center">
               <Image
-                src={record.itemImage || "/default-image.png"}
-                alt={record.medi_name}
-                width={64}
-                height={64}
-                className="w-16 h-16 mb-2"
+                src={record.itemImage || "/medi.png"}
+                alt={record.medi_name || "기본 이미지"}
+                width={128}
+                height={128}
+                className="w-32 h-32 mb-2 object-cover"
               />
               <p className="text-lg font-semibold">{record.medi_nickname}</p>
               <p className="text-sm text-gray-500">{record.medi_name}</p>

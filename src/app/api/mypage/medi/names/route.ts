@@ -1,40 +1,60 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+// src/app/api/mypage/medi/names/route.ts
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { NextResponse } from 'next/server';
+import { supabase } from '@/utils/supabase/client';
+
+interface Item {
+  itemName: string;
+  itemImage: string | null;
+}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("user_id");
+  const userId = searchParams.get('user_id');
 
   if (!userId) {
-    return NextResponse.json(
-      { error: "Missing user_id query parameter" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Missing user_id' }, { status: 400 });
   }
 
   try {
-    const { data, error } = await supabase
-      .from("medications")
-      .select("*")
-      .eq("user_id", userId);
+    const { data: medications, error } = await supabase
+      .from('medications')
+      .select('*')
+      .eq('user_id', userId);
 
     if (error) {
-      console.error("Error fetching medication records:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch medication records" },
-        { status: 500 }
-      );
+      throw error;
     }
 
-    return NextResponse.json(data);
+    const apiUrl = `${process.env.NEXT_PUBLIC_E_MEDI_URL}?serviceKey=${process.env.NEXT_PUBLIC_E_MEDI_KEY}&pageNo=1&numOfRows=100&type=json`;
+
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error('네트워크 응답에 문제가 있습니다.');
+    }
+
+    const data = await response.json();
+    const items: Item[] = data.body.items || [];
+
+    const formattedItems = items.map((item: Item) => ({
+      itemName: item.itemName,
+      itemImage: item.itemImage || null,
+    }));
+
+    const medicationsWithImages = medications.map((med) => {
+      const foundItem = formattedItems.find((item) => item.itemName === med.medi_name);
+      return {
+        ...med,
+        itemImage: foundItem ? foundItem.itemImage : null,
+      };
+    });
+
+    return NextResponse.json(medicationsWithImages);
   } catch (error) {
-    console.error("Error fetching medication records:", error);
+    console.error('Error fetching medication records:', error);
     return NextResponse.json(
-      { error: "Failed to fetch medication records" },
+      { error: '데이터를 가져오는 데 실패했습니다.' },
       { status: 500 }
     );
   }
