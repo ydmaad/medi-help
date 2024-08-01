@@ -4,10 +4,9 @@ import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
 
 export default function SignUpPage() {
-  // 상태 관리: 사용자 입력 및 유효성 검사 상태
+  // 상태 관리를 위한 useState 훅 사용
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,12 +21,6 @@ export default function SignUpPage() {
   });
 
   const router = useRouter();
-
-  // Supabase 클라이언트 초기화
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
 
   // 닉네임 유효성 검사 함수
   const validateNickname = (value: string) => {
@@ -73,7 +66,7 @@ export default function SignUpPage() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 모든 필드 입력 확인
+    // 모든 필드가 입력되었는지 확인
     if (
       nickname === "" ||
       email === "" ||
@@ -84,20 +77,20 @@ export default function SignUpPage() {
       return;
     }
 
-    // 비밀번호 일치 확인
+    // 비밀번호 일치 여부 확인
     if (password !== passwordConfirm) {
       setValidationStatus((prev) => ({ ...prev, passwordConfirm: "error" }));
       return;
     }
 
-    // 약관 동의 확인
+    // 약관 동의 여부 확인
     if (!agreeTerms || !agreePrivacy) {
       alert("이용약관과 개인정보처리방침에 동의해주세요.");
       return;
     }
 
     try {
-      // Supabase를 사용하여 회원가입
+      // Supabase를 사용하여 회원가입 처리
       const { data: signUpData, error: signUpError } =
         await supabase.auth.signUp({
           email,
@@ -124,7 +117,7 @@ export default function SignUpPage() {
         }
 
         alert("회원가입이 완료되었습니다.");
-        router.replace("/auth/login");
+        router.replace("/auth/login"); // 로그인 페이지로 리다이렉트
       }
     } catch (error: any) {
       console.error("회원가입 중 에러 발생:", error);
@@ -213,9 +206,6 @@ export default function SignUpPage() {
             validationStatus.password === "error" ? "border-red-500" : ""
           }`}
         />
-        <p className="text-sm text-gray-500 mt-1">
-          알파벳 대,소문자, 숫자, 특수문자 포함 8자 이상
-        </p>
         {validationStatus.password === "error" && (
           <p className="text-red-500 mt-1">
             비밀번호는 알파벳 대,소문자, 숫자, 특수문자를 포함하여 8자
@@ -240,9 +230,6 @@ export default function SignUpPage() {
             validationStatus.passwordConfirm === "error" ? "border-red-500" : ""
           }`}
         />
-        {validationStatus.passwordConfirm === "success" && (
-          <p className="text-green-500 mt-1">비밀번호가 일치합니다.</p>
-        )}
         {validationStatus.passwordConfirm === "error" &&
           passwordConfirm !== "" && (
             <p className="text-red-500 mt-1">비밀번호가 일치하지 않습니다.</p>
