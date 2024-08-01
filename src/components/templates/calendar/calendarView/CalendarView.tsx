@@ -3,19 +3,22 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, EventClickArg } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
 import TestModal from "../calendarModal/TestModal";
 import AddModal from "../calendarModal/AddModal";
 import { EventsType } from "@/types/calendar";
 import { COLOR_OF_TIME } from "@/constant/constant";
+import DetailModal from "../calendarModal/DetailModal";
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventsType[]>([]);
   const [openAddModal, setOpenAddModal] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [calendarId, setCalendarId] = useState<string>("");
+  const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
+  const [editDate, setEditDate] = useState<Date>();
 
   useEffect(() => {
     const getCalendarData = async () => {
@@ -50,9 +53,9 @@ const CalendarView = () => {
 
   console.log(events);
 
-  const handleEventClick = (event: EventClickArg) => {
-    setOpenAddModal(true);
-    console.log(event.view.calendar.getDate());
+  const handleDateClick = (event: DateClickArg) => {
+    setOpenDetailModal(true);
+    setEditDate(new Date(event.date));
   };
 
   const handleButtonClick = () => {
@@ -71,6 +74,11 @@ const CalendarView = () => {
         setOpenAddModal={setOpenAddModal}
         setEvents={setEvents}
       />
+      <DetailModal
+        openDetailModal={openDetailModal}
+        setOpenDetailModal={setOpenDetailModal}
+        editDate={editDate}
+      />
       <div className="relative p-8 w-11/12 h-7/12 fc-button ">
         <button
           onClick={handleButtonClick}
@@ -82,7 +90,7 @@ const CalendarView = () => {
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={events}
-          dateClick={handleEventClick}
+          dateClick={handleDateClick}
           selectable={true}
           eventOverlap={false}
           displayEventTime={false}
