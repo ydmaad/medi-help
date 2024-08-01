@@ -68,7 +68,7 @@ export default function LoginPage() {
       router.push("/");
     } catch (error) {
       console.error("Login error:", error);
-      setError("로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
+      setError("이메일, 비밀번호를 다시 입력해 주세요.");
     }
   };
 
