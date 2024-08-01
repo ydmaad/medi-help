@@ -11,6 +11,7 @@ export type MedicinesType = {
 };
 
 export type EventsType = {
+  groupId: string | null;
   title: string;
   start: Date | null;
   backgroundColor: string;

@@ -18,13 +18,13 @@ const CalendarView = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [calendarId, setCalendarId] = useState<string>("");
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
-  const [editDate, setEditDate] = useState<Date>();
+  const [editDate, setEditDate] = useState<string>();
+  const [editEvents, setEditEvents] = useState<EventsType[]>([]);
 
   useEffect(() => {
     const getCalendarData = async () => {
       try {
         const { data } = await axios.get("/api/calendar");
-        console.log(data);
         {
           data.map((el: any) => {
             el.medi_name.map((name: string) => {
@@ -32,6 +32,7 @@ const CalendarView = () => {
                 return [
                   ...prev,
                   {
+                    groupId: el.id,
                     title: name,
                     start: el.start_date,
                     backgroundColor: COLOR_OF_TIME[el.medi_time],
@@ -51,11 +52,28 @@ const CalendarView = () => {
     getCalendarData();
   }, []);
 
-  console.log(events);
+  useEffect(() => {
+    let editList = events.filter((event) => {
+      console.log(editDate);
+      return event.start?.toString().split("T")[0] === editDate;
+    });
+
+    setEditEvents(editList);
+    console.log(editList);
+
+    if (editList.length !== 0) {
+      setOpenDetailModal(true);
+    }
+  }, [editDate]);
 
   const handleDateClick = (event: DateClickArg) => {
-    setOpenDetailModal(true);
-    setEditDate(new Date(event.date));
+    const offset = 1000 * 60 * 60 * 9;
+    setEditDate(
+      new Date(event.date.getTime() + offset).toISOString().split("T")[0]
+    );
+    console.log(
+      new Date(event.date.getTime() + offset).toISOString().split("T")[0]
+    );
   };
 
   const handleButtonClick = () => {
@@ -77,7 +95,7 @@ const CalendarView = () => {
       <DetailModal
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
-        editDate={editDate}
+        editEvents={editEvents}
       />
       <div className="relative p-8 w-11/12 h-7/12 fc-button ">
         <button

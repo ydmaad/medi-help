@@ -2,20 +2,21 @@ import ModalButton from "@/components/atoms/ModalButton";
 import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalInner from "@/components/molecules/ModalInner";
-import { ValueType } from "@/types/calendar";
-import React, { useState } from "react";
+import { COLOR_OF_TIME } from "@/constant/constant";
+import { EventsType, ValueType } from "@/types/calendar";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 
 interface Props {
   openDetailModal: boolean;
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
-  editDate: Date | undefined;
+  editEvents: EventsType[];
 }
 
 const DetailModal = ({
   openDetailModal,
   setOpenDetailModal,
-  editDate,
+  editEvents,
 }: Props) => {
   const [values, setValues] = useState<ValueType>({
     medi_time: "morning",
@@ -23,6 +24,33 @@ const DetailModal = ({
     side_effect: "",
     start_date: new Date(),
   });
+
+  useEffect(() => {
+    setViewEvents();
+  }, [editEvents]);
+
+  useEffect(() => {
+    setViewEvents();
+  }, [values.medi_time]);
+
+  const setViewEvents = () => {
+    let viewEvents = editEvents.filter((event) => {
+      let time = Object.keys(COLOR_OF_TIME).filter((timeName) => {
+        return COLOR_OF_TIME[timeName] === event.backgroundColor;
+      });
+      console.log(time);
+      return time[0] === values.medi_time;
+    });
+    console.log(viewEvents);
+
+    viewEvents.map((event) => {
+      setValues((prev) => {
+        return { ...prev, medi_name: [...prev.medi_name, event.title] };
+      });
+    });
+  };
+
+  console.log(values);
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {

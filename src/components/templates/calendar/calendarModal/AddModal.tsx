@@ -39,6 +39,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
             return [
               ...prev,
               {
+                groupId: null,
                 title: name,
                 start: value.start_date,
                 backgroundColor: COLOR_OF_TIME[value.medi_time],

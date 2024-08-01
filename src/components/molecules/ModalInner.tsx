@@ -57,7 +57,6 @@ const ModalInner = ({ values, setValues }: Props) => {
 
   // time Category onClick 함수
   const handleTimeClick = (time: string) => {
-    console.log(time);
     setValues((prev) => {
       return { ...prev, medi_name: [], medi_time: time };
     });
