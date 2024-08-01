@@ -18,7 +18,19 @@ export async function GET(
     const { id } = params;
     const { data, error } = await supabase
       .from("posts")
-      .select("*")
+      .select(
+        `
+        id,
+        title,
+        contents,
+        img_url,
+        created_at,
+        user:user_id (
+          nickname,
+          avatar
+        )
+      `
+      )
       .eq("id", id);
     // console.log("된다!!", data);
 

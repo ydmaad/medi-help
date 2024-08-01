@@ -1,5 +1,4 @@
-import { TablesInsert, TablesUpdate } from "./../../../types/supabase";
-import { Tables } from "@/types/supabase";
+import { TablesInsert } from "./../../../types/supabase";
 import { supabase } from "@/utils/supabase/client";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
@@ -21,7 +20,7 @@ export async function GET() {
           avatar
         )
       `);
-    // console.log("된다!!", data);
+    console.log("된다!!", data);
 
     if (error) {
       return NextResponse.json(

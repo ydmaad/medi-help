@@ -65,7 +65,7 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
         {filteredPosts.map((item) => {
           const imageUrls = getImageUrls(item.img_url);
           return (
-            <li key={item.id} className="border p-4 w-[700px] h-[150px] my-5">
+            <li key={item.id} className="border p-4 w-[1000px] h-[150px] my-5">
               {/* 상세페이지로 이동 */}
               <Link
                 href={`/community/${item.id}`}
