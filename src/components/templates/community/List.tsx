@@ -60,12 +60,12 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
     <>
       <Link href={`/community/post`}></Link>
       {/* <Link href={`/community/${id}`}></Link> */}
-      <h1 className="text-3xl font-bold mb-6">게시글 목록</h1>
+
       <ul className="space-y-4">
         {filteredPosts.map((item) => {
           const imageUrls = getImageUrls(item.img_url);
           return (
-            <li key={item.id} className="border-b p-4 w-[700px]">
+            <li key={item.id} className="border p-4 w-[700px] h-[150px] my-5">
               {/* 상세페이지로 이동 */}
               <Link
                 href={`/community/${item.id}`}
@@ -77,10 +77,10 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
                       {" "}
                       {item.title}
                     </h2>
-                    <p className="text-gray-600 mb-4 line-clamp-2">
+                    <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
                       {item.contents}
                     </p>
-                    <div className="flex justify-between items-center text-sm text-gray-500">
+                    {/* <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center">
                         <Image
                           src={
@@ -94,8 +94,8 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
                         />
                         <span>{item.user.nickname}</span>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
+                    </div> */}
+                    <div className="text-sm text-gray-500 mt-4">
                       {new Date(item.created_at).toLocaleString()}
                     </div>
                   </div>

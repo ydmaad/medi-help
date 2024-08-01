@@ -144,6 +144,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
               alt={`게시글 이미지 ${index + 1}`}
               width={300}
               height={200}
+              priority
+              style={{ width: "100%", height: "auto" }}
             />
           </div>
         ))}

@@ -83,7 +83,6 @@ export async function PUT(
     const body: CommentUpdateReal = await request.json();
     const { id: commentId, comment } = body;
 
-    // TODO : 유저 확인 로직 필요
     const { data, error } = await supabase
       .from("comments")
       .update({ comment })
