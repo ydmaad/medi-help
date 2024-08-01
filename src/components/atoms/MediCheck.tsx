@@ -15,7 +15,6 @@ const MediCheck = ({ values, setValues, name, time, idx }: Props) => {
   const [mediTimes, setMediTimes] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log(Object.keys(time));
     let timeOfMedicine = Object.keys(time).filter((times) => {
       return time[times] === true;
     });
@@ -27,7 +26,6 @@ const MediCheck = ({ values, setValues, name, time, idx }: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log(values.medi_name.includes(name));
     setChecked(values.medi_name.includes(name));
   }, [values.medi_name.length]);
 

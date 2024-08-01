@@ -44,7 +44,7 @@ const page = () => {
   return (
     <>
       <Hero />
-      <div className="flex justify-between mx-20 mb-[10px]">
+      <div className="flex justify-between mx-36 mb-[10px]">
         <MainTitle text="메거진" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
@@ -85,7 +85,7 @@ const page = () => {
           ))}
         </div>
       </div>
-      <div className="flex justify-between mx-20 mb-[10px]">
+      <div className="flex justify-between mx-36 mb-[10px]">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>

@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode } from "react";
 
 type ImageContextType = {
-  src: string;
+  src: string | null;
   alt?: string;
   title: string;
   subtitle: string | null;
