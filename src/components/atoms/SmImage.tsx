@@ -1,12 +1,23 @@
 import React from "react";
 import { useImage } from "@/hooks/useImage";
 
-const SmImage = () => {
+type SmImageProps = {
+  width?: number;
+  height?: number;
+};
+
+const SmImage = ({ width = 316, height = 200 }: SmImageProps) => {
   const { src, alt } = useImage();
 
   return (
-    <div className="w-[316px] h-[200px] border border-brand-gray-300 rounded-lg overflow-hidden">
-      <img src={src} alt={alt} className="w-full h-full object-cover" />
+    <div
+      className={`w-[${width}px] h-[${height}px] border border-brand-gray-300 rounded-lg overflow-hidden`}
+    >
+      <img
+        src={src || "/placeholder.jpg"}
+        alt={alt}
+        className="w-full h-full object-cover"
+      />
     </div>
   );
 };

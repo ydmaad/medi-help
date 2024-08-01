@@ -1,16 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import SearchBar from "@/components/molecules/SearchBar";
+import Pagination from "@/components/molecules/Pagination";
+import MediCard from "@/components/molecules/MediCard";
 
 type Item = {
   itemName: string;
   entpName: string;
   effect: string;
   itemImage: string | null;
+  id: string;
 };
 
-const ITEMS_PER_PAGE: number = 20;
-const TOTAL_ITEMS: number = 750;
+const ITEMS_PER_PAGE = 20;
+
+const SkeletonCard = () => (
+  <div className="border border-brand-gray-300 rounded-lg overflow-hidden animate-pulse h-[200px]">
+    <div className="bg-gray-200 h-full w-full" />
+  </div>
+);
 
 const SearchPage = () => {
   const [allItems, setAllItems] = useState<Item[]>([]);
@@ -20,20 +29,16 @@ const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const totalPages = Math.ceil(TOTAL_ITEMS / ITEMS_PER_PAGE);
-
-  const fetchData = async (pageNo: number) => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `/api/search?pageNo=${pageNo}&numOfRows=100`
-      );
+      const response = await fetch(`/api/search?pageNo=1&numOfRows=100`);
       if (!response.ok) {
         throw new Error("네트워크 응답에 문제가 있습니다.");
       }
       const data = await response.json();
-      setAllItems((prevItems) => [...prevItems, ...data]);
-      setDisplayedItems(data.slice(0, ITEMS_PER_PAGE));
+      setAllItems(data);
+      setCurrentPage(1);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -42,8 +47,8 @@ const SearchPage = () => {
   };
 
   useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const filteredItems = allItems.filter(
@@ -51,71 +56,78 @@ const SearchPage = () => {
         item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.effect.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    setDisplayedItems(filteredItems.slice(startIndex, endIndex));
-  }, [searchTerm, currentPage, allItems]);
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
+    setDisplayedItems(filteredItems);
     setCurrentPage(1);
+  }, [searchTerm, allItems]);
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
+  const totalPages = Math.ceil(displayedItems.length / ITEMS_PER_PAGE);
+  const paginatedItems = displayedItems.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center">
+        <h1 className="text-[32px] font-bold mb-[26px] mt-[80px]">
+          궁금한 약을 검색해 보세요
+        </h1>
+        <div className="mb-[132px]">
+          <SearchBar onSearchChange={handleSearchChange} />
+        </div>
+        <div className="grid grid-cols-4 gap-4 mt-4 w-[1000px] h-auto">
+          {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+            <SkeletonCard key={index} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <div>오류: {error}</div>;
 
   return (
-    <div>
-      <h1>약 목록</h1>
-      <input
-        type="text"
-        placeholder="약 이름 또는 효능 검색..."
-        value={searchTerm}
-        onChange={handleSearchChange}
-      />
-      <ul>
-        {displayedItems.length > 0 ? (
-          displayedItems.map((item, index) => (
-            <li key={index} className="flex items-center mb-4">
-              {item.itemImage && (
-                <img
-                  src={item.itemImage}
-                  alt={item.itemName}
-                  className="w-16 h-16 object-cover mr-4"
-                />
-              )}
-              <div>
-                <strong>{item.itemName}</strong> - {item.entpName}
-              </div>
-            </li>
+    <div className="flex flex-col items-center">
+      <h1 className="text-[32px] font-bold mb-[26px] mt-[80px]">
+        궁금한 약을 검색해 보세요
+      </h1>
+      <div className="mb-[132px]">
+        <SearchBar onSearchChange={handleSearchChange} />
+      </div>
+      <div className="text-lg mb-4">총 약 수: {displayedItems.length}개</div>
+      <div className="grid grid-cols-4 gap-4 mt-4">
+        {paginatedItems.length > 0 ? (
+          paginatedItems.map((item) => (
+            <MediCard
+              key={item.id}
+              src={item.itemImage}
+              alt={item.itemName}
+              title={item.itemName}
+              subtitle={item.effect}
+              leftText="제조사"
+              rightText={item.entpName}
+              id={item.id}
+            />
           ))
         ) : (
-          <li>검색 결과가 없습니다.</li>
+          <div className="col-span-4 text-center">검색 결과가 없습니다.</div>
         )}
-      </ul>
-      <div>
-        <p>
-          현재 페이지: {currentPage} / 총 페이지: {totalPages}
-        </p>
-        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-          이전 페이지
-        </button>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          다음 페이지
-        </button>
       </div>
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };
