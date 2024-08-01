@@ -16,7 +16,7 @@ type Magazine = {
   reporting_date: string;
 };
 
-const page = () => {
+const Page: React.FC = () => {
   const [magazines, setMagazines] = useState<Magazine[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -143,4 +143,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
