@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function LoginPage() {
+  // 상태 관리
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const { setUser } = useAuthStore();
   const router = useRouter();
 
+  // 이메일 기억하기 기능
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("rememberedEmail");
     if (rememberedEmail) {
@@ -24,15 +26,18 @@ export default function LoginPage() {
     }
   }, []);
 
+  // 이메일 유효성 검사
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
+  // 로그인 폼 제출 처리
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
+    // 입력 검증
     if (!email || !password) {
       setError("이메일과 비밀번호를 입력해주세요.");
       return;
@@ -44,11 +49,13 @@ export default function LoginPage() {
     }
 
     try {
+      // Supabase를 통한 로그인 처리
       const { data: authData, error: authError } =
         await supabase.auth.signInWithPassword({ email, password });
 
       if (authError) throw authError;
 
+      // 사용자 정보 조회
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("*")
@@ -57,14 +64,17 @@ export default function LoginPage() {
 
       if (userError) throw userError;
 
+      // 로그인 성공 처리
       setUser(userData);
 
+      // 이메일 기억하기 처리
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email);
       } else {
         localStorage.removeItem("rememberedEmail");
       }
 
+      // 메인 페이지로 리다이렉트
       router.push("/");
     } catch (error) {
       console.error("Login error:", error);
@@ -72,13 +82,12 @@ export default function LoginPage() {
     }
   };
 
+  // 소셜 로그인 핸들러 (미구현)
   const handleGoogleLogin = async () => {
-    // TODO: Google 로그인 로직 구현
     alert("Google 로그인 기능은 아직 구현되지 않았습니다.");
   };
 
   const handleKakaoLogin = async () => {
-    // TODO: Kakao 로그인 로직 구현
     alert("Kakao 로그인 기능은 아직 구현되지 않았습니다.");
   };
 
@@ -87,6 +96,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6">로그인</h2>
         <form onSubmit={onSubmit} className="space-y-4">
+          {/* 이메일 입력 필드 */}
           <div>
             <input
               type="email"
@@ -96,6 +106,7 @@ export default function LoginPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
+          {/* 비밀번호 입력 필드 */}
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -104,6 +115,7 @@ export default function LoginPage() {
               placeholder="비밀번호"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
+            {/* 비밀번호 표시/숨김 토글 버튼 */}
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -119,7 +131,9 @@ export default function LoginPage() {
               />
             </button>
           </div>
+          {/* 에러 메시지 표시 */}
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* 이메일 기억하기 체크박스 */}
           <div className="flex items-center">
             <input
               type="checkbox"
@@ -132,6 +146,7 @@ export default function LoginPage() {
               이메일 기억하기
             </label>
           </div>
+          {/* 로그인 버튼 */}
           <button
             type="submit"
             className="w-full bg-brand-primary-500 text-white py-2 rounded-md"
@@ -139,6 +154,7 @@ export default function LoginPage() {
             로그인
           </button>
         </form>
+        {/* 계정 관련 링크 */}
         <div className="mt-4 flex justify-between text-sm text-gray-600">
           <span>
             <Link href="/auth/find-id" className="mr-2">
@@ -151,6 +167,7 @@ export default function LoginPage() {
           </span>
           <Link href="/auth/signup">회원가입</Link>
         </div>
+        {/* 소셜 로그인 섹션 */}
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -161,6 +178,7 @@ export default function LoginPage() {
             </div>
           </div>
           <div className="mt-6">
+            {/* 구글 로그인 버튼 */}
             <button
               onClick={handleGoogleLogin}
               className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-md mb-2"
@@ -174,6 +192,7 @@ export default function LoginPage() {
               />
               구글 로그인
             </button>
+            {/* 카카오 로그인 버튼 */}
             <button
               onClick={handleKakaoLogin}
               className="flex items-center justify-center w-full py-2 bg-yellow-300 rounded-md"
