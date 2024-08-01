@@ -56,6 +56,17 @@ export default function Posts() {
     return <div>Loading...</div>;
   }
 
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-xl mb-4">내가 쓴 게시글</h2>
@@ -64,6 +75,7 @@ export default function Posts() {
           <div key={post.id} className="bg-gray-100 p-4 rounded shadow mb-4">
             <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
             <p className="text-gray-700">{post.contents}</p>
+            <p className="text-gray-500 text-sm">{formatDate(post.created_at)}</p>
           </div>
         ))
       ) : (
