@@ -39,11 +39,16 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
 
   // 게시글 검색
   const filteredPosts = posts
-    ? posts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          post.contents.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? posts
+        .filter(
+          (post) =>
+            post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.contents.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
     : [];
 
   // img_url을 배열로 만드는 함수
@@ -78,7 +83,10 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center">
                         <Image
-                          src={item.user.avatar as string}
+                          src={
+                            (item.user.avatar as string) ||
+                            "/default-avatar.jpg"
+                          }
                           alt="user_img"
                           width={20}
                           height={20}

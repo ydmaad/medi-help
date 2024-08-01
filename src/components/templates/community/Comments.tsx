@@ -67,20 +67,31 @@ const editComment = async (
 
 // 댓글 등록 요청
 const postComment = async (postId: string, comment: string) => {
-  const response = await fetch(`/api/community/${postId}/comments`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ post_id: postId, comment }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`오류 : ${response.status} ${response.statusText}`);
+  const user = useAuthStore.getState().user;
+  if (!user) {
+    throw new Error("사용자 인증 정보가 없습니다.");
   }
-  const data = await response.json();
-  // console.log(data);
-  return data;
+
+  try {
+    const response = await fetch(`/api/community/${postId}/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "User-Id": user.id,
+      },
+      body: JSON.stringify({ post_id: postId, comment }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`오류 : ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    // console.log(data);
+    return data;
+  } catch (error) {
+    console.error("댓글 등록 오류 =>", error);
+    alert("댓글 등록 실패");
+  }
 };
 
 const Comments: React.FC<CommentsProps> = ({ postId }) => {
