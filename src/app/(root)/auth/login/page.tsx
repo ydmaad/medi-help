@@ -110,7 +110,7 @@ export default function LoginPage() {
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               <Image
-                src="/eye-icon.png"
+                src="/open_eye_icon.svg"
                 alt="Toggle password visibility"
                 width={20}
                 height={20}
@@ -138,13 +138,27 @@ export default function LoginPage() {
           </button>
         </form>
         <div className="mt-4 flex justify-between text-sm text-gray-600">
-          <Link href="/auth/find-id">계정 찾기</Link>
-          <Link href="/auth/find-password">비밀번호 찾기</Link>
+          <span>
+            <Link href="/auth/find-id" className="mr-2">
+              계정 찾기
+            </Link>
+            |
+            <Link href="/auth/find-password" className="ml-2">
+              비밀번호 찾기
+            </Link>
+          </span>
           <Link href="/auth/signup">회원가입</Link>
         </div>
         <div className="mt-6">
-          <p className="text-center text-sm text-gray-600">간편 로그인</p>
-          <div className="mt-2">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">간편 로그인</span>
+            </div>
+          </div>
+          <div className="mt-6">
             <button
               onClick={handleGoogleLogin}
               className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-md mb-2"
