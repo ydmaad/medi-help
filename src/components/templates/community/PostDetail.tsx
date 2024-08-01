@@ -71,7 +71,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   }, [id]);
 
   // TODO : 콘솔 확인하면서 진행!! - post에 user 정보(avatar, nickname 안 담김)
-  // console.log(post);
+  console.log("여기에 아바타랑 닉네임 들어오면 성공", post);
 
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
@@ -144,6 +144,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
               alt={`게시글 이미지 ${index + 1}`}
               width={300}
               height={200}
+              priority
+              style={{ width: "100%", height: "auto" }}
             />
           </div>
         ))}

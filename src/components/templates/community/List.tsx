@@ -39,11 +39,16 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
 
   // 게시글 검색
   const filteredPosts = posts
-    ? posts.filter(
-        (post) =>
-          post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          post.contents.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? posts
+        .filter(
+          (post) =>
+            post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.contents.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
     : [];
 
   // img_url을 배열로 만드는 함수
@@ -55,12 +60,12 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
     <>
       <Link href={`/community/post`}></Link>
       {/* <Link href={`/community/${id}`}></Link> */}
-      <h1 className="text-3xl font-bold mb-6">게시글 목록</h1>
+
       <ul className="space-y-4">
         {filteredPosts.map((item) => {
           const imageUrls = getImageUrls(item.img_url);
           return (
-            <li key={item.id} className="border-b p-4 w-[700px]">
+            <li key={item.id} className="border p-4 w-[1000px] h-[150px] my-5">
               {/* 상세페이지로 이동 */}
               <Link
                 href={`/community/${item.id}`}
@@ -72,13 +77,16 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
                       {" "}
                       {item.title}
                     </h2>
-                    <p className="text-gray-600 mb-4 line-clamp-2">
+                    <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
                       {item.contents}
                     </p>
-                    <div className="flex justify-between items-center text-sm text-gray-500">
+                    {/* <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center">
                         <Image
-                          src={item.user.avatar as string}
+                          src={
+                            (item.user.avatar as string) ||
+                            "/default-avatar.jpg"
+                          }
                           alt="user_img"
                           width={20}
                           height={20}
@@ -86,8 +94,8 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
                         />
                         <span>{item.user.nickname}</span>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
+                    </div> */}
+                    <div className="text-sm text-gray-500 mt-4">
                       {new Date(item.created_at).toLocaleString()}
                     </div>
                   </div>
