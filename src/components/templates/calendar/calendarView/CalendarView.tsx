@@ -25,25 +25,28 @@ const CalendarView = () => {
     const getCalendarData = async () => {
       try {
         const { data } = await axios.get("/api/calendar");
-        {
-          data.map((el: any) => {
-            el.medi_name.map((name: string) => {
-              setEvents((prev) => {
-                return [
-                  ...prev,
-                  {
-                    groupId: el.id,
-                    title: name,
-                    start: el.start_date,
-                    backgroundColor: COLOR_OF_TIME[el.medi_time],
-                    borderColor: COLOR_OF_TIME[el.medi_time],
-                    textColor: "white",
-                  },
-                ];
-              });
+        data.map(async(el: any) => {
+          const data = await fetch(`/api/calendar/bridge?calendar_id=${el.id}`);
+          const mediNameData = await data.json();
+          console.log(mediNameData)
+          mediNameData.map((medi: {
+            "medi_name": string,
+          }) => {
+            setEvents((prev) => {
+              return [
+                ...prev,
+                {
+                  groupId: el.id,
+                  title: medi.medi_name,
+                  start: el.start_date,
+                  backgroundColor: COLOR_OF_TIME[el.medi_time],
+                  borderColor: COLOR_OF_TIME[el.medi_time],
+                  textColor: "white",
+                },
+              ];
             });
           });
-        }
+        });
       } catch (error) {
         console.log("axios error", error);
       }

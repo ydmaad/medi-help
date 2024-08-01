@@ -50,8 +50,6 @@ const DetailModal = ({
     });
   };
 
-  console.log(values);
-
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);

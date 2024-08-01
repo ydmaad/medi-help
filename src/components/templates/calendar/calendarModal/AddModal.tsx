@@ -8,6 +8,7 @@ import { COLOR_OF_TIME } from "@/constant/constant";
 import ModalButton from "@/components/atoms/ModalButton";
 import Modal from "react-modal";
 import ModalInner from "@/components/molecules/ModalInner";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
   openAddModal: boolean;
@@ -16,6 +17,7 @@ interface Props {
 }
 const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
   const [values, setValues] = useState<ValueType>({
+    id: uuidv4(),
     medi_time: "morning",
     medi_name: [],
     side_effect: "",
@@ -29,6 +31,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
 
   // 저장 버튼 onClick 함수
   const handleSubmitClick = () => {
+    console.log("hihihih")
     const postCalendar = async (value: ValueType) => {
       try {
         const res = await axios.post("/api/calendar", value);
@@ -48,6 +51,10 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
               },
             ];
           });
+          axios.post("/api/calendar/bridge", {
+            medi_name: name,
+            calendar_id: values.id,
+          })
         });
         return res;
       } catch (error) {
@@ -60,6 +67,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
       console.log(values);
       postCalendar(values);
       setValues({
+        id: uuidv4(),
         medi_time: "morning",
         medi_name: [],
         side_effect: "",

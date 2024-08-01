@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { useAuthStore } from "@/store/auth";
+import { v4 as uuidv4 } from 'uuid';
 
 interface MediRecord {
   id: string;

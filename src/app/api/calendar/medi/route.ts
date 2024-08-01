@@ -36,16 +36,20 @@ export async function POST(req: NextRequest) {
   try {
     const newMediRecord = await req.json();
 
-    const { data, error } = await supabase
+    const response = await supabase
       .from('medications')
       .insert([newMediRecord]);
 
-    if (error) {
-      console.error("Supabase error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    console.log(response)
+
+    if (response.error) {
+      console.error("Supabase error:", response.error);
+      return NextResponse.json({ error: response.error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ medicationRecords: data }, { status: 201 });
+    console.log("datadatadatadatadatadata", response.error);
+
+    return NextResponse.json({ medicationRecords: response.error }, { status: 201 });
   } catch (err) {
     console.error("Server error:", err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

@@ -1,4 +1,5 @@
 export type ValueType = {
+  id: string;
   medi_time: string;
   medi_name: string[];
   side_effect: string;

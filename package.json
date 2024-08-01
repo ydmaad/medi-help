@@ -22,15 +22,17 @@
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
-    "zustand": "^4.5.4",
     "react-modal": "^3.16.1",
-    "web-push": "^3.6.7"
+    "uuid": "^10.0.0",
+    "web-push": "^3.6.7",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-modal": "^3.16.3",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "postcss": "^8",
