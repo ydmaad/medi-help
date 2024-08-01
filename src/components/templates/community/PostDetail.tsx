@@ -70,10 +70,10 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
     loadPost();
   }, [id]);
 
-  useEffect(() => {
-    console.log("현재 로그인 유저", user?.id);
-    console.log("현재 게시글을 작성한 유저", post?.user.id);
-  }, [user, post]);
+  // useEffect(() => {
+  //   console.log("현재 로그인 유저", user?.id);
+  //   console.log("현재 게시글을 작성한 유저", post?.user.id);
+  // }, [user, post]);
 
   // 게시글 삭제 핸들러
   const handleDelete = async () => {

@@ -119,8 +119,8 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
 
   // 사용자 권한 확인 함수
   const modifyUser = (commentUserId: string) => {
-    console.log(user?.id);
-    console.log(commentUserId);
+    // console.log(user?.id);
+    // console.log(commentUserId);
     return user && user.id === commentUserId;
   };
 
