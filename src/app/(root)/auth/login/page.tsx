@@ -4,35 +4,51 @@ import { useAuthStore } from "@/store/auth";
 import { supabase } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const { setUser } = useAuthStore();
   const router = useRouter();
 
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRememberMe(true);
+    }
+  }, []);
+
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
+    setError("");
 
     if (!email || !password) {
-      alert("모든 항목을 입력해주세요.");
+      setError("이메일과 비밀번호를 입력해주세요.");
       return;
     }
 
-    // 스키마의 user 정보를 불러오는 로직
+    if (!validateEmail(email)) {
+      setError("올바른 이메일 형식이 아닙니다.");
+      return;
+    }
+
     try {
       const { data: authData, error: authError } =
-        await supabase.auth.signInWithPassword({
-          email: email,
-          password: password,
-        });
+        await supabase.auth.signInWithPassword({ email, password });
 
       if (authError) throw authError;
 
-      // auth 스키마의 user테이블의 id 바탕으로 public 스키마의 user 테이블에서 유저정보 가져오기
       const { data: userData, error: userError } = await supabase
         .from("users")
         .select("*")
@@ -41,63 +57,123 @@ export default function LoginPage() {
 
       if (userError) throw userError;
 
-      // userData를 store에 저장(주스탠드)
       setUser(userData);
 
-      // 로그인 성공 후 메인 페이지로 리다이렉트
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", email);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+
       router.push("/");
     } catch (error) {
       console.error("Login error:", error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : "로그인 중 오류가 발생했습니다."
-      );
+      setError("로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
     }
   };
 
+  const handleGoogleLogin = async () => {
+    // TODO: Google 로그인 로직 구현
+    alert("Google 로그인 기능은 아직 구현되지 않았습니다.");
+  };
+
+  const handleKakaoLogin = async () => {
+    // TODO: Kakao 로그인 로직 구현
+    alert("Kakao 로그인 기능은 아직 구현되지 않았습니다.");
+  };
+
   return (
-    <form
-      onSubmit={onSubmit}
-      className="flex flex-col gap-y-2 border-2 w-96 items-center"
-    >
-      <div className="w-full flex items-center justify-between p-4">
-        <label htmlFor="email" className="mr-2">
-          이메일
-        </label>
-        <input
-          ref={emailRef}
-          type="email"
-          id="email"
-          placeholder="이메일을 입력하세요."
-          className="border-2 border-gray-300 rounded-md p-1"
-        />
-      </div>
-      <div className="w-full flex items-center justify-between p-4">
-        <label htmlFor="password" className="mr-2">
-          비밀번호
-        </label>
-        <input
-          ref={passwordRef}
-          type="password"
-          id="password"
-          placeholder="비밀번호를 입력하세요."
-          className="border-2 border-gray-300 rounded-md p-1"
-        />
-      </div>
-      <div className="w-full p-4 flex flex-col gap-y-2">
-        <button className="w-full bg-blue-500 text-white p-2 rounded-md">
-          로그인
-        </button>
-        <Link href="/auth/signup">
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="w-full max-w-md bg-white rounded-lg p-8">
+        <h2 className="text-2xl font-bold text-center mb-6">로그인</h2>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="아이디(이메일 주소)"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              <Image
+                src="/eye-icon.png"
+                alt="Toggle password visibility"
+                width={20}
+                height={20}
+              />
+            </button>
+          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="rememberMe" className="text-sm text-gray-600">
+              이메일 기억하기
+            </label>
+          </div>
           <button
-            type="button"
-            className="w-full bg-black text-white p-2 rounded-md"
+            type="submit"
+            className="w-full bg-brand-primary-500 text-white py-2 rounded-md"
           >
-            회원가입 가기
+            로그인
           </button>
-        </Link>
+        </form>
+        <div className="mt-4 flex justify-between text-sm text-gray-600">
+          <Link href="/auth/find-id">계정 찾기</Link>
+          <Link href="/auth/find-password">비밀번호 찾기</Link>
+          <Link href="/auth/signup">회원가입</Link>
+        </div>
+        <div className="mt-6">
+          <p className="text-center text-sm text-gray-600">간편 로그인</p>
+          <div className="mt-2">
+            <button
+              onClick={handleGoogleLogin}
+              className="flex items-center justify-center w-full py-2 border border-gray-300 rounded-md mb-2"
+            >
+              <Image
+                src="/google_icon.svg"
+                alt="Google"
+                width={20}
+                height={20}
+                className="mr-2"
+              />
+              구글 로그인
+            </button>
+            <button
+              onClick={handleKakaoLogin}
+              className="flex items-center justify-center w-full py-2 bg-yellow-300 rounded-md"
+            >
+              <Image
+                src="/kakao_icon.svg"
+                alt="Kakao"
+                width={20}
+                height={20}
+                className="mr-2"
+              />
+              카카오 로그인
+            </button>
+          </div>
+        </div>
       </div>
-    </form>
+    </div>
   );
 }
