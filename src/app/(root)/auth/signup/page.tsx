@@ -38,7 +38,7 @@ export default function SignUpPage() {
   const validateEmail = async (value: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(value)) {
-      // 실제로는 서버에 중복 확인 요청을 보내야 합니다.
+      // 이메일 중복확인 : 서버에 중복 확인 요청을 보내서 구현해야함(추가 구현 사항)
       setValidationStatus((prev) => ({ ...prev, email: "success" }));
     } else {
       setValidationStatus((prev) => ({ ...prev, email: "error" }));
