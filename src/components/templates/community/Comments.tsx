@@ -108,15 +108,19 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
       try {
         const getData = await fetchComment(postId);
         setComment(getData.data);
+        // console.log(getData.data);
       } catch (error) {
         console.log((error as Error).message);
       }
     };
     getComment();
   }, [postId]);
+  // console.log(comment.user.id);
 
   // 사용자 권한 확인 함수
   const modifyUser = (commentUserId: string) => {
+    console.log(user?.id);
+    console.log(commentUserId);
     return user && user.id === commentUserId;
   };
 
@@ -189,8 +193,6 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
       alert("댓글 수정에 실패했습니다. 다시 시도해 주세요.");
     }
   };
-
-  // console.log(comment);
 
   return (
     <>

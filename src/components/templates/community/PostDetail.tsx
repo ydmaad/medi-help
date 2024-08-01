@@ -10,7 +10,7 @@ import { useAuthStore } from "@/store/auth";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
-type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
+type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname" | "id"> };
 
 interface PostDetailProps {
   id: string;
@@ -70,12 +70,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
     loadPost();
   }, [id]);
 
-  // TODO : 콘솔 확인하면서 진행!! - post에 user 정보(avatar, nickname 안 담김)
-  console.log("여기에 아바타랑 닉네임 들어오면 성공", post);
+  useEffect(() => {
+    console.log("현재 로그인 유저", user?.id);
+    console.log("현재 게시글을 작성한 유저", post?.user.id);
+  }, [user, post]);
 
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
-    if (!user || user.id !== post?.user_id) {
+    if (!user || user.id !== post?.user.id) {
       alert("게시글을 삭제할 권한이 없습니다.");
       return;
     }
@@ -107,7 +109,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
 
   // 사용자 권한 확인 함수
   const modifyUser = () => {
-    return user && post && user.id === post.user_id;
+    return user && post && user.id === post.user.id;
   };
 
   // 수정 링크 클릭 핸들러
