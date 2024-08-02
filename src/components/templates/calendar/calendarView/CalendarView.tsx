@@ -119,7 +119,7 @@ const CalendarView = () => {
           locale="en"
           contentHeight={"auto"}
           fixedWeekCount={false}
-          ariaHideApp={false}
+          // ariaHideApp={false}
         />
       </div>
     </>
