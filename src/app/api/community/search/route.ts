@@ -5,7 +5,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const searchTerm = searchParams.get("search") || "";
 
-  console.log("받은 검색어는 이거 맞아?:", searchTerm);
+  // console.log("받은 검색어는 이거 맞아?:", searchTerm);
 
   const { data, error } = await supabase
     .from("posts")
