@@ -148,6 +148,7 @@ export type Database = {
           start_date: string | null
           times: Json
           user_id: string | null
+          itemImage: string | null
         }
         Insert: {
           created_at?: string | null
