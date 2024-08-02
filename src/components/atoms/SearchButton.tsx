@@ -1,11 +1,17 @@
 "use client";
+import React from "react";
 import Link from "next/link";
 
-const SearchButton = () => {
+interface SearchButtonProps {
+  searchTerm: string;
+  onClick: () => void;
+}
+
+const SearchButton = ({ searchTerm, onClick }: SearchButtonProps) => {
   return (
-    <Link href="/search" className="flex items-center cursor-pointer">
+    <button onClick={onClick} className="flex items-center cursor-pointer">
       <img src="/search.png" alt="돋보기" className="mr-[3px]" />
-    </Link>
+    </button>
   );
 };
 

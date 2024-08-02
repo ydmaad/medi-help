@@ -57,7 +57,7 @@ const Post = () => {
   // 게시글을 전송을 요청하는 핸들러
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("전송할 데이터!! : ", { title, contents, image });
+    // console.log("전송할 데이터!! : ", { title, contents, image });
     await fetchPost({ title, contents, image });
   };
 

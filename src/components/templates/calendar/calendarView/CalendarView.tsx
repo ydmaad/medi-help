@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Calendar, EventClickArg } from "@fullcalendar/core";
+import { EventInput } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
@@ -15,14 +15,11 @@ import { useAuthStore } from "@/store/auth";
 const CalendarView = () => {
   const [events, setEvents] = useState<EventsType[]>([]);
   const [openAddModal, setOpenAddModal] = useState<boolean>(false);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [calendarId, setCalendarId] = useState<string>("");
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [editDate, setEditDate] = useState<string>();
   const [editEvents, setEditEvents] = useState<EventsType[]>([]);
 
   const { user } = useAuthStore();
-  console.log(user?.id);
 
   useEffect(() => {
     if (!user) {
@@ -32,7 +29,6 @@ const CalendarView = () => {
     const getCalendarData = async () => {
       try {
         const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
-        console.log(data);
         {
           data.map((el: any) => {
             el.medi_name.map((name: string) => {
@@ -106,7 +102,7 @@ const CalendarView = () => {
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          events={events}
+          events={events as EventInput[]}
           dateClick={handleDateClick}
           selectable={true}
           eventOverlap={false}
@@ -119,7 +115,7 @@ const CalendarView = () => {
           locale="en"
           contentHeight={"auto"}
           fixedWeekCount={false}
-          ariaHideApp={false}
+          // ariaHideApp={false}
         />
       </div>
     </>

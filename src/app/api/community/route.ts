@@ -20,7 +20,7 @@ export async function GET() {
           avatar
         )
       `);
-    console.log("된다!!", data);
+    // console.log("된다!!", data);
 
     if (error) {
       return NextResponse.json(
@@ -40,7 +40,7 @@ export async function GET() {
 
 // 게시글 등록하는 요청
 export async function POST(request: NextRequest) {
-  console.log("포스트 요청 시작");
+  // console.log("포스트 요청 시작");
   const supabase = createRouteHandlerClient({ cookies });
   try {
     // 현재 로그인한 사용자 정보 가져오기
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     for (const file of files) {
       if (file instanceof File) {
         const fileName = `${Date.now()}_${file.name}`;
-        console.log(`업로드 시도: ${file.name}`);
+        // console.log(`업로드 시도: ${file.name}`);
 
         try {
           const { data: imgUploadData, error: imgUploadError } =

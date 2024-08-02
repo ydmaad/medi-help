@@ -35,7 +35,7 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
     };
     fetchData();
   }, [searchTerm, setPosts]);
-  console.log(posts);
+  // console.log(posts);
 
   // 게시글 검색
   const filteredPosts = posts
