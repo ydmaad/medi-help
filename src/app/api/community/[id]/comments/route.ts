@@ -17,7 +17,9 @@ export async function GET(
     const { id } = params;
     const { data, error } = await supabase
       .from("comments")
-      .select(`id, comment, created_at,post_id,user:user_id(nickname, avatar) `)
+      .select(
+        `id, comment, created_at,post_id,user:user_id(nickname, avatar,id) `
+      )
       .eq("post_id", id);
     // console.log("된다!!", data);
 
