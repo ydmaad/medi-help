@@ -10,7 +10,7 @@ import { useAuthStore } from "@/store/auth";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
-type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
+type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname" | "id"> };
 
 interface PostDetailProps {
   id: string;
@@ -70,12 +70,14 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
     loadPost();
   }, [id]);
 
-  // TODO : 콘솔 확인하면서 진행!! - post에 user 정보(avatar, nickname 안 담김)
-  console.log("여기에 아바타랑 닉네임 들어오면 성공", post);
+  // useEffect(() => {
+  //   console.log("현재 로그인 유저", user?.id);
+  //   console.log("현재 게시글을 작성한 유저", post?.user.id);
+  // }, [user, post]);
 
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
-    if (!user || user.id !== post?.user_id) {
+    if (!user || user.id !== post?.user.id) {
       alert("게시글을 삭제할 권한이 없습니다.");
       return;
     }
@@ -107,7 +109,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
 
   // 사용자 권한 확인 함수
   const modifyUser = () => {
-    return user && post && user.id === post.user_id;
+    return user && post && user.id === post.user.id;
   };
 
   // 수정 링크 클릭 핸들러
@@ -127,50 +129,60 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   // console.log(new Date(post.data[0].created_at));
   return (
     <>
-      <h1 className="text-2xl font-bold mb-4 p-5">{post.title}</h1>
-      <p className="text-sm text-gray-500 px-5">
-        작성자: {post.user?.nickname}
-      </p>
-      <p className="text-sm text-gray-500 px-5">
-        작성일: {new Date(post.created_at).toLocaleString()}
-      </p>
+      <div className="max-w-3xl mx-auto overflow-hidden mt-20">
+        <h1 className="text-2xl font-bold  px-4">{post.title}</h1>
 
-      {/* 여러 이미지 표시 */}
-      <div className="p-5 flex flex-wrap gap-4">
-        {imageUrl.map((url, index) => (
-          <div key={index}>
-            <Image
-              src={url.trim()}
-              alt={`게시글 이미지 ${index + 1}`}
-              width={300}
-              height={200}
-              priority
-              style={{ width: "100%", height: "auto" }}
-            />
+        <div className="flex justify-between items-center px-2 py-3">
+          <div className="flex items-center space-x-2">
+            <p className="text-sm text-gray-500 pl-2">{post.user?.nickname}</p>
+            <div className="mx-2 h-4 w-px bg-gray-300"></div>
+            <p className="text-sm text-gray-500 ml-0">
+              {new Date(post.created_at).toLocaleString()}
+            </p>
           </div>
-        ))}
+
+          {/* 버튼 */}
+          <div className="flex space-x-2">
+            <button
+              onClick={handleDelete}
+              className="text-sm text-gray-500 pr-2"
+            >
+              삭제
+            </button>
+            <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
+            <Link
+              href={`/community/${id}/edit`}
+              onClick={handleEditClick}
+              className="text-sm text-gray-500 pl-2"
+            >
+              수정
+            </Link>
+          </div>
+          {/* 버튼 ===================== */}
+        </div>
+
+        {/* 여러 이미지 표시 */}
+        <div className="p-5 flex flex-wrap gap-4">
+          {imageUrl.map((url, index) => (
+            <div key={index}>
+              <Image
+                src={url.trim()}
+                alt={`게시글 이미지 ${index + 1}`}
+                width={300}
+                height={200}
+                priority
+                style={{ width: "100%", height: "auto" }}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="p-5 max-w-[1000px] ">
+          <div>{formatContent(post.contents)}</div>
+        </div>
+
+        <Comments postId={id} />
       </div>
-
-      <div className="p-5 w-[500px] ">
-        <div>{formatContent(post.contents)}</div>
-      </div>
-
-      <button
-        onClick={handleDelete}
-        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out"
-      >
-        삭제하기
-      </button>
-
-      <Link
-        href={`/community/${id}/edit`}
-        onClick={handleEditClick}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded inline-flex items-center transition duration-300 ease-in-out"
-      >
-        수정하기
-      </Link>
-
-      <Comments postId={id} />
     </>
   );
 };

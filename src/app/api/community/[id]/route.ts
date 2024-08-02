@@ -27,7 +27,8 @@ export async function GET(
         created_at,
         user:user_id (
           nickname,
-          avatar
+          avatar,
+          id
         )
       `
       )
