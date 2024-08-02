@@ -34,7 +34,7 @@ const MediCard = ({
   };
 
   const handleClick = () => {
-    router.push(`/magazine/${id}`);
+    router.push(`/search/${id}`);
   };
 
   return (

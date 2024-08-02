@@ -23,22 +23,25 @@ const SkeletonCard = () => (
 
 const SearchPage = () => {
   const [allItems, setAllItems] = useState<Item[]>([]);
-  const [displayedItems, setDisplayedItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
-  const fetchData = async () => {
+  const fetchData = async (page: number, term: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/search?pageNo=1&numOfRows=100`);
+      const response = await fetch(
+        `/api/search?pageNo=${page}&numOfRows=${ITEMS_PER_PAGE}&searchTerm=${term}`
+      );
       if (!response.ok) {
         throw new Error("네트워크 응답에 문제가 있습니다.");
       }
       const data = await response.json();
-      setAllItems(data);
-      setCurrentPage(1);
+      setAllItems(data.items);
+      setTotalItems(data.totalItems);
+      setCurrentPage(page);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -47,29 +50,28 @@ const SearchPage = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const filteredItems = allItems.filter(
-      (item) =>
-        item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.effect.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setDisplayedItems(filteredItems);
-    setCurrentPage(1);
-  }, [searchTerm, allItems]);
+    fetchData(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const totalPages = Math.ceil(displayedItems.length / ITEMS_PER_PAGE);
-  const paginatedItems = displayedItems.slice(
+  const filteredItems = searchTerm
+    ? allItems.filter(
+        (item) =>
+          item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.effect.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : allItems;
+
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+  const paginatedItems = filteredItems.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -102,7 +104,7 @@ const SearchPage = () => {
       <div className="mb-[132px]">
         <SearchBar onSearchChange={handleSearchChange} />
       </div>
-      <div className="text-lg mb-4">총 약 수: {displayedItems.length}개</div>
+      <div className="text-lg mb-4">총 약 수: {totalItems}개</div>
       <div className="grid grid-cols-4 gap-4 mt-4">
         {paginatedItems.length > 0 ? (
           paginatedItems.map((item) => (
