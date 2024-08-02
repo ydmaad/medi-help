@@ -7,9 +7,7 @@ import UserBoard from "@/components/templates/mypage/UserBoard";
 const MyPage: React.FC = () => {
   return (
     <div>
-      <h1>My Page</h1>
       <UserBoard />
-      <Details />
       <MediLists />
       <Posts />
     </div>
