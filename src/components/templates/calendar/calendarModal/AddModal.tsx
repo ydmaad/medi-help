@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import { ValueType, EventsType } from "@/types/calendar";
@@ -8,6 +8,7 @@ import { COLOR_OF_TIME } from "@/constant/constant";
 import ModalButton from "@/components/atoms/ModalButton";
 import Modal from "react-modal";
 import ModalInner from "@/components/molecules/ModalInner";
+import { useAuthStore } from "@/store/auth";
 
 interface Props {
   openAddModal: boolean;
@@ -15,12 +16,23 @@ interface Props {
   setEvents: React.Dispatch<React.SetStateAction<EventsType[]>>;
 }
 const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
+  const { user } = useAuthStore();
+
   const [values, setValues] = useState<ValueType>({
+    user_id: "",
     medi_time: "morning",
     medi_name: [],
     side_effect: "",
     start_date: new Date(),
   });
+
+  useEffect(() => {
+    if (user) {
+      setValues((prev) => {
+        return { ...prev, user_id: user.id };
+      });
+    }
+  }, [user]);
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
@@ -44,7 +56,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
                 start: value.start_date,
                 backgroundColor: COLOR_OF_TIME[value.medi_time],
                 borderColor: COLOR_OF_TIME[value.medi_time],
-                textColor: "white",
+                extendProps: { sideEffect: value.side_effect },
               } as EventsType,
             ];
           });
@@ -60,6 +72,7 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
       console.log(values);
       postCalendar(values);
       setValues({
+        ...values,
         medi_time: "morning",
         medi_name: [],
         side_effect: "",

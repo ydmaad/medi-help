@@ -6,11 +6,11 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
-import TestModal from "../calendarModal/TestModal";
 import AddModal from "../calendarModal/AddModal";
 import { EventsType } from "@/types/calendar";
 import { COLOR_OF_TIME } from "@/constant/constant";
 import DetailModal from "../calendarModal/DetailModal";
+import { useAuthStore } from "@/store/auth";
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventsType[]>([]);
@@ -21,10 +21,18 @@ const CalendarView = () => {
   const [editDate, setEditDate] = useState<string>();
   const [editEvents, setEditEvents] = useState<EventsType[]>([]);
 
+  const { user } = useAuthStore();
+  console.log(user?.id);
+
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     const getCalendarData = async () => {
       try {
-        const { data } = await axios.get("/api/calendar");
+        const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
+        console.log(data);
         {
           data.map((el: any) => {
             el.medi_name.map((name: string) => {
@@ -37,7 +45,7 @@ const CalendarView = () => {
                     start: el.start_date,
                     backgroundColor: COLOR_OF_TIME[el.medi_time],
                     borderColor: COLOR_OF_TIME[el.medi_time],
-                    textColor: "white",
+                    extendProps: { sideEffect: el.side_effect },
                   },
                 ];
               });
@@ -50,30 +58,25 @@ const CalendarView = () => {
     };
 
     getCalendarData();
-  }, []);
+  }, [user]);
 
-  useEffect(() => {
+  const handleDateClick = (event: DateClickArg) => {
+    const offset = 1000 * 60 * 60 * 9;
+    const newDate = new Date(event.date.getTime() + offset)
+      .toISOString()
+      .split("T")[0];
+
+    setEditDate(newDate);
+
     let editList = events.filter((event) => {
-      console.log(editDate);
-      return event.start?.toString().split("T")[0] === editDate;
+      return event.start?.toString().split("T")[0] === newDate;
     });
 
     setEditEvents(editList);
-    console.log(editList);
 
     if (editList.length !== 0) {
       setOpenDetailModal(true);
     }
-  }, [editDate]);
-
-  const handleDateClick = (event: DateClickArg) => {
-    const offset = 1000 * 60 * 60 * 9;
-    setEditDate(
-      new Date(event.date.getTime() + offset).toISOString().split("T")[0]
-    );
-    console.log(
-      new Date(event.date.getTime() + offset).toISOString().split("T")[0]
-    );
   };
 
   const handleButtonClick = () => {
@@ -82,11 +85,6 @@ const CalendarView = () => {
 
   return (
     <>
-      <TestModal
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-        calendarId={calendarId}
-      />
       <AddModal
         openAddModal={openAddModal}
         setOpenAddModal={setOpenAddModal}
@@ -96,6 +94,7 @@ const CalendarView = () => {
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
         editEvents={editEvents}
+        editDate={editDate}
       />
       <div className="relative p-8 w-11/12 h-7/12 fc-button ">
         <button
@@ -120,6 +119,7 @@ const CalendarView = () => {
           locale="en"
           contentHeight={"auto"}
           fixedWeekCount={false}
+          ariaHideApp={false}
         />
       </div>
     </>
