@@ -92,7 +92,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center pt-8">
+    <div className="flex flex-col items-center justify-center">
       <div className="w-full max-w-md bg-white rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6">로그인</h2>
         <form onSubmit={onSubmit} className="space-y-4">
