@@ -124,9 +124,6 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
 
-  // TODO : 닉네임 확인!!
-  // console.log(post.user?.nickname); // undefined 나옴
-  // console.log(new Date(post.data[0].created_at));
   return (
     <>
       <div className="max-w-3xl mx-auto overflow-hidden mt-20">

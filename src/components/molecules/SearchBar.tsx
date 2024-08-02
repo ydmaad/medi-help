@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SearchButton from "@/components/atoms/SearchButton";
 
 interface SearchBarProps {
@@ -6,8 +6,14 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ onSearchChange }: SearchBarProps) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchChange(event.target.value);
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchButtonClick = () => {
+    onSearchChange(searchTerm);
   };
 
   return (
@@ -19,7 +25,10 @@ const SearchBar = ({ onSearchChange }: SearchBarProps) => {
         onChange={handleInputChange}
       />
       <div className="absolute right-2">
-        <SearchButton />
+        <SearchButton
+          searchTerm={searchTerm}
+          onClick={handleSearchButtonClick}
+        />
       </div>
     </div>
   );

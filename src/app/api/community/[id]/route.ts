@@ -94,8 +94,8 @@ export async function PUT(
     // 파일 이미지 처리
     const imageFiles = formData.getAll("imageFile") as File[];
 
-    console.log("새로등록할 이미지", imageFiles);
-    console.log("기존 이미지", imageUrls);
+    // console.log("새로등록할 이미지", imageFiles);
+    // console.log("기존 이미지", imageUrls);
 
     // 파일 이미지를 supabase storage에 저장
     let newImageUrl = []; // 스트링만 담긴 배열

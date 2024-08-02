@@ -51,13 +51,13 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
             return [
               ...prev,
               {
-                groupId: null,
+                groupId: null as unknown as string | undefined,
                 title: name,
                 start: value.start_date,
                 backgroundColor: COLOR_OF_TIME[value.medi_time],
                 borderColor: COLOR_OF_TIME[value.medi_time],
                 extendProps: { sideEffect: value.side_effect },
-              },
+              } as EventsType,
             ];
           });
         });

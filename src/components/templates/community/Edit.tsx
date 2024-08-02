@@ -81,23 +81,9 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
     getPost();
   }, [id]);
 
-  console.log(image);
-  console.log(currentImage);
-  console.log(saveImage);
-
-  // 파일 선택 클릭시 여러 이미지가 배열로 들어가지 않음
-  // 3가지
-
-  //  스티링 배열
-  // 업로드시 미리보기용 배열
-  // 초기값은 수파베이스에 저장된 미리보기용 배열
-  // ㄴ ui에 표시하기 위한 배열
-
-  // 스토리지에 저장하기 위한 파일배열
-
-  // 수파베이스 테이블에 저장할 유알엑 스트링 배열
-
   // console.log(image);
+  // console.log(currentImage);
+  // console.log(saveImage);
 
   const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -121,9 +107,6 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
       setError((error as Error).message);
     }
   };
-
-  // TODO : 수파베이스에서 가져온 이미지에 배열로 같이 추가
-  // 수파베이스에서 가져온 이미지 + 현재 추가한 이미지 = 새로운 스테이트(saveImages)에 넣어서 요청 전송
 
   // 여러 이미지 파일을 처리하는 핸들러
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
