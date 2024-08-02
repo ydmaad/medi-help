@@ -1,3 +1,5 @@
+import { EventInput } from "@fullcalendar/core";
+
 export type ValueType = {
   medi_time: string;
   medi_name: string[];
@@ -10,11 +12,11 @@ export type MedicinesType = {
   time: { [key: string]: boolean };
 };
 
-export type EventsType = {
-  groupId: string | null;
+export interface EventsType extends Omit<EventInput, "groupId"> {
+  groupId?: string | null;
   title: string;
-  start: Date | null;
-  backgroundColor: string;
-  borderColor: string;
-  textColor: string;
-};
+  start: string | Date;
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
+}

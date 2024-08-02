@@ -6,7 +6,7 @@ const MainImage = () => {
 
   return (
     <div className="w-[588px] h-[280px] border border-brand-gray-300 rounded-[20px] overflow-hidden">
-      <img src={src} alt={alt} className="w-full h-full object-cover" />
+      <img src={src || ""} alt={alt} className="w-full h-full object-cover" />
     </div>
   );
 };

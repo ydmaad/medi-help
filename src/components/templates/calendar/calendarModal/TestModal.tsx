@@ -8,10 +8,17 @@ interface Props {
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   calendarId: string;
 }
+type test_calendar = {
+  name: string[]; // name을 string[]로 변경
+  user_id: string;
+  medi_time: string;
+  sideEffect: string;
+  time: string;
+};
 
 const TestModal = ({ openModal, setOpenModal, calendarId }: Props) => {
   const [values, setValues] = useState<test_calendar>({
-    name: "",
+    name: ["아스피린"],
     user_id: "test@test.com",
     medi_time: "",
     sideEffect: "",
