@@ -30,10 +30,6 @@ const DetailModal = ({
   });
 
   useEffect(() => {
-    console.log(values);
-  }, [openDetailModal]);
-
-  useEffect(() => {
     setViewEvents();
   }, [editEvents, editDate, values.medi_time]);
 
