@@ -7,8 +7,18 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("user_id");
+
+  if (!userId) {
+    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  }
+
   try {
-    const { data, error } = await supabase.from("calendar").select("*");
+    const { data, error } = await supabase
+      .from("calendar")
+      .select("*")
+      .eq("user_id", userId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

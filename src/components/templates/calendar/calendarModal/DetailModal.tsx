@@ -4,6 +4,7 @@ import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalInner from "@/components/molecules/ModalInner";
 import { COLOR_OF_TIME } from "@/constant/constant";
 import { EventsType, ValueType } from "@/types/calendar";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 
@@ -11,14 +12,17 @@ interface Props {
   openDetailModal: boolean;
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
   editEvents: EventsType[];
+  editDate: string | undefined;
 }
 
 const DetailModal = ({
   openDetailModal,
   setOpenDetailModal,
   editEvents,
+  editDate,
 }: Props) => {
   const [values, setValues] = useState<ValueType>({
+    user_id: "",
     medi_time: "morning",
     medi_name: [],
     side_effect: "",
@@ -26,28 +30,41 @@ const DetailModal = ({
   });
 
   useEffect(() => {
-    setViewEvents();
-  }, [editEvents]);
+    console.log(values);
+  }, [openDetailModal]);
 
   useEffect(() => {
     setViewEvents();
-  }, [values.medi_time]);
+  }, [editEvents, editDate, values.medi_time]);
 
   const setViewEvents = () => {
     let viewEvents = editEvents.filter((event) => {
       let time = Object.keys(COLOR_OF_TIME).filter((timeName) => {
         return COLOR_OF_TIME[timeName] === event.backgroundColor;
       });
-      console.log(time);
       return time[0] === values.medi_time;
     });
     console.log(viewEvents);
 
-    viewEvents.map((event) => {
+    if (viewEvents.length === 0) {
       setValues((prev) => {
-        return { ...prev, medi_name: [...prev.medi_name, event.title] };
+        return {
+          ...prev,
+          medi_name: [],
+          side_effect: "",
+        };
       });
-    });
+    } else {
+      viewEvents.map((event) => {
+        setValues((prev) => {
+          return {
+            ...prev,
+            medi_name: [...prev.medi_name, event.title],
+            side_effect: event.extendProps.sideEffect,
+          };
+        });
+      });
+    }
   };
 
   console.log(values);
@@ -55,7 +72,48 @@ const DetailModal = ({
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);
+    setValues({
+      ...values,
+      medi_time: "morning",
+      medi_name: [],
+      side_effect: "",
+      start_date: new Date(),
+    });
   };
+
+  // Route Handler 통해서 UPDATE 하는 함수
+  const updateCalendar = async (id: string, value: test_calendar) => {
+    try {
+      const res = await axios.patch(`/api/calendar/${id}`, value);
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Patch Error", error);
+    }
+  };
+
+  // Route Handler 통해서 DELETE 하는 함수
+  const deleteCalendar = async (id: string) => {
+    try {
+      const res = await axios.delete(`/api/calendar/${id}`);
+      console.log(res);
+      return res;
+    } catch (error) {
+      console.log("Delete Error", error);
+    }
+  };
+
+  // 수정하기 버튼 onClick 함수
+  // const handleUpdateButtonClick = () => {
+  //   updateCalendar(calendarId, values);
+  //   setOpenModal(false);
+  // };
+
+  // 삭제하기 버튼 onClick 함수
+  // const handleDeleteButtonClick = () => {
+  //   deleteCalendar(calendarId);
+  //   setOpenModal(false);
+  // };
 
   return (
     <Modal
