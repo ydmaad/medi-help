@@ -1,4 +1,5 @@
 export type ValueType = {
+  user_id: string;
   medi_time: string;
   medi_name: string[];
   side_effect: string;
@@ -16,5 +17,5 @@ export type EventsType = {
   start: Date | null;
   backgroundColor: string;
   borderColor: string;
-  textColor: string;
+  extendProps: { sideEffect: string };
 };
