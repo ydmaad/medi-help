@@ -1,12 +1,12 @@
+import { cookies } from "next/headers";
 import { TablesInsert, TablesUpdate } from "../../../../types/supabase";
 import { Tables } from "@/types/supabase";
 import { supabase } from "@/utils/supabase/client";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 type Post = Tables<"posts">; // 테이블을 읽어올때
-
 type PostInsert = TablesInsert<"posts">; // 추가
-
 type PostUpdate = TablesUpdate<"posts">; //수정
 
 // 게시글 상세페이지 불러오는 요청
@@ -18,7 +18,20 @@ export async function GET(
     const { id } = params;
     const { data, error } = await supabase
       .from("posts")
-      .select("*")
+      .select(
+        `
+        id,
+        title,
+        contents,
+        img_url,
+        created_at,
+        user:user_id (
+          nickname,
+          avatar,
+          id
+        )
+      `
+      )
       .eq("id", id);
     // console.log("된다!!", data);
 
@@ -39,7 +52,6 @@ export async function GET(
 }
 
 // 게시글 삭제하는 요청
-// 해당 게시글을 삭제하는 유저가 게시글을 쓴 유저가 맞는지 확인하는 코드 필요
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -71,42 +83,55 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const { id } = params;
-  try {
-    // 클라이언트에서 데이터 보내는 형식 : formData
-    const formData = await request.formData();
+  const supabase = createRouteHandlerClient({ cookies });
 
-    // formData에서 필드 추출
+  try {
+    const formData = await request.formData();
     const title = formData.get("title") as string;
     const contents = formData.get("contents") as string;
-    const image = formData.getAll("image") as File[];
+    // URL 이미지 처리
+    const imageUrls = formData.getAll("imageUrl") as string[];
+    // 파일 이미지 처리
+    const imageFiles = formData.getAll("imageFile") as File[];
 
-    // 이미지 업로드 처리
-    const imageUrls = await Promise.all(
-      image.map(async (img) => {
-        const { data, error } = await supabase.storage
+    console.log("새로등록할 이미지", imageFiles);
+    console.log("기존 이미지", imageUrls);
+
+    // 파일 이미지를 supabase storage에 저장
+    let newImageUrl = []; // 스트링만 담긴 배열
+    for (const file of imageFiles) {
+      const fileName = `${Date.now()}_${file.name}`;
+
+      try {
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from("posts_image_url")
-          .upload(`${id}/${img.name}`, img);
+          .upload(fileName, file);
 
-        if (error) throw error;
-
-        // 업로드된 이미지의 URL 반환
-        const {
-          data: { publicUrl },
-        } = supabase.storage
+        if (uploadError) {
+          console.error(`이미지 업로드 실패 : ${file.name}`, uploadError);
+          continue;
+        }
+        const { data: urlData } = supabase.storage
           .from("posts_image_url")
-          .getPublicUrl(`${id}/${img.name}`);
+          .getPublicUrl(fileName);
 
-        return publicUrl;
-      })
-    );
+        newImageUrl.push(urlData.publicUrl);
+      } catch (uploadError) {
+        console.error(`이미지 업로드 중 예외 발생: ${file.name}`, uploadError);
+      }
+    }
+
+    const allImages = [...imageUrls, ...newImageUrl];
+
+    const updateData = {
+      title,
+      contents,
+      img_url: allImages.join(","),
+    };
 
     const { data, error } = await supabase
       .from("posts")
-      .update({
-        title,
-        contents,
-        img_url: imageUrls.join(","),
-      })
+      .update(updateData)
       .eq("id", id)
       .select();
 

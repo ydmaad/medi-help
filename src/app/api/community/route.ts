@@ -1,15 +1,10 @@
-import { TablesInsert, TablesUpdate } from "./../../../types/supabase";
-import { Tables } from "@/types/supabase";
+import { TablesInsert } from "./../../../types/supabase";
 import { supabase } from "@/utils/supabase/client";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-type Post = Tables<"posts">; // 테이블을 읽어올때
-
 type PostInsert = TablesInsert<"posts">; // 추가
-
-type PostUpdate = TablesUpdate<"posts">; //수정
 
 // 게시글 불러오는 요청
 export async function GET() {
@@ -25,7 +20,7 @@ export async function GET() {
           avatar
         )
       `);
-    // console.log("된다!!", data);
+    console.log("된다!!", data);
 
     if (error) {
       return NextResponse.json(
@@ -49,12 +44,8 @@ export async function POST(request: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
   try {
     // 현재 로그인한 사용자 정보 가져오기
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
+    const userId = request.headers.get("User-Id");
+    if (!userId) {
       return NextResponse.json({ error: "인증되지 않은 사용자입니다." });
     }
 
@@ -111,12 +102,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 하드코딩한 부분
-    // TODO : 나중에 auth 부분 성공시 수정하기!!
     const postData: PostInsert = {
       title,
       contents,
-      user_id: session.user.id,
+      user_id: userId,
       img_url: img_url.join(","),
     };
 
@@ -144,34 +133,5 @@ export async function POST(request: NextRequest) {
       { error: "Internal Server Error", message: (error as Error).message },
       { status: 500 }
     );
-  }
-}
-
-// 게시글 수정하는 요청
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  try {
-    const body: PostUpdate = await request.json();
-
-    const { data, error } = await supabase
-      .from("posts")
-      .update(body)
-      .eq("id", id)
-      .select();
-
-    if (error) {
-      return NextResponse.json({ error: "수정 실패", message: error.message });
-    }
-
-    return NextResponse.json({ message: "수정 성공", data });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({
-      error: "Internal Server Error",
-      message: (error as Error).message,
-    });
   }
 }

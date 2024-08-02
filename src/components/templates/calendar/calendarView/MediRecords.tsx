@@ -60,10 +60,20 @@ const MediRecords: React.FC = () => {
     setMediRecords((prevRecords) => prevRecords.filter((record) => record.id !== id));
   };
 
+  // 날짜 비교 시 시간을 제거하고 비교합니다.
+  const stripTime = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  const currentDate = stripTime(new Date());
+  const filteredMediRecords = mediRecords.filter((record) => {
+    const startDate = stripTime(new Date(record.start_date));
+    const endDate = stripTime(new Date(record.end_date));
+    return currentDate >= startDate && currentDate <= endDate;
+  });
+
   return (
     <div className="p-4">
-      <h2 className="text-xl mb-4">복용중인 약 목록</h2>
-      {mediRecords.map((record) => (
+      <h2 className="text-xl mb-4">오늘 복용중인 약 목록</h2>
+      {filteredMediRecords.map((record) => (
         <div
           key={record.id}
           className="bg-gray-100 p-4 rounded shadow mb-2 cursor-pointer"
@@ -74,6 +84,7 @@ const MediRecords: React.FC = () => {
         >
           <div>
             <p className="text-lg font-semibold">{record.medi_nickname}</p>
+            <p className="text-sm text-gray-500">{record.start_date} ~ {record.end_date}</p>
           </div>
         </div>
       ))}
