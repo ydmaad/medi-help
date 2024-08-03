@@ -1,49 +1,42 @@
+import { supabase } from "@/utils/supabase/client";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const numOfRows = searchParams.get("numOfRows") || "100";
-  const type = searchParams.get("type") || "json";
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const pageNo = parseInt(url.searchParams.get("pageNo") || "1");
+  const numOfRows = parseInt(url.searchParams.get("numOfRows") || "20");
 
   try {
-    const allItems = [];
-    let pageNo = 1;
-    let moreData = true;
+    const { data, error, count } = await supabase
+      .from("search_medicine")
+      .select("*", { count: "exact" });
+    // .range((pageNo - 1) * numOfRows, pageNo * numOfRows - 1); //모든 데이터를 받아오려면 해당 매서드를 사용해서 우회해야하지만 우회 하게 되면 데이터는 받아와지지만 ui가 적용이 안되는 오류 발생.
 
-    while (moreData) {
-      const apiUrl = `${process.env.NEXT_PUBLIC_E_MEDI_URL}?serviceKey=${process.env.NEXT_PUBLIC_E_MEDI_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&type=${type}`;
-      const response = await fetch(apiUrl);
-
-      if (!response.ok) {
-        throw new Error("네트워크 응답에 문제가 있습니다.");
-      }
-
-      const data = await response.json();
-      const items = data.body.items || [];
-
-      // 필터링 및 데이터 포맷팅
-      const formattedItems = items
-        .filter((item: any) => item.itemImage)
-        .map((item: any) => ({
-          itemName: item.itemName,
-          entpName: item.entpName,
-          effect: item.efcyQesitm || "효능 정보 없음",
-          itemImage: item.itemImage,
-        }));
-
-      if (formattedItems.length > 0) {
-        allItems.push(...formattedItems);
-        pageNo++;
-      } else {
-        moreData = false;
-      }
+    if (error) {
+      return NextResponse.json(
+        { error: "데이터 조회 실패", message: error.message },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json(allItems);
+    const responseData = data.map((item) => ({
+      itemName: item.itemName,
+      entpName: item.entpName,
+      effect: item.efcyQesitm || "효능 정보 없음",
+      itemImage: item.itemImage,
+      id: item.id,
+    }));
+
+    const totalItems = count || 0;
+
+    return NextResponse.json(
+      { message: "조회 성공", totalItems, items: responseData },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "데이터를 가져오는 데 실패했습니다." },
+      { error: "Internal Server Error", message: (error as Error).message },
       { status: 500 }
     );
   }
