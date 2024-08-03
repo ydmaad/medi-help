@@ -95,7 +95,7 @@ const CalendarView = () => {
       <div className="relative p-8 w-11/12 h-7/12 fc-button ">
         <button
           onClick={handleButtonClick}
-          className="absolute w-24 right-20 top-10 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300"
+          className="absolute w-24 right-12 top-10 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300"
         >
           기록추가 +
         </button>

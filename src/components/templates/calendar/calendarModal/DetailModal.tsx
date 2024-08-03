@@ -29,9 +29,10 @@ const DetailModal = ({
     start_date: new Date(),
   });
 
+  // 의존성 배열 내부의 2가지 요소가 둘 다 트리거가 될 경우 값이 잘못 들어온다. 로직 분리 필요!
   useEffect(() => {
     setViewEvents();
-  }, [editEvents, editDate, values.medi_time]);
+  }, [editEvents, values.medi_time]);
 
   const setViewEvents = () => {
     let viewEvents = editEvents.filter((event) => {
@@ -40,7 +41,6 @@ const DetailModal = ({
       });
       return time[0] === values.medi_time;
     });
-    console.log(viewEvents);
 
     if (viewEvents.length === 0) {
       setValues((prev) => {
@@ -62,8 +62,6 @@ const DetailModal = ({
       });
     }
   };
-
-  console.log(values);
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {

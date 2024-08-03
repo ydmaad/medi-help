@@ -24,7 +24,6 @@ const ModalInner = ({ values, setValues }: Props) => {
           const { data } = await axios.get(
             `/api/calendar/medi?user_id=${user.id}`
           );
-          console.log(data);
           data.medicationRecords.map((record: any) => {
             SetMedicines((prev) => {
               return [
