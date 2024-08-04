@@ -58,29 +58,28 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
 
   return (
     <>
-      <Link href={`/community/post`}></Link>
-      {/* <Link href={`/community/${id}`}></Link> */}
-
       <ul className="space-y-4">
         {filteredPosts.map((item) => {
           const imageUrls = getImageUrls(item.img_url);
           return (
-            <li key={item.id} className="border p-4 w-[1000px] h-[150px] my-5">
+            <>
               {/* 상세페이지로 이동 */}
               <Link
+                key={item.id}
                 href={`/community/${item.id}`}
                 className="block hover:bg-gray-50 transition duration-150 ease-in-out"
               >
-                <div className="flex justify-between">
-                  <div className="flex-grow pr-4">
-                    <h2 className="text-xl font-semibold mb-2">
-                      {" "}
-                      {item.title}
-                    </h2>
-                    <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
-                      {item.contents}
-                    </p>
-                    {/* <div className="flex justify-between items-center text-sm text-gray-500">
+                <li className="border p-4 w-[1000px] h-[150px] my-5">
+                  <div className="flex justify-between">
+                    <div className="flex-grow pr-4">
+                      <h2 className="text-xl font-semibold mb-2">
+                        {" "}
+                        {item.title}
+                      </h2>
+                      <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
+                        {item.contents}
+                      </p>
+                      {/* <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center">
                         <Image
                           src={
@@ -95,24 +94,25 @@ const List: React.FC<ListProps> = ({ searchTerm, posts, setPosts }) => {
                         <span>{item.user.nickname}</span>
                       </div>
                     </div> */}
-                    <div className="text-sm text-gray-500 mt-4">
-                      {new Date(item.created_at).toLocaleString()}
+                      <div className="text-sm text-gray-500 mt-4">
+                        {new Date(item.created_at).toLocaleString()}
+                      </div>
                     </div>
+                    {imageUrls.length > 0 && (
+                      <div className="w-24 h-24 flex-shrink-0">
+                        <Image
+                          src={imageUrls[0]}
+                          alt="Post image"
+                          width={96}
+                          height={96}
+                          className="object-cover w-full h-full rounded"
+                        />
+                      </div>
+                    )}
                   </div>
-                  {imageUrls.length > 0 && (
-                    <div className="w-24 h-24 flex-shrink-0">
-                      <Image
-                        src={imageUrls[0]}
-                        alt="Post image"
-                        width={96}
-                        height={96}
-                        className="object-cover w-full h-full rounded"
-                      />
-                    </div>
-                  )}
-                </div>
+                </li>
               </Link>
-            </li>
+            </>
           );
         })}
       </ul>
