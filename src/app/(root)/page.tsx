@@ -45,7 +45,7 @@ const Page: React.FC = () => {
     <>
       <Hero />
       <div className="flex justify-between mx-36 mb-[10px]">
-        <MainTitle text="메거진" />
+        <MainTitle text="매거진" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
       <div className="flex flex-col items-center">
