@@ -51,44 +51,46 @@ const MediLists: React.FC = () => {
   const displayedMediRecords = showAll ? mediRecords : mediRecords.slice(0, 5);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl mb-4">현재 복용 중인 약</h2>
-      <div className="flex flex-wrap gap-4">
-        {displayedMediRecords.map((record) => (
-          <div
-            key={record.id}
-            className="bg-gray-100 p-4 rounded shadow mb-2 w-1/5 flex flex-col items-center"
-          >
-            {record.itemImage ? (
-              <Image
-                src={record.itemImage}
-                alt={record.medi_name || "기본 이미지"}
-                width={200}
-                height={200}
-                className="w-40 h-40 mb-2 object-contain"
-              />
-            ) : (
-              <div className="w-40 h-40 mb-2 flex items-center justify-center bg-gray-200">
-                <p className="text-gray-500">이미지 없음</p>
-              </div>
-            )}
-            <p className="text-lg font-semibold">{record.medi_nickname}</p>
-            <p className="text-sm text-gray-500">{record.medi_name}</p>
-            <p className="text-sm text-gray-500">
-              {record.start_date} ~ {record.end_date}
-            </p>
-          </div>
-        ))}
-        {!showAll && mediRecords.length > 5 && (
-          <div className="w-1/5 p-4 flex items-center justify-center">
-            <button
-              onClick={() => setShowAll(true)}
-              className="text-blue-500 hover:underline"
+    <div className="flex justify-center p-4">
+      <div className="w-full max-w-4xl">
+      <h2 className="text-xl mb-4 text-center">복용 중인 약</h2>
+        <div className="flex flex-wrap justify-center gap-4">
+          {displayedMediRecords.map((record) => (
+            <div
+              key={record.id}
+              className="bg-gray-100 p-4 rounded shadow mb-2 w-full md:w-1/5 flex flex-col items-center"
             >
-              더보기
-            </button>
-          </div>
-        )}
+              {record.itemImage ? (
+                <Image
+                  src={record.itemImage}
+                  alt={record.medi_name || "기본 이미지"}
+                  width={200}
+                  height={200}
+                  className="w-40 h-40 mb-2 object-contain"
+                />
+              ) : (
+                <div className="w-40 h-40 mb-2 flex items-center justify-center bg-gray-200">
+                  <p className="text-gray-500">이미지 없음</p>
+                </div>
+              )}
+              <p className="text-lg font-semibold">{record.medi_nickname}</p>
+              <p className="text-sm text-gray-500">{record.medi_name}</p>
+              <p className="text-sm text-gray-500">
+                {record.start_date} ~ {record.end_date}
+              </p>
+            </div>
+          ))}
+          {!showAll && mediRecords.length > 5 && (
+            <div className="w-full md:w-1/5 p-4 flex items-center justify-center">
+              <button
+                onClick={() => setShowAll(true)}
+                className="text-blue-500 hover:underline"
+              >
+                더보기
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

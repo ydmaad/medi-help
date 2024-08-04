@@ -51,22 +51,24 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl mb-4">내가 쓴 게시글</h2>
-      <div className="flex flex-col gap-4">
-        {posts.map((post) => (
-          <div
-            key={post.id}
-            className="bg-gray-100 p-4 rounded shadow-md overflow-hidden"
-            style={{ maxHeight: "150px" }}
-          >
-            <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
-            <p className="text-gray-700 overflow-hidden overflow-ellipsis" style={{ whiteSpace: "nowrap" }}>
-              {post.contents}
-            </p>
-            <p className="text-gray-500 text-sm mt-2">{formatDate(post.created_at)}</p>
-          </div>
-        ))}
+    <div className="flex justify-center p-4">
+    <div className="w-full max-w-4xl">
+      <h2 className="text-xl mb-4 text-center">작성한 게시글</h2>
+        <div className="flex flex-col gap-4">
+          {posts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-gray-100 p-4 rounded shadow-md overflow-hidden"
+              style={{ maxHeight: "150px" }}
+            >
+              <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
+              <p className="text-gray-700 overflow-hidden overflow-ellipsis" style={{ whiteSpace: "nowrap" }}>
+                {post.contents}
+              </p>
+              <p className="text-gray-500 text-sm mt-2">{formatDate(post.created_at)}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
