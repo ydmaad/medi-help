@@ -44,7 +44,6 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
     const postCalendar = async (value: ValueType) => {
       try {
         const res = await axios.post("/api/calendar", value);
-        console.log(res);
 
         value.medi_name.map((name: string) => {
           setEvents((prev) => {
@@ -68,8 +67,6 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
     };
 
     if (values.medi_name.length !== 0) {
-      console.log("가랏!");
-      console.log(values);
       postCalendar(values);
       setValues({
         ...values,
