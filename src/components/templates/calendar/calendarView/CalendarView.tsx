@@ -90,7 +90,6 @@ const CalendarView = () => {
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
         editEvents={editEvents}
-        editDate={editDate}
       />
       <div className="relative p-8 w-11/12 h-7/12 fc-button ">
         <button

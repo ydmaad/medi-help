@@ -12,14 +12,12 @@ interface Props {
   openDetailModal: boolean;
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
   editEvents: EventsType[];
-  editDate: string | undefined;
 }
 
 const DetailModal = ({
   openDetailModal,
   setOpenDetailModal,
   editEvents,
-  editDate,
 }: Props) => {
   const [values, setValues] = useState<ValueType>({
     user_id: "",
@@ -29,7 +27,6 @@ const DetailModal = ({
     start_date: new Date(),
   });
 
-  // 의존성 배열 내부의 2가지 요소가 둘 다 트리거가 될 경우 값이 잘못 들어온다. 로직 분리 필요!
   useEffect(() => {
     setViewEvents();
   }, [editEvents, values.medi_time]);
@@ -41,6 +38,8 @@ const DetailModal = ({
       });
       return time[0] === values.medi_time;
     });
+
+    let viewEventTitles = viewEvents.map((event) => event.title);
 
     if (viewEvents.length === 0) {
       setValues((prev) => {
@@ -55,7 +54,7 @@ const DetailModal = ({
         setValues((prev) => {
           return {
             ...prev,
-            medi_name: [...prev.medi_name, event.title],
+            medi_name: viewEventTitles,
             side_effect: event.extendProps.sideEffect,
           };
         });
