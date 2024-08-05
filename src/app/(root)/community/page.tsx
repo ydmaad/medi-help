@@ -40,7 +40,9 @@ const CommunityPage = () => {
       <div className="max-w-[1000px] mx-auto mt-20">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
-            <h1 className="text-3xl font-bold">커뮤니티</h1>
+            <Link href={`/community`}>
+              <h1 className="text-3xl font-bold">커뮤니티</h1>
+            </Link>
             <Search handleSearch={handleSearch} />
           </div>
           <Link
