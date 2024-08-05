@@ -18,12 +18,13 @@ const MediCheck = ({ values, setValues, name, time, idx }: Props) => {
     let timeOfMedicine = Object.keys(time).filter((times) => {
       return time[times] === true;
     });
+
     setMediTimes(
       timeOfMedicine.map((time) => {
         return NAME_OF_TIME[time];
       })
     );
-  }, []);
+  }, [time]);
 
   useEffect(() => {
     setChecked(values.medi_name.includes(name));
