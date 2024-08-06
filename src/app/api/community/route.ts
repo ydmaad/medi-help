@@ -7,9 +7,20 @@ import { cookies } from "next/headers";
 type PostInsert = TablesInsert<"posts">; // 추가
 
 // 게시글 불러오는 요청
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { data, error } = await supabase.from("posts").select(`
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "6");
+    const offset = (page - 1) * limit;
+
+    // 전체 게시글 수 조회
+    const { count: totalCount } = await supabase
+      .from("posts")
+      .select("*", { count: "exact", head: true });
+
+    const { data, error } = await supabase.from("posts").select(
+      `
         id,
         title,
         contents,
@@ -19,7 +30,10 @@ export async function GET() {
           nickname,
           avatar
         )
-      `);
+      `
+    );
+    // .range(offset, offset + limit - 1)
+    // .order("created_at", { ascending: false });
     // console.log("된다!!", data);
 
     if (error) {
