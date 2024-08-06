@@ -6,7 +6,7 @@ import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
@@ -40,9 +40,8 @@ const CommunityPage = () => {
       <div className="max-w-[1000px] mx-auto mt-20">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
-            <Link href={`/community`}>
-              <h1 className="text-3xl font-bold">커뮤니티</h1>
-            </Link>
+            <h1 className="text-3xl font-bold">커뮤니티</h1>
+
             <Search handleSearch={handleSearch} />
           </div>
           <Link

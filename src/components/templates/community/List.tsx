@@ -82,7 +82,8 @@ const List: React.FC<ListProps> = ({
         .filter(
           (post) =>
             post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            post.contents.toLowerCase().includes(searchTerm.toLowerCase())
+            post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .sort(
           (a, b) =>

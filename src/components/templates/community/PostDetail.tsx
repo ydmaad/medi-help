@@ -155,8 +155,8 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
               수정
             </Link>
           </div>
-          {/* 버튼 ===================== */}
         </div>
+        {/* 버튼 ===================== */}
 
         {/* 여러 이미지 표시 */}
         <div className="p-5 flex flex-wrap gap-4">
