@@ -1,4 +1,3 @@
-// src/components/templates/mypage/MediLists.tsx
 "use client";
 
 import axios from 'axios';
@@ -66,7 +65,7 @@ const MediLists: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full md:w-1/2">
+    <div className="flex flex-col w-full md:w-2/3 lg:w-3/4 p-4 bg-white rounded-md shadow-md">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl">현재 복용 중인 약 <span className="text-blue-500">{mediRecords.length}개</span></h2>
         {mediRecords.length > 3 && (
@@ -78,11 +77,11 @@ const MediLists: React.FC = () => {
           </button>
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         {displayedMediRecords.map((record) => (
           <div
             key={record.id}
-            className="bg-gray-100 p-4 rounded shadow mb-2 flex flex-col items-center"
+            className="bg-gray-100 p-4 rounded shadow mb-2 flex flex-col items-start"
             onClick={() => handleMediClick(record)}
           >
             {record.itemImage ? (
@@ -101,6 +100,7 @@ const MediLists: React.FC = () => {
             <p className="text-lg font-semibold">{record.medi_nickname}</p>
             <p className="text-sm text-gray-500">{record.medi_name}</p>
             <p className="text-sm text-gray-500">
+              복용 일자 |  
               {record.start_date} ~ {record.end_date}
             </p>
           </div>
