@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/auth";
 import { supabase } from "@/utils/supabase/client";
 import TextButton from "../atoms/Textbutton";
 import { useRouter } from "next/navigation";
+import ImageButton from "../atoms/ImageButton";
 
 const LoginNav: React.FC = () => {
   // 주스탠드 스토어에서 user 정보와 clearAuth 함수를 가져옴
@@ -32,13 +33,10 @@ const LoginNav: React.FC = () => {
   if (user) {
     return (
       <div className="grid grid-cols-3 gap-2">
-        {/* 알림 버튼 */}
-        <TextButton text="알림" href="/mypage" />
-        {/* 사용자 이름 표시 */}
-        <TextButton
-          text={`${getEmailUsername(user.email)}님`}
-          href="/columns"
-        />
+        {/* 알림 버튼 알람 모달을 띄우는 쪽으로 변경 예정 */}
+        <ImageButton src="/ring.svg" alt="알림" href="/mypage" />
+
+        <TextButton text={`${getEmailUsername(user.email)}님`} href="/mypage" />
         {/* 로그아웃 버튼 
             TextButton은 href prop을 필요로 하므로 "#"를 전달하고,
             실제 로그아웃 동작은 상위 div의 onClick 이벤트로 처리 */}
