@@ -4,7 +4,7 @@ import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import { ValueType } from "@/types/calendar";
 import axios from "axios";
-import { COLOR_OF_TIME, DATE_OFFSET } from "@/constant/constant";
+import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import ModalButton from "@/components/atoms/ModalButton";
 import Modal from "react-modal";
 import ModalInner from "@/components/molecules/ModalInner";
@@ -32,7 +32,9 @@ const AddModal = ({
     medi_time: "morning",
     medicine_id: [],
     side_effect: "",
-    start_date: new Date(new Date().getTime() + DATE_OFFSET),
+    start_date: new Date(new Date().getTime() + DATE_OFFSET)
+      .toISOString()
+      .split("T")[0],
   });
 
   useEffect(() => {
@@ -46,7 +48,9 @@ const AddModal = ({
   // 날짜가 바뀔 때 마다 실행하고 싶은데, 오늘 등록하는 경우에는.. 의존성 배열을 어떻게 줘야 될지 모르겠다.
   useEffect(() => {
     let dateFilteredEvent = events.filter((event: EventInput) => {
-      let value_date = new Date(values.start_date.getTime() + DATE_OFFSET)
+      let value_date = new Date(
+        new Date(values.start_date).getTime() + DATE_OFFSET
+      )
         .toISOString()
         .split("T")[0];
       let event_date = new Date(
@@ -66,7 +70,7 @@ const AddModal = ({
         return { ...prev, id: event_id };
       });
     }
-  }, [values.medicine_id.length]);
+  }, [values.medicine_id.length, values.start_date]);
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
@@ -78,7 +82,6 @@ const AddModal = ({
     const postCalendar = async (value: ValueType) => {
       try {
         const { data } = await axios.post("/api/calendar", value);
-        console.log(value);
 
         setEvents((prev) => {
           return [
@@ -88,7 +91,11 @@ const AddModal = ({
               title: `${data[0][0].medications.medi_nickname} 외 ${
                 value.medicine_id.length - 1
               }개`,
-              start: value.start_date,
+              start: `${
+                new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+                  .toISOString()
+                  .split("T")[0]
+              } ${TIME_OF_TIME[value.medi_time]}`,
               backgroundColor: COLOR_OF_TIME[value.medi_time],
               borderColor: COLOR_OF_TIME[value.medi_time],
               extendProps: {
@@ -113,9 +120,11 @@ const AddModal = ({
         medi_time: "morning",
         medicine_id: [],
         side_effect: "",
-        start_date: new Date(new Date().getTime() + DATE_OFFSET),
+        start_date: new Date(new Date().getTime() + DATE_OFFSET)
+          .toISOString()
+          .split("T")[0],
       });
-      // setOpenAddModal(false);
+      setOpenAddModal(false);
     }
   };
 

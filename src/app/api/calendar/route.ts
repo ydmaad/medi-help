@@ -45,9 +45,16 @@ export async function POST(req: NextRequest) {
       return { calendar_id: id, user_id, medicine_id: medi_id, medi_time };
     });
 
+    console.log(values);
+
+    if (!id) {
+      NextResponse.json("ID is required.");
+    }
+
     const { data: CalendarData, error: CalendarError } = await supabase
       .from("calendar")
-      .upsert([{ id, side_effect, start_date, user_id }]);
+      .upsert([{ id, side_effect, start_date, user_id }])
+      .eq("id", id);
 
     if (CalendarError) {
       return NextResponse.json(
@@ -56,24 +63,38 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { data: BridgeData, error: BridgeError } = await supabase
-      .from("calendar_medicine")
-      .upsert(medicineList)
-      .select("*, medications:medicine_id(id, medi_nickname)");
+    if (medicine_id.length !== 0) {
+      const { data: BridgeDeleteData, error: BridgeDeleteError } =
+        await supabase
+          .from("calendar_medicine")
+          .delete()
+          .eq("calendar_id", id)
+          .eq("medi_time", medi_time);
 
-    if (BridgeError) {
-      console.log(BridgeError.message);
-      return NextResponse.json({ error: BridgeError.message }, { status: 500 });
+      if (BridgeDeleteError) {
+        return NextResponse.json(
+          { error: BridgeDeleteError.message },
+          { status: 500 }
+        );
+      }
+
+      const { data: BridgeInsertData, error: BridgeInsertError } =
+        await supabase
+          .from("calendar_medicine")
+          .insert(medicineList)
+          .select("*, medications:medicine_id(id, medi_nickname)");
+
+      if (BridgeInsertError) {
+        return NextResponse.json(
+          { error: BridgeInsertError.message },
+          { status: 500 }
+        );
+      }
+      return NextResponse.json([BridgeInsertData]);
     }
 
-    return NextResponse.json([BridgeData], { status: 201 });
+    return NextResponse.json([CalendarData]);
   } catch (error) {
-    if (error instanceof Error) {
-      console.log("post error", error);
-      return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 }
-      );
-    }
+    console.log(error);
   }
 }

@@ -6,19 +6,26 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
-import AddModal from "../calendarModal/AddModal";
-import { EventsType } from "@/types/calendar";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import DetailModal from "../calendarModal/DetailModal";
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
+import uuid from "react-uuid";
+import { ValueType } from "@/types/calendar";
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventInput[]>([]);
-  const [openAddModal, setOpenAddModal] = useState<boolean>(false);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
-  const [editDate, setEditDate] = useState<string>();
-  const [editEvents, setEditEvents] = useState<EventInput[]>([]);
+  const [values, setValues] = useState<ValueType>({
+    id: uuid(),
+    user_id: "",
+    medi_time: "morning",
+    medicine_id: [],
+    side_effect: "",
+    start_date: new Date(new Date().getTime() + DATE_OFFSET)
+      .toISOString()
+      .split("T")[0],
+  });
 
   const { user } = useAuthStore();
 
@@ -34,25 +41,16 @@ const CalendarView = () => {
     const getCalendarData = async () => {
       try {
         const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
+
         {
           data.map((event: EventInput) => {
-            let morningList = event.calendar_medicine.filter(
-              (medicine: any) => {
-                return medicine.medi_time === "morning";
-              }
-            );
-            let afternoonList = event.calendar_medicine.filter(
-              (medicine: any) => {
-                return medicine.medi_time === "afternoon";
-              }
-            );
-            let eveningList = event.calendar_medicine.filter(
-              (medicine: any) => {
-                return medicine.medi_time === "evening";
-              }
-            );
+            const setEventList = (time: string) => {
+              let eventList = event.calendar_medicine.filter(
+                (medicine: any) => {
+                  return medicine.medi_time === time;
+                }
+              );
 
-            const setEventList = (eventList: any) => {
               if (eventList.length !== 0) {
                 setEvents((prev) => {
                   return [
@@ -79,9 +77,9 @@ const CalendarView = () => {
               }
             };
 
-            setEventList(morningList);
-            setEventList(afternoonList);
-            setEventList(eveningList);
+            setEventList("morning");
+            setEventList("afternoon");
+            setEventList("evening");
           });
         }
       } catch (error) {
@@ -92,40 +90,32 @@ const CalendarView = () => {
     getCalendarData();
   }, [user]);
 
+  // 날짜 클릭 시 , value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
     const newDate = new Date(event.date.getTime() + DATE_OFFSET)
       .toISOString()
       .split("T")[0];
 
-    setEditDate(newDate);
-
-    let editList = events.filter((event) => {
-      return event.start?.toString().split(" ")[0] === newDate;
+    setValues((prev) => {
+      return { ...prev, start_date: newDate };
     });
 
-    setEditEvents(editList);
-
-    if (editList.length !== 0) {
-      setOpenDetailModal(true);
-    }
+    setOpenDetailModal(true);
   };
 
   const handleButtonClick = () => {
-    setOpenAddModal(true);
+    setOpenDetailModal(true);
   };
 
   return (
     <>
-      <AddModal
-        openAddModal={openAddModal}
-        setOpenAddModal={setOpenAddModal}
-        events={events}
-        setEvents={setEvents}
-      />
       <DetailModal
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
-        editEvents={editEvents}
+        events={events}
+        setEvents={setEvents}
+        values={values}
+        setValues={setValues}
       />
       <div className="relative p-8 w-11/12 h-7/12 fc-button ">
         <button
