@@ -8,18 +8,23 @@ import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
 import AddModal from "../calendarModal/AddModal";
 import { EventsType } from "@/types/calendar";
-import { COLOR_OF_TIME } from "@/constant/constant";
+import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import DetailModal from "../calendarModal/DetailModal";
 import { useAuthStore } from "@/store/auth";
+import { Tables } from "@/types/supabase";
 
 const CalendarView = () => {
-  const [events, setEvents] = useState<EventsType[]>([]);
+  const [events, setEvents] = useState<EventInput[]>([]);
   const [openAddModal, setOpenAddModal] = useState<boolean>(false);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [editDate, setEditDate] = useState<string>();
-  const [editEvents, setEditEvents] = useState<EventsType[]>([]);
+  const [editEvents, setEditEvents] = useState<EventInput[]>([]);
 
   const { user } = useAuthStore();
+
+  type CalendarType = Tables<"calendar">;
+  type BridgeType = Tables<"calendar_medicine">;
+  type MedicinesType = Tables<"medications">;
 
   useEffect(() => {
     if (!user) {
@@ -30,22 +35,53 @@ const CalendarView = () => {
       try {
         const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
         {
-          data.map((el: any) => {
-            el.medi_name.map((name: string) => {
-              setEvents((prev) => {
-                return [
-                  ...prev,
-                  {
-                    groupId: el.id,
-                    title: name,
-                    start: el.start_date,
-                    backgroundColor: COLOR_OF_TIME[el.medi_time],
-                    borderColor: COLOR_OF_TIME[el.medi_time],
-                    extendProps: { sideEffect: el.side_effect },
-                  },
-                ];
-              });
-            });
+          data.map((event: EventInput) => {
+            let morningList = event.calendar_medicine.filter(
+              (medicine: any) => {
+                return medicine.medi_time === "morning";
+              }
+            );
+            let afternoonList = event.calendar_medicine.filter(
+              (medicine: any) => {
+                return medicine.medi_time === "afternoon";
+              }
+            );
+            let eveningList = event.calendar_medicine.filter(
+              (medicine: any) => {
+                return medicine.medi_time === "evening";
+              }
+            );
+
+            const setEventList = (eventList: any) => {
+              if (eventList.length !== 0) {
+                setEvents((prev) => {
+                  return [
+                    ...prev,
+                    {
+                      groupId: event.id,
+                      title: `${eventList[0].medications.medi_nickname} 외 ${
+                        eventList.length - 1
+                      }개`,
+                      start: `${event.start_date} ${
+                        TIME_OF_TIME[eventList[0].medi_time]
+                      }`,
+                      backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
+                      extendProps: {
+                        sideEffect: event.side_effect,
+                        medi_time: eventList[0].medi_time,
+                        medicineList: eventList.map(
+                          (medicine: any) => medicine.medications.id
+                        ),
+                      },
+                    },
+                  ];
+                });
+              }
+            };
+
+            setEventList(morningList);
+            setEventList(afternoonList);
+            setEventList(eveningList);
           });
         }
       } catch (error) {
@@ -57,15 +93,14 @@ const CalendarView = () => {
   }, [user]);
 
   const handleDateClick = (event: DateClickArg) => {
-    const offset = 1000 * 60 * 60 * 9;
-    const newDate = new Date(event.date.getTime() + offset)
+    const newDate = new Date(event.date.getTime() + DATE_OFFSET)
       .toISOString()
       .split("T")[0];
 
     setEditDate(newDate);
 
     let editList = events.filter((event) => {
-      return event.start?.toString().split("T")[0] === newDate;
+      return event.start?.toString().split(" ")[0] === newDate;
     });
 
     setEditEvents(editList);
@@ -84,6 +119,7 @@ const CalendarView = () => {
       <AddModal
         openAddModal={openAddModal}
         setOpenAddModal={setOpenAddModal}
+        events={events}
         setEvents={setEvents}
       />
       <DetailModal
@@ -101,7 +137,7 @@ const CalendarView = () => {
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          events={events as EventInput[]}
+          events={events}
           dateClick={handleDateClick}
           selectable={true}
           eventOverlap={false}
@@ -114,7 +150,6 @@ const CalendarView = () => {
           locale="en"
           contentHeight={"auto"}
           fixedWeekCount={false}
-          // ariaHideApp={false}
         />
       </div>
     </>

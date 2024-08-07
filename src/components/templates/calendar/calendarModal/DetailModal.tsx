@@ -1,17 +1,19 @@
+"use client";
 import ModalButton from "@/components/atoms/ModalButton";
 import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalInner from "@/components/molecules/ModalInner";
-import { COLOR_OF_TIME } from "@/constant/constant";
-import { EventsType, ValueType } from "@/types/calendar";
+import { ValueType } from "@/types/calendar";
+import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import uuid from "react-uuid";
 
 interface Props {
   openDetailModal: boolean;
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
-  editEvents: EventsType[];
+  editEvents: EventInput[];
 }
 
 const DetailModal = ({
@@ -20,9 +22,10 @@ const DetailModal = ({
   editEvents,
 }: Props) => {
   const [values, setValues] = useState<ValueType>({
+    id: uuid(),
     user_id: "",
     medi_time: "morning",
-    medi_name: [],
+    medicine_id: [],
     side_effect: "",
     start_date: new Date(),
   });
@@ -31,34 +34,15 @@ const DetailModal = ({
     setViewEvents();
   }, [editEvents, values.medi_time]);
 
+  // meditime 필터링 추가 + sideEffect set 로직 추가
   const setViewEvents = () => {
-    let viewEvents = editEvents.filter((event) => {
-      let time = Object.keys(COLOR_OF_TIME).filter((timeName) => {
-        return COLOR_OF_TIME[timeName] === event.backgroundColor;
-      });
-      return time[0] === values.medi_time;
-    });
-
-    let viewEventTitles = viewEvents.map((event) => event.title);
-
-    if (viewEvents.length === 0) {
-      setValues((prev) => {
-        return {
-          ...prev,
-          medi_name: [],
-          side_effect: "",
-        };
-      });
-    } else {
-      viewEvents.map((event) => {
-        setValues((prev) => {
-          return {
-            ...prev,
-            medi_name: viewEventTitles,
-            side_effect: event.extendProps.sideEffect,
-          };
-        });
-      });
+    if (editEvents.length !== 0) {
+      let filteredMedicines;
+      let viewMedicines = editEvents[0].extendProps.medicineList.map(
+        (medicine: any) => medicine.medications.id
+      );
+      console.log(editEvents[0]);
+      setValues({ ...values, medicine_id: viewMedicines });
     }
   };
 
@@ -68,7 +52,7 @@ const DetailModal = ({
     setValues({
       ...values,
       medi_time: "morning",
-      medi_name: [],
+      medicine_id: [],
       side_effect: "",
       start_date: new Date(),
     });

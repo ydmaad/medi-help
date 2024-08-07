@@ -1,29 +1,38 @@
 "use client";
-import React, { useActionState, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalCloseButton from "@/components/atoms/ModalCloseButton";
-import { ValueType, EventsType } from "@/types/calendar";
+import { ValueType } from "@/types/calendar";
 import axios from "axios";
-import { COLOR_OF_TIME } from "@/constant/constant";
+import { COLOR_OF_TIME, DATE_OFFSET } from "@/constant/constant";
 import ModalButton from "@/components/atoms/ModalButton";
 import Modal from "react-modal";
 import ModalInner from "@/components/molecules/ModalInner";
 import { useAuthStore } from "@/store/auth";
+import { EventInput } from "@fullcalendar/core";
+import uuid from "react-uuid";
 
 interface Props {
   openAddModal: boolean;
   setOpenAddModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setEvents: React.Dispatch<React.SetStateAction<EventsType[]>>;
+  events: EventInput[];
+  setEvents: React.Dispatch<React.SetStateAction<EventInput[]>>;
 }
-const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
+const AddModal = ({
+  openAddModal,
+  setOpenAddModal,
+  events,
+  setEvents,
+}: Props) => {
   const { user } = useAuthStore();
 
   const [values, setValues] = useState<ValueType>({
+    id: uuid(),
     user_id: "",
     medi_time: "morning",
-    medi_name: [],
+    medicine_id: [],
     side_effect: "",
-    start_date: new Date(),
+    start_date: new Date(new Date().getTime() + DATE_OFFSET),
   });
 
   useEffect(() => {
@@ -34,6 +43,31 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
     }
   }, [user]);
 
+  // 날짜가 바뀔 때 마다 실행하고 싶은데, 오늘 등록하는 경우에는.. 의존성 배열을 어떻게 줘야 될지 모르겠다.
+  useEffect(() => {
+    let dateFilteredEvent = events.filter((event: EventInput) => {
+      let value_date = new Date(values.start_date.getTime() + DATE_OFFSET)
+        .toISOString()
+        .split("T")[0];
+      let event_date = new Date(
+        new Date(String(event.start)).getTime() + DATE_OFFSET
+      )
+        .toISOString()
+        .split("T")[0];
+
+      return event_date === value_date;
+    });
+
+    console.log(dateFilteredEvent);
+
+    if (dateFilteredEvent.length !== 0) {
+      let event_id = dateFilteredEvent[0].groupId as string;
+      setValues((prev) => {
+        return { ...prev, id: event_id };
+      });
+    }
+  }, [values.medicine_id.length]);
+
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenAddModal(false);
@@ -43,39 +77,45 @@ const AddModal = ({ openAddModal, setOpenAddModal, setEvents }: Props) => {
   const handleSubmitClick = () => {
     const postCalendar = async (value: ValueType) => {
       try {
-        const res = await axios.post("/api/calendar", value);
+        const { data } = await axios.post("/api/calendar", value);
+        console.log(value);
 
-        value.medi_name.map((name: string) => {
-          setEvents((prev) => {
-            return [
-              ...prev,
-              {
-                groupId: null as unknown as string | undefined,
-                title: name,
-                start: value.start_date,
-                backgroundColor: COLOR_OF_TIME[value.medi_time],
-                borderColor: COLOR_OF_TIME[value.medi_time],
-                extendProps: { sideEffect: value.side_effect },
-              } as EventsType,
-            ];
-          });
+        setEvents((prev) => {
+          return [
+            ...prev,
+            {
+              groupId: value.id,
+              title: `${data[0][0].medications.medi_nickname} 외 ${
+                value.medicine_id.length - 1
+              }개`,
+              start: value.start_date,
+              backgroundColor: COLOR_OF_TIME[value.medi_time],
+              borderColor: COLOR_OF_TIME[value.medi_time],
+              extendProps: {
+                sideEffect: value.side_effect,
+                medi_time: value.medi_time,
+                medicineList: value.medicine_id,
+              },
+            },
+          ];
         });
-        return res;
+        return data;
       } catch (error) {
         console.log("Post Error", error);
       }
     };
 
-    if (values.medi_name.length !== 0) {
+    if (values.medicine_id.length !== 0) {
       postCalendar(values);
       setValues({
         ...values,
+        id: "",
         medi_time: "morning",
-        medi_name: [],
+        medicine_id: [],
         side_effect: "",
-        start_date: new Date(),
+        start_date: new Date(new Date().getTime() + DATE_OFFSET),
       });
-      setOpenAddModal(false);
+      // setOpenAddModal(false);
     }
   };
 
