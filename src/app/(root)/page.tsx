@@ -11,6 +11,7 @@ import ContentsCard from "@/components/molecules/ContentsCard";
 import RootLayout from "./layout";
 
 type Magazine = {
+  id: string;
   title: string;
   imgs_url: string;
   written_by: string;
@@ -44,16 +45,14 @@ const Page: React.FC = () => {
 
   return (
     <RootLayout isMainPage={true}>
-      {" "}
-      {/* 메인 페이지임을 전달 */}
       <Hero />
       <div className="flex justify-between mb-[10px]">
-        <MainTitle text="매거진" />
+        <MainTitle text="매디 칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row ">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
@@ -62,6 +61,7 @@ const Page: React.FC = () => {
               title={magazine.title}
               leftText={magazine.written_by}
               rightText={magazine.reporting_date}
+              id={magazine.id}
             />
           ))}
           {limitedSubMagazines.map((magazine, index) => (
@@ -72,10 +72,11 @@ const Page: React.FC = () => {
               title={magazine.title}
               leftText={magazine.written_by}
               rightText={magazine.reporting_date}
+              id={magazine.id}
             />
           ))}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[26px]">
+        <div className="grid grid-cols-3 gap-[26px]">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -84,6 +85,7 @@ const Page: React.FC = () => {
               title={magazine.title}
               leftText={magazine.written_by}
               rightText={magazine.reporting_date}
+              id={magazine.id}
             />
           ))}
         </div>
