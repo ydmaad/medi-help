@@ -9,10 +9,10 @@ type PostInsert = TablesInsert<"posts">; // 추가
 // 게시글 불러오는 요청
 export async function GET(request: NextRequest) {
   try {
-    // const { searchParams } = new URL(request.url);
-    // const page = parseInt(searchParams.get("page") || "1");
-    // const limit = parseInt(searchParams.get("limit") || "6");
-    // const offset = (page - 1) * limit;
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "6");
+    const offset = (page - 1) * limit;
 
     // 각 게시글 가져오기
     const { data: posts, error } = await supabase.from("posts").select(

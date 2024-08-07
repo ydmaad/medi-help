@@ -50,6 +50,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ id }) => {
   const [error, setError] = useState<string | null>(null);
   const route = useRouter();
   const { user } = useAuthStore();
+  const [isLike, setIsLike] = useState<boolean>(false);
 
   useEffect(() => {
     const loadPost = async () => {

@@ -7,7 +7,6 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { differenceInDays, format, formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
-import { supabase } from "@/utils/supabase/client";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
@@ -26,21 +25,11 @@ const POST_PER_PAGE = 6;
 
 // 게시글 불러오는 요청
 const fetchPosts = async (page: number, limit: number) => {
-  const res = await fetch(
-    `/api/community?page=${page}&numOfRows=${POST_PER_PAGE}&limit=${limit}`
-  );
+  const res = await fetch(`/api/community?page=${page}`);
   const data = await res.json();
   console.log("List에 가져온 데이터 :", data);
   return data;
 };
-
-// 댓글 갯수 가져오는 요청
-// const fetchCommentCount = async (postId: string[]) => {
-//   const res = await fetch(`/api/community/${postId}/comments`);
-//   const count = await res.json();
-//   console.log("댓글 갯수", count);
-//   return count;
-// };
 
 // 게시글 리스트 스켈레톤
 const ListSkeleton = () => {
@@ -67,7 +56,7 @@ const List: React.FC<ListProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPosts, setTotalPosts] = useState<number>(0);
+  const [totalPosts, setTotalPosts] = useState<number>(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -119,10 +108,12 @@ const List: React.FC<ListProps> = ({
   // const pageEndIndex = pageStartIndex + POST_PER_PAGE;
   // const currentPagePosts = filteredPosts.slice(pageStartIndex, pageEndIndex);
 
+  // 게시글 작성 시간(**전)
   const formatTimeAgo = (date: Date | number | string): string => {
     const d = date instanceof Date ? date : new Date(date);
     const now = new Date();
     const diffDays = differenceInDays(now, d);
+    // 7일이상 지난 게시글
     if (diffDays > 7) {
       return format(d, "yyyy년 MM월 dd일 HH:mm", { locale: ko });
     } else {
@@ -211,7 +202,7 @@ const List: React.FC<ListProps> = ({
       {1 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={10}
           onPageChange={handlePageChange}
         />
       )}
