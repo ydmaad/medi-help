@@ -53,7 +53,7 @@ const DetailModal = ({
 
     if (editList.length !== 0) {
       setViewEvents(true);
-      let viewEvent = editList.filter((event: any) => {
+      let viewEvent = editList.filter((event: EventInput) => {
         return values.medi_time === event.extendProps.medi_time;
       })[0];
       if (viewEvent) {

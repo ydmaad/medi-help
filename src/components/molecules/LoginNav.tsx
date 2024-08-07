@@ -37,7 +37,7 @@ const LoginNav: React.FC = () => {
         {/* 사용자 이름 표시 */}
         <TextButton
           text={`${getEmailUsername(user.email)}님`}
-          href="/columns"
+          href="/mypage"
         />
         {/* 로그아웃 버튼 
             TextButton은 href prop을 필요로 하므로 "#"를 전달하고,

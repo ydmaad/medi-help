@@ -52,11 +52,9 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   const [image, setImage] = useState<File[]>([]);
   // supabase에서 가져온 기존 이미지
   const [currentImage, setCurrentImage] = useState<string[]>([]);
-  // TODO : 수파베이스에 저장할 스테이트 생성 (image + currentImage) -> 파일 타입으로!!
+  // 수파베이스에 저장할 스테이트 생성 (image + currentImage) -> 파일 + 문자열 타입으로!!
   const [saveImage, setSaveImage] = useState<(File | string)[]>([]);
-
   const router = useRouter();
-  // TODO : 수파베이스에 저장할 스테이트 생성 (image + currentImages) -> 파일 타입으로!!
 
   useEffect(() => {
     const getPost = async () => {
@@ -85,6 +83,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   // console.log(currentImage);
   // console.log(saveImage);
 
+  // route에 보낼 데이터
   const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
@@ -131,7 +130,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
   return (
     <>
       <div className="w-[700px] mx-auto p-4 bg-white shadow-md rounded-lg">
-        <h1 className="text-2xl font-bold mb-4">글 수정 하는데야!!!</h1>
+        <h1 className="text-2xl font-bold mb-4">글 수정</h1>
 
         <div className="mb-4">
           <label
@@ -198,18 +197,20 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
           />
         </div>
       </div>
-      <Link
-        href={`/community/${id}`}
-        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-md transition duration-300 ease-in-out"
-      >
-        취소
-      </Link>
-      <button
-        onClick={handleEdit}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded inline-flex items-center transition duration-300 ease-in-out"
-      >
-        완료
-      </button>
+      <div className="flex justify-center space-x-4 m-8">
+        <Link
+          href={`/community/${id}`}
+          className="bg-gray-100 w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-gray-300 inline-flex items-center justify-center"
+        >
+          취소
+        </Link>
+        <button
+          onClick={handleEdit}
+          className="bg-blue-500 text-white w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
+        >
+          완료
+        </button>
+      </div>
     </>
   );
 };
