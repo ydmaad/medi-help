@@ -47,7 +47,7 @@ const Page: React.FC = () => {
     <RootLayout isMainPage={true}>
       <Hero />
       <div className="flex justify-between mb-[10px]">
-        <MainTitle text="매디 칼럼" />
+        <MainTitle text="매디칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
       <div className="flex flex-col items-center">
@@ -118,7 +118,7 @@ const Page: React.FC = () => {
             subTitle="이것은 서브 제목입니다."
           />
         </div>
-        <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
+        <div className="grid grid-cols-1 ml-[36px] gap-4 w-full md:w-1/2">
           <ContentsCard
             hotTitle={null}
             newTitle="✨ NEW"
