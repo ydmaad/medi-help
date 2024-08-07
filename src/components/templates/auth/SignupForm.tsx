@@ -13,6 +13,7 @@ type SignupFormProps = {
     nickname: string;
     email: string;
     password: string;
+    phone: string;
     agreeTerms: boolean;
     agreePrivacy: boolean;
   }) => void;
@@ -25,6 +26,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [phone, setPhone] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
 
@@ -86,7 +88,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
       agreeTerms &&
       agreePrivacy
     ) {
-      onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+      onSubmit({ nickname, email, password, phone, agreeTerms, agreePrivacy });
     }
   };
 
@@ -96,11 +98,19 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 닉네임 입력 필드 */}
         <div>
+          <label
+            htmlFor="nickname"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            닉네임
+          </label>
           <AuthInput
+            id="nickname"
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             placeholder="닉네임 설정"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
           {nicknameValid === false && (
             <p className="text-red-500 text-sm mt-1">
@@ -112,36 +122,57 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
               사용할 수 있는 닉네임입니다.
             </p>
           )}
-          <p className="text-gray-500 text-sm mt-1"></p> {/* 공란 처리 */}
         </div>
 
         {/* 이메일 입력 필드 */}
         <div>
-          <AuthInput
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="아이디 입력"
-          />
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            이메일 입력
+          </label>
+          <div className="flex">
+            <AuthInput
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@도메인.com"
+              className="flex-grow px-3 py-2 border border-gray-300 rounded-md"
+            />
+            <button
+              type="button"
+              className="ml-2 px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-md"
+            >
+              중복확인
+            </button>
+          </div>
           {emailValid === false && (
             <p className="text-red-500 text-sm mt-1">
               올바른 이메일 형식이 아닙니다.
             </p>
           )}
           {emailValid === true && (
-            <p className="text-green-500 text-sm mt-1">
+            <p className="text-green-500 text-xs mt-1">
               사용할 수 있는 이메일입니다.
             </p>
           )}
-          <p className="text-gray-500 text-sm mt-1"></p> {/* 공란 처리 */}
         </div>
 
         {/* 비밀번호 입력 필드 */}
         <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            비밀번호 입력
+          </label>
           <AuthPasswordInput
+            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="비밀번호"
+            placeholder="비밀번호를 입력해 주세요."
           />
           {passwordValid === false && (
             <p className="text-red-500 text-sm mt-1">
@@ -149,15 +180,21 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
               이상이어야 합니다.
             </p>
           )}
-          <p className="text-gray-500 text-sm mt-1"></p> {/* 공란 처리 */}
         </div>
 
         {/* 비밀번호 확인 입력 필드 */}
         <div>
+          <label
+            htmlFor="passwordConfirm"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            비밀번호 확인
+          </label>
           <AuthPasswordInput
+            id="passwordConfirm"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
-            placeholder="비밀번호 확인"
+            placeholder="다시 한번 입력해 주세요."
           />
           {passwordConfirmValid === false && (
             <p className="text-red-500 text-sm mt-1">
@@ -169,6 +206,24 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
               비밀번호가 일치합니다.
             </p>
           )}
+        </div>
+
+        {/* 핸드폰 번호 입력 필드 */}
+        <div>
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            SMS 메시지 복용 알림 서비스 이용(선택)
+          </label>
+          <AuthInput
+            id="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="핸드폰 번호를 입력해 주세요."
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          />
         </div>
 
         {/* 약관 동의 체크박스 */}
@@ -189,7 +244,10 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         {error && <AuthErrorMessage message={error} />}
 
         {/* 회원가입 버튼 */}
-        <AuthButton type="submit" className="w-full bg-blue-500 text-white">
+        <AuthButton
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded-md"
+        >
           회원가입
         </AuthButton>
       </form>
