@@ -15,10 +15,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="relative flex flex-col justify-center items-center">
-      <div className="absolute inset-0 z-0">
-        <BgLinear />
-      </div>
+    <div className="relative flex flex-col justify-center items-center ">
       <div className="mt-[206px] mb-[106px] z-10">
         <div className="mb-6 z-10">
           <MainLogo />

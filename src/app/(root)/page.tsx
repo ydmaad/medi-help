@@ -8,6 +8,7 @@ import Hero from "@/components/molecules/Hero";
 import LoadMoreButton from "@/components/atoms/LoadMoreButton";
 import MainTitle from "@/components/atoms/MainTitle";
 import ContentsCard from "@/components/molecules/ContentsCard";
+import RootLayout from "./layout";
 
 type Magazine = {
   title: string;
@@ -42,15 +43,17 @@ const Page: React.FC = () => {
   const limitedSubMagazines = magazines.slice(1, 2);
 
   return (
-    <>
+    <RootLayout isMainPage={true}>
+      {" "}
+      {/* 메인 페이지임을 전달 */}
       <Hero />
-      <div className="flex justify-between mx-36 mb-[10px]">
+      <div className="flex justify-between mb-[10px]">
         <MainTitle text="매거진" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="flex">
+        <div className="flex flex-col md:flex-row">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
@@ -72,7 +75,7 @@ const Page: React.FC = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-3 gap-[26px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[26px]">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -85,61 +88,59 @@ const Page: React.FC = () => {
           ))}
         </div>
       </div>
-      <div className="flex justify-between mx-36 mb-[10px]">
+      <div className="flex justify-between mb-[10px]">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
-      <div className="flex justify-center items-center">
-        {/* 첫 번째 ContentsCard 3개 세로 정렬 */}
-        <div className="grid grid-cols-1 gap-4">
+      <div className="flex justify-center items-center flex-col md:flex-row">
+        <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
           <ContentsCard
             hotTitle="🔥️ HOT"
-            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
+            newTitle={null}
             communityTitle="커뮤니티 제목 1"
             imageSrc="https://via.placeholder.com/100"
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+            subTitle="이것은 서브 제목입니다."
           />
           <ContentsCard
             hotTitle="🔥️ HOT"
-            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
+            newTitle={null}
             communityTitle="커뮤니티 제목 2"
             imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+            subTitle="이것은 서브 제목입니다."
           />
           <ContentsCard
             hotTitle="🔥️ HOT"
-            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
+            newTitle={null}
             communityTitle="커뮤니티 제목 3"
             imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+            subTitle="이것은 서브 제목입니다."
           />
         </div>
-        {/* 나중에 커뮤니티 데이터 받아오는 로직 작성 이후 변경 최신순과 인기순 정렬로 진행 예정 버튼으로 해당 페이지로 이동 하게 하는것도 추후 구현  */}
-        <div className="grid grid-cols-1 gap-4 ">
+        <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
           <ContentsCard
             hotTitle={null}
-            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
+            newTitle="✨ NEW"
             communityTitle="커뮤니티 제목 A"
             imageSrc="https://via.placeholder.com/100"
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+            subTitle="이것은 서브 제목입니다."
           />
           <ContentsCard
             hotTitle={null}
-            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
+            newTitle="✨ NEW"
             communityTitle="커뮤니티 제목 B"
             imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+            subTitle="이것은 서브 제목입니다."
           />
           <ContentsCard
             hotTitle={null}
-            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
+            newTitle="✨ NEW"
             communityTitle="커뮤니티 제목 C"
             imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
+            subTitle="이것은 서브 제목입니다."
           />
         </div>
       </div>
-    </>
+    </RootLayout>
   );
 };
 

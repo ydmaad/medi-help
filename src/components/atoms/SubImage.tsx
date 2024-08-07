@@ -5,7 +5,7 @@ const SubImage = () => {
   const { src, alt } = useImage();
 
   return (
-    <div className="w-[384px] h-[280px] border border-brand-gray-300 rounded-[20px] overflow-hidden">
+    <div className="w-full max-w-[384px] aspect-[384/280] border border-brand-gray-300 rounded-[20px] overflow-hidden">
       <img src={src || ""} alt={alt} className="w-full h-full object-cover" />
     </div>
   );
