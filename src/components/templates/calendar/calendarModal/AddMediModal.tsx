@@ -19,6 +19,9 @@ interface MediRecord {
   end_date: string;
   created_at: string;
   user_id: string;
+  day_of_week: string[];
+  notification_time: string[];
+  repeat: boolean;
 }
 
 interface AddMediModalProps {
@@ -45,6 +48,11 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
   const [notes, setNotes] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [notificationEnabled, setNotificationEnabled] = useState(false);
+  const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
+  const [notificationTime, setNotificationTime] = useState<string>("");
+  const [fiveMinuteInterval, setFiveMinuteInterval] = useState(false);
+  const [repeat, setRepeat] = useState(false);
 
   useEffect(() => {
     const fetchMediNames = async () => {
@@ -65,6 +73,12 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
     setTimes({ ...times, [e.target.name]: e.target.checked });
   };
 
+  const handleDayOfWeekChange = (day: string) => {
+    setDaysOfWeek((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  };
+
   const handleAdd = async () => {
     if (!user) return;
 
@@ -78,6 +92,9 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       end_date: endDate,
       created_at: new Date().toISOString(),
       user_id: user.id,
+      day_of_week: notificationEnabled ? daysOfWeek : [],
+      notification_time: notificationEnabled ? [notificationTime] : [],
+      repeat,
     };
 
     try {
@@ -90,6 +107,11 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         setNotes("");
         setStartDate("");
         setEndDate("");
+        setNotificationEnabled(false);
+        setDaysOfWeek([]);
+        setNotificationTime("");
+        setFiveMinuteInterval(false);
+        setRepeat(false);
         onRequestClose();
       } else {
         console.error("Failed to add medi record:", response.statusText);
@@ -216,6 +238,90 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            알림 설정:
+          </label>
+          <label className="inline-flex items-center">
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={notificationEnabled}
+                onChange={(e) => setNotificationEnabled(e.target.checked)}
+                className="sr-only"
+              />
+              <div
+                className={`block w-10 h-6 rounded-full transition-colors duration-300 ${
+                  notificationEnabled ? "bg-blue-500" : "bg-gray-300"
+                }`}
+              ></div>
+              <div
+                className={`dot absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300 ${
+                  notificationEnabled ? "transform translate-x-full" : ""
+                }`}
+              ></div>
+            </div>
+            <span className="ml-3 text-gray-700">알림 사용</span>
+          </label>
+        </div>
+        {notificationEnabled && (
+          <>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                요일 선택:
+              </label>
+              <div className="flex space-x-2">
+                {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => handleDayOfWeekChange(day)}
+                    className={`px-2 py-1 rounded ${
+                      daysOfWeek.includes(day)
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                시간 설정:
+              </label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="time"
+                  value={notificationTime}
+                  onChange={(e) => setNotificationTime(e.target.value)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={repeat}
+                    onChange={(e) => setRepeat(e.target.checked)}
+                    className="form-checkbox"
+                  />
+                  <span className="ml-2">반복</span>
+                </label>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  checked={fiveMinuteInterval}
+                  onChange={(e) => setFiveMinuteInterval(e.target.checked)}
+                  className="form-checkbox"
+                />
+                <span className="ml-2">5분 간격으로 알림</span>
+              </label>
+            </div>
+          </>
+        )}
         <div className="flex items-center justify-between">
           <button
             onClick={handleAdd}
