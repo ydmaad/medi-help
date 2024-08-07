@@ -6,18 +6,36 @@ import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
 
-type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
+type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> } & {
+  comment_count: number;
+};
 
 const CommunityPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [posts, setPosts] = useState<PostWithUser[]>([]);
+  const [allPosts, setAllPosts] = useState<PostWithUser[]>([]);
   const { user } = useAuthStore();
   const router = useRouter();
+
+  const fectchAllPosts = async () => {
+    const res = await fetch(`/api/community`);
+    const data = await res.json();
+    setAllPosts(data);
+  };
+
+  useEffect(() => {
+    fectchAllPosts();
+  }, []);
+
+  const handleReset = () => {
+    setSearchTerm("");
+    allPosts;
+  };
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -40,7 +58,9 @@ const CommunityPage = () => {
       <div className="max-w-[1000px] mx-auto mt-20">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
-            <h1 className="text-3xl font-bold">커뮤니티</h1>
+            <button onClick={handleReset} className="text-3xl font-bold">
+              커뮤니티
+            </button>
 
             <Search handleSearch={handleSearch} />
           </div>

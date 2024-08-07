@@ -7,10 +7,13 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { differenceInDays, format, formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { supabase } from "@/utils/supabase/client";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
-type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> };
+type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> } & {
+  comment_count: number;
+};
 
 interface ListProps {
   searchTerm: string;
@@ -27,9 +30,17 @@ const fetchPosts = async (page: number, limit: number) => {
     `/api/community?page=${page}&numOfRows=${POST_PER_PAGE}&limit=${limit}`
   );
   const data = await res.json();
-  console.log("API response:", data);
+  console.log("List에 가져온 데이터 :", data);
   return data;
 };
+
+// 댓글 갯수 가져오는 요청
+// const fetchCommentCount = async (postId: string[]) => {
+//   const res = await fetch(`/api/community/${postId}/comments`);
+//   const count = await res.json();
+//   console.log("댓글 갯수", count);
+//   return count;
+// };
 
 // 게시글 리스트 스켈레톤
 const ListSkeleton = () => {
@@ -152,6 +163,9 @@ const List: React.FC<ListProps> = ({
                     <div className="flex-grow pr-4">
                       <h2 className="text-xl font-semibold mb-2">
                         {item.title}
+                        <span className="text-[#f66555] ml-1">
+                          ({`${item.comment_count}`})
+                        </span>
                       </h2>
                       <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
                         {item.contents}

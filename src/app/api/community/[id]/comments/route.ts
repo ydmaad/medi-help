@@ -15,13 +15,15 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-    const { data, error } = await supabase
+    const { data, count, error } = await supabase
       .from("comments")
       .select(
-        `id, comment, created_at,post_id,user:user_id(nickname, avatar,id) `
+        `id, comment, created_at,post_id,user:user_id(nickname, avatar,id) `,
+        { count: "exact" }
       )
       .eq("post_id", id);
     // console.log("된다!!", data);
+    console.log("댓글 개수!!", count);
 
     if (error) {
       return NextResponse.json(
@@ -30,7 +32,7 @@ export async function GET(
       );
     }
     return NextResponse.json(
-      { message: "댓글 조회 성공", data },
+      { message: "댓글 조회 성공", data, count },
       { status: 200 }
     );
   } catch (error) {
