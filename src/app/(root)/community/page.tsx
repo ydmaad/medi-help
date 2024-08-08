@@ -57,29 +57,29 @@ const CommunityPage = () => {
   return (
     <>
       <div className="max-w-[1000px] mx-auto mt-20">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
-            <button onClick={handleReset} className="text-3xl font-bold">
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex flex-col">
+            <button
+              onClick={handleReset}
+              className="flex items-center text-3xl font-bold"
+            >
+              <span className="mr-3">&#128172;</span>
               커뮤니티
             </button>
-
-            <Search handleSearch={handleSearch} />
+            <span className="text-brand-gray-600 font-extrabold mt-2">
+              약에 대한 이야기를 나누어 보아요
+            </span>
           </div>
-          <Link
-            href={`/community/post`}
-            onClick={handleUserCheck}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 flex items-center space-x-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+          <div className="flex items-center space-x-4">
+            <Search handleSearch={handleSearch} />
+            <Link
+              href={`/community/post`}
+              onClick={handleUserCheck}
+              className="bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600 flex items-center space-x-2"
             >
-              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-            </svg>
-            <span>글쓰기</span>
-          </Link>
+              <span>글쓰기</span>
+            </Link>
+          </div>
         </div>
         <List searchTerm={searchTerm} posts={posts} setPosts={setPosts} />
       </div>

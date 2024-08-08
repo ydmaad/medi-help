@@ -59,9 +59,11 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     const fetchData = async () => {
       // console.log("검색어가 업데이트 돼는 부분!?!?", searchTerm);
       try {
+        // 게시글 데이터를 가져와서 스테이트에 넣기
         const { data, totalPosts } = await fetchPosts(currentPage);
         setPosts(data);
         setTotalPosts(totalPosts);
+        // 게시글의 총 페이지 수 계산
         const calculatedTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
         setTotalPages(calculatedTotalPages);
       } catch (error) {
@@ -132,14 +134,12 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
           const imageUrls = getImageUrls(item.img_url);
           const timeAgo = formatTimeAgo(item.created_at);
           return (
-            <>
-              {/* 상세페이지로 이동 */}
+            <li key={item.id}>
               <Link
-                key={item.id}
                 href={`/community/${item.id}`}
                 className="block hover:bg-gray-50 transition duration-150 ease-in-out"
               >
-                <li className="border p-4 w-[1000px] h-[150px] my-5">
+                <div className="border rounded-2xl p-4 w-[1000px] h-[150px] my-5">
                   <div className="flex justify-between">
                     <div className="flex-grow pr-4">
                       <h2 className="text-xl font-semibold mb-2">
@@ -154,10 +154,10 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                       <div className="flex justify-between items-center text-sm text-gray-500">
                         <div className="flex items-center">
                           <span>{item.user.nickname}</span>
-                          <span className="ml-3">{timeAgo}</span>
-                          <span className="ml-3">
-                            저장 {item.bookmark_count}
-                          </span>
+                          <div className="mx-3 h-4 w-px bg-gray-300"></div>
+                          <span>{timeAgo}</span>
+                          <div className="mx-3 h-4 w-px bg-gray-300"></div>
+                          <span>저장 {item.bookmark_count}</span>
                         </div>
                       </div>
                     </div>
@@ -173,13 +173,13 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                       </div>
                     )}
                   </div>
-                </li>
+                </div>
               </Link>
-            </>
+            </li>
           );
         })}
       </ul>
-      {1 && (
+      {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
