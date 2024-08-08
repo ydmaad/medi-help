@@ -16,7 +16,7 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-    const { data, error } = await supabase
+    const { data: posts, error } = await supabase
       .from("posts")
       .select(
         `
@@ -41,7 +41,26 @@ export async function GET(
         { status: 400 }
       );
     }
-    return NextResponse.json({ message: "조회 성공", data }, { status: 200 });
+
+    // 각 게시글 map 돌려 북마크 수 가져오기
+    const postsWitchBookmarkCount = await Promise.all(
+      posts.map(async (post) => {
+        const { count, error } = await supabase
+          .from("bookmark")
+          .select("id", { count: "exact" })
+          .eq("post_id", post.id);
+        if (error) {
+          console.error("북마크 수 조회 실패 : ", error);
+          return { ...post, bookmark_count: 0 };
+        }
+        return { ...post, bookmark_count: count };
+      })
+    );
+
+    return NextResponse.json(
+      { message: "조회 성공", data: postsWitchBookmarkCount },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
