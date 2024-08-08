@@ -49,15 +49,15 @@ export default function SignupPage() {
 
       if (data.user) {
         // 사용자 추가 정보를 데이터베이스에 저장
-        const { error: insertError } = await supabase.from("users").insert([
-          {
-            id: data.user.id,
-            email,
-            nickname,
-          },
-        ]);
+        // const { error: insertError } = await supabase.from("users").insert([
+        //   {
+        //     id: data.user.id,
+        //     email,
+        //     nickname,
+        //   },
+        // ]);
 
-        if (insertError) throw insertError;
+        // if (insertError) throw insertError;
 
         // 저장된 사용자 정보 조회
         const { data: userData, error: fetchError } = await supabase
