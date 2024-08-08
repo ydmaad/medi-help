@@ -87,6 +87,7 @@ const Post = () => {
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
           />
+
           {/* 이미지 첨부, 내용 인풋 */}
           <div className="border border-gray-100 rounded-md my-7">
             {/* 이미지 첨부 부분 */}
