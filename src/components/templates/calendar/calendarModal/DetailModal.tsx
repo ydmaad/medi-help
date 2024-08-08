@@ -42,11 +42,11 @@ const DetailModal = ({
   }, [user]);
 
   useEffect(() => {
-    setViewValues();
+    setViewMedicines();
   }, [values.start_date, values.medi_time]);
 
-  // input 창에 value Set.
-  const setViewValues = () => {
+  // input 창에 Medicines Set.
+  const setViewMedicines = () => {
     let editList = events.filter((event) => {
       return event.start?.toString().split(" ")[0] === values.start_date;
     });
@@ -56,11 +56,11 @@ const DetailModal = ({
       let viewEvent = editList.filter((event: EventInput) => {
         return values.medi_time === event.extendProps.medi_time;
       })[0];
+
       if (viewEvent) {
         setValues({
           ...values,
           medicine_id: viewEvent.extendProps.medicineList,
-          side_effect: editList[0].extendProps.sideEffect,
         });
       }
     }
@@ -73,6 +73,29 @@ const DetailModal = ({
         side_effect: "",
       });
     }
+  };
+
+  // input 창에 sideEffect Set.
+  const setSideEffect = () => {
+    const getSideEffect = async (start_date: string) => {
+      try {
+        const { data } = await axios.get(
+          `/api/calendar/side_effect?start_date=${start_date}`
+        );
+
+        if (data.length !== 0) {
+          setValues((prev) => {
+            return { ...prev, side_effect: data[0].side_effect };
+          });
+        }
+
+        return data;
+      } catch (error) {
+        console.log("Get SideEffect Error", error);
+      }
+    };
+
+    getSideEffect(values.start_date);
   };
 
   // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기
@@ -100,6 +123,8 @@ const DetailModal = ({
         return { ...prev, id: uuid() };
       });
     }
+
+    setSideEffect();
   }, [values.start_date]);
 
   // side_effect 입력란 onChange 함수
@@ -136,27 +161,33 @@ const DetailModal = ({
         );
       });
 
-      setEvents([
-        ...deletedEvents,
-        {
-          groupId: value.id,
-          title: `${data[0][0].medications.medi_nickname} 외 ${
-            value.medicine_id.length - 1
-          }개`,
-          start: `${
-            new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
-              .toISOString()
-              .split("T")[0]
-          } ${TIME_OF_TIME[value.medi_time]}`,
-          backgroundColor: COLOR_OF_TIME[value.medi_time],
-          borderColor: COLOR_OF_TIME[value.medi_time],
-          extendProps: {
-            sideEffect: value.side_effect,
-            medi_time: value.medi_time,
-            medicineList: value.medicine_id,
+      if (value.medicine_id.length === 0) {
+        setEvents([...deletedEvents]);
+      }
+
+      if (value.medicine_id.length !== 0) {
+        setEvents([
+          ...deletedEvents,
+          {
+            groupId: value.id,
+            title: `${data[0][0].medications.medi_nickname} 외 ${
+              value.medicine_id.length - 1
+            }개`,
+            start: `${
+              new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+                .toISOString()
+                .split("T")[0]
+            } ${TIME_OF_TIME[value.medi_time]}`,
+            backgroundColor: COLOR_OF_TIME[value.medi_time],
+            borderColor: COLOR_OF_TIME[value.medi_time],
+            extendProps: {
+              medi_time: value.medi_time,
+              medicineList: value.medicine_id,
+            },
           },
-        },
-      ]);
+        ]);
+      }
+
       return data;
     } catch (error) {
       console.log("Post Error", error);
@@ -167,7 +198,18 @@ const DetailModal = ({
   const deleteCalendar = async (id: string) => {
     try {
       const res = await axios.delete(`/api/calendar/${id}`);
-      console.log(res);
+
+      let deletedEvents = events.filter((event) => {
+        return (
+          String(event.start).split(" ")[0] !==
+          new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+            .toISOString()
+            .split("T")[0]
+        );
+      });
+
+      setEvents(deletedEvents);
+
       return res;
     } catch (error) {
       console.log("Delete Error", error);
@@ -199,16 +241,6 @@ const DetailModal = ({
     if (confirm(`${values.start_date}의 기록을 모두 삭제하시겠습니까 ? `)) {
       deleteCalendar(values.id);
 
-      let deletedEvents = events.filter((event) => {
-        return (
-          String(event.start).split(" ")[0] !==
-          new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
-            .toISOString()
-            .split("T")[0]
-        );
-      });
-
-      setEvents(deletedEvents);
       setOpenDetailModal(false);
       setValues({
         ...values,

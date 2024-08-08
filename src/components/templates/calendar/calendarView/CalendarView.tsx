@@ -44,42 +44,44 @@ const CalendarView = () => {
 
         {
           data.map((event: EventInput) => {
-            const setEventList = (time: string) => {
-              let eventList = event.calendar_medicine.filter(
-                (medicine: any) => {
-                  return medicine.medi_time === time;
-                }
-              );
+            console.log(event);
+            if (event.calendar_medicine.length !== 0) {
+              const setEventList = (time: string) => {
+                let eventList = event.calendar_medicine.filter(
+                  (medicine: any) => {
+                    return medicine.medi_time === time;
+                  }
+                );
 
-              if (eventList.length !== 0) {
-                setEvents((prev) => {
-                  return [
-                    ...prev,
-                    {
-                      groupId: event.id,
-                      title: `${eventList[0].medications.medi_nickname} 외 ${
-                        eventList.length - 1
-                      }개`,
-                      start: `${event.start_date} ${
-                        TIME_OF_TIME[eventList[0].medi_time]
-                      }`,
-                      backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
-                      extendProps: {
-                        sideEffect: event.side_effect,
-                        medi_time: eventList[0].medi_time,
-                        medicineList: eventList.map(
-                          (medicine: any) => medicine.medications.id
-                        ),
+                if (eventList.length !== 0) {
+                  setEvents((prev) => {
+                    return [
+                      ...prev,
+                      {
+                        groupId: event.id,
+                        title: `${eventList[0].medications.medi_nickname} 외 ${
+                          eventList.length - 1
+                        }개`,
+                        start: `${event.start_date} ${
+                          TIME_OF_TIME[eventList[0].medi_time]
+                        }`,
+                        backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
+                        extendProps: {
+                          medi_time: eventList[0].medi_time,
+                          medicineList: eventList.map(
+                            (medicine: any) => medicine.medications.id
+                          ),
+                        },
                       },
-                    },
-                  ];
-                });
-              }
-            };
+                    ];
+                  });
+                }
+              };
 
-            setEventList("morning");
-            setEventList("afternoon");
-            setEventList("evening");
+              setEventList("morning");
+              setEventList("afternoon");
+              setEventList("evening");
+            }
           });
         }
       } catch (error) {
@@ -137,7 +139,7 @@ const CalendarView = () => {
             center: "",
             right: "",
           }}
-          locale="en"
+          locale="ko"
           contentHeight={"auto"}
           fixedWeekCount={false}
         />
