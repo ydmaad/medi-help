@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 type Comment = Tables<"comments">; // 테이블을 읽어올때
 type CommentInsert = TablesInsert<"comments">; // 등록
 type CommentUpdate = TablesUpdate<"comments">; //수정
+
 // 타입 명확하게 지정하여 사용
 type CommentUpdateReal = CommentUpdate & { id: string; comment: string };
 
@@ -22,8 +23,8 @@ export async function GET(
         { count: "exact" }
       )
       .eq("post_id", id);
-    // console.log("된다!!", data);
-    console.log("댓글 개수!!", count);
+
+    // console.log("댓글 개수!!", count);
 
     if (error) {
       return NextResponse.json(
