@@ -59,13 +59,28 @@ export async function GET(request: NextRequest) {
       })
     );
 
+    // 각 게시글 map 돌려 북마크 수 가져오기
+    const postsWitchBookmarkCount = await Promise.all(
+      postsWitchCommentCount.map(async (post) => {
+        const { count, error } = await supabase
+          .from("bookmark")
+          .select("id", { count: "exact" })
+          .eq("post_id", post.id);
+        if (error) {
+          console.error("북마크 수 조회 실패 : ", error);
+          return { ...post, bookmark_count: 0 };
+        }
+        return { ...post, bookmark_count: count };
+      })
+    );
+
     // .range(offset, offset + limit - 1)
     // .order("created_at", { ascending: false });
 
-    // console.log("된다!!", postsWitchCommentCount);
+    console.log("된다!!", postsWitchBookmarkCount);
 
     return NextResponse.json(
-      { message: "조회 성공", data: postsWitchCommentCount },
+      { message: "조회 성공", data: postsWitchBookmarkCount },
       { status: 200 }
     );
   } catch (error) {

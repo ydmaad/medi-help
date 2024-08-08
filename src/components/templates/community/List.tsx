@@ -12,6 +12,7 @@ type Post = Tables<"posts">;
 type User = Tables<"users">;
 type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> } & {
   comment_count: number;
+  bookmark_count: number;
 };
 
 interface ListProps {
@@ -177,7 +178,9 @@ const List: React.FC<ListProps> = ({
                           <span>{item.user.nickname}</span>
                           <span className="ml-3">{timeAgo}</span>
                           {/* 북마크 기능 완료 후 수정 */}
-                          <span className="ml-3">저장{}</span>
+                          <span className="ml-3">
+                            저장 {item.bookmark_count}
+                          </span>
                         </div>
                       </div>
                     </div>
