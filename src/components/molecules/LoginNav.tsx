@@ -1,3 +1,4 @@
+// src/components/molecules/LoginNav.tsx
 "use client";
 
 import React from "react";
@@ -24,9 +25,9 @@ const LoginNav: React.FC = () => {
   };
 
   // 이메일에서 사용자 이름만 추출하는 함수
-  const getEmailUsername = (email: string) => {
-    return email.split("@")[0];
-  };
+  // const getEmailUsername = (email: string) => {
+  //   return email.split("@")[0];
+  // };
 
   // 사용자가 로그인한 경우의 UI
   if (user) {
@@ -35,10 +36,8 @@ const LoginNav: React.FC = () => {
         {/* 알림 버튼 */}
         <TextButton text="알림" href="/mypage" />
         {/* 사용자 이름 표시 */}
-        <TextButton
-          text={`${getEmailUsername(user.email)}님`}
-          href="/mypage"
-        />
+        {/* 닉네임으로 표시 */}
+        <TextButton text={`${user.nickname || "User"}님`} href="/mypage" />
         {/* 로그아웃 버튼 
             TextButton은 href prop을 필요로 하므로 "#"를 전달하고,
             실제 로그아웃 동작은 상위 div의 onClick 이벤트로 처리 */}
