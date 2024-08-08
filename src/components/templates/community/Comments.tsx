@@ -306,21 +306,25 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
               <div className="flex space-x-2">
                 {!isEdit[ment.id] && (
                   <>
-                    <button
-                      onClick={() => handleDelete(ment.id, ment.user.id)}
-                      className="text-sm text-gray-500 pr-2"
-                    >
-                      삭제
-                    </button>
-                    <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
-                    <button
-                      onClick={() =>
-                        handleEdit(ment.id, ment.comment, ment.user.id)
-                      }
-                      className="text-sm text-gray-500 pl-2"
-                    >
-                      수정
-                    </button>
+                    {user?.id === ment.user.id && (
+                      <>
+                        <button
+                          onClick={() => handleDelete(ment.id, ment.user.id)}
+                          className="text-sm text-gray-500 pr-2"
+                        >
+                          삭제
+                        </button>
+                        <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
+                        <button
+                          onClick={() =>
+                            handleEdit(ment.id, ment.comment, ment.user.id)
+                          }
+                          className="text-sm text-gray-500 pl-2"
+                        >
+                          수정
+                        </button>
+                      </>
+                    )}
                   </>
                 )}
               </div>
