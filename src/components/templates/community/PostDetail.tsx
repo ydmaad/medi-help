@@ -10,7 +10,11 @@ import { useAuthStore } from "@/store/auth";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
-type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname" | "id"> };
+type PostWithUser = Post & {
+  user: Pick<User, "avatar" | "nickname" | "id">;
+} & {
+  bookmark_count: number;
+};
 
 interface PostDetailProps {
   id: string;
@@ -222,6 +226,13 @@ const PostDetail = ({ id }: PostDetailProps) => {
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
             <p className="text-sm text-gray-500 ml-0">
               {new Date(post.created_at).toLocaleString()}
+            </p>
+            <div className="mx-2 h-4 w-px bg-gray-300"></div>
+            <p className="text-sm text-gray-500 ml-0">
+              저장
+              <span className="text-sm text-brand-primary-400 ml-1">
+                {post.bookmark_count}
+              </span>
             </p>
           </div>
 
