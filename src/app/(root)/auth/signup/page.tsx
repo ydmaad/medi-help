@@ -4,18 +4,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore, AuthUser } from "@/store/auth";
 import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { SignupForm } from "@/components/templates/auth/SignupForm";
-
-type SupabaseUser = {
-  id: string;
-  email: string;
-  nickname: string | null;
-  avatar: string | null;
-  created_at: string;
-};
 
 export default function SignupPage() {
   const { setUser } = useAuthStore();
@@ -72,7 +64,7 @@ export default function SignupPage() {
         if (fetchError) throw fetchError;
 
         // 전역 상태에 사용자 정보 저장
-        setUser(userData as SupabaseUser);
+        setUser(userData as AuthUser);
 
         // 회원가입 성공 시 메인 페이지로 이동
         router.push("/");

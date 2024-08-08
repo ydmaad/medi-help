@@ -9,30 +9,53 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
 
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      // 세션 교환 성공 시 사용자 정보를 가져와 닉네임을 설정합니다.
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("nickname")
-          .eq("id", user.id)
-          .single();
+  console.log("Callback route hit, code:", code);
 
-        if (!userError && userData?.nickname) {
-          // 닉네임을 사용자 메타데이터에 저장합니다.
-          await supabase.auth.updateUser({
-            data: { nickname: userData.nickname },
-          });
-        }
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+    console.log("Exchange code for session result:", { data, error });
+
+    if (!error && data.user) {
+      // 카카오 계정의 닉네임 또는 이메일을 사용자 이름으로 사용
+      const username =
+        data.user.user_metadata.full_name ||
+        data.user.email?.split("@")[0] ||
+        "User";
+
+      // users 테이블에 사용자 정보 저장 또는 업데이트
+      const { data: userData, error: upsertError } = await supabase
+        .from("users")
+        .upsert(
+          {
+            id: data.user.id,
+            email: data.user.email,
+            nickname: username,
+          },
+          { onConflict: "id" }
+        )
+        .select()
+        .single();
+
+      console.log("Upsert user data result:", { userData, upsertError });
+
+      if (upsertError) {
+        console.error("Error upserting user data:", upsertError);
+      } else {
+        console.log("User data saved/updated:", userData);
       }
-      return NextResponse.redirect(`${origin}${next}`);
     }
+
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`);
+    } else {
+      console.error("Error during auth callback:", error.message);
+    }
+  } else {
+    console.error("Error during auth callback: No code provided");
   }
 
+  // 에러가 있거나 코드가 없는 경우
+  console.log("Redirecting to error page");
   return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }
