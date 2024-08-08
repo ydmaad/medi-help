@@ -4,9 +4,11 @@
 
 /* calendar */
 
-/* :root { */
-/* --fc-border-color: "#f5f6f7" !important; */
-/* } */
+:root {
+  --fc-border-color: transparent !important;
+  --fc-today-bg-color: #e9f5fe !important;
+  --fc-button-border-color: transparent !important;
+}
 
 .fc-toolbar-title {
   display: flex;
@@ -23,13 +25,20 @@
 }
 
 .fc-button {
-  border: transparent !important;
+  border: none !important;
   color: black !important;
+  outline: none !important;
 }
 
-.fc .fc-daygrid-event {
-  display: flex !important;
-  align-items: center !important;
+.fc-day-sun a {
+  color: #f66555;
+  text-decoration: none;
+}
+
+.fc .fc-scrollgrid {
+  border: 1px solid #f5f6f7 !important; /*gray-50*/
+  box-shadow: inset 1px !important;
+  padding: 1px;
 }
 
 .fc-daygrid-day-top {
@@ -60,6 +69,11 @@
 
   .fc-daygrid-day-frame .fc-scrollgrid-sync-inner {
     min-height: 122px;
+  }
+
+  .fc .fc-daygrid-event-harness {
+    display: flex;
+    align-items: center;
   }
 
   .fc-event-title {
@@ -99,6 +113,14 @@
     display: flex;
     justify-content: center;
     margin: 0px !important;
+  }
+
+  .fc .fc-daygrid-event {
+    height: 10px;
+    display: flex !important;
+    margin-top: 10px;
+    align-items: center !important;
+    overflow: hidden;
   }
 
   .fc .fc-daygrid-event-harness {

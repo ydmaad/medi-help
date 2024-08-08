@@ -6,7 +6,11 @@ import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalInner from "@/components/molecules/ModalInner";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import { useAuthStore } from "@/store/auth";
-import { ValueType } from "@/types/calendar";
+import { MedicinesType, ValueType } from "@/types/calendar";
+import {
+  handleContentChange,
+  setViewMedicines,
+} from "@/utils/calendar/calendarFunc";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -20,6 +24,8 @@ interface Props {
   setEvents: React.Dispatch<React.SetStateAction<EventInput[]>>;
   values: ValueType;
   setValues: React.Dispatch<React.SetStateAction<ValueType>>;
+  medicines: MedicinesType[];
+  setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
 }
 
 const DetailModal = ({
@@ -29,6 +35,8 @@ const DetailModal = ({
   setEvents,
   values,
   setValues,
+  medicines,
+  setMedicines,
 }: Props) => {
   const [viewEvents, setViewEvents] = useState<boolean>(false);
   const { user } = useAuthStore();
@@ -42,38 +50,8 @@ const DetailModal = ({
   }, [user]);
 
   useEffect(() => {
-    setViewMedicines();
+    setViewMedicines({ events, values, setValues, setViewEvents });
   }, [values.start_date, values.medi_time]);
-
-  // input 창에 Medicines Set.
-  const setViewMedicines = () => {
-    let editList = events.filter((event) => {
-      return event.start?.toString().split(" ")[0] === values.start_date;
-    });
-
-    if (editList.length !== 0) {
-      setViewEvents(true);
-      let viewEvent = editList.filter((event: EventInput) => {
-        return values.medi_time === event.extendProps.medi_time;
-      })[0];
-
-      if (viewEvent) {
-        setValues({
-          ...values,
-          medicine_id: viewEvent.extendProps.medicineList,
-        });
-      }
-    }
-
-    if (editList.length === 0) {
-      setViewEvents(false);
-      setValues({
-        ...values,
-        medicine_id: [],
-        side_effect: "",
-      });
-    }
-  };
 
   // input 창에 sideEffect Set.
   const setSideEffect = () => {
@@ -126,14 +104,6 @@ const DetailModal = ({
 
     setSideEffect();
   }, [values.start_date]);
-
-  // side_effect 입력란 onChange 함수
-  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setValues((prev) => {
-      return { ...prev, [name]: value };
-    });
-  };
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
@@ -258,8 +228,8 @@ const DetailModal = ({
     <Modal
       isOpen={openDetailModal}
       onRequestClose={handleCloseButtonClick}
-      className="fixed h-screen inset-0 flex items-center justify-items-center "
-      overlayClassName="fixed inset-0 bg-black/[0.6] z-10"
+      className="fixed h-screen inset-0 flex items-center justify-items-center max-[414px]:hidden "
+      overlayClassName="fixed inset-0 bg-black/[0.6] z-10 max-[414px]:hidden "
       ariaHideApp={false}
     >
       <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 mx-auto flex flex-col gap-4 bg-white rounded-sm z-20 drop-shadow-xl ">
@@ -271,10 +241,15 @@ const DetailModal = ({
           type="date"
           name="start_date"
           value={values.start_date}
-          onChange={handleContentChange}
+          onChange={(event) => handleContentChange(event, setValues)}
           className="px-24 py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
         />
-        <ModalInner values={values} setValues={setValues} />
+        <ModalInner
+          values={values}
+          setValues={setValues}
+          medicines={medicines}
+          setMedicines={setMedicines}
+        />
         <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
           <ModalButton
             handleClick={handleDeleteButtonClick}
