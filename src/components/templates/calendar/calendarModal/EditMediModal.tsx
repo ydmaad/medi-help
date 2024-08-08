@@ -67,8 +67,8 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       notes,
       start_date: startDate,
       end_date: endDate,
-      day_of_week: dayOfWeek,
-      notification_time: notificationTime,
+      day_of_week: notificationEnabled ? dayOfWeek : [],
+      notification_time: notificationEnabled ? notificationTime : [],
       repeat,
     };
 

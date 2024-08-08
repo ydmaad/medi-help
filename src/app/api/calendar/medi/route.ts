@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, PostgrestError } from '@supabase/supabase-js';
-import axios from 'axios';
 import { sendEmail } from '@/utils/sendEmail';
+import { generateNotificationMessage } from '@/utils/notificationMessage';
 import '@/utils/scheduleEmail'; // 스케줄링 로직을 불러옵니다.
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -72,12 +72,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Send Email
-    const subject = `Reminder: It's time to take your medication ${newMediRecord.medi_nickname}`;
-    const message = `It's time to take your medication ${newMediRecord.medi_nickname} (${newMediRecord.medi_name}) at ${newMediRecord.times.morning ? 'morning' : ''} ${newMediRecord.times.afternoon ? 'afternoon' : ''} ${newMediRecord.times.evening ? 'evening' : ''}. Notes: ${newMediRecord.notes}`;
-
     const user = await supabase
       .from('users')
-      .select('email')
+      .select('email, nickname')
       .eq('id', newMediRecord.user_id)
       .single();
 
@@ -85,6 +82,13 @@ export async function POST(req: NextRequest) {
       console.error('Failed to fetch user email:', user.error);
       return NextResponse.json({ error: 'Failed to fetch user email' }, { status: 500 });
     }
+
+    const { subject, message } = generateNotificationMessage({
+      medi_nickname: newMediRecord.medi_nickname,
+      medi_name: newMediRecord.medi_name,
+      user_nickname: user.data.nickname,
+      notes: newMediRecord.notes,
+    });
 
     await sendEmail({
       to: user.data.email,
@@ -121,12 +125,9 @@ export async function PUT(req: NextRequest) {
     }
 
     // Send Email
-    const subject = `Reminder: It's time to take your medication ${updatedMediRecord.medi_nickname}`;
-    const message = `It's time to take your medication ${updatedMediRecord.medi_nickname} (${updatedMediRecord.medi_name}) at ${updatedMediRecord.times.morning ? 'morning' : ''} ${updatedMediRecord.times.afternoon ? 'afternoon' : ''} ${updatedMediRecord.times.evening ? 'evening' : ''}. Notes: ${updatedMediRecord.notes}`;
-
     const user = await supabase
       .from('users')
-      .select('email')
+      .select('email, nickname')
       .eq('id', updatedMediRecord.user_id)
       .single();
 
@@ -134,6 +135,13 @@ export async function PUT(req: NextRequest) {
       console.error('Failed to fetch user email:', user.error);
       return NextResponse.json({ error: 'Failed to fetch user email' }, { status: 500 });
     }
+
+    const { subject, message } = generateNotificationMessage({
+      medi_nickname: updatedMediRecord.medi_nickname,
+      medi_name: updatedMediRecord.medi_name,
+      user_nickname: user.data.nickname,
+      notes: updatedMediRecord.notes,
+    });
 
     await sendEmail({
       to: user.data.email,

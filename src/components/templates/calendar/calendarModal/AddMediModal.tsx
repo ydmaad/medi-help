@@ -83,8 +83,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       end_date: endDate,
       created_at: new Date().toISOString(),
       user_id: user.id,
-      day_of_week: dayOfWeek,
-      notification_time: notificationTime,
+      day_of_week: notificationEnabled ? dayOfWeek : [],
+      notification_time: notificationEnabled ? notificationTime : [],
       repeat,
     };
 

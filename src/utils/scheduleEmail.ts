@@ -1,6 +1,7 @@
 import cron from 'node-cron';
 import { createClient } from '@supabase/supabase-js';
 import { sendEmail } from './sendEmail';
+import { generateNotificationMessage } from './notificationMessage';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -23,6 +24,7 @@ interface MediRecord {
   day_of_week: string[];
   notification_time: string[];
   repeat: boolean;
+  user_nickname: string;
 }
 
 async function sendMedicationReminders() {
@@ -31,7 +33,8 @@ async function sendMedicationReminders() {
     .select(`
       *,
       users (
-        email
+        email,
+        nickname
       )
     `)
     .eq('repeat', true);
@@ -48,10 +51,15 @@ async function sendMedicationReminders() {
   for (const record of data) {
     const mediRecord: MediRecord = record;
     const userEmail = record.users.email;
+    const userNickname = record.users.nickname;
 
     if (mediRecord.day_of_week.includes(dayOfWeek) && mediRecord.notification_time.includes(currentTime)) {
-      const subject = `Reminder: It's time to take your medication ${mediRecord.medi_nickname}`;
-      const message = `It's time to take your medication ${mediRecord.medi_nickname} (${mediRecord.medi_name}) at ${currentTime}. Notes: ${mediRecord.notes}`;
+      const { subject, message } = generateNotificationMessage({
+        medi_nickname: mediRecord.medi_nickname,
+        medi_name: mediRecord.medi_name,
+        user_nickname: userNickname,
+        notes: mediRecord.notes,
+      });
 
       await sendEmail({
         to: userEmail,
