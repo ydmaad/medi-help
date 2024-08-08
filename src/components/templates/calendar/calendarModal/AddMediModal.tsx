@@ -246,12 +246,15 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
           <label className="block text-gray-700 text-sm font-bold mr-2">
             알림 설정:
           </label>
-          <input
-            type="checkbox"
-            checked={notificationEnabled}
-            onChange={() => setNotificationEnabled(!notificationEnabled)}
-            className="toggle-checkbox"
-          />
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={notificationEnabled}
+              onChange={() => setNotificationEnabled(!notificationEnabled)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 border border-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          </label>
         </div>
         {notificationEnabled && (
           <>
@@ -276,27 +279,31 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                 ))}
               </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                알림 시간:
-              </label>
-              <input
-                type="time"
-                value={notificationTime[0]}
-                onChange={(e) => handleNotificationTimeChange(0, e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
-            <div className="mb-4 flex items-center">
-              <label className="block text-gray-700 text-sm font-bold mr-2">
-                반복:
-              </label>
-              <input
-                type="checkbox"
-                checked={repeat}
-                onChange={() => setRepeat(!repeat)}
-                className="toggle-checkbox"
-              />
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex-grow mr-2">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  알림 시간:
+                </label>
+                <input
+                  type="time"
+                  value={notificationTime[0]}
+                  onChange={(e) =>
+                    handleNotificationTimeChange(0, e.target.value)
+                  }
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div className="ml-4 flex items-center">
+                <input
+                  type="checkbox"
+                  checked={repeat}
+                  onChange={() => setRepeat(!repeat)}
+                  className="form-checkbox h-5 w-5 text-blue-600"
+                />
+                <label className="ml-2 block text-gray-700 text-sm font-bold">
+                  반복
+                </label>
+              </div>
             </div>
           </>
         )}

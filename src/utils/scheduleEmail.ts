@@ -24,7 +24,6 @@ interface MediRecord {
   day_of_week: string[];
   notification_time: string[];
   repeat: boolean;
-  user_nickname: string;
 }
 
 async function sendMedicationReminders() {
@@ -45,7 +44,7 @@ async function sendMedicationReminders() {
   }
 
   const today = new Date();
-  const dayOfWeek = today.toLocaleString('en-US', { weekday: 'long' }).toLowerCase();
+  const dayOfWeek = today.toLocaleString('ko-KR', { weekday: 'short' });
   const currentTime = today.toTimeString().slice(0, 5);
 
   for (const record of data) {
@@ -53,7 +52,10 @@ async function sendMedicationReminders() {
     const userEmail = record.users.email;
     const userNickname = record.users.nickname;
 
-    if (mediRecord.day_of_week.includes(dayOfWeek) && mediRecord.notification_time.includes(currentTime)) {
+    if (
+      mediRecord.day_of_week.includes(dayOfWeek) &&
+      mediRecord.notification_time.includes(currentTime)
+    ) {
       const { subject, message } = generateNotificationMessage({
         medi_nickname: mediRecord.medi_nickname,
         medi_name: mediRecord.medi_name,
