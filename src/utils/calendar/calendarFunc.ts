@@ -37,7 +37,6 @@ export const setViewMedicines = ({
     setValues({
       ...values,
       medicine_id: [],
-      side_effect: "",
     });
   }
 };

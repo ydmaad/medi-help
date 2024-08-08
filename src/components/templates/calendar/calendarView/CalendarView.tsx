@@ -155,6 +155,7 @@ const CalendarView = () => {
           values={values}
           setValues={setValues}
           events={events}
+          setEvents={setEvents}
           medicines={medicines}
           setMedicines={setMedicines}
         />

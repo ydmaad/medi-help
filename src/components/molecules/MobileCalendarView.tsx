@@ -8,11 +8,13 @@ import { useAuthStore } from "@/store/auth";
 import { EventInput } from "@fullcalendar/core";
 import { handleContentChange } from "@/utils/calendar/calendarFunc";
 import MediCheck from "../atoms/MediCheck";
+import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 
 interface Props {
   values: ValueType;
   setValues: React.Dispatch<React.SetStateAction<ValueType>>;
   events: EventInput[];
+  setEvents: React.Dispatch<React.SetStateAction<EventInput[]>>;
   medicines: MedicinesType[];
   setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
 }
@@ -21,6 +23,7 @@ const MobileCalendarView = ({
   values,
   setValues,
   events,
+  setEvents,
   medicines,
   setMedicines,
 }: Props) => {
@@ -74,13 +77,65 @@ const MobileCalendarView = ({
     });
   };
 
-  // 작성 버튼 onClick 함수
-  const handleWriteButtonClick = () => {
-    setEdit(!edit);
+  // Route Handler 통해서 POST 하는 함수
+  const postCalendar = async (value: ValueType) => {
+    try {
+      const { data } = await axios.post(`/api/calendar`, value);
+
+      let deletedEvents = events.filter((event) => {
+        return !(
+          event.groupId === value.id &&
+          event.extendProps.medi_time === value.medi_time
+        );
+      });
+
+      if (value.medicine_id.length === 0) {
+        setEvents([...deletedEvents]);
+      }
+
+      if (value.medicine_id.length !== 0) {
+        setEvents([
+          ...deletedEvents,
+          {
+            groupId: value.id,
+            title: `${data[0][0].medications.medi_nickname} 외 ${
+              value.medicine_id.length - 1
+            }개`,
+            start: `${
+              new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+                .toISOString()
+                .split("T")[0]
+            } ${TIME_OF_TIME[value.medi_time]}`,
+            backgroundColor: COLOR_OF_TIME[value.medi_time],
+            borderColor: COLOR_OF_TIME[value.medi_time],
+            extendProps: {
+              medi_time: value.medi_time,
+              medicineList: value.medicine_id,
+            },
+          },
+        ]);
+      }
+
+      return data;
+    } catch (error) {
+      console.log("Post Error", error);
+    }
   };
 
   // 저장 버튼 onClick 함수
   const handleSubmitButtonClick = () => {
+    postCalendar(values);
+    setEdit(!edit);
+    setValues({
+      ...values,
+      medi_time: "morning",
+      medicine_id: [],
+      side_effect: "",
+    });
+  };
+
+  // 작성 버튼 onClick 함수
+  const handleWriteButtonClick = () => {
     setEdit(!edit);
   };
 
@@ -181,13 +236,23 @@ const MobileCalendarView = ({
         {tabNumber === 1 ? (
           edit ? (
             <textarea
-              className="min-h-[125px] p-4 w-full text-[16px] font-normal resize-none outline-none"
+              className={`min-h-[125px] p-4 w-full text-[16px] font-normal resize-none outline-none placeholder:text-[14px] placeholder:text-brand-gray-400`}
               onChange={(event) => handleContentChange(event, setValues)}
+              name="side_effect"
               value={values.side_effect}
+              placeholder="복약 후 몸 상태나 오늘 하루 복약에 대한 한 마디"
             ></textarea>
           ) : (
-            <div className="min-h-[125px] p-4 w-full text-[16px] font-normal">
-              {values.side_effect}
+            <div
+              className={`min-h-[125px] p-4 w-full border border-brand-gray-50 bg-brand-gray-50 font-normal ${
+                values.side_effect.length !== 0
+                  ? "text-[16px] text-brand-gray-800"
+                  : "text-[14px] text-brand-gray-400"
+              }  `}
+            >
+              {values.side_effect.length !== 0
+                ? values.side_effect
+                : "복약 후 몸 상태나 오늘 하루 복약에 대한 한 마디"}
             </div>
           )
         ) : null}

@@ -38,7 +38,7 @@ const PillComponent: React.FC<Props> = ({
 
   useEffect(() => {
     setChecked(values.medicine_id.includes(id));
-  }, [values.medicine_id.length]);
+  }, [values.medicine_id]);
 
   useEffect(() => {
     setViewMedicines({ events, values, setValues, setViewEvents });
