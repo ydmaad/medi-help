@@ -16,6 +16,9 @@ const Pagination = ({
   totalPages,
   onPageChange,
 }: PaginationProps) => {
+  console.log(currentPage);
+  console.log(totalPages);
+
   const handlePrev = () => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);

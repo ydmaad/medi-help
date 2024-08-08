@@ -25,11 +25,11 @@ interface ListProps {
 const POST_PER_PAGE = 6;
 
 // 게시글 불러오는 요청
-const fetchPosts = async (page: number, limit: number) => {
+const fetchPosts = async (page: number) => {
   const res = await fetch(`/api/community?page=${page}`);
-  const data = await res.json();
-  console.log("List에 가져온 데이터 :", data);
-  return data;
+  const result = await res.json();
+  console.log("List에 가져온 데이터 :", result.data);
+  return result.data;
 };
 
 // 게시글 리스트 스켈레톤
@@ -57,16 +57,16 @@ const List: React.FC<ListProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPosts, setTotalPosts] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
     const fetchData = async () => {
       // console.log("검색어가 업데이트 돼는 부분!?!?", searchTerm);
       try {
-        const response = await fetchPosts(currentPage, POST_PER_PAGE);
-        setPosts(response.data);
-        setTotalPosts(response.total);
-        console.log("Total posts:", response.total);
+        const response = await fetchPosts(currentPage);
+        setPosts(response);
+        setTotalPages(response);
+        console.log("Total posts:", totalPages);
       } catch (error) {
         console.log("에러가 났네요 =>", error);
       } finally {
@@ -102,7 +102,7 @@ const List: React.FC<ListProps> = ({
   };
 
   // 총 페이지 수 계산
-  const totalPages = Math.ceil(totalPosts / POST_PER_PAGE);
+  const totalPage = Math.ceil(totalPages / POST_PER_PAGE);
 
   // 현재 페이지에 해당하는 게시글 선택
   // const pageStartIndex = (currentPage - 1) * POST_PER_PAGE;
@@ -205,7 +205,7 @@ const List: React.FC<ListProps> = ({
       {1 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={10}
+          totalPages={totalPages}
           onPageChange={handlePageChange}
         />
       )}
