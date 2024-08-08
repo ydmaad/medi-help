@@ -76,8 +76,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         />
         {/* 비밀번호 입력 필드 */}
         <AuthPasswordInput
+          id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호를 입력하세요"
         />
         {/* 에러 메시지 */}
         {formError && <AuthErrorMessage message={formError} />}

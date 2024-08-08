@@ -1,3 +1,15 @@
+"use client";
+
+import React from "react";
+
+export default function AuthPage() {
+  return (
+    <div>
+      <h1>Auth Page</h1>
+    </div>
+  );
+}
+
 // "use client";
 // import { supabase } from "@/utils/supabase/client";
 // import React from "react";
