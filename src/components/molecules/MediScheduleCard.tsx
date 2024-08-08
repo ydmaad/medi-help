@@ -55,7 +55,7 @@ const PillComponent: React.FC<Props> = ({
         alt="pill"
         width={24}
         height={24}
-        className="mr-2"
+        className=" w-auto mr-2"
       />
       <div className="flex flex-col gap-0.5 font-normal">
         <div

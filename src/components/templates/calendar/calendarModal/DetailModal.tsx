@@ -13,6 +13,7 @@ import {
 } from "@/utils/calendar/calendarFunc";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import uuid from "react-uuid";
@@ -57,8 +58,12 @@ const DetailModal = ({
   const setSideEffect = () => {
     const getSideEffect = async (start_date: string) => {
       try {
+        if (!user) {
+          throw Error("User is required.");
+        }
+
         const { data } = await axios.get(
-          `/api/calendar/side_effect?start_date=${start_date}`
+          `/api/calendar/sideEffect/${start_date}?user_id=${user.id}`
         );
 
         if (data.length !== 0) {
@@ -69,6 +74,9 @@ const DetailModal = ({
 
         return data;
       } catch (error) {
+        if (isDynamicServerError(error)) {
+          throw error;
+        }
         console.log("Get SideEffect Error", error);
       }
     };
@@ -102,7 +110,9 @@ const DetailModal = ({
       });
     }
 
-    setSideEffect();
+    if (user) {
+      setSideEffect();
+    }
   }, [values.start_date]);
 
   // modal 닫기 버튼 onClick 함수
