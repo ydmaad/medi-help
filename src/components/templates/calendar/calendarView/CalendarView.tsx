@@ -15,7 +15,7 @@ import { ValueType } from "@/types/calendar";
 import Image from "next/image";
 import PillComponent from "@/components/molecules/MediScheduleCard";
 
-const MOCK_DATA = [
+export const MOCK_DATA = [
   {
     time: "12:00",
     pillName: "키커지는약",

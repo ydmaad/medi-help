@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2773f5d9-bf93-413d-ae5e-6543e093b4d5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/public/pill-filled.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/pill-inactive.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/molecules/MediScheduleCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/CalendarView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/CalendarView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/MediRecords.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/MediRecords.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +74,7 @@
       <workItem from="1722494834006" duration="5515000" />
       <workItem from="1722935170326" duration="1879000" />
       <workItem from="1723084136656" duration="23000" />
-      <workItem from="1723084169457" duration="3507000" />
+      <workItem from="1723084169457" duration="3988000" />
     </task>
     <servers />
   </component>
