@@ -44,7 +44,6 @@ const CalendarView = () => {
 
         {
           data.map((event: EventInput) => {
-            console.log(event);
             if (event.calendar_medicine.length !== 0) {
               const setEventList = (time: string) => {
                 let eventList = event.calendar_medicine.filter(
@@ -119,30 +118,32 @@ const CalendarView = () => {
         values={values}
         setValues={setValues}
       />
-      <div className="relative p-8 w-11/12 h-7/12 fc-button ">
-        <button
-          onClick={handleButtonClick}
-          className="absolute w-24 right-12 top-10 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300"
-        >
-          기록추가 +
-        </button>
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          events={events}
-          dateClick={handleDateClick}
-          selectable={true}
-          eventOverlap={false}
-          displayEventTime={false}
-          headerToolbar={{
-            left: "prev title next",
-            center: "",
-            right: "",
-          }}
-          locale="ko"
-          contentHeight={"auto"}
-          fixedWeekCount={false}
-        />
+      <div className="w-full flex justify-center">
+        <div className="relative p-8 w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] max-[414px]:h-[284px]">
+          <button
+            onClick={handleButtonClick}
+            className="absolute w-24 right-12 top-4 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
+          >
+            기록추가 +
+          </button>
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={events}
+            dateClick={handleDateClick}
+            selectable={true}
+            eventOverlap={false}
+            displayEventTime={false}
+            headerToolbar={{
+              left: "prev title next",
+              center: "",
+              right: "",
+            }}
+            locale="en"
+            contentHeight={"auto"}
+            fixedWeekCount={false}
+          />
+        </div>
       </div>
     </>
   );
