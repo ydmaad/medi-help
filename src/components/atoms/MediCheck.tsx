@@ -1,18 +1,18 @@
 "use client";
-import { ValueType } from "@/types/calendar";
+import { MedicinesType, ValueType } from "@/types/calendar";
 import React, { useEffect, useState } from "react";
 import { NAME_OF_TIME } from "@/constant/constant";
 
 interface Props {
   values: ValueType;
   setValues: React.Dispatch<React.SetStateAction<ValueType>>;
-  name: string;
-  time: { [key: string]: boolean };
+  medicine: MedicinesType;
   idx: number;
 }
-const MediCheck = ({ values, setValues, name, time, idx }: Props) => {
+const MediCheck = ({ values, setValues, medicine, idx }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
+  const { id, time, name } = medicine;
 
   useEffect(() => {
     let timeOfMedicine = Object.keys(time).filter((times) => {
@@ -27,18 +27,20 @@ const MediCheck = ({ values, setValues, name, time, idx }: Props) => {
   }, [time]);
 
   useEffect(() => {
-    setChecked(values.medi_name.includes(name));
-  }, [values.medi_name.length]);
+    setChecked(values.medicine_id.includes(id));
+  }, [values.medicine_id.length]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       setValues((prev) => {
-        return { ...prev, medi_name: [...values.medi_name, name] };
+        return { ...prev, medicine_id: [...values.medicine_id, id] };
       });
     } else {
-      let deletedMediName = values.medi_name.filter((medi) => medi !== name);
+      let deletedMediName = values.medicine_id.filter(
+        (medi_id) => medi_id !== id
+      );
       setValues((prev) => {
-        return { ...prev, medi_name: deletedMediName };
+        return { ...prev, medicine_id: deletedMediName };
       });
     }
   };

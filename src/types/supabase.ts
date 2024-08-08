@@ -195,45 +195,40 @@ export type Database = {
       medications: {
         Row: {
           created_at: string | null
-          day_of_week: string[] | null
+
+
           end_date: string | null
           id: string
           medi_name: string
           medi_nickname: string | null
           notes: string | null
-          notification_time: string[] | null
-          phone_number: string | null
-          repeat: boolean | null
+
           start_date: string | null
           times: Json
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
-          day_of_week?: string[] | null
+
           end_date?: string | null
           id?: string
           medi_name: string
           medi_nickname?: string | null
           notes?: string | null
-          notification_time?: string[] | null
-          phone_number?: string | null
-          repeat?: boolean | null
+
           start_date?: string | null
           times: Json
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
-          day_of_week?: string[] | null
+
           end_date?: string | null
           id?: string
           medi_name?: string
           medi_nickname?: string | null
           notes?: string | null
-          notification_time?: string[] | null
-          phone_number?: string | null
-          repeat?: boolean | null
+
           start_date?: string | null
           times?: Json
           user_id?: string | null
@@ -320,6 +315,53 @@ export type Database = {
         }
         Relationships: []
       }
+
+
+      subscriptions: {
+        Row: {
+          endpoint: string
+          expirationTime: string | null
+          id: string
+          keys: Json | null
+        }
+        Insert: {
+          endpoint: string
+          expirationTime?: string | null
+          id?: string
+          keys?: Json | null
+        }
+        Update: {
+          endpoint?: string
+          expirationTime?: string | null
+          id?: string
+          keys?: Json | null
+        }
+        Relationships: []
+      }
+      user_medicine: {
+        Row: {
+          medicine_id: string
+          user_id: string
+        }
+        Insert: {
+          medicine_id?: string
+          user_id: string
+        }
+        Update: {
+          medicine_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_medicine_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+
       users: {
         Row: {
           avatar: string | null
@@ -327,7 +369,7 @@ export type Database = {
           email: string
           id: string
           nickname: string | null
-          phone_number: string | null
+
         }
         Insert: {
           avatar?: string | null
@@ -335,7 +377,7 @@ export type Database = {
           email: string
           id?: string
           nickname?: string | null
-          phone_number?: string | null
+
         }
         Update: {
           avatar?: string | null
@@ -343,7 +385,7 @@ export type Database = {
           email?: string
           id?: string
           nickname?: string | null
-          phone_number?: string | null
+
         }
         Relationships: [
           {
