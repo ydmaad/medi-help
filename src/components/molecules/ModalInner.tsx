@@ -29,6 +29,7 @@ const ModalInner = ({ values, setValues }: Props) => {
               return [
                 ...prev,
                 {
+                  id: record.id,
                   name: record.medi_nickname,
                   time: record.times,
                 },
@@ -57,7 +58,7 @@ const ModalInner = ({ values, setValues }: Props) => {
   // time Category onClick 함수
   const handleTimeClick = (time: string) => {
     setValues((prev) => {
-      return { ...prev, medi_name: [], medi_time: time };
+      return { ...prev, medicine_id: [], medi_time: time };
     });
   };
 
@@ -96,8 +97,7 @@ const ModalInner = ({ values, setValues }: Props) => {
               <MediCheck
                 values={values}
                 setValues={setValues}
-                name={medicine.name}
-                time={medicine.time}
+                medicine={medicine}
                 idx={idx}
                 key={idx}
               />
