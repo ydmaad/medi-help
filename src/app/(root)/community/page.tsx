@@ -13,6 +13,7 @@ type User = Tables<"users">;
 
 type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> } & {
   comment_count: number;
+  bookmark_count: number;
 };
 
 const CommunityPage = () => {
