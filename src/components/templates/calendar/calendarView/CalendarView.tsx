@@ -11,11 +11,15 @@ import DetailModal from "../calendarModal/DetailModal";
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import uuid from "react-uuid";
-import { ValueType } from "@/types/calendar";
+import { MedicinesType, ValueType } from "@/types/calendar";
+import MobileCalendarView from "@/components/molecules/MobileCalendarView";
+import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventInput[]>([]);
+  const [medicines, setMedicines] = useState<MedicinesType[]>([]);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
+  const [viewEvents, setViewEvents] = useState<boolean>(false);
   const [values, setValues] = useState<ValueType>({
     id: uuid(),
     user_id: "",
@@ -31,7 +35,7 @@ const CalendarView = () => {
 
   type CalendarType = Tables<"calendar">;
   type BridgeType = Tables<"calendar_medicine">;
-  type MedicinesType = Tables<"medications">;
+  type MedicineType = Tables<"medications">;
 
   useEffect(() => {
     if (!user) {
@@ -44,42 +48,43 @@ const CalendarView = () => {
 
         {
           data.map((event: EventInput) => {
-            const setEventList = (time: string) => {
-              let eventList = event.calendar_medicine.filter(
-                (medicine: any) => {
-                  return medicine.medi_time === time;
-                }
-              );
+            if (event.calendar_medicine.length !== 0) {
+              const setEventList = (time: string) => {
+                let eventList = event.calendar_medicine.filter(
+                  (medicine: any) => {
+                    return medicine.medi_time === time;
+                  }
+                );
 
-              if (eventList.length !== 0) {
-                setEvents((prev) => {
-                  return [
-                    ...prev,
-                    {
-                      groupId: event.id,
-                      title: `${eventList[0].medications.medi_nickname} 외 ${
-                        eventList.length - 1
-                      }개`,
-                      start: `${event.start_date} ${
-                        TIME_OF_TIME[eventList[0].medi_time]
-                      }`,
-                      backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
-                      extendProps: {
-                        sideEffect: event.side_effect,
-                        medi_time: eventList[0].medi_time,
-                        medicineList: eventList.map(
-                          (medicine: any) => medicine.medications.id
-                        ),
+                if (eventList.length !== 0) {
+                  setEvents((prev) => {
+                    return [
+                      ...prev,
+                      {
+                        groupId: event.id,
+                        title: `${eventList[0].medications.medi_nickname} 외 ${
+                          eventList.length - 1
+                        }개`,
+                        start: `${event.start_date} ${
+                          TIME_OF_TIME[eventList[0].medi_time]
+                        }`,
+                        backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
+                        extendProps: {
+                          medi_time: eventList[0].medi_time,
+                          medicineList: eventList.map(
+                            (medicine: any) => medicine.medications.id
+                          ),
+                        },
                       },
-                    },
-                  ];
-                });
-              }
-            };
+                    ];
+                  });
+                }
+              };
 
-            setEventList("morning");
-            setEventList("afternoon");
-            setEventList("evening");
+              setEventList("morning");
+              setEventList("afternoon");
+              setEventList("evening");
+            }
           });
         }
       } catch (error) {
@@ -97,13 +102,14 @@ const CalendarView = () => {
       .split("T")[0];
 
     setValues((prev) => {
-      return { ...prev, start_date: newDate };
+      return { ...prev, start_date: newDate, medi_time: "morning" };
     });
 
     setOpenDetailModal(true);
   };
 
   const handleButtonClick = () => {
+    setViewMedicines({ events, values, setValues, setViewEvents });
     setOpenDetailModal(true);
   };
 
@@ -116,30 +122,42 @@ const CalendarView = () => {
         setEvents={setEvents}
         values={values}
         setValues={setValues}
+        medicines={medicines}
+        setMedicines={setMedicines}
       />
-      <div className="relative p-8 w-11/12 h-7/12 fc-button ">
-        <button
-          onClick={handleButtonClick}
-          className="absolute w-24 right-12 top-10 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300"
-        >
-          기록추가 +
-        </button>
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
+      <div className="w-full flex flex-col">
+        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
+          <button
+            onClick={handleButtonClick}
+            className="absolute w-24 right-12 top-4 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
+          >
+            기록추가
+          </button>
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={events}
+            dateClick={handleDateClick}
+            selectable={true}
+            eventOverlap={false}
+            displayEventTime={false}
+            headerToolbar={{
+              left: "prev title next",
+              center: "",
+              right: "",
+            }}
+            locale="en"
+            contentHeight={"auto"}
+            fixedWeekCount={false}
+          />
+        </div>
+        <MobileCalendarView
+          values={values}
+          setValues={setValues}
           events={events}
-          dateClick={handleDateClick}
-          selectable={true}
-          eventOverlap={false}
-          displayEventTime={false}
-          headerToolbar={{
-            left: "prev title next",
-            center: "",
-            right: "",
-          }}
-          locale="en"
-          contentHeight={"auto"}
-          fixedWeekCount={false}
+          setEvents={setEvents}
+          medicines={medicines}
+          setMedicines={setMedicines}
         />
       </div>
     </>
