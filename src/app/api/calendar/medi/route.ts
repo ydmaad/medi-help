@@ -1,9 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, PostgrestError } from '@supabase/supabase-js';
+import axios from 'axios';
+import { sendEmail } from '@/utils/sendEmail';
+import '@/utils/scheduleEmail'; // 스케줄링 로직을 불러옵니다.
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+interface MediRecord {
+  id: string;
+  medi_name: string;
+  medi_nickname: string;
+  times: {
+    morning: boolean;
+    afternoon: boolean;
+    evening: boolean;
+  };
+  notes: string;
+  start_date: string;
+  end_date: string;
+  created_at: string;
+  user_id: string;
+  day_of_week: string[];
+  notification_time: string[];
+  repeat: boolean;
+}
+
+function isPostgrestError(error: any): error is PostgrestError {
+  return error && typeof error === 'object' && 'message' in error && 'details' in error;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,7 +52,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ medicationRecords: data }, { status: 200 });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Server error:", err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
@@ -34,7 +60,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const newMediRecord = await req.json();
+    const newMediRecord: MediRecord = await req.json();
 
     const { data, error } = await supabase
       .from('medications')
@@ -45,9 +71,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Send Email
+    const subject = `Reminder: It's time to take your medication ${newMediRecord.medi_nickname}`;
+    const message = `It's time to take your medication ${newMediRecord.medi_nickname} (${newMediRecord.medi_name}) at ${newMediRecord.times.morning ? 'morning' : ''} ${newMediRecord.times.afternoon ? 'afternoon' : ''} ${newMediRecord.times.evening ? 'evening' : ''}. Notes: ${newMediRecord.notes}`;
+
+    const user = await supabase
+      .from('users')
+      .select('email')
+      .eq('id', newMediRecord.user_id)
+      .single();
+
+    if (user.error || !user.data) {
+      console.error('Failed to fetch user email:', user.error);
+      return NextResponse.json({ error: 'Failed to fetch user email' }, { status: 500 });
+    }
+
+    await sendEmail({
+      to: user.data.email,
+      subject,
+      text: message,
+    });
+
     return NextResponse.json({ medicationRecords: data }, { status: 201 });
-  } catch (err) {
-    console.error("Server error:", err);
+  } catch (err: unknown) {
+    console.error("Server error:", err instanceof Error ? err.message : 'Unknown error');
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -61,7 +108,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
-    const updatedMediRecord = await req.json();
+    const updatedMediRecord: MediRecord = await req.json();
 
     const { data, error } = await supabase
       .from('medications')
@@ -73,9 +120,30 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Send Email
+    const subject = `Reminder: It's time to take your medication ${updatedMediRecord.medi_nickname}`;
+    const message = `It's time to take your medication ${updatedMediRecord.medi_nickname} (${updatedMediRecord.medi_name}) at ${updatedMediRecord.times.morning ? 'morning' : ''} ${updatedMediRecord.times.afternoon ? 'afternoon' : ''} ${updatedMediRecord.times.evening ? 'evening' : ''}. Notes: ${updatedMediRecord.notes}`;
+
+    const user = await supabase
+      .from('users')
+      .select('email')
+      .eq('id', updatedMediRecord.user_id)
+      .single();
+
+    if (user.error || !user.data) {
+      console.error('Failed to fetch user email:', user.error);
+      return NextResponse.json({ error: 'Failed to fetch user email' }, { status: 500 });
+    }
+
+    await sendEmail({
+      to: user.data.email,
+      subject,
+      text: message,
+    });
+
     return NextResponse.json({ medicationRecords: data }, { status: 200 });
-  } catch (err) {
-    console.error("Server error:", err);
+  } catch (err: unknown) {
+    console.error("Server error:", err instanceof Error ? err.message : 'Unknown error');
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -100,8 +168,8 @@ export async function DELETE(req: NextRequest) {
     }
 
     return NextResponse.json({ medicationRecords: data }, { status: 200 });
-  } catch (err) {
-    console.error("Server error:", err);
+  } catch (err: unknown) {
+    console.error("Server error:", err instanceof Error ? err.message : 'Unknown error');
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
