@@ -204,7 +204,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
   return (
     <>
       <div className="max-w-3xl mx-auto overflow-hidden mt-20">
-        <div className="flex  items-center">
+        <div className="flex items-center  ">
           <h1 className="text-2xl font-bold  px-4">{post.title}</h1>
           <button onClick={handleBookmark} className="flex itmes-center">
             <Image
@@ -216,7 +216,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
           </button>
         </div>
 
-        <div className="flex  items-center px-2 py-3">
+        <div className="flex justify-between items-center px-2 py-3">
           <div className="flex items-center space-x-2">
             <p className="text-sm text-gray-500 pl-2">{post.user?.nickname}</p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
@@ -226,22 +226,24 @@ const PostDetail = ({ id }: PostDetailProps) => {
           </div>
 
           {/* 버튼 */}
-          <div className="flex space-x-2">
-            <button
-              onClick={handleDelete}
-              className="text-sm text-gray-500 pr-2"
-            >
-              삭제
-            </button>
-            <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
-            <Link
-              href={`/community/${id}/edit`}
-              onClick={handleEditClick}
-              className="text-sm text-gray-500 pl-2"
-            >
-              수정
-            </Link>
-          </div>
+          {user?.id === post.user.id && (
+            <div className="flex space-x-2">
+              <button
+                onClick={handleDelete}
+                className="text-sm text-gray-500 pr-2"
+              >
+                삭제
+              </button>
+              <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
+              <Link
+                href={`/community/${id}/edit`}
+                onClick={handleEditClick}
+                className="text-sm text-gray-500 pl-2"
+              >
+                수정
+              </Link>
+            </div>
+          )}
         </div>
         {/* 버튼 ===================== */}
 
