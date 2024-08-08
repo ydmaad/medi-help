@@ -18,8 +18,17 @@ type Magazine = {
   reporting_date: string;
 };
 
+type Post = {
+  id: string;
+  title: string;
+  img_url: string;
+  created_at: string;
+  contents: string;
+};
+
 const Page: React.FC = () => {
   const [magazines, setMagazines] = useState<Magazine[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchMagazines = async () => {
@@ -35,13 +44,29 @@ const Page: React.FC = () => {
     }
   };
 
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch("/api/community");
+      if (!response.ok) {
+        throw new Error("커뮤니티 데이터를 불러오는 데 실패했습니다.");
+      }
+      const result = await response.json();
+      setPosts(result.data);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
   useEffect(() => {
     fetchMagazines();
+    fetchPosts();
   }, []);
 
   const limitedMagazines = magazines.slice(0, 3);
   const limitedMainMagazines = magazines.slice(0, 1);
   const limitedSubMagazines = magazines.slice(1, 2);
+
+  const limitedPosts = posts.slice(0, 6);
 
   return (
     <RootLayout isMainPage={true}>
@@ -76,7 +101,7 @@ const Page: React.FC = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-3 gap-[26px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[26px] w-full">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -95,51 +120,17 @@ const Page: React.FC = () => {
         <LoadMoreButton targetPage="/community" />
       </div>
       <div className="flex justify-center items-center flex-col md:flex-row">
-        <div className="grid grid-cols-1 gap-4 w-full md:w-1/2">
-          <ContentsCard
-            hotTitle="🔥️ HOT"
-            newTitle={null}
-            communityTitle="커뮤니티 제목 1"
-            imageSrc="https://via.placeholder.com/100"
-            subTitle="이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle="🔥️ HOT"
-            newTitle={null}
-            communityTitle="커뮤니티 제목 2"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle="🔥️ HOT"
-            newTitle={null}
-            communityTitle="커뮤니티 제목 3"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다."
-          />
-        </div>
-        <div className="grid grid-cols-1 ml-[36px] gap-4 w-full md:w-1/2">
-          <ContentsCard
-            hotTitle={null}
-            newTitle="✨ NEW"
-            communityTitle="커뮤니티 제목 A"
-            imageSrc="https://via.placeholder.com/100"
-            subTitle="이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle={null}
-            newTitle="✨ NEW"
-            communityTitle="커뮤니티 제목 B"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle={null}
-            newTitle="✨ NEW"
-            communityTitle="커뮤니티 제목 C"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다."
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-2  gap-4 w-full">
+          {limitedPosts.map((post, index) => (
+            <ContentsCard
+              key={index}
+              hotTitle={null}
+              newTitle="✨ NEW"
+              communityTitle={post.title}
+              imageSrc={post.img_url}
+              subTitle={post.contents}
+            />
+          ))}
         </div>
       </div>
     </RootLayout>
