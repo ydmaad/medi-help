@@ -9,15 +9,25 @@ type PostInsert = TablesInsert<"posts">; // 추가
 // 게시글 불러오는 요청
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  console.log(searchParams.get("page"));
   const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "6");
+  const perPage = parseInt(searchParams.get("perPage") || "6");
+  const offset = (page - 1) * perPage;
+
   try {
-    const offset = (page - 1) * limit;
+    // 총 게시글 수 조회
+    const { count, error: countError } = await supabase
+      .from("posts")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) {
+      throw countError;
+    }
 
     // 각 게시글 가져오기
-    const { data: posts, error } = await supabase.from("posts").select(
-      `
+    const { data: posts, error } = await supabase
+      .from("posts")
+      .select(
+        `
         id,
         title,
         contents,
@@ -28,7 +38,9 @@ export async function GET(request: NextRequest) {
           avatar
         )
       `
-    );
+      )
+      .range(offset, offset + perPage - 1)
+      .order("created_at", { ascending: false });
 
     if (error) {
       return NextResponse.json(
@@ -75,13 +87,12 @@ export async function GET(request: NextRequest) {
       })
     );
 
-    // .range(offset, offset + limit - 1)
-    // .order("created_at", { ascending: false });
-
-    // console.log("된다!!", postsWitchBookmarkCount);
-
     return NextResponse.json(
-      { message: "조회 성공", data: postsWitchBookmarkCount },
+      {
+        message: "조회 성공",
+        data: postsWitchBookmarkCount,
+        totalPosts: count,
+      },
       { status: 200 }
     );
   } catch (error) {

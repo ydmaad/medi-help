@@ -81,12 +81,7 @@ const CommunityPage = () => {
             <span>글쓰기</span>
           </Link>
         </div>
-        <List
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          posts={posts}
-          setPosts={setPosts}
-        />
+        <List searchTerm={searchTerm} posts={posts} setPosts={setPosts} />
       </div>
     </>
   );
