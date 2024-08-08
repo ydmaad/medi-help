@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bookmark: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: true
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar: {
         Row: {
           created_at: string
@@ -162,33 +195,40 @@ export type Database = {
       medications: {
         Row: {
           created_at: string | null
+
+
           end_date: string | null
           id: string
           medi_name: string
           medi_nickname: string | null
           notes: string | null
+
           start_date: string | null
           times: Json
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
+
           end_date?: string | null
           id?: string
           medi_name: string
           medi_nickname?: string | null
           notes?: string | null
+
           start_date?: string | null
           times: Json
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
+
           end_date?: string | null
           id?: string
           medi_name?: string
           medi_nickname?: string | null
           notes?: string | null
+
           start_date?: string | null
           times?: Json
           user_id?: string | null
@@ -275,6 +315,8 @@ export type Database = {
         }
         Relationships: []
       }
+
+
       subscriptions: {
         Row: {
           endpoint: string
@@ -319,6 +361,7 @@ export type Database = {
           },
         ]
       }
+
       users: {
         Row: {
           avatar: string | null
@@ -326,6 +369,7 @@ export type Database = {
           email: string
           id: string
           nickname: string | null
+
         }
         Insert: {
           avatar?: string | null
@@ -333,6 +377,7 @@ export type Database = {
           email: string
           id?: string
           nickname?: string | null
+
         }
         Update: {
           avatar?: string | null
@@ -340,6 +385,7 @@ export type Database = {
           email?: string
           id?: string
           nickname?: string | null
+
         }
         Relationships: [
           {

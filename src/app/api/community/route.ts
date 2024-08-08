@@ -7,9 +7,16 @@ import { cookies } from "next/headers";
 type PostInsert = TablesInsert<"posts">; // 추가
 
 // 게시글 불러오는 요청
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { data, error } = await supabase.from("posts").select(`
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "6");
+    const offset = (page - 1) * limit;
+
+    // 각 게시글 가져오기
+    const { data: posts, error } = await supabase.from("posts").select(
+      `
         id,
         title,
         contents,
@@ -19,8 +26,8 @@ export async function GET() {
           nickname,
           avatar
         )
-      `);
-    // console.log("된다!!", data);
+      `
+    );
 
     if (error) {
       return NextResponse.json(
@@ -28,7 +35,54 @@ export async function GET() {
         { status: 400 }
       );
     }
-    return NextResponse.json({ message: "조회 성공", data }, { status: 200 });
+
+    // posts가 null인 경우 빈 배열로 처리
+    if (!posts) {
+      return NextResponse.json(
+        { message: "조회 성공", data: [] },
+        { status: 200 }
+      );
+    }
+
+    // 각 개시글을 map을 돌려 댓글 수 가져오기
+    const postsWitchCommentCount = await Promise.all(
+      posts.map(async (post) => {
+        const { count, error } = await supabase
+          .from("comments")
+          .select("id", { count: "exact" })
+          .eq("post_id", post.id);
+        if (error) {
+          console.error("댓글 수 조회 실패 :", error);
+          return { ...post, comment_count: 0 };
+        }
+        return { ...post, comment_count: count };
+      })
+    );
+
+    // 각 게시글 map 돌려 북마크 수 가져오기
+    const postsWitchBookmarkCount = await Promise.all(
+      postsWitchCommentCount.map(async (post) => {
+        const { count, error } = await supabase
+          .from("bookmark")
+          .select("id", { count: "exact" })
+          .eq("post_id", post.id);
+        if (error) {
+          console.error("북마크 수 조회 실패 : ", error);
+          return { ...post, bookmark_count: 0 };
+        }
+        return { ...post, bookmark_count: count };
+      })
+    );
+
+    // .range(offset, offset + limit - 1)
+    // .order("created_at", { ascending: false });
+
+    console.log("된다!!", postsWitchBookmarkCount);
+
+    return NextResponse.json(
+      { message: "조회 성공", data: postsWitchBookmarkCount },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json(

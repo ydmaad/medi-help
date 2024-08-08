@@ -194,10 +194,17 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
     }
   };
 
+  // 내용 표시 - 단락 구분
+  const formatContent = (content: string) => {
+    return content.split("\n").map((paragraph, index) => (
+      <p key={index} className="mb-4">
+        {paragraph}
+      </p>
+    ));
+  };
+
   return (
     <>
-      {/* TODO : 여기에 현재 로그인 된 유저의 아바타와 닉네임이 보이도록 할 예정!! */}
-
       <div className="max-w-[1000px] p-4 bg-white  border border-gray-300  rounded-lg">
         <div className="flex items-center mb-3">
           <Image
@@ -231,24 +238,40 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
         return (
           <div
             key={ment.id}
-            className="my-4 p-4 border border-gray-300 rounded-lg  max-w-[1000px]"
+            className="my-4 p-4 border border-gray-300 rounded-lg  max-w-[1000px] relative"
           >
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
-                <div className="flex items-center mb-2">
-                  <Image
-                    src={ment.user?.avatar || "/default-avatar.jpg"}
-                    alt={"유저 이미지"}
-                    width={40}
-                    height={40}
-                    className="rounded-full mr-3 aspect-square object-cover"
-                  />
-                  <div className="font-semibold">{ment.user.nickname}</div>
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex  justify-center items-center">
+                    <Image
+                      src={ment.user?.avatar || "/default-avatar.jpg"}
+                      alt={"유저 이미지"}
+                      width={40}
+                      height={40}
+                      className="rounded-full mr-3 aspect-square object-cover"
+                    />
+                    <div className="text-l mt-[15px] mb-4">
+                      {ment.user.nickname}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {isEdit[ment.id] ? (
+                      <button
+                        onClick={() => handleCancelEdit(ment.id)}
+                        className="text-sm text-gray-500  absolute top-6 right-6"
+                      >
+                        취소
+                      </button>
+                    ) : (
+                      <button className="hidden">취소</button>
+                    )}
+                  </div>
                 </div>
                 {/* 수정모드 삼항연산자 */}
                 {isEdit[ment.id] ? (
                   // 수정모드일때 (true)
-                  <div>
+                  <>
                     <textarea
                       value={editedComment[ment.id] || ment.comment}
                       onChange={(e) =>
@@ -257,49 +280,51 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
                           [ment.id]: e.target.value,
                         }))
                       }
-                      className="w-full p-2 border border-gray-300 rounded-lg"
+                      className="w-[700px] h-[50px] px-2 focus:outline-none resize-none"
                     />
-                    <div className="flex space-x-2">
+                    <div className="absolute bottom-2 right-4">
                       <button
                         onClick={() => handleSaveEdit(ment.id)}
-                        className="text-blue-500 hover:text-blue-700"
+                        className="w-[90px] mb-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        저장
-                      </button>
-                      <button
-                        onClick={() => handleCancelEdit(ment.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        취소
+                        수정
                       </button>
                     </div>
-                  </div>
+                  </>
                 ) : (
                   // 일반 모드일 떼(false) - 원래 댓글 내용 표시
-                  <div className="mt-1">{ment.comment}</div>
+                  <>
+                    <div className="mt-1 w-full">
+                      {formatContent(ment.comment)}
+                    </div>
+                    <div className="text-gray-500 mt-3 text-sm">
+                      {new Date(ment.created_at).toLocaleString()}
+                    </div>
+                  </>
                 )}
-                <div className="text-gray-500 mt-4 text-sm">
-                  {new Date(ment.created_at).toLocaleString()}
-                </div>
               </div>
               <div className="flex space-x-2">
                 {!isEdit[ment.id] && (
                   <>
-                    <button
-                      onClick={() => handleDelete(ment.id, ment.user.id)}
-                      className="text-sm text-gray-500 pr-2"
-                    >
-                      삭제
-                    </button>
-                    <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
-                    <button
-                      onClick={() =>
-                        handleEdit(ment.id, ment.comment, ment.user.id)
-                      }
-                      className="text-sm text-gray-500 pl-2"
-                    >
-                      수정
-                    </button>
+                    {user?.id === ment.user.id && (
+                      <>
+                        <button
+                          onClick={() => handleDelete(ment.id, ment.user.id)}
+                          className="text-sm text-gray-500 pr-2"
+                        >
+                          삭제
+                        </button>
+                        <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
+                        <button
+                          onClick={() =>
+                            handleEdit(ment.id, ment.comment, ment.user.id)
+                          }
+                          className="text-sm text-gray-500 pl-2"
+                        >
+                          수정
+                        </button>
+                      </>
+                    )}
                   </>
                 )}
               </div>
