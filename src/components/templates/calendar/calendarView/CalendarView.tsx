@@ -20,51 +20,51 @@ export const MOCK_DATA = [
     time: "12:00",
     pillName: "키커지는약",
     timeOfDay: "morning",
-    hasTaken : true,
+    hasTaken: true,
   },
   {
     time: "12:00",
     pillName: "똑똑해지는약",
     timeOfDay: "morning",
-    hasTaken : false,
+    hasTaken: false,
   },
   {
     time: "12:00",
     pillName: "잘생겨지는약",
     timeOfDay: "lunch",
-    hasTaken : true,
+    hasTaken: true,
   },
   {
     time: "12:00",
     pillName: "살빠지는약",
     timeOfDay: "lunch",
-    hasTaken : false,
+    hasTaken: false,
   },
   {
     time: "12:00",
     pillName: "돈버는약",
     timeOfDay: "dinner",
-    hasTaken : false,
+    hasTaken: false,
   },
   {
     time: "12:00",
     pillName: "영양제",
     timeOfDay: "dinner",
-    hasTaken : true,
+    hasTaken: true,
   },
   {
     time: "12:00",
     pillName: "진짜약",
     timeOfDay: "dinner",
-    hasTaken : false,
+    hasTaken: false,
   },
-]
+];
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventInput[]>([]);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [tabNumber, setTabNumber] = useState<number>(0);
-  const [timeOfDay, setTimeOfDay] = useState<string>("morning")
+  const [timeOfDay, setTimeOfDay] = useState<string>("morning");
   const [values, setValues] = useState<ValueType>({
     id: uuid(),
     user_id: "",
@@ -167,8 +167,8 @@ const CalendarView = () => {
         values={values}
         setValues={setValues}
       />
-      <div className="w-full flex justify-center">
-        <div className="relative p-8 w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] max-[414px]:h-[284px]">
+      <div className="w-full flex flex-col">
+        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
           <button
             onClick={handleButtonClick}
             className="absolute w-24 right-12 top-4 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
@@ -193,42 +193,78 @@ const CalendarView = () => {
             fixedWeekCount={false}
           />
         </div>
-      </div>
-      <div className="border border-[#F5F6F7] bg-[#FBFBFB] p-5">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex justify-between gap-6 text-[16px] font-normal">
-            <div className={`cursor-pointer ${tabNumber === 0 ? "font-bold" : "text-[#7C7F86]"}`} onClick={() => setTabNumber(0)}>복약 리스트</div>
-            <div className={`cursor-pointer ${tabNumber === 1 ? "font-bold" : "text-[#7C7F86]"}`} onClick={() => setTabNumber(1)}>노트</div>
+        <div className="min-[414px]:hidden max-[414px]:w-[364px] p-[10px]  border border-[#F5F6F7] bg-[#FBFBFB] p-5">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between gap-6 text-[16px] font-normal">
+              <div
+                className={`cursor-pointer ${
+                  tabNumber === 0 ? "font-bold" : "text-[#7C7F86]"
+                }`}
+                onClick={() => setTabNumber(0)}
+              >
+                복약 리스트
+              </div>
+              <div
+                className={`cursor-pointer ${
+                  tabNumber === 1 ? "font-bold" : "text-[#7C7F86]"
+                }`}
+                onClick={() => setTabNumber(1)}
+              >
+                노트
+              </div>
+            </div>
+            <div className="text-[16px] text-[#279EF9]">편집</div>
           </div>
-          <div className="text-[16px] text-[#279EF9]">편집</div>
-        </div>
-        {tabNumber === 0 ?
-          <>
-            <div className="flex gap-2 justify-start items-center mb-2">
-              <button
+          {tabNumber === 0 ? (
+            <>
+              <div className="flex gap-2 justify-start items-center mb-2">
+                <button
                   onClick={() => setTimeOfDay("morning")}
-                  className={`${timeOfDay === 'morning' ? "rounded-full bg-[#9CD2FC] w-8 h-8 text-[12px] text-[#155189]": "rounded-full bg-[#F5F6F7] w-8 h-8 text-[12px] text-[#BCBFC1]"} `}>
-                아침
-              </button>
-              <button
+                  className={`${
+                    timeOfDay === "morning"
+                      ? "rounded-full bg-[#9CD2FC] w-8 h-8 text-[12px] text-[#155189]"
+                      : "rounded-full bg-[#F5F6F7] w-8 h-8 text-[12px] text-[#BCBFC1]"
+                  } `}
+                >
+                  아침
+                </button>
+                <button
                   onClick={() => setTimeOfDay("lunch")}
-                  className={`${timeOfDay === 'lunch' ? "rounded-full bg-[#9CD2FC] w-8 h-8 text-[12px] text-[#155189]" : "rounded-full bg-[#F5F6F7] w-8 h-8 text-[12px] text-[#BCBFC1]"} `}>
-                점심
-              </button>
-              <button
+                  className={`${
+                    timeOfDay === "lunch"
+                      ? "rounded-full bg-[#9CD2FC] w-8 h-8 text-[12px] text-[#155189]"
+                      : "rounded-full bg-[#F5F6F7] w-8 h-8 text-[12px] text-[#BCBFC1]"
+                  } `}
+                >
+                  점심
+                </button>
+                <button
                   onClick={() => setTimeOfDay("dinner")}
-                  className={`${timeOfDay === 'dinner' ? "rounded-full bg-[#9CD2FC] w-8 h-8 text-[12px] text-[#155189]" : "rounded-full bg-[#F5F6F7] w-8 h-8 text-[12px] text-[#BCBFC1]"} `}>
-                저녁
-              </button>
-            </div>
-            <div className="flex flex-col w-full gap-2">
-              {MOCK_DATA.filter(e => e.timeOfDay === timeOfDay).map(ele => <PillComponent key={ele.pillName} pill={ele}/>)}
-            </div>
-          </> : null
-        }
-        {tabNumber === 1 ?
-            <textarea className="min-h-[125px] p-4 w-full text-[16px] font-normal resize-none" value="신경불안약 먹으니까 너무 졸림. 약 복용 주기 4시간 지키면서 복용하기"></textarea> : null
-        }
+                  className={`${
+                    timeOfDay === "dinner"
+                      ? "rounded-full bg-[#9CD2FC] w-8 h-8 text-[12px] text-[#155189]"
+                      : "rounded-full bg-[#F5F6F7] w-8 h-8 text-[12px] text-[#BCBFC1]"
+                  } `}
+                >
+                  저녁
+                </button>
+              </div>
+              <div className="flex flex-col w-full gap-2">
+                {MOCK_DATA.filter((e) => e.timeOfDay === timeOfDay).map(
+                  (ele) => (
+                    <PillComponent key={ele.pillName} pill={ele} />
+                  )
+                )}
+              </div>
+            </>
+          ) : null}
+          {tabNumber === 1 ? (
+            <textarea
+              className="min-h-[125px] p-4 w-full text-[16px] font-normal resize-none"
+              value={`신경불안약 먹으니까 너무 졸림. 약 복용 주기 4시간 지키면서 복용하기`}
+            ></textarea>
+          ) : null}
+        </div>
       </div>
     </>
   );
