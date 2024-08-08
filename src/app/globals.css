@@ -30,11 +30,6 @@
   outline: none !important;
 }
 
-.fc-day-sun a {
-  color: #f66555;
-  text-decoration: none;
-}
-
 .fc .fc-scrollgrid {
   border: 1px solid #f5f6f7 !important; /*gray-50*/
   box-shadow: inset 1px !important;
@@ -147,6 +142,11 @@
   .fc-daygrid-dot-event {
     align-items: normal !important;
     padding: 8px 0 !important;
+  }
+
+  .fc-day-sun a {
+    color: #f66555;
+    text-decoration: none;
   }
 }
 
