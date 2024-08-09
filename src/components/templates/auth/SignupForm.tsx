@@ -178,18 +178,18 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           >
             이메일 입력
           </label>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-2">
             <AuthInput
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@도메인.com"
-              className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md"
+              className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
             />
             <AuthPrimaryButton
               onClick={handleEmailCheck}
-              className="rounded-l-none h-[42px]"
+              className="h-[42px] w-1/3 px-2"
             >
               중복확인
             </AuthPrimaryButton>
