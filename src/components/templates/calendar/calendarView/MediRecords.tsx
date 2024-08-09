@@ -109,10 +109,10 @@ const MediRecords: React.FC = () => {
 
   return (
     <div className="p-4">
-      <div className="border border-[#F5F6F7] bg-[#FBFBFB] p-5">
+      {/* <div className="border border-[#F5F6F7] bg-[#FBFBFB] p-5">
         <div className="flex justify-between items-center mb-4">
-          <div className="flex justify-between gap-6 text-[16px] font-normal">
-            <div
+          <div className="flex justify-between gap-6 text-[16px] font-normal"> */}
+      {/* <div
               className={`cursor-pointer ${
                 tabNumber === 0 ? "font-bold" : "text-[#7C7F86]"
               }`}
@@ -166,9 +166,9 @@ const MediRecords: React.FC = () => {
               </button>
             </div>
             <div className="flex flex-col w-full gap-2">
-              {/* {MOCK_DATA.filter((e) => e.timeOfDay === timeOfDay).map((ele) => (
+              {MOCK_DATA.filter((e) => e.timeOfDay === timeOfDay).map((ele) => (
                 <PillComponent key={ele.pillName} pill={ele} />
-              ))} */}
+              ))}
             </div>
           </>
         ) : null}
@@ -178,7 +178,7 @@ const MediRecords: React.FC = () => {
             value="신경불안약 먹으니까 너무 졸림. 약 복용 주기 4시간 지키면서 복용하기"
           ></textarea>
         ) : null}
-      </div>
+      </div> */}
       <h2 className="text-xl mb-4">오늘 복용중인 약 목록</h2>
       {filteredMediRecords.map((record) => (
         <div
