@@ -16,12 +16,10 @@ const ModalFilterButton = ({
   return (
     <button
       onClick={() => handleTimeClick(time)}
-      className={`w-[34px] h-[34px] flex justify-center items-center rounded-full ${
-        values.medi_time === time ? "bg-brand-primary-200" : "bg-transparent"
-      } ${
+      className={`${
         values.medi_time === time
-          ? "text-brand-primary-800"
-          : "text-brand-gray-400"
+          ? "rounded-full bg-[#9CD2FC] w-8 h-8 text-[12px] text-[#155189]"
+          : "rounded-full bg-[#F5F6F7] w-8 h-8 text-[12px] text-[#BCBFC1]"
       } `}
     >
       {children}

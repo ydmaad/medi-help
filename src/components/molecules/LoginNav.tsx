@@ -1,3 +1,5 @@
+// src/components/molecules/LoginNav.tsx
+
 "use client";
 
 import React from "react";
@@ -13,8 +15,11 @@ const LoginNav: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      // Supabase를 통해 로그아웃 처리
       await supabase.auth.signOut();
+      // 전역 상태의 사용자 정보 초기화
       clearAuth();
+      // 홈페이지로 리다이렉트
       router.push("/");
     } catch (error) {
       console.error("Logout error:", error);
@@ -30,7 +35,7 @@ const LoginNav: React.FC = () => {
       <div className="flex items-center space-x-4 ">
         <ImageButton src="/ring.svg" alt="알림" href="/mypage" />
         <TextButton
-          text={`${getEmailUsername(user.email)}님`}
+          text={`${user.nickname || user.email?.split("@")[0] || "User"}님`}
           href="/mypage"
           className="text-brand-primary-500"
         />
