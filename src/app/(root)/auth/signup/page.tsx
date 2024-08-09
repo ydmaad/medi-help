@@ -38,21 +38,26 @@ export default function SignupPage() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            name: nickname,
+          },
+        },
       });
 
       if (error) throw error;
 
       if (data.user) {
         // 사용자 추가 정보를 데이터베이스에 저장
-        const { error: insertError } = await supabase.from("users").insert([
-          {
-            id: data.user.id,
-            email,
-            nickname,
-          },
-        ]);
+        // const { error: insertError } = await supabase.from("users").insert([
+        //   {
+        //     id: data.user.id,
+        //     email,
+        //     nickname,
+        //   },
+        // ]);
 
-        if (insertError) throw insertError;
+        // if (insertError) throw insertError;
 
         // 저장된 사용자 정보 조회
         const { data: userData, error: fetchError } = await supabase
@@ -80,7 +85,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center min-h-screen">
       <SignupForm onSubmit={handleSignup} error={error} />
     </div>
   );
