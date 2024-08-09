@@ -6,7 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { differenceInDays, format, formatDistanceToNow } from "date-fns";
-import { ko } from "date-fns/locale";
+import { hr, ko } from "date-fns/locale";
+import { IoIosArrowDown } from "react-icons/io";
 
 type Post = Tables<"posts">;
 type User = Tables<"users">;
@@ -24,9 +25,9 @@ interface ListProps {
 const POST_PER_PAGE = 6;
 
 // 게시글 불러오는 요청
-const fetchPosts = async (page: number) => {
+const fetchPosts = async (page: number, sortOption: string) => {
   const res = await fetch(
-    `/api/community?page=${page}&perPage=${POST_PER_PAGE}`
+    `/api/community?page=${page}&perPage=${POST_PER_PAGE}&sort=${sortOption}`
   );
   const result = await res.json();
   return { data: result.data, totalPosts: result.totalPosts };
@@ -61,17 +62,24 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   const [categoryFilterPosts, setCategoryFilterPosts] = useState<
     PostWithUser[]
   >([]);
+  const [sortOption, setSortOption] = useState<string>("최신순");
+  const [isOptionOpen, setIsOptionOpen] = useState<boolean>(false);
+  const optionList = ["최신순", "오래된순", "인기순"];
 
   useEffect(() => {
     const fetchData = async () => {
-      // console.log("검색어가 업데이트 돼는 부분!?!?", searchTerm);
       try {
-        // 게시글 데이터를 가져와서 스테이트에 넣기
-        const { data, totalPosts } = await fetchPosts(currentPage);
+        const { data, totalPosts } = await fetchPosts(currentPage, sortOption);
         setPosts(data);
         setTotalPosts(totalPosts);
-        setCategoryFilterPosts(data);
-        // 게시글의 총 페이지 수 계산
+        if (selectCategory === "전체") {
+          setCategoryFilterPosts(data);
+        } else {
+          const filtered = data.filter(
+            (post: PostWithUser) => post.category === selectCategory
+          );
+          setCategoryFilterPosts(filtered);
+        }
         const calculatedTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
         setTotalPages(calculatedTotalPages);
       } catch (error) {
@@ -81,28 +89,24 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       }
     };
     fetchData();
-  }, [searchTerm, setPosts, currentPage]);
+  }, [searchTerm, currentPage, sortOption, selectCategory]);
 
-  console.log(posts);
+  // console.log(posts);
 
   // 게시글 검색
-  const filteredPosts = categoryFilterPosts
-    .filter(
-      (post) =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+  const filteredPosts = categoryFilterPosts.filter(
+    (post) =>
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // img_url을 배열로 만드는 함수
   const getImageUrls = (urlString: string | null): string[] => {
     return urlString ? urlString.split(",").map((url) => url.trim()) : [];
   };
 
+  // 페이지 이동하는 핸들러
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -123,15 +127,37 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     }
   };
 
-  // handleCategorySelect 함수를 수정합니다.
-  const handleCategorySelect = (category: string) => {
+  // 카테고리 별 필터 핸들러
+  const handleCategorySelect = async (category: string) => {
     setSelectCategory(category);
-    if (category === "전체") {
-      setCategoryFilterPosts(posts);
-    } else {
-      const filtered = posts.filter((post) => post.category === category);
-      setCategoryFilterPosts(filtered);
+    setCurrentPage(1); // 카테고리 변경 시 첫 페이지로 돌아감
+    try {
+      const { data, totalPosts } = await fetchPosts(1, sortOption);
+      setPosts(data);
+      setTotalPosts(totalPosts);
+      if (category === "전체") {
+        setCategoryFilterPosts(data);
+      } else {
+        const filtered = data.filter(
+          (post: PostWithUser) => post.category === category
+        );
+        setCategoryFilterPosts(filtered);
+      }
+      const calculatedTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
+      setTotalPages(calculatedTotalPages);
+    } catch (error) {
+      console.log("카테고리 변경 중 에러 발생:", error);
     }
+  };
+  // 정렬 리스트 펼기치 핸들러
+  const handleOptionOpen = () => {
+    setIsOptionOpen(!isOptionOpen);
+  };
+
+  // 정렬 리스트에서 옵션 선택 핸들러
+  const handleOptionSelect = (option: string) => {
+    setSortOption(option);
+    setCurrentPage(1); // 정렬 옵션이 변경되면 첫 페이지로 도라감
   };
 
   // 게시글 로딩중 스켈레톤 적용
@@ -147,30 +173,60 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
 
   return (
     <>
-      <ul className="space-y-4">
-        <div>
-          {["전체", "카테고리 01", "카테고리 02", "카테고리 03"].map(
-            (category) => (
-              <button
-                key={category}
-                onClick={() => handleCategorySelect(category)}
-                className={`px-4 py-2 mr-2 rounded-full ${
-                  selectCategory === category
-                    ? "bg-brand-gray-600 text-white"
-                    : "bg-brand-gray-50 text-gray-700"
-                }`}
-              >
-                {category}
-              </button>
-            )
-          )}
+      <div className="space-y-4">
+        <div className="flex justify-between">
+          <div className="flex items-center">
+            {["전체", "카테고리 01", "카테고리 02", "카테고리 03"].map(
+              (category) => (
+                <button
+                  key={category}
+                  onClick={() => handleCategorySelect(category)}
+                  className={`px-4 py-2 mr-2 rounded-full ${
+                    selectCategory === category
+                      ? "bg-brand-gray-600 text-white"
+                      : "bg-brand-gray-50 text-gray-700"
+                  }`}
+                >
+                  {category}
+                </button>
+              )
+            )}
+          </div>
+          <div className="relative">
+            <button
+              onClick={handleOptionOpen}
+              className="flex items-center justify-center text-brand-gray-600"
+            >
+              <span>{sortOption}</span>
+              <IoIosArrowDown />
+            </button>
+            {isOptionOpen && (
+              <div className="absolute -left-[28px] mt-2 flex h-[120px] w-[100px] flex-col items-center justify-center gap-[0.3rem] border shadow rounded-2xl bg-white z-10">
+                {optionList.map((option, index) => (
+                  <button
+                    key={option}
+                    onClick={() => {
+                      handleOptionSelect(option);
+                      handleOptionOpen(); // 옵션 선택 후 리스트를 닫습니다.
+                    }}
+                    className="text-brand-gray-800 text-sm w-full hover:bg-gray-100"
+                  >
+                    {option}
+                    {index !== optionList.length - 1 && (
+                      <hr className="mt-[0.3rem] mx-auto w-[4.5rem] border-brand-gray-200" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {filteredPosts.map((item) => {
           const imageUrls = getImageUrls(item.img_url);
           const timeAgo = formatTimeAgo(item.created_at);
           return (
-            <li key={item.id}>
+            <li key={item.id} className="block">
               <Link
                 href={`/community/${item.id}`}
                 className="block hover:bg-gray-50 transition duration-150 ease-in-out"
@@ -214,7 +270,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
             </li>
           );
         })}
-      </ul>
+      </div>
       {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}

@@ -108,6 +108,8 @@ const PostDetail = ({ id }: PostDetailProps) => {
     loadPost();
   }, [id]);
 
+  console.log(post);
+
   // 북마크한 게시글과 유저가 일치하는지 확인
   useEffect(() => {
     const checkBookmarkUser = async () => {
@@ -204,27 +206,36 @@ const PostDetail = ({ id }: PostDetailProps) => {
   return (
     <>
       <div className="max-w-3xl mx-auto overflow-hidden mt-20">
-        <div className="flex items-center  ">
-          <h1 className="text-2xl font-bold  px-4">{post.title}</h1>
-          <button onClick={handleBookmark} className="flex itmes-center">
-            <Image
-              src={isBookmark ? "/bookmark.svg" : "/emptyBookmark.svg"}
-              alt="북마크 아이콘"
-              width={40}
-              height={40}
-            />
-          </button>
+        <div className="flex flex-col">
+          <div className="text-left px-4 py-2">
+            <span className="text-sm  text-brand-gray-400">
+              {post.category}
+            </span>
+          </div>
+          <div className="flex items-center ">
+            <h1 className="text-2xl font-bold  px-3">{post.title}</h1>
+            <button onClick={handleBookmark} className="flex itmes-center">
+              <Image
+                src={isBookmark ? "/bookmark.svg" : "/emptyBookmark.svg"}
+                alt="북마크 아이콘"
+                width={40}
+                height={40}
+              />
+            </button>
+          </div>
         </div>
 
         <div className="flex justify-between items-center px-2 py-3">
           <div className="flex items-center space-x-2">
-            <p className="text-sm text-gray-500 pl-2">{post.user?.nickname}</p>
+            <p className="text-sm font-extrabold text-brand-gray-800 pl-2">
+              {post.user?.nickname}
+            </p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
-            <p className="text-sm text-gray-500 ml-0">
+            <p className="text-sm text-brand-gray-600 ml-0">
               {new Date(post.created_at).toLocaleString()}
             </p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
-            <p className="text-sm text-gray-500 ml-0">
+            <p className="text-sm text-brand-gray-600 ml-0">
               저장
               <span className="text-sm text-brand-primary-400 ml-1">
                 {post.bookmark_count}
