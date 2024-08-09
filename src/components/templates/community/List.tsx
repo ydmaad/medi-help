@@ -17,7 +17,6 @@ type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> } & {
 
 interface ListProps {
   searchTerm: string;
-  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   posts: PostWithUser[];
   setPosts: React.Dispatch<React.SetStateAction<PostWithUser[]>>;
 }
@@ -25,11 +24,12 @@ interface ListProps {
 const POST_PER_PAGE = 6;
 
 // 게시글 불러오는 요청
-const fetchPosts = async (page: number, limit: number) => {
-  const res = await fetch(`/api/community?page=${page}`);
-  const data = await res.json();
-  console.log("List에 가져온 데이터 :", data);
-  return data;
+const fetchPosts = async (page: number) => {
+  const res = await fetch(
+    `/api/community?page=${page}&perPage=${POST_PER_PAGE}`
+  );
+  const result = await res.json();
+  return { data: result.data, totalPosts: result.totalPosts };
 };
 
 // 게시글 리스트 스켈레톤
@@ -49,24 +49,23 @@ const ListSkeleton = () => {
   );
 };
 
-const List: React.FC<ListProps> = ({
-  searchTerm,
-  setSearchTerm,
-  posts,
-  setPosts,
-}) => {
+const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [totalPosts, setTotalPosts] = useState<number>(1);
 
   useEffect(() => {
     const fetchData = async () => {
       // console.log("검색어가 업데이트 돼는 부분!?!?", searchTerm);
       try {
-        const response = await fetchPosts(currentPage, POST_PER_PAGE);
-        setPosts(response.data);
-        setTotalPosts(response.total);
-        console.log("Total posts:", response.total);
+        // 게시글 데이터를 가져와서 스테이트에 넣기
+        const { data, totalPosts } = await fetchPosts(currentPage);
+        setPosts(data);
+        setTotalPosts(totalPosts);
+        // 게시글의 총 페이지 수 계산
+        const calculatedTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
+        setTotalPages(calculatedTotalPages);
       } catch (error) {
         console.log("에러가 났네요 =>", error);
       } finally {
@@ -101,14 +100,6 @@ const List: React.FC<ListProps> = ({
     setCurrentPage(page);
   };
 
-  // 총 페이지 수 계산
-  const totalPages = Math.ceil(totalPosts / POST_PER_PAGE);
-
-  // 현재 페이지에 해당하는 게시글 선택
-  // const pageStartIndex = (currentPage - 1) * POST_PER_PAGE;
-  // const pageEndIndex = pageStartIndex + POST_PER_PAGE;
-  // const currentPagePosts = filteredPosts.slice(pageStartIndex, pageEndIndex);
-
   // 게시글 작성 시간(**전)
   const formatTimeAgo = (date: Date | number | string): string => {
     const d = date instanceof Date ? date : new Date(date);
@@ -129,7 +120,7 @@ const List: React.FC<ListProps> = ({
   if (isLoading) {
     return (
       <ul className="space-y-4">
-        {[...Array(6)].map((_, index) => (
+        {[...Array(POST_PER_PAGE)].map((_, index) => (
           <ListSkeleton key={index} />
         ))}
       </ul>
@@ -143,14 +134,12 @@ const List: React.FC<ListProps> = ({
           const imageUrls = getImageUrls(item.img_url);
           const timeAgo = formatTimeAgo(item.created_at);
           return (
-            <>
-              {/* 상세페이지로 이동 */}
+            <li key={item.id}>
               <Link
-                key={item.id}
                 href={`/community/${item.id}`}
                 className="block hover:bg-gray-50 transition duration-150 ease-in-out"
               >
-                <li className="border p-4 w-[1000px] h-[150px] my-5">
+                <div className="border rounded-2xl p-4 w-[1000px] h-[150px] my-5">
                   <div className="flex justify-between">
                     <div className="flex-grow pr-4">
                       <h2 className="text-xl font-semibold mb-2">
@@ -164,23 +153,11 @@ const List: React.FC<ListProps> = ({
                       </p>
                       <div className="flex justify-between items-center text-sm text-gray-500">
                         <div className="flex items-center">
-                          {/* 유저 아바타 이미지 - 최종으로 안쓸 거면 아예 삭제하기 */}
-                          {/* <Image
-                          src={
-                            (item.user.avatar as string) ||
-                            "/default-avatar.jpg"
-                          }
-                          alt="user_img"
-                          width={20}
-                          height={20}
-                          className="rounded-full object-cover w-10 h-10 mr-2"
-                        /> */}
                           <span>{item.user.nickname}</span>
-                          <span className="ml-3">{timeAgo}</span>
-                          {/* 북마크 기능 완료 후 수정 */}
-                          <span className="ml-3">
-                            저장 {item.bookmark_count}
-                          </span>
+                          <div className="mx-3 h-4 w-px bg-gray-300"></div>
+                          <span>{timeAgo}</span>
+                          <div className="mx-3 h-4 w-px bg-gray-300"></div>
+                          <span>저장 {item.bookmark_count}</span>
                         </div>
                       </div>
                     </div>
@@ -196,16 +173,16 @@ const List: React.FC<ListProps> = ({
                       </div>
                     )}
                   </div>
-                </li>
+                </div>
               </Link>
-            </>
+            </li>
           );
         })}
       </ul>
-      {1 && (
+      {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={10}
+          totalPages={totalPages}
           onPageChange={handlePageChange}
         />
       )}
