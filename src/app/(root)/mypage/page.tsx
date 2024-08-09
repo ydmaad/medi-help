@@ -1,15 +1,22 @@
+// src/app/(root)/mypage/page.tsx
 import React from "react";
-import Details from "@/components/templates/mypage/Details";
 import MediLists from "@/components/templates/mypage/MediLists";
-import Posts from "@/components/templates/mypage/posts";
+
 import UserBoard from "@/components/templates/mypage/UserBoard";
+import Post from "@/components/templates/community/Post";
+import Posts from "@/components/templates/mypage/posts";
+
 
 const MyPage: React.FC = () => {
   return (
-    <div>
-      <UserBoard />
-      <MediLists />
-      <Posts />
+    <div className="max-w-screen-xl mx-auto px-8 py-4">
+      <div className="flex justify-between">
+        <UserBoard />
+        <MediLists />
+      </div>
+      <div className="mt-8">
+        <Posts/>
+      </div>
     </div>
   );
 };

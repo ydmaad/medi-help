@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ClientComponent from '@/components/molecules/ClientComponent';
 
 export const metadata: Metadata = {
   title: "MEDI HELP",
@@ -13,7 +14,10 @@ export default function HtmlLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <ClientComponent />
+      </body>
     </html>
   );
 }

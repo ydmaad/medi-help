@@ -43,7 +43,6 @@ const deletePost = async (id: string) => {
   const response = await fetch(`/api/community/${id}`, {
     method: "DELETE",
   });
-
   if (!response.ok) {
     throw Error("게시글 삭제에 실패했습니다.");
   }
@@ -56,7 +55,6 @@ const statusBookmark = async (postId: string): Promise<BookmarkData[]> => {
     throw new Error("북마크 상태 확인 실패");
   }
   const result = await response.json();
-  console.log("이 게시글 북마크 한 데이터", result.data);
   return result.data;
 };
 
@@ -89,7 +87,6 @@ const PostDetail = ({ id }: PostDetailProps) => {
   const route = useRouter();
   const { user } = useAuthStore();
   const [isBookmark, setIsBookmark] = useState<boolean>(false);
-  const [bookmarkCount, setBookmarkCount] = useState<number>(0);
 
   // 게시글 불러오기
   useEffect(() => {
@@ -187,15 +184,14 @@ const PostDetail = ({ id }: PostDetailProps) => {
       alert("북마크하려면 로그인이 필요합니다.");
       return;
     }
-
     try {
       await fetchBookmark(id, user.id);
       setIsBookmark((pre) => !pre);
-      if (isBookmark) {
-        console.log("북마크 제거");
-      } else {
-        console.log("북마크 추가");
-      }
+      // if (isBookmark) {
+      //   console.log("북마크 제거");
+      // } else {
+      //   console.log("북마크 추가");
+      // }
     } catch (error) {
       console.error("북마크 토글 중 오류:", error);
     }

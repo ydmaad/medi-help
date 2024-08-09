@@ -51,9 +51,9 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center p-4">
-    <div className="w-full max-w-4xl">
-      <h2 className="text-xl mb-4 text-center">작성한 게시글</h2>
+    <div className="flex p-4 md:p-8 lg:p-16">
+      <div className="w-full max-w-4xl">
+        <h2 className="text-xl mb-4">작성한 게시글</h2>
         <div className="flex flex-col gap-4">
           {posts.map((post) => (
             <div

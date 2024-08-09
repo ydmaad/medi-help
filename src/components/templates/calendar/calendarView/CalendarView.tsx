@@ -14,6 +14,7 @@ import uuid from "react-uuid";
 import { MedicinesType, ValueType } from "@/types/calendar";
 import MobileCalendarView from "@/components/molecules/MobileCalendarView";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventInput[]>([]);
@@ -95,6 +96,42 @@ const CalendarView = () => {
     getCalendarData();
   }, [user]);
 
+  // input 창에 sideEffect Set.
+  const setSideEffect = () => {
+    const getSideEffect = async (start_date: string) => {
+      try {
+        if (!user) {
+          throw Error("User is required.");
+        }
+
+        const { data } = await axios.get(
+          `/api/calendar/sideEffect/${start_date}?user_id=${user.id}`
+        );
+
+        if (data.length !== 0) {
+          setValues((prev) => {
+            return { ...prev, side_effect: data[0].side_effect };
+          });
+        }
+
+        if (data.length === 0) {
+          setValues((prev) => {
+            return { ...prev, side_effect: "" };
+          });
+        }
+
+        return data;
+      } catch (error) {
+        if (isDynamicServerError(error)) {
+          throw error;
+        }
+        console.log("Get SideEffect Error", error);
+      }
+    };
+
+    getSideEffect(values.start_date);
+  };
+
   // 날짜 클릭 시 , value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
     const newDate = new Date(event.date.getTime() + DATE_OFFSET)
@@ -110,6 +147,7 @@ const CalendarView = () => {
 
   const handleButtonClick = () => {
     setViewMedicines({ events, values, setValues, setViewEvents });
+    setSideEffect();
     setOpenDetailModal(true);
   };
 
@@ -124,8 +162,9 @@ const CalendarView = () => {
         setValues={setValues}
         medicines={medicines}
         setMedicines={setMedicines}
+        setSideEffect={setSideEffect}
       />
-      <div className="w-full flex flex-col">
+      <div className="w-full flex flex-col mt-8">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
           <button
             onClick={handleButtonClick}
@@ -146,9 +185,12 @@ const CalendarView = () => {
               center: "",
               right: "",
             }}
-            locale="en"
+            locale="ko"
             contentHeight={"auto"}
             fixedWeekCount={false}
+            dayCellContent={(arg) => {
+              return <i>{arg.dayNumberText.replace("일", "")}</i>;
+            }}
           />
         </div>
         <MobileCalendarView
