@@ -11,7 +11,7 @@ const RootLayout = ({ children, isMainPage }: RootLayoutProps) => {
     <div className="h-full min-h-screen">
       {isMainPage ? (
         <>
-          <div className="absolute inset-0 z-0 mt-[67px]">
+          <div className="absolute inset-0 z-0">
             <BgLinear />
           </div>
           <div>{children}</div>
