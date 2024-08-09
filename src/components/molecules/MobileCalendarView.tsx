@@ -1,14 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import PillComponent from "@/components/molecules/MediScheduleCard";
-import ModalFilterButton from "@/components/atoms/ModalFilterButton";
 import { MedicinesType, ValueType } from "@/types/calendar";
 import axios from "axios";
-import { useAuthStore } from "@/store/auth";
 import { EventInput } from "@fullcalendar/core";
-import { handleContentChange } from "@/utils/calendar/calendarFunc";
 import MediCheck from "../atoms/MediCheck";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
+import FilterComponent from "./FilterComponent";
+import CalendarEditNote from "../atoms/EditNote";
+import PillComponent from "./PillComponent";
+import ViewNote from "../atoms/ViewNote";
 
 interface Props {
   values: ValueType;
@@ -17,6 +17,8 @@ interface Props {
   setEvents: React.Dispatch<React.SetStateAction<EventInput[]>>;
   medicines: MedicinesType[];
   setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
+  edit: boolean;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MobileCalendarView = ({
@@ -26,56 +28,17 @@ const MobileCalendarView = ({
   setEvents,
   medicines,
   setMedicines,
+  edit,
+  setEdit,
 }: Props) => {
   const [tabNumber, setTabNumber] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [edit, setEdit] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
-
-  const { user } = useAuthStore();
-
-  useEffect(() => {
-    const getMedicines = async () => {
-      try {
-        if (user) {
-          const { data } = await axios.get(
-            `/api/calendar/medi?user_id=${user.id}`
-          );
-
-          data.medicationRecords.map((record: any) => {
-            setMedicines((prev) => {
-              return [
-                ...prev,
-                {
-                  id: record.id,
-                  name: record.medi_nickname,
-                  time: record.times,
-                },
-              ];
-            });
-          });
-          return data;
-        }
-        setIsLoading(false);
-      } catch (error) {
-        console.log("medi axios =>", error);
-      }
-    };
-
-    getMedicines();
-  }, [user]);
 
   useEffect(() => {
     let dateArr = values.start_date.split("-");
-    setSelectedDate(`${dateArr[1]}월 ${dateArr[2]}일`);
+    setSelectedDate(`${dateArr[0]}년 ${dateArr[1]}월 ${dateArr[2]}일`);
   }, [values.start_date]);
-
-  // time Category onClick 함수
-  const handleTimeClick = (time: string) => {
-    setValues((prev) => {
-      return { ...prev, medicine_id: [], medi_time: time };
-    });
-  };
 
   // Route Handler 통해서 POST 하는 함수
   const postCalendar = async (value: ValueType) => {
@@ -172,30 +135,8 @@ const MobileCalendarView = ({
           </div>
         </div>
         {tabNumber === 0 ? (
-          <>
-            <div className="flex gap-2 justify-start items-center mb-[8px]">
-              <ModalFilterButton
-                values={values}
-                handleTimeClick={handleTimeClick}
-                time={"morning"}
-              >
-                아침
-              </ModalFilterButton>
-              <ModalFilterButton
-                values={values}
-                handleTimeClick={handleTimeClick}
-                time={"afternoon"}
-              >
-                점심
-              </ModalFilterButton>
-              <ModalFilterButton
-                values={values}
-                handleTimeClick={handleTimeClick}
-                time={"evening"}
-              >
-                저녁
-              </ModalFilterButton>
-            </div>
+          <div className="flex flex-col gap-4">
+            <FilterComponent values={values} setValues={setValues} />
             <div className="flex flex-col items-center w-full gap-2">
               {edit
                 ? medicines
@@ -213,8 +154,6 @@ const MobileCalendarView = ({
                         />
                       );
                     })
-                : isLoading
-                ? "Loading..."
                 : medicines
                     .filter((medi: MedicinesType) => {
                       return medi.time[values.medi_time] === true;
@@ -231,29 +170,13 @@ const MobileCalendarView = ({
                       );
                     })}
             </div>
-          </>
+          </div>
         ) : null}
         {tabNumber === 1 ? (
           edit ? (
-            <textarea
-              className={`min-h-[125px] p-4 w-full text-[16px] font-normal resize-none outline-none placeholder:text-[14px] placeholder:text-brand-gray-400`}
-              onChange={(event) => handleContentChange(event, setValues)}
-              name="side_effect"
-              value={values.side_effect}
-              placeholder="복약 후 몸 상태나 오늘 하루 복약에 대한 한 마디"
-            ></textarea>
+            <CalendarEditNote values={values} setValues={setValues} />
           ) : (
-            <div
-              className={`min-h-[125px] p-4 w-full border border-brand-gray-50 bg-brand-gray-50 font-normal ${
-                values.side_effect.length !== 0
-                  ? "text-[16px] text-brand-gray-800"
-                  : "text-[14px] text-brand-gray-400"
-              }  `}
-            >
-              {values.side_effect.length !== 0
-                ? values.side_effect
-                : "복약 후 몸 상태나 오늘 하루 복약에 대한 한 마디"}
-            </div>
+            <ViewNote values={values} />
           )
         ) : null}
       </div>

@@ -46,15 +46,15 @@ const PillComponent: React.FC<Props> = ({
 
   return (
     <div
-      className={`w-full flex py-2 px-4 rounded-[4px] ${
+      className={`w-full h-14 flex py-2 px-2 rounded-[4px] ${
         checked ? "bg-[#E9F5FE]" : "bg-[#F5F6F7]"
       }`}
     >
       <Image
         src={checked ? "/pill-filled.svg" : "/pill-inactive.svg"}
         alt="pill"
-        width={24}
-        height={24}
+        width={20}
+        height={20}
         className=" w-auto mr-2"
       />
       <div className="flex flex-col gap-0.5 font-normal">
@@ -68,7 +68,7 @@ const PillComponent: React.FC<Props> = ({
               checked ? "bg-[#BCE1FD]" : "bg-[#E0E2E4]"
             } inline-block mr-1`}
           />
-          {mediTimes.join(", ")}
+          {NAME_OF_TIME[values.medi_time]}
           <span
             className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
           >

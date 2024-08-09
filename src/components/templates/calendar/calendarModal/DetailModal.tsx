@@ -3,17 +3,14 @@
 import ModalButton from "@/components/atoms/ModalButton";
 import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import ModalTitle from "@/components/atoms/ModalTitle";
-import ModalInner from "@/components/molecules/ModalInner";
+import EditModalInner from "@/components/molecules/EditModalInner";
+import ViewModalInner from "@/components/molecules/ViewModalInner";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import { useAuthStore } from "@/store/auth";
 import { MedicinesType, ValueType } from "@/types/calendar";
-import {
-  handleContentChange,
-  setViewMedicines,
-} from "@/utils/calendar/calendarFunc";
+import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
-import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import uuid from "react-uuid";
@@ -28,6 +25,8 @@ interface Props {
   medicines: MedicinesType[];
   setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
   setSideEffect: () => void;
+  edit: boolean;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DetailModal = ({
@@ -40,6 +39,8 @@ const DetailModal = ({
   medicines,
   setMedicines,
   setSideEffect,
+  edit,
+  setEdit,
 }: Props) => {
   const [viewEvents, setViewEvents] = useState<boolean>(false);
 
@@ -47,6 +48,10 @@ const DetailModal = ({
 
   useEffect(() => {
     setViewMedicines({ events, values, setValues, setViewEvents });
+
+    if (user) {
+      setSideEffect();
+    }
   }, [values.start_date, values.medi_time]);
 
   // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기
@@ -63,7 +68,6 @@ const DetailModal = ({
 
     if (dateFilteredEvent.length !== 0) {
       let event_id = dateFilteredEvent[0].groupId as string;
-
       setValues((prev) => {
         return { ...prev, id: event_id };
       });
@@ -74,15 +78,12 @@ const DetailModal = ({
         return { ...prev, id: uuid() };
       });
     }
-
-    if (user) {
-      setSideEffect();
-    }
-  }, [values.start_date]);
+  }, [values.medicine_id, values.side_effect]);
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);
+    setEdit(false);
     setValues({
       ...values,
       medi_time: "morning",
@@ -97,6 +98,7 @@ const DetailModal = ({
   // Route Handler 통해서 POST 하는 함수
   const postCalendar = async (value: ValueType) => {
     try {
+      console.log(value);
       const { data } = await axios.post(`/api/calendar`, value);
 
       let deletedEvents = events.filter((event) => {
@@ -161,7 +163,7 @@ const DetailModal = ({
     }
   };
 
-  // 수정하기 버튼 onClick 함수
+  // 저장하기 버튼 onClick 함수
   const handlePostButtonClick = () => {
     if (values.medicine_id.length === 0) {
       alert("복용하신 약을 체크해주세요!");
@@ -199,41 +201,61 @@ const DetailModal = ({
     }
   };
 
+  // 수정하기 버튼 onClick 함수
+  const handleEditButtonClick = () => {
+    setEdit(true);
+  };
+
   return (
     <Modal
       isOpen={openDetailModal}
       onRequestClose={handleCloseButtonClick}
       className="fixed h-screen inset-0 flex items-center justify-items-center max-[414px]:hidden "
-      overlayClassName="fixed inset-0 bg-black/[0.6] z-10 max-[414px]:hidden "
+      overlayClassName="fixed inset-0 bg-black/[0.6] z-40 max-[414px]:hidden "
       ariaHideApp={false}
     >
-      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 mx-auto flex flex-col gap-4 bg-white rounded-sm z-20 drop-shadow-xl ">
+      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 mx-auto flex flex-col gap-[20px] bg-white rounded-sm z-20 drop-shadow-xl ">
         <div className="flex align-items py-1 justify-between gap-2">
           <ModalTitle>하루 약 기록</ModalTitle>
           <ModalCloseButton handleCloseButtonClick={handleCloseButtonClick} />
         </div>
-        <input
-          type="date"
-          name="start_date"
-          value={values.start_date}
-          onChange={(event) => handleContentChange(event, setValues)}
-          className="px-24 py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
-        />
-        <ModalInner
-          values={values}
-          setValues={setValues}
-          medicines={medicines}
-          setMedicines={setMedicines}
-        />
-        <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
-          <ModalButton
-            handleClick={handleDeleteButtonClick}
-            viewEvents={viewEvents}
-          >
-            삭제
-          </ModalButton>
-          <ModalButton handleClick={handlePostButtonClick}>저장</ModalButton>
-        </div>
+
+        {edit ? (
+          <>
+            <EditModalInner
+              values={values}
+              setValues={setValues}
+              medicines={medicines}
+              setMedicines={setMedicines}
+            />
+            <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
+              <ModalButton
+                handleClick={handleDeleteButtonClick}
+                viewEvents={viewEvents}
+              >
+                삭제
+              </ModalButton>
+              <ModalButton handleClick={handlePostButtonClick}>
+                저장
+              </ModalButton>
+            </div>
+          </>
+        ) : (
+          <>
+            <ViewModalInner
+              values={values}
+              setValues={setValues}
+              medicines={medicines}
+              setMedicines={setMedicines}
+              events={events}
+            />
+            <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
+              <ModalButton handleClick={handleEditButtonClick}>
+                수정
+              </ModalButton>
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );

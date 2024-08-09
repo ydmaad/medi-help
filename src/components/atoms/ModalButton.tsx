@@ -12,11 +12,11 @@ const ModalButton = ({ children, handleClick, viewEvents }: Props) => {
     <button
       onClick={handleClick}
       className={`w-24 h-10  rounded-md text-sm font-semibold ${
-        children === "저장" ? "" : `${viewEvents ? "block" : "hidden"}`
+        children === "삭제" ? `${viewEvents ? "block" : "hidden"}` : ""
       } ${
-        children === "저장" ? "bg-brand-primary-500" : "bg-brand-primary-50"
+        children === "삭제" ? "bg-brand-primary-50" : "bg-brand-primary-500"
       } ${
-        children === "저장" ? "text-white" : "text-brand-primary-500"
+        children === "삭제" ? "text-brand-primary-500" : "text-white"
       } hover:scale-105 ease-in duration-300`}
     >
       {children}

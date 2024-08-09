@@ -62,13 +62,9 @@ const MediCheck = ({ values, setValues, medicine, idx }: Props) => {
               checked ? "bg-[#BCE1FD]" : "bg-[#E0E2E4]"
             } inline-block mr-1`}
           />
-          {mediTimes.join(", ")}
+          {NAME_OF_TIME[values.medi_time]}
           <span
-            className={
-              checked
-                ? "text-[#279EF9] ml-1 hidden "
-                : "text-[#7C7F86] ml-1 hidden "
-            }
+            className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
           >
             {`오후 12:00`}
           </span>

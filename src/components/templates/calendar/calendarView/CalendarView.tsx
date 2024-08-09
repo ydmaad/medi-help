@@ -15,13 +15,13 @@ import { MedicinesType, ValueType } from "@/types/calendar";
 import MobileCalendarView from "@/components/molecules/MobileCalendarView";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
-import { useRouter } from "next/navigation";
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventInput[]>([]);
   const [medicines, setMedicines] = useState<MedicinesType[]>([]);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
   const [values, setValues] = useState<ValueType>({
     id: uuid(),
     user_id: "",
@@ -48,6 +48,36 @@ const CalendarView = () => {
   }, [user]);
 
   useEffect(() => {
+    const getMedicines = async () => {
+      try {
+        if (user) {
+          const { data } = await axios.get(
+            `/api/calendar/medi?user_id=${user.id}`
+          );
+
+          data.medicationRecords.map((record: any) => {
+            setMedicines((prev) => {
+              return [
+                ...prev,
+                {
+                  id: record.id,
+                  name: record.medi_nickname,
+                  time: record.times,
+                },
+              ];
+            });
+          });
+          return data;
+        }
+      } catch (error) {
+        console.log("medi axios =>", error);
+      }
+    };
+
+    getMedicines();
+  }, [user]);
+
+  useEffect(() => {
     if (!user) {
       return;
     }
@@ -66,15 +96,19 @@ const CalendarView = () => {
                   }
                 );
 
-                if (eventList.length !== 0) {
+                let countMedicines = eventList.length;
+                let medicineNickname = eventList[0].medications.medi_nickname;
+
+                if (countMedicines !== 0) {
                   setEvents((prev) => {
                     return [
                       ...prev,
                       {
                         groupId: event.id,
-                        title: `${eventList[0].medications.medi_nickname} 외 ${
-                          eventList.length - 1
-                        }개`,
+                        title:
+                          countMedicines !== 1
+                            ? `${medicineNickname} 외 ${countMedicines - 1}개`
+                            : `${medicineNickname}`,
                         start: `${event.start_date} ${
                           TIME_OF_TIME[eventList[0].medi_time]
                         }`,
@@ -172,6 +206,8 @@ const CalendarView = () => {
         medicines={medicines}
         setMedicines={setMedicines}
         setSideEffect={setSideEffect}
+        edit={edit}
+        setEdit={setEdit}
       />
       <div className="w-full flex flex-col mt-8">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
@@ -209,6 +245,8 @@ const CalendarView = () => {
           setEvents={setEvents}
           medicines={medicines}
           setMedicines={setMedicines}
+          edit={edit}
+          setEdit={setEdit}
         />
       </div>
     </>
