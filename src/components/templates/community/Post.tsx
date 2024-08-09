@@ -32,6 +32,7 @@ const fetchPost = async ({
     image.forEach((img) => {
       formData.append("image", img);
     });
+    3;
 
     const response = await fetch(`/api/community/`, {
       method: "POST",
@@ -61,6 +62,10 @@ const Post = () => {
   // 게시글을 전송을 요청하는 핸들러
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!selectCategory) {
+      alert("카테고리를 선택해주세요.");
+      return;
+    }
     // console.log("전송할 데이터!! : ", { title, contents, image });
     await fetchPost({ title, contents, image, category: selectCategory });
   };

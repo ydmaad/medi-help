@@ -53,7 +53,14 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  // 총 게시글 갯수
   const [totalPosts, setTotalPosts] = useState<number>(1);
+  // 선택된 카테고리
+  const [selectCategory, setSelectCategory] = useState<string>("전체");
+  // 카테고리 별로 필터된 게시글
+  const [categoryFilterPosts, setCategoryFilterPosts] = useState<
+    PostWithUser[]
+  >([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +70,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
         const { data, totalPosts } = await fetchPosts(currentPage);
         setPosts(data);
         setTotalPosts(totalPosts);
+        setCategoryFilterPosts(data);
         // 게시글의 총 페이지 수 계산
         const calculatedTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
         setTotalPages(calculatedTotalPages);
@@ -74,22 +82,21 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     };
     fetchData();
   }, [searchTerm, setPosts, currentPage]);
-  // console.log(posts);
+
+  console.log(posts);
 
   // 게시글 검색
-  const filteredPosts = posts
-    ? posts
-        .filter(
-          (post) =>
-            post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        .sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        )
-    : [];
+  const filteredPosts = categoryFilterPosts
+    .filter(
+      (post) =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
 
   // img_url을 배열로 만드는 함수
   const getImageUrls = (urlString: string | null): string[] => {
@@ -116,6 +123,17 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     }
   };
 
+  // handleCategorySelect 함수를 수정합니다.
+  const handleCategorySelect = (category: string) => {
+    setSelectCategory(category);
+    if (category === "전체") {
+      setCategoryFilterPosts(posts);
+    } else {
+      const filtered = posts.filter((post) => post.category === category);
+      setCategoryFilterPosts(filtered);
+    }
+  };
+
   // 게시글 로딩중 스켈레톤 적용
   if (isLoading) {
     return (
@@ -130,6 +148,24 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   return (
     <>
       <ul className="space-y-4">
+        <div>
+          {["전체", "카테고리 01", "카테고리 02", "카테고리 03"].map(
+            (category) => (
+              <button
+                key={category}
+                onClick={() => handleCategorySelect(category)}
+                className={`px-4 py-2 mr-2 rounded-full ${
+                  selectCategory === category
+                    ? "bg-brand-gray-600 text-white"
+                    : "bg-brand-gray-50 text-gray-700"
+                }`}
+              >
+                {category}
+              </button>
+            )
+          )}
+        </div>
+
         {filteredPosts.map((item) => {
           const imageUrls = getImageUrls(item.img_url);
           const timeAgo = formatTimeAgo(item.created_at);

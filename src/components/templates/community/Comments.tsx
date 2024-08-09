@@ -255,7 +255,7 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
                       {ment.user.nickname}
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-shrink-0 items-center space-x-2">
                     {isEdit[ment.id] ? (
                       <button
                         onClick={() => handleCancelEdit(ment.id)}

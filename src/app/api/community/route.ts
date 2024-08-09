@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
         contents,
         img_url,
         created_at,
+        category,
         user:user_id (
           nickname,
           avatar
@@ -123,9 +124,10 @@ export async function POST(request: NextRequest) {
     // formData에서 필드 추출
     const title = formData.get("title") as string;
     const contents = formData.get("contents") as string;
+    const category = formData.get("category") as string;
 
     // title, contents 유효성 검사
-    if (!title || !contents) {
+    if (!title || !contents || !category) {
       return NextResponse.json({ error: "제목과 내용은 필수입니다." });
     }
 
@@ -172,6 +174,7 @@ export async function POST(request: NextRequest) {
       title,
       contents,
       user_id: userId,
+      category,
       img_url: img_url.join(","),
     };
 
