@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import SmCard from "@/components/molecules/SmCard";
 import Title from "@/components/atoms/Title";
+import MagazineTitle from "@/components/atoms/MagazineTitle";
 
 type Magazine = {
   id: string;
@@ -36,7 +37,12 @@ const MagazinePage = () => {
 
   return (
     <>
-      <Title>매거진</Title>
+      <Title>👀 메디칼럼</Title>
+      <span className="text-brand-gray-600 font-extrabold mb-[60px]">
+        약에 관련된 모든 이야기를 전해드려요
+      </span>
+      <MagazineTitle text="에디터's PICK!" />
+      <MagazineTitle text="전체" />
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
         <div className="grid grid-cols-3 gap-4">
