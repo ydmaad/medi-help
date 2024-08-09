@@ -34,6 +34,7 @@ export const MOCK_DATA = [
     hasTaken: false,
   },
 ];
+
 interface MediRecord {
   id: string;
   medi_name: string;
@@ -48,6 +49,9 @@ interface MediRecord {
   end_date: string;
   created_at: string;
   user_id: string;
+  day_of_week: string[]; // 추가된 속성
+  notification_time: string[]; // 추가된 속성
+  repeat: boolean; // 추가된 속성
 }
 
 const MediRecords: React.FC = () => {
