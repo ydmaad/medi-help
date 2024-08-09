@@ -3,9 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { sendEmail } from './sendEmail';
 import { generateNotificationMessage } from './notificationMessage';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
 interface MediRecord {
   id: string;
@@ -26,8 +24,19 @@ interface MediRecord {
   repeat: boolean;
 }
 
-async function sendMedicationReminders() {
-  const { data, error } = await supabase
+function getKoreanTime() {
+  const now = new Date();
+  const utcOffset = now.getTime() + now.getTimezoneOffset() * 60000;
+  const koreanTime = new Date(utcOffset + 9 * 3600000); // UTC+9 for Korea Standard Time
+  return koreanTime;
+}
+
+async function sendScheduledEmails() {
+  const now = getKoreanTime();
+  const currentTime = now.toTimeString().slice(0, 5);
+  const dayOfWeek = now.toLocaleString('ko-KR', { weekday: 'short' });
+
+  const { data: madiData, error } = await supabase
     .from('medications')
     .select(`
       *,
@@ -36,25 +45,27 @@ async function sendMedicationReminders() {
         nickname
       )
     `)
-    .eq('repeat', true);
+    .not('day_of_week', 'is', null)
+    .not('notification_time', 'is', null)
 
   if (error) {
     console.error('Failed to fetch medication records:', error);
     return;
   }
 
-  const today = new Date();
-  const dayOfWeek = today.toLocaleString('ko-KR', { weekday: 'short' });
-  const currentTime = today.toTimeString().slice(0, 5);
+  const data = madiData.filter(f => f.users);
 
   for (const record of data) {
     const mediRecord: MediRecord = record;
     const userEmail = record.users.email;
     const userNickname = record.users.nickname;
 
+    if(!mediRecord.day_of_week.length || !mediRecord.notification_time.length)
+      continue;
+
     if (
       mediRecord.day_of_week.includes(dayOfWeek) &&
-      mediRecord.notification_time.includes(currentTime)
+      mediRecord.notification_time[0].includes(currentTime)
     ) {
       const { subject, message } = generateNotificationMessage({
         medi_nickname: mediRecord.medi_nickname,
@@ -63,16 +74,21 @@ async function sendMedicationReminders() {
         notes: mediRecord.notes,
       });
 
-      await sendEmail({
-        to: userEmail,
-        subject,
-        text: message,
-      });
-
-      console.log(`Email sent to ${userEmail} for medication ${mediRecord.medi_nickname}`);
+      try {
+        await sendEmail({
+          to: userEmail,
+          subject,
+          text: message,
+        });
+        console.log(`Email sent to ${userEmail} for medication ${mediRecord.medi_nickname}`);
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError);
+      }
     }
   }
 }
 
 // 매 분마다 스케줄링된 작업 실행
-cron.schedule('* * * * *', sendMedicationReminders);
+cron.schedule('* * * * *', sendScheduledEmails, {
+  timezone: 'Asia/Seoul',
+});
