@@ -80,7 +80,7 @@ const Page: React.FC = () => {
       </div>
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="flex flex-col md:flex-row ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 w-full  ">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
