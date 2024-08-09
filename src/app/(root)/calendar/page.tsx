@@ -6,7 +6,7 @@ import React from "react";
 
 const Page = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen mt-[67px]">
       <div className="max-[414px]:hidden w-1/4 p-4 bg-gray-100 overflow-y-auto">
         <MediRecords />
       </div>
