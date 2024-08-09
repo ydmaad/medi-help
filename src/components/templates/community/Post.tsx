@@ -10,10 +10,12 @@ const fetchPost = async ({
   title,
   contents,
   image,
+  category,
 }: {
   title: string;
   contents: string;
   image: File[];
+  category: string;
 }) => {
   const user = useAuthStore.getState().user;
 
@@ -26,6 +28,7 @@ const fetchPost = async ({
     const formData = new FormData();
     formData.append("title", title);
     formData.append("contents", contents);
+    formData.append("category", category);
     image.forEach((img) => {
       formData.append("image", img);
     });
@@ -53,12 +56,13 @@ const Post = () => {
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
   const [image, setImage] = useState<File[]>([]);
+  const [selectCategory, setSelectCategory] = useState<string>("");
 
   // 게시글을 전송을 요청하는 핸들러
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     // console.log("전송할 데이터!! : ", { title, contents, image });
-    await fetchPost({ title, contents, image });
+    await fetchPost({ title, contents, image, category: selectCategory });
   };
 
   // 여러 이미지 파일을 처리하는 핸들러
@@ -74,11 +78,31 @@ const Post = () => {
     setImage((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = (category: string) => {
+    setSelectCategory(category);
+  };
+  console.log(selectCategory);
+
   return (
     <>
       <div className="w-[1000px]  mx-auto p-6">
-        <h1 className="text-2xl font-bold  ml-6">글쓰기</h1>
-
+        <h1 className="text-2xl font-bold  ml-6 my-6">커뮤니티 글쓰기</h1>
+        <div className="flex space-x-2 ml-6">
+          {["카테고리 01", "카테고리 02", "카테고리 03"].map((category) => (
+            <button
+              key={category}
+              onClick={() => handleCategorySelect(category)}
+              className={`px-4 py-2 rounded-full ${
+                selectCategory === category
+                  ? "bg-brand-gray-600 text-white"
+                  : "bg-brand-gray-50 text-gray-700"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
         <div className="bg-white  rounded-lg p-6">
           <input
             type="text"
@@ -107,7 +131,7 @@ const Post = () => {
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                사진 / 동영상 추가 (최대 50MB)
+                사진 추가 (최대 50MB)
                 <input
                   type="file"
                   multiple
@@ -150,13 +174,13 @@ const Post = () => {
           <div className="flex justify-center space-x-4">
             <Link
               href={`/community/`}
-              className="bg-gray-100 w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-gray-300 inline-flex items-center justify-center"
+              className="bg-brand-primary-50 text-brand-primary-500 w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-gray-300 inline-flex items-center justify-center"
             >
               취소
             </Link>
             <button
               onClick={handleAddPost}
-              className="bg-blue-500 text-white w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
+              className="bg-brand-primary-500 text-white w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
             >
               작성
             </button>
