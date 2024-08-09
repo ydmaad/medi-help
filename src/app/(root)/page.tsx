@@ -8,16 +8,27 @@ import Hero from "@/components/molecules/Hero";
 import LoadMoreButton from "@/components/atoms/LoadMoreButton";
 import MainTitle from "@/components/atoms/MainTitle";
 import ContentsCard from "@/components/molecules/ContentsCard";
+import BgLinear from "@/components/atoms/BgLinear";
 
 type Magazine = {
+  id: string;
   title: string;
   imgs_url: string;
   written_by: string;
   reporting_date: string;
 };
 
+type Post = {
+  id: string;
+  title: string;
+  img_url: string;
+  created_at: string;
+  contents: string;
+};
+
 const Page: React.FC = () => {
   const [magazines, setMagazines] = useState<Magazine[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchMagazines = async () => {
@@ -33,24 +44,43 @@ const Page: React.FC = () => {
     }
   };
 
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch("/api/community");
+      if (!response.ok) {
+        throw new Error("커뮤니티 데이터를 불러오는 데 실패했습니다.");
+      }
+      const result = await response.json();
+      setPosts(result.data);
+    } catch (err) {
+      setError((err as Error).message);
+    }
+  };
+
   useEffect(() => {
     fetchMagazines();
+    fetchPosts();
   }, []);
 
   const limitedMagazines = magazines.slice(0, 3);
   const limitedMainMagazines = magazines.slice(0, 1);
   const limitedSubMagazines = magazines.slice(1, 2);
 
+  const limitedPosts = posts.slice(0, 6);
+
   return (
     <>
+      <div className="absolute inset-0 z-0">
+        <BgLinear />
+      </div>
       <Hero />
-      <div className="flex justify-between mx-36 mb-[10px]">
-        <MainTitle text="매거진" />
+      <div className="flex justify-between mb-[10px]">
+        <MainTitle text="매디칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="flex">
+        <div className="grid grid-cols-1 sm:grid-cols-2 w-full  ">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
@@ -59,6 +89,7 @@ const Page: React.FC = () => {
               title={magazine.title}
               leftText={magazine.written_by}
               rightText={magazine.reporting_date}
+              id={magazine.id}
             />
           ))}
           {limitedSubMagazines.map((magazine, index) => (
@@ -69,10 +100,11 @@ const Page: React.FC = () => {
               title={magazine.title}
               leftText={magazine.written_by}
               rightText={magazine.reporting_date}
+              id={magazine.id}
             />
           ))}
         </div>
-        <div className="grid grid-cols-3 gap-[26px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[26px] w-full">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -81,62 +113,27 @@ const Page: React.FC = () => {
               title={magazine.title}
               leftText={magazine.written_by}
               rightText={magazine.reporting_date}
+              id={magazine.id}
             />
           ))}
         </div>
       </div>
-      <div className="flex justify-between mx-36 mb-[10px]">
+      <div className="flex justify-between mb-[10px]">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
-      <div className="flex justify-center items-center">
-        {/* 첫 번째 ContentsCard 3개 세로 정렬 */}
-        <div className="grid grid-cols-1 gap-4">
-          <ContentsCard
-            hotTitle="🔥️ HOT"
-            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
-            communityTitle="커뮤니티 제목 1"
-            imageSrc="https://via.placeholder.com/100"
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle="🔥️ HOT"
-            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
-            communityTitle="커뮤니티 제목 2"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle="🔥️ HOT"
-            newTitle={null} /*✨ NEW로 변경해서 사용 가능 */
-            communityTitle="커뮤니티 제목 3"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
-          />
-        </div>
-        {/* 나중에 커뮤니티 데이터 받아오는 로직 작성 이후 변경 최신순과 인기순 정렬로 진행 예정 버튼으로 해당 페이지로 이동 하게 하는것도 추후 구현  */}
-        <div className="grid grid-cols-1 gap-4 ">
-          <ContentsCard
-            hotTitle={null}
-            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
-            communityTitle="커뮤니티 제목 A"
-            imageSrc="https://via.placeholder.com/100"
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle={null}
-            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
-            communityTitle="커뮤니티 제목 B"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
-          />
-          <ContentsCard
-            hotTitle={null}
-            newTitle="✨ NEW" /*✨ NEW로 변경해서 사용 가능 */
-            communityTitle="커뮤니티 제목 C"
-            imageSrc={null}
-            subTitle="이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다.이것은 서브 제목입니다."
-          />
+      <div className="flex justify-center items-center flex-col md:flex-row">
+        <div className="grid grid-cols-1 lg:grid-cols-2  gap-4 w-full">
+          {limitedPosts.map((post, index) => (
+            <ContentsCard
+              key={index}
+              hotTitle={null}
+              newTitle="✨ NEW"
+              communityTitle={post.title}
+              imageSrc={post.img_url}
+              subTitle={post.contents}
+            />
+          ))}
         </div>
       </div>
     </>
