@@ -42,15 +42,8 @@ const DetailModal = ({
   setSideEffect,
 }: Props) => {
   const [viewEvents, setViewEvents] = useState<boolean>(false);
-  const { user } = useAuthStore();
 
-  useEffect(() => {
-    if (user) {
-      setValues((prev) => {
-        return { ...prev, user_id: user.id };
-      });
-    }
-  }, [user]);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     setViewMedicines({ events, values, setValues, setViewEvents });

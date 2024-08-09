@@ -15,6 +15,7 @@ import { MedicinesType, ValueType } from "@/types/calendar";
 import MobileCalendarView from "@/components/molecules/MobileCalendarView";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
+import { useRouter } from "next/navigation";
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventInput[]>([]);
@@ -37,6 +38,14 @@ const CalendarView = () => {
   type CalendarType = Tables<"calendar">;
   type BridgeType = Tables<"calendar_medicine">;
   type MedicineType = Tables<"medications">;
+
+  useEffect(() => {
+    if (user) {
+      setValues((prev) => {
+        return { ...prev, user_id: user.id };
+      });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -94,7 +103,7 @@ const CalendarView = () => {
     };
 
     getCalendarData();
-  }, [user]);
+  }, [values.user_id]);
 
   // input 창에 sideEffect Set.
   const setSideEffect = () => {
