@@ -27,6 +27,7 @@ interface Props {
   setValues: React.Dispatch<React.SetStateAction<ValueType>>;
   medicines: MedicinesType[];
   setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
+  setSideEffect: () => void;
 }
 
 const DetailModal = ({
@@ -38,51 +39,15 @@ const DetailModal = ({
   setValues,
   medicines,
   setMedicines,
+  setSideEffect,
 }: Props) => {
   const [viewEvents, setViewEvents] = useState<boolean>(false);
-  const { user } = useAuthStore();
 
-  useEffect(() => {
-    if (user) {
-      setValues((prev) => {
-        return { ...prev, user_id: user.id };
-      });
-    }
-  }, [user]);
+  const { user } = useAuthStore();
 
   useEffect(() => {
     setViewMedicines({ events, values, setValues, setViewEvents });
   }, [values.start_date, values.medi_time]);
-
-  // input 창에 sideEffect Set.
-  const setSideEffect = () => {
-    const getSideEffect = async (start_date: string) => {
-      try {
-        if (!user) {
-          throw Error("User is required.");
-        }
-
-        const { data } = await axios.get(
-          `/api/calendar/sideEffect/${start_date}?user_id=${user.id}`
-        );
-
-        if (data.length !== 0) {
-          setValues((prev) => {
-            return { ...prev, side_effect: data[0].side_effect };
-          });
-        }
-
-        return data;
-      } catch (error) {
-        if (isDynamicServerError(error)) {
-          throw error;
-        }
-        console.log("Get SideEffect Error", error);
-      }
-    };
-
-    getSideEffect(values.start_date);
-  };
 
   // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기
   useEffect(() => {

@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import ModalFilterButton from "../atoms/ModalFilterButton";
 import MediCheck from "../atoms/MediCheck";
 import SemiTitle from "../atoms/SemiTitle";
+import { handleContentChange } from "@/utils/calendar/calendarFunc";
 
 interface Props {
   values: ValueType;
@@ -15,46 +16,6 @@ interface Props {
 }
 
 const ModalInner = ({ values, setValues, medicines, setMedicines }: Props) => {
-  const { user } = useAuthStore();
-
-  useEffect(() => {
-    const getMedicines = async () => {
-      try {
-        if (user) {
-          const { data } = await axios.get(
-            `/api/calendar/medi?user_id=${user.id}`
-          );
-          data.medicationRecords.map((record: any) => {
-            setMedicines((prev) => {
-              return [
-                ...prev,
-                {
-                  id: record.id,
-                  name: record.medi_nickname,
-                  time: record.times,
-                },
-              ];
-            });
-          });
-        }
-      } catch (error) {
-        console.log("medi axios =>", error);
-      }
-    };
-
-    getMedicines();
-  }, []);
-
-  // side_effect 입력란 onChange 함수
-  const handleContentChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setValues((prev) => {
-      return { ...prev, [name]: value };
-    });
-  };
-
   // time Category onClick 함수
   const handleTimeClick = (time: string) => {
     setValues((prev) => {
@@ -108,7 +69,7 @@ const ModalInner = ({ values, setValues, medicines, setMedicines }: Props) => {
       <textarea
         name="side_effect"
         value={values.side_effect}
-        onChange={handleContentChange}
+        onChange={(event) => handleContentChange(event, setValues)}
         placeholder="간단한 약 메모"
         className="h-2/5 min-h-20 p-1 border border-brand-gray-200 outline-none rounded-sm text-sm resize-none"
       ></textarea>

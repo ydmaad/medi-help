@@ -64,7 +64,11 @@ const MediCheck = ({ values, setValues, medicine, idx }: Props) => {
           />
           {mediTimes.join(", ")}
           <span
-            className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
+            className={
+              checked
+                ? "text-[#279EF9] ml-1 hidden "
+                : "text-[#7C7F86] ml-1 hidden "
+            }
           >
             {`오후 12:00`}
           </span>
