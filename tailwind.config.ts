@@ -42,16 +42,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    plugin(function ({ addUtilities }: { addUtilities: any }) {
-      const newUtilities = {
-        [".fc-button"]: {
-          backgroundColor: "transparent",
-        },
-      };
-
-      addUtilities(newUtilities, ["responsive", "hover"]);
-    }),
-  ],
+  plugins: [],
 };
 export default config;

@@ -6,9 +6,14 @@ import ModalTitle from "@/components/atoms/ModalTitle";
 import ModalInner from "@/components/molecules/ModalInner";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import { useAuthStore } from "@/store/auth";
-import { ValueType } from "@/types/calendar";
+import { MedicinesType, ValueType } from "@/types/calendar";
+import {
+  handleContentChange,
+  setViewMedicines,
+} from "@/utils/calendar/calendarFunc";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import uuid from "react-uuid";
@@ -20,6 +25,8 @@ interface Props {
   setEvents: React.Dispatch<React.SetStateAction<EventInput[]>>;
   values: ValueType;
   setValues: React.Dispatch<React.SetStateAction<ValueType>>;
+  medicines: MedicinesType[];
+  setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
 }
 
 const DetailModal = ({
@@ -29,6 +36,8 @@ const DetailModal = ({
   setEvents,
   values,
   setValues,
+  medicines,
+  setMedicines,
 }: Props) => {
   const [viewEvents, setViewEvents] = useState<boolean>(false);
   const { user } = useAuthStore();
@@ -42,37 +51,37 @@ const DetailModal = ({
   }, [user]);
 
   useEffect(() => {
-    setViewValues();
+    setViewMedicines({ events, values, setValues, setViewEvents });
   }, [values.start_date, values.medi_time]);
 
-  // input 창에 value Set.
-  const setViewValues = () => {
-    let editList = events.filter((event) => {
-      return event.start?.toString().split(" ")[0] === values.start_date;
-    });
+  // input 창에 sideEffect Set.
+  const setSideEffect = () => {
+    const getSideEffect = async (start_date: string) => {
+      try {
+        if (!user) {
+          throw Error("User is required.");
+        }
 
-    if (editList.length !== 0) {
-      setViewEvents(true);
-      let viewEvent = editList.filter((event: EventInput) => {
-        return values.medi_time === event.extendProps.medi_time;
-      })[0];
-      if (viewEvent) {
-        setValues({
-          ...values,
-          medicine_id: viewEvent.extendProps.medicineList,
-          side_effect: editList[0].extendProps.sideEffect,
-        });
+        const { data } = await axios.get(
+          `/api/calendar/sideEffect/${start_date}?user_id=${user.id}`
+        );
+
+        if (data.length !== 0) {
+          setValues((prev) => {
+            return { ...prev, side_effect: data[0].side_effect };
+          });
+        }
+
+        return data;
+      } catch (error) {
+        if (isDynamicServerError(error)) {
+          throw error;
+        }
+        console.log("Get SideEffect Error", error);
       }
-    }
+    };
 
-    if (editList.length === 0) {
-      setViewEvents(false);
-      setValues({
-        ...values,
-        medicine_id: [],
-        side_effect: "",
-      });
-    }
+    getSideEffect(values.start_date);
   };
 
   // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기
@@ -100,15 +109,11 @@ const DetailModal = ({
         return { ...prev, id: uuid() };
       });
     }
-  }, [values.start_date]);
 
-  // side_effect 입력란 onChange 함수
-  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setValues((prev) => {
-      return { ...prev, [name]: value };
-    });
-  };
+    if (user) {
+      setSideEffect();
+    }
+  }, [values.start_date]);
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
@@ -136,27 +141,33 @@ const DetailModal = ({
         );
       });
 
-      setEvents([
-        ...deletedEvents,
-        {
-          groupId: value.id,
-          title: `${data[0][0].medications.medi_nickname} 외 ${
-            value.medicine_id.length - 1
-          }개`,
-          start: `${
-            new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
-              .toISOString()
-              .split("T")[0]
-          } ${TIME_OF_TIME[value.medi_time]}`,
-          backgroundColor: COLOR_OF_TIME[value.medi_time],
-          borderColor: COLOR_OF_TIME[value.medi_time],
-          extendProps: {
-            sideEffect: value.side_effect,
-            medi_time: value.medi_time,
-            medicineList: value.medicine_id,
+      if (value.medicine_id.length === 0) {
+        setEvents([...deletedEvents]);
+      }
+
+      if (value.medicine_id.length !== 0) {
+        setEvents([
+          ...deletedEvents,
+          {
+            groupId: value.id,
+            title: `${data[0][0].medications.medi_nickname} 외 ${
+              value.medicine_id.length - 1
+            }개`,
+            start: `${
+              new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+                .toISOString()
+                .split("T")[0]
+            } ${TIME_OF_TIME[value.medi_time]}`,
+            backgroundColor: COLOR_OF_TIME[value.medi_time],
+            borderColor: COLOR_OF_TIME[value.medi_time],
+            extendProps: {
+              medi_time: value.medi_time,
+              medicineList: value.medicine_id,
+            },
           },
-        },
-      ]);
+        ]);
+      }
+
       return data;
     } catch (error) {
       console.log("Post Error", error);
@@ -167,7 +178,18 @@ const DetailModal = ({
   const deleteCalendar = async (id: string) => {
     try {
       const res = await axios.delete(`/api/calendar/${id}`);
-      console.log(res);
+
+      let deletedEvents = events.filter((event) => {
+        return (
+          String(event.start).split(" ")[0] !==
+          new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+            .toISOString()
+            .split("T")[0]
+        );
+      });
+
+      setEvents(deletedEvents);
+
       return res;
     } catch (error) {
       console.log("Delete Error", error);
@@ -199,16 +221,6 @@ const DetailModal = ({
     if (confirm(`${values.start_date}의 기록을 모두 삭제하시겠습니까 ? `)) {
       deleteCalendar(values.id);
 
-      let deletedEvents = events.filter((event) => {
-        return (
-          String(event.start).split(" ")[0] !==
-          new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
-            .toISOString()
-            .split("T")[0]
-        );
-      });
-
-      setEvents(deletedEvents);
       setOpenDetailModal(false);
       setValues({
         ...values,
@@ -226,8 +238,8 @@ const DetailModal = ({
     <Modal
       isOpen={openDetailModal}
       onRequestClose={handleCloseButtonClick}
-      className="fixed h-screen inset-0 flex items-center justify-items-center "
-      overlayClassName="fixed inset-0 bg-black/[0.6] z-10"
+      className="fixed h-screen inset-0 flex items-center justify-items-center max-[414px]:hidden "
+      overlayClassName="fixed inset-0 bg-black/[0.6] z-10 max-[414px]:hidden "
       ariaHideApp={false}
     >
       <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 mx-auto flex flex-col gap-4 bg-white rounded-sm z-20 drop-shadow-xl ">
@@ -239,10 +251,15 @@ const DetailModal = ({
           type="date"
           name="start_date"
           value={values.start_date}
-          onChange={handleContentChange}
+          onChange={(event) => handleContentChange(event, setValues)}
           className="px-24 py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
         />
-        <ModalInner values={values} setValues={setValues} />
+        <ModalInner
+          values={values}
+          setValues={setValues}
+          medicines={medicines}
+          setMedicines={setMedicines}
+        />
         <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
           <ModalButton
             handleClick={handleDeleteButtonClick}
