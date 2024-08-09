@@ -3,9 +3,9 @@ import Post from "@/components/templates/community/Post";
 
 const RegisterPostPage = () => {
   return (
-    <>
+    <div className="mt-[67px]">
       <Post />
-    </>
+    </div>
   );
 };
 

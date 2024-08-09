@@ -3,9 +3,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/client';
-import MediInfoModal from './myPageModal/MediInfoModal';
 
 interface MediRecord {
   id: string;
@@ -24,11 +22,8 @@ interface MediRecord {
   user_id: string;
 }
 
-const MediLists: React.FC = () => {
+const Medications: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
-  const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchMediRecords = async () => {
@@ -52,40 +47,14 @@ const MediLists: React.FC = () => {
     fetchMediRecords();
   }, []);
 
-  const displayedMediRecords = mediRecords.slice(0, 3);
-
-  const handleShowAllClick = () => {
-    router.push('/mypage/Medications');
-  };
-
-  const handleMediClick = (record: MediRecord) => {
-    setSelectedMediRecord(record);
-    setIsModalOpen(true);
-  };
-
   return (
-    <div className="flex flex-col w-full md:w-1/2 lg:w-2/3 p-4 bg-white rounded-md shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center">
-          <h2 className="text-xl cursor-pointer" onClick={handleShowAllClick}>
-            현재 복용 중인 약 <span className="text-blue-500">{mediRecords.length}개</span>
-          </h2>
-          {mediRecords.length > 3 && (
-            <button
-              onClick={handleShowAllClick}
-              className="text-blue-500 hover:underline ml-2"
-            >
-              &gt;
-            </button>
-          )}
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-        {displayedMediRecords.map((record) => (
+    <div className="max-w-screen-xl mx-auto px-8 py-4 bg-white rounded-md shadow-md">
+      <h2 className="text-xl mb-4">전체 약 목록</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {mediRecords.map((record) => (
           <div
             key={record.id}
             className="bg-gray-100 p-4 rounded shadow mb-2 flex flex-col items-start"
-            onClick={() => handleMediClick(record)}
           >
             {record.itemImage ? (
               <Image
@@ -101,22 +70,21 @@ const MediLists: React.FC = () => {
               </div>
             )}
             <p className="text-lg font-semibold">{record.medi_nickname}</p>
-            <p className="text-sm text-gray-500 mt-1">{record.medi_name}</p>
+            <p className="text-sm text-gray-500 mt-1"> 약 이름 | {record.medi_name}</p>
             <p className="text-sm text-gray-500">
-              {record.start_date} ~ {record.end_date}
+             복용 기간 |  {record.start_date} ~ {record.end_date}
             </p>
+            <p className="text-sm text-gray-500 mt-1">메모 | {record.notes}</p>
+            <div className="flex space-x-2 mt-2">
+              {record.times.morning && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">아침</span>}
+              {record.times.afternoon && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">점심</span>}
+              {record.times.evening && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">저녁</span>}
+            </div>
           </div>
         ))}
       </div>
-      {selectedMediRecord && (
-        <MediInfoModal
-          isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}
-          mediRecord={selectedMediRecord}
-        />
-      )}
     </div>
   );
 };
 
-export default MediLists;
+export default Medications;

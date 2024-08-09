@@ -1,8 +1,6 @@
-"use client";
-
-import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
+import axios from "axios";
 import { useAuthStore } from "@/store/auth";
 
 interface MediRecord {
@@ -19,6 +17,9 @@ interface MediRecord {
   end_date: string;
   created_at: string;
   user_id: string;
+  day_of_week: string[];
+  notification_time: string[];
+  repeat: boolean;
 }
 
 interface AddMediModalProps {
@@ -45,6 +46,10 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
   const [notes, setNotes] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [dayOfWeek, setDayOfWeek] = useState<string[]>([]);
+  const [notificationTime, setNotificationTime] = useState<string[]>([""]);
+  const [repeat, setRepeat] = useState(false);
+  const [notificationEnabled, setNotificationEnabled] = useState(false);
 
   useEffect(() => {
     const fetchMediNames = async () => {
@@ -78,6 +83,9 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       end_date: endDate,
       created_at: new Date().toISOString(),
       user_id: user.id,
+      day_of_week: notificationEnabled ? dayOfWeek : [],
+      notification_time: notificationEnabled ? notificationTime : [],
+      repeat,
     };
 
     try {
@@ -90,6 +98,10 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         setNotes("");
         setStartDate("");
         setEndDate("");
+        setDayOfWeek([]);
+        setNotificationTime([""]);
+        setRepeat(false);
+        setNotificationEnabled(false);
         onRequestClose();
       } else {
         console.error("Failed to add medi record:", response.statusText);
@@ -99,11 +111,19 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
     }
   };
 
-  const filteredMediNames = searchTerm
-    ? mediNames.filter((name) =>
-        name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : mediNames;
+  const handleDayOfWeekChange = (day: string) => {
+    setDayOfWeek((prevDays) =>
+      prevDays.includes(day)
+        ? prevDays.filter((d) => d !== day)
+        : [...prevDays, day]
+    );
+  };
+
+  const handleNotificationTimeChange = (index: number, value: string) => {
+    const updatedNotificationTime = [...notificationTime];
+    updatedNotificationTime[index] = value;
+    setNotificationTime(updatedNotificationTime);
+  };
 
   return (
     <Modal
@@ -113,7 +133,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50 overflow-auto">
         <h2 className="text-2xl mb-4">나의 약</h2>
         <div className="mb-4">
           <input
@@ -131,37 +151,43 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
             value={mediName}
             onChange={(e) => {
               setMediName(e.target.value);
-              setSearchTerm(e.target.value); // 검색어 설정
+              setSearchTerm(e.target.value);
             }}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
           <datalist id="mediNames">
-            {filteredMediNames.map((name, index) => (
-              <option key={index} value={name} />
-            ))}
+            {mediNames
+              .filter((name) =>
+                name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((name, index) => (
+                <option key={index} value={name} />
+              ))}
           </datalist>
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            복용 시작일:
-          </label>
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            복용 종료일:
-          </label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
+        <div className="flex space-x-4 mb-4">
+          <div className="w-1/2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              복용 시작일:
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="w-1/2">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              복용 종료일:
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -211,11 +237,76 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
           </label>
           <textarea
             value={notes}
-            placeholder="간단한 약 정보를 입력해주세요"
             onChange={(e) => setNotes(e.target.value)}
+            placeholder="간단한 약 정보를 입력해주세요"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
+        <div className="mb-4 flex items-center">
+          <label className="block text-gray-700 text-sm font-bold mr-2">
+            알림 설정:
+          </label>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={notificationEnabled}
+              onChange={() => setNotificationEnabled(!notificationEnabled)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 border border-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+        {notificationEnabled && (
+          <>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                알림 요일:
+              </label>
+              <div className="flex space-x-2">
+                {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => handleDayOfWeekChange(day)}
+                    className={`px-4 py-2 rounded-lg ${
+                      dayOfWeek.includes(day)
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex-grow mr-2">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  알림 시간:
+                </label>
+                <input
+                  type="time"
+                  value={notificationTime[0]}
+                  onChange={(e) =>
+                    handleNotificationTimeChange(0, e.target.value)
+                  }
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div>
+              <div className="ml-4 flex items-center">
+                <input
+                  type="checkbox"
+                  checked={repeat}
+                  onChange={() => setRepeat(!repeat)}
+                  className="form-checkbox h-5 w-5 text-blue-600"
+                />
+                <label className="ml-2 block text-gray-700 text-sm font-bold">
+                  반복
+                </label>
+              </div>
+            </div>
+          </>
+        )}
         <div className="flex items-center justify-between">
           <button
             onClick={handleAdd}

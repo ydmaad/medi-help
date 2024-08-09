@@ -227,7 +227,7 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
         <div className="flex justify-end">
           <button
             onClick={handleAddComment}
-            className="w-[90px] bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-[90px] bg-brand-primary-500 text-white px-4 py-2 rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             작성
           </button>
