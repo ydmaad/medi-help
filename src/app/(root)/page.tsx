@@ -8,7 +8,7 @@ import Hero from "@/components/molecules/Hero";
 import LoadMoreButton from "@/components/atoms/LoadMoreButton";
 import MainTitle from "@/components/atoms/MainTitle";
 import ContentsCard from "@/components/molecules/ContentsCard";
-import RootLayout from "./layout";
+import BgLinear from "@/components/atoms/BgLinear";
 
 type Magazine = {
   id: string;
@@ -69,7 +69,10 @@ const Page: React.FC = () => {
   const limitedPosts = posts.slice(0, 6);
 
   return (
-    <RootLayout isMainPage={true}>
+    <>
+      <div className="absolute inset-0 z-0">
+        <BgLinear />
+      </div>
       <Hero />
       <div className="flex justify-between mb-[10px]">
         <MainTitle text="매디칼럼" />
@@ -133,7 +136,7 @@ const Page: React.FC = () => {
           ))}
         </div>
       </div>
-    </RootLayout>
+    </>
   );
 };
 
