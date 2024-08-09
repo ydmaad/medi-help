@@ -1,7 +1,5 @@
 import React from "react";
 import { useRouter } from "next/navigation";
-import BgLinear from "@/components/atoms/BgLinear";
-import MainLogo from "@/components/atoms/MainLogo";
 import SearchBar from "./SearchBar";
 import Mouse from "@/components/atoms/mouse";
 
@@ -16,15 +14,14 @@ const Hero = () => {
 
   return (
     <div className="relative flex flex-col justify-center items-center">
-      <div className="absolute inset-0 z-0">
-        <BgLinear />
-      </div>
-      <div className="mt-[206px] mb-[106px] z-10">
-        <div className="mb-6 z-10">
-          <MainLogo />
-        </div>
-        <SearchBar onSearchChange={handleSearchChange} />
+      <div className=" mt-[500px] mb-[132px] z-10  ">
         <Mouse />
+      </div>
+      <div className="text-[24px] font-bold text-brand-gray-1000 mb-[16px]  z-10 ">
+        약에 대한 정보가 궁금하다면?
+      </div>
+      <div className="mb-[120px] z-10 ">
+        <SearchBar onSearchChange={handleSearchChange} />
       </div>
     </div>
   );

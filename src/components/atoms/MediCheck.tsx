@@ -47,22 +47,42 @@ const MediCheck = ({ values, setValues, medicine, idx }: Props) => {
 
   return (
     <div
-      className={`w-full h-14 px-3 py-2 flex ${
+      className={`w-full h-14 px-4 py-2 flex justify-between ${
         checked ? "bg-brand-primary-50" : "bg-brand-gray-50"
-      } rounded-md`}
+      } rounded-[4px]`}
     >
-      <div className="w-3/5 flex flex-col justify-center gap-1 ">
-        <div className="h-full text-xs text-gray-600">
+      <div className=" flex flex-col justify-center gap-0.5 font-normal ">
+        <div
+          className={`text-[12px] ${
+            checked ? "text-[#7C7F86]" : "text-[#7C7F86]"
+          }`}
+        >
+          <div
+            className={`w-2 h-2 rounded-full ${
+              checked ? "bg-[#BCE1FD]" : "bg-[#E0E2E4]"
+            } inline-block mr-1`}
+          />
           {mediTimes.join(", ")}
+          <span
+            className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
+          >
+            {`오후 12:00`}
+          </span>
         </div>
-        <div className="h-full text-sm text-gray-1000 truncate">{name}</div>
+        <div
+          className={`h-full text-sm truncate ${
+            checked ? "text-brand-gray-1000" : "text-brand-gray-600"
+          }`}
+        >
+          {name}
+        </div>
       </div>
-      <div className="w-2/5 flex items-center justify-center ">
+      <div className="flex items-center justify-center ">
         <label
           htmlFor={`medicine ${idx}`}
           className={`w-[28px] min-w-[28px] h-[28px] min-h-[28px] p-1 flex items-center justify-center rounded-sm text-3xl ${
-            checked ? "text-white" : "text-gray-200"
-          } ${checked ? "bg-brand-primary-500" : "bg-transparent"}`}
+            checked ? "text-brand-primary-500" : "text-gray-200"
+          } bg-transparent`}
         >
           ✓
         </label>

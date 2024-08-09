@@ -10,11 +10,11 @@ import SemiTitle from "../atoms/SemiTitle";
 interface Props {
   values: ValueType;
   setValues: React.Dispatch<React.SetStateAction<ValueType>>;
+  medicines: MedicinesType[];
+  setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
 }
 
-const ModalInner = ({ values, setValues }: Props) => {
-  const [medicines, SetMedicines] = useState<MedicinesType[]>([]);
-
+const ModalInner = ({ values, setValues, medicines, setMedicines }: Props) => {
   const { user } = useAuthStore();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const ModalInner = ({ values, setValues }: Props) => {
             `/api/calendar/medi?user_id=${user.id}`
           );
           data.medicationRecords.map((record: any) => {
-            SetMedicines((prev) => {
+            setMedicines((prev) => {
               return [
                 ...prev,
                 {
@@ -110,7 +110,7 @@ const ModalInner = ({ values, setValues }: Props) => {
         value={values.side_effect}
         onChange={handleContentChange}
         placeholder="간단한 약 메모"
-        className="h-2/5 min-h-20 p-1 border border-brand-gray-200 outline-none rounded-sm text-sm"
+        className="h-2/5 min-h-20 p-1 border border-brand-gray-200 outline-none rounded-sm text-sm resize-none"
       ></textarea>
     </>
   );
