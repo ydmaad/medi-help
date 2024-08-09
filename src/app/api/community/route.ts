@@ -77,8 +77,6 @@ export async function GET(request: NextRequest) {
     // .range(offset, offset + limit - 1)
     // .order("created_at", { ascending: false });
 
-    console.log("된다!!", postsWitchBookmarkCount);
-
     return NextResponse.json(
       { message: "조회 성공", data: postsWitchBookmarkCount },
       { status: 200 }

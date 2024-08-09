@@ -4,7 +4,7 @@ import Link from "next/link";
 const LogoButton = () => {
   return (
     <Link href="/" className="flex items-center cursor-pointer">
-      <img src="/MEDIHELP.png" alt="로고" className="w-24 h-auto mr-[112px]" />
+      <img src="/MEDIHELP.svg" alt="로고" className="w-24 h-auto " />
     </Link>
   );
 };
