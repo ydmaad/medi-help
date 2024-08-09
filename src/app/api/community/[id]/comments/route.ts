@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 type Comment = Tables<"comments">; // 테이블을 읽어올때
 type CommentInsert = TablesInsert<"comments">; // 등록
 type CommentUpdate = TablesUpdate<"comments">; //수정
+
 // 타입 명확하게 지정하여 사용
 type CommentUpdateReal = CommentUpdate & { id: string; comment: string };
 
@@ -15,13 +16,15 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-    const { data, error } = await supabase
+    const { data, count, error } = await supabase
       .from("comments")
       .select(
-        `id, comment, created_at,post_id,user:user_id(nickname, avatar,id) `
+        `id, comment, created_at,post_id,user:user_id(nickname, avatar,id) `,
+        { count: "exact" }
       )
       .eq("post_id", id);
-    // console.log("된다!!", data);
+
+    // console.log("댓글 개수!!", count);
 
     if (error) {
       return NextResponse.json(
@@ -30,7 +33,7 @@ export async function GET(
       );
     }
     return NextResponse.json(
-      { message: "댓글 조회 성공", data },
+      { message: "댓글 조회 성공", data, count },
       { status: 200 }
     );
   } catch (error) {

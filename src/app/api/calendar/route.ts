@@ -45,8 +45,6 @@ export async function POST(req: NextRequest) {
       return { calendar_id: id, user_id, medicine_id: medi_id, medi_time };
     });
 
-    console.log(values);
-
     if (!id) {
       NextResponse.json("ID is required.");
     }
