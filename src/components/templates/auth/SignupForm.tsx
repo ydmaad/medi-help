@@ -4,9 +4,11 @@
 import React, { useState, useEffect } from "react";
 import { AuthInput } from "../../atoms/AuthInput";
 import { AuthButton } from "../../atoms/AuthButton";
+import { AuthPrimaryButton } from "../../atoms/AuthPrimaryButton";
 import { AuthErrorMessage } from "../../atoms/AuthErrorMessage";
 import { AuthPasswordInput } from "../../molecules/AuthPasswordInput";
 import { AuthCheckbox } from "../../molecules/AuthCheckbox";
+import { supabase } from "@/utils/supabase/client";
 
 type SignupFormProps = {
   onSubmit: (data: {
@@ -35,6 +37,48 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   const [passwordConfirmValid, setPasswordConfirmValid] = useState<
     boolean | null
   >(null);
+
+  // 이메일 중복 확인 상태
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isEmailAvailable, setIsEmailAvailable] = useState(false);
+
+  // 이메일 중복 확인 함수
+  const checkEmail = async (email: string) => {
+    const { data, error } = await supabase
+      .from("users")
+      .select("email")
+      .eq("email", email);
+
+    if (error) {
+      console.error(error.message);
+      return false;
+    }
+    return data.length === 0;
+  };
+
+  // 이메일 중복 확인 핸들러
+  const handleEmailCheck = async () => {
+    if (!email || !emailValid) {
+      alert("유효한 이메일을 입력해주세요.");
+      return;
+    }
+
+    const isAvailable = await checkEmail(email);
+    setIsEmailChecked(true);
+    setIsEmailAvailable(isAvailable);
+
+    if (isAvailable) {
+      alert("사용 가능한 이메일입니다.");
+    } else {
+      alert("이미 사용 중인 이메일입니다.");
+    }
+  };
+
+  // 이메일 변경 시 중복 확인 상태 초기화
+  useEffect(() => {
+    setIsEmailChecked(false);
+    setIsEmailAvailable(false);
+  }, [email]);
 
   // 닉네임 유효성 검사
   useEffect(() => {
@@ -81,12 +125,16 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
     if (
       nicknameValid &&
       emailValid &&
+      isEmailChecked &&
+      isEmailAvailable &&
       passwordValid &&
       passwordConfirmValid &&
       agreeTerms &&
       agreePrivacy
     ) {
       onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+    } else {
+      alert("모든 필드를 올바르게 입력하고 이메일 중복 확인을 해주세요.");
     }
   };
 
@@ -139,21 +187,26 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
               placeholder="example@도메인.com"
               className="flex-grow px-3 py-2 border border-gray-300 rounded-l-md"
             />
-            {/* <button
-              type="button"
-              className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-r-md h-[42px]"
+            <AuthPrimaryButton
+              onClick={handleEmailCheck}
+              className="rounded-l-none h-[42px]"
             >
               중복확인
-            </button> */}
+            </AuthPrimaryButton>
           </div>
           {emailValid === false && (
             <p className="text-red-500 text-sm mt-1">
               올바른 이메일 형식이 아닙니다.
             </p>
           )}
-          {emailValid === true && (
+          {isEmailChecked && isEmailAvailable && (
             <p className="text-green-500 text-xs mt-1">
-              사용할 수 있는 이메일입니다.
+              사용 가능한 이메일입니다.
+            </p>
+          )}
+          {isEmailChecked && !isEmailAvailable && (
+            <p className="text-red-500 text-xs mt-1">
+              이미 사용 중인 이메일입니다.
             </p>
           )}
         </div>
@@ -224,10 +277,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         {error && <AuthErrorMessage message={error} />}
 
         {/* 회원가입 버튼 */}
-        <AuthButton
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-md"
-        >
+        <AuthButton type="submit" className="w-full">
           회원가입
         </AuthButton>
       </form>
