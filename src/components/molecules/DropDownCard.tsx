@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 interface DropDownCardProps {
   title: string;
@@ -12,18 +12,15 @@ const DropDownCard = ({
   hiddenText,
 }: DropDownCardProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const handleButtonClick = () => {
     setIsFlipped(!isFlipped);
   };
 
   return (
-    <div
-      className={`my-[24px] rounded-[16px] border-[1px] border-brand-gray-50 transition-all duration-300 ${
-        isFlipped ? "h-auto" : "h-[76px]"
-      }`}
-    >
-      <div className="mx-[40px] flex items-center justify-between p-4">
+    <div className="my-[24px] rounded-[16px] border-[1px] border-brand-gray-50 overflow-hidden">
+      <div className="mx-[40px] flex items-center justify-between p-4 ">
         <div
           className={`text-lg font-semibold ${
             isFlipped ? "text-brand-primary-500" : "text-brand-gray-800"
@@ -46,12 +43,19 @@ const DropDownCard = ({
           />
         </button>
       </div>
-      {isFlipped && (
-        <div className="p-4 text-left mx-[40px]">
-          {hiddenText &&
-            hiddenText.map((text) => <div className="mb-2">{text}</div>)}
-        </div>
-      )}
+      <div
+        ref={contentRef}
+        className={`transition-max-height duration-300 ease-in-out text-left ${
+          isFlipped ? "max-h-[200px] p-3 mx-[40px]" : "max-h-0 p-0 mx-[40px]"
+        }`}
+      >
+        {hiddenText &&
+          hiddenText.map((text, index) => (
+            <div key={index} className="mb-2 ">
+              {text}
+            </div>
+          ))}
+      </div>
     </div>
   );
 };
