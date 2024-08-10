@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import DropDownCard from "@/components/molecules/DropDownCard";
 
 interface MedicineData {
   itemName: string;
   entpName: string;
   itemImage: string;
+  efcyQesitm: string;
   useMethodQesitm: string;
   atpnQesitm: string;
   intrcQesitm: string;
@@ -24,7 +26,7 @@ export default function SearchPage() {
       const fetchData = async () => {
         const response = await fetch(`/api/search/${id}`);
         const result = await response.json();
-        setData(result[0]); // Assuming the API returns an array of results
+        setData(result[0]);
         setLoading(false);
       };
 
@@ -33,53 +35,36 @@ export default function SearchPage() {
   }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="text-center">Loading...</div>;
   }
 
   if (!data) {
-    return <div>No data found</div>;
+    return <div className="text-center">No data found</div>;
   }
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <div>
-        <h1>{data.itemName}</h1>
-        <h3>{data.entpName}</h3>
-      </div>
-      <div style={{ textAlign: "left", margin: "20px 0" }}>
-        <small>기본 정보</small>
-        <div
-          style={{
-            width: "486px",
-            height: "hug-content",
-            margin: "44px auto",
-            backgroundColor: "white",
-            padding: "10px",
-          }}
-        >
-          <img
-            src={data.itemImage}
-            alt={data.itemName}
-            style={{
-              width: "398px",
-              height: "220px",
-              display: "block",
-              margin: "0 auto",
-            }}
-          />
-        </div>
-      </div>
-      <div style={{ textAlign: "left", margin: "20px 0" }}>
-        <small>용법 및 용량</small>
-        <p>{data.useMethodQesitm}</p>
-      </div>
-      <div style={{ textAlign: "left", margin: "20px 0" }}>
-        <small>사용상 주의사항</small>
-        <p>{data.atpnQesitm}</p>
-        <p>{data.intrcQesitm}</p>
-        <p>{data.seQesitm}</p>
-        <p>{data.depositMethodQesitm}</p>
-      </div>
+    <div className="text-center mt-[67px]">
+      <DropDownCard
+        title="효능 효과"
+        buttonImage="/dropdownbtn.svg"
+        hiddenText={[data.efcyQesitm]}
+      />
+      <DropDownCard
+        title="용법 및 용량"
+        buttonImage="/dropdownbtn.svg"
+        hiddenText={[data.useMethodQesitm]}
+      />
+
+      <DropDownCard
+        title="사용상 주의사항"
+        buttonImage="/dropdownbtn.svg"
+        hiddenText={[
+          data.atpnQesitm,
+          data.intrcQesitm,
+          data.seQesitm,
+          data.depositMethodQesitm,
+        ]}
+      />
     </div>
   );
 }
