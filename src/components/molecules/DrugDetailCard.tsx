@@ -36,7 +36,7 @@ const DrugDetailCard = ({
           className="w-full h-full object-cover rounded-[16px]"
         />
       </div>
-      <div className="flex flex-col text-left justify-center p-[20px] text-xl">
+      <div className="flex flex-col text-left justify-center p-[20px] ">
         <div className="mb-[10px]">
           <span className="text-brand-gray-600 mr-[24px]">분류 </span>
           <span className="text-brand-gray-1000 ">{category}</span>
