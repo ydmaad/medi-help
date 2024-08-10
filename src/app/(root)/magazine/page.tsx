@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SmCard from "@/components/molecules/SmCard";
 import Title from "@/components/atoms/Title";
 import MagazineTitle from "@/components/atoms/MagazineTitle";
+import Carousel from "@/components/molecules/Carousel";
 
 type Magazine = {
   id: string;
@@ -35,6 +36,14 @@ const MagazinePage = () => {
     fetchMagazines();
   }, []);
 
+  const carouselImages = magazines.map((magazine) => ({
+    src: magazine.imgs_url,
+    alt: magazine.title,
+    title: magazine.title,
+    leftText: magazine.written_by,
+    rightText: magazine.reporting_date,
+  }));
+
   return (
     <>
       <Title>👀 메디칼럼</Title>
@@ -42,6 +51,11 @@ const MagazinePage = () => {
         약에 관련된 모든 이야기를 전해드려요
       </span>
       <MagazineTitle text="에디터's PICK!" />
+      {carouselImages.length > 0 ? (
+        <Carousel images={carouselImages} />
+      ) : (
+        <p>슬라이드할 이미지가 없습니다.</p>
+      )}
       <MagazineTitle text="전체" />
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}

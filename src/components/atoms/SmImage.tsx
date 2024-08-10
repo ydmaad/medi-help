@@ -11,13 +11,9 @@ const SmImage = ({ width = 316, height = 200 }: SmImageProps) => {
 
   return (
     <div
-      className={`w-[${width}px] h-[${height}px] border border-brand-gray-300 rounded-lg overflow-hidden`}
+      className={`w-full h-auto aspect-[${width}/${height}] border border-brand-gray-300 rounded-lg overflow-hidden`}
     >
-      <img
-        src={src || "/placeholder.jpg"}
-        alt={alt}
-        className="w-full h-full object-cover"
-      />
+      <img src={src || ""} alt={alt} className="w-full h-full object-cover" />
     </div>
   );
 };
