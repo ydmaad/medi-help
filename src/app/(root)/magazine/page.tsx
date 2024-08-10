@@ -5,6 +5,7 @@ import SmCard from "@/components/molecules/SmCard";
 import Title from "@/components/atoms/Title";
 import MagazineTitle from "@/components/atoms/MagazineTitle";
 import Carousel from "@/components/molecules/Carousel";
+import Pagination from "@/components/molecules/Pagination"; // Pagination 컴포넌트 임포트
 
 type Magazine = {
   id: string;
@@ -18,6 +19,8 @@ type Magazine = {
 const MagazinePage = () => {
   const [magazines, setMagazines] = useState<Magazine[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // 페이지당 보여줄 아이템 수
 
   const fetchMagazines = async () => {
     try {
@@ -45,6 +48,15 @@ const MagazinePage = () => {
     id: magazine.id,
   }));
 
+  const indexOfLastMagazine = currentPage * itemsPerPage;
+  const indexOfFirstMagazine = indexOfLastMagazine - itemsPerPage;
+  const currentMagazines = magazines.slice(
+    indexOfFirstMagazine,
+    indexOfLastMagazine
+  );
+
+  const totalPages = Math.ceil(magazines.length / itemsPerPage);
+
   return (
     <>
       <Title>👀 메디칼럼</Title>
@@ -61,7 +73,7 @@ const MagazinePage = () => {
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
         <div className="grid grid-cols-3 gap-4">
-          {magazines.map((magazine) => (
+          {currentMagazines.map((magazine) => (
             <SmCard
               key={magazine.id}
               src={magazine.imgs_url}
@@ -74,6 +86,12 @@ const MagazinePage = () => {
             />
           ))}
         </div>
+        {/* Pagination 컴포넌트 추가 */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </>
   );
