@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import DropDownCard from "@/components/molecules/DropDownCard";
+import DrugDetailCard from "@/components/molecules/DrugDetailCard";
 
 interface MedicineData {
   itemName: string;
@@ -44,6 +45,22 @@ export default function SearchPage() {
 
   return (
     <div className="text-center mt-[67px]">
+      <h1 className="text-brand-gray-1000 text-[32px] font-bold mt-[159px]">
+        {data.itemName}
+      </h1>
+      <DrugDetailCard
+        imageUrl={data.itemImage} // 실제 이미지 URL
+        altText="약 이미지 설명"
+        category="처방약"
+        classification="일반의약품"
+        manufacturer="제약회사 A"
+        insuranceCode="12345"
+        appearance="하얀색 정제"
+        dosageForm="정제"
+        shape="원형"
+        color="흰색"
+        size="10mm"
+      />
       <DropDownCard
         title="효능 효과"
         buttonImage="/dropdownbtn.svg"
