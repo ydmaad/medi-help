@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import MagazineImg from "../atoms/MagazineImg";
 import PageButton from "../atoms/PageButton";
 
@@ -8,6 +9,7 @@ interface Image {
   title: string;
   leftText: string;
   rightText: string;
+  id: string;
 }
 
 interface CarouselProps {
@@ -16,6 +18,7 @@ interface CarouselProps {
 
 const Carousel = ({ images }: CarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -27,6 +30,10 @@ const Carousel = ({ images }: CarouselProps) => {
     );
   };
 
+  const handleClick = (id: string) => {
+    router.push(`/magazine/${id}`);
+  };
+
   const firstImage = images[currentIndex];
   const secondImage = images[(currentIndex + 1) % images.length];
 
@@ -36,7 +43,7 @@ const Carousel = ({ images }: CarouselProps) => {
         <MagazineImg
           src={firstImage.src}
           alt={firstImage.alt}
-          onClick={() => {}}
+          onClick={() => handleClick(firstImage.id)}
           leftText={firstImage.leftText}
           rightText={firstImage.rightText}
           title={firstImage.title}
@@ -44,7 +51,7 @@ const Carousel = ({ images }: CarouselProps) => {
         <MagazineImg
           src={secondImage.src}
           alt={secondImage.alt}
-          onClick={() => {}}
+          onClick={() => handleClick(secondImage.id)}
           leftText={secondImage.leftText}
           rightText={secondImage.rightText}
           title={secondImage.title}

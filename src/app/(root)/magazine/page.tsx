@@ -42,6 +42,7 @@ const MagazinePage = () => {
     title: magazine.title,
     leftText: magazine.written_by,
     rightText: magazine.reporting_date,
+    id: magazine.id,
   }));
 
   return (

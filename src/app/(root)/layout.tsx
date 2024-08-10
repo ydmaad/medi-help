@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import Header from "@/components/molecules/TopHeader";
+import Footer from "@/components/molecules/Footer";
 
 const RootLayout = ({ children }: PropsWithChildren<{}>) => {
   return (
@@ -7,6 +8,7 @@ const RootLayout = ({ children }: PropsWithChildren<{}>) => {
       <>
         <Header />
         <div className="mx-[140px]">{children}</div>
+        <Footer />
       </>
     </div>
   );
