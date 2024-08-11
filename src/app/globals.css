@@ -4,17 +4,17 @@
 
 /* calendar */
 
-.fc-button {
-  background-color: transparent !important;
-  border: transparent !important;
-  color: black !important;
+:root {
+  --fc-border-color: transparent !important;
+  --fc-today-bg-color: #e9f5fe !important;
+  --fc-button-border-color: transparent !important;
 }
 
-.fc-toolbar-title {
-  font-size: 18px !important;
+.fc .fc-toolbar-title {
   display: flex;
   align-items: center;
   font-weight: 600;
+  color: #40444c;
 }
 
 .fc-toolbar-chunk {
@@ -23,6 +23,140 @@
 
 .fc .fc-toolbar.fc-header-toolbar {
   margin-bottom: 0.5rem !important;
+}
+
+.fc-button {
+  border: none !important;
+  color: #40444c !important;
+  outline: none !important;
+}
+
+.fc .fc-scrollgrid {
+  border: 1px solid #f5f6f7 !important; /*gray-50*/
+  box-shadow: inset 1px !important;
+  padding: 1px;
+}
+
+.fc-daygrid-day-top {
+  display: flex;
+  justify-content: center;
+}
+
+.fc .fc-daygrid-day-number {
+  color: #7c7f86; /*gray-600*/
+}
+
+.fc th {
+  margin-bottom: 16px;
+  color: #7c7f86; /*gray-600*/
+}
+
+.fc-day-sun a {
+  color: #f66555;
+  text-decoration: none;
+}
+
+i {
+  font-style: normal !important;
+}
+
+@media screen and (min-width: 414px) {
+  :root {
+    --fc-button-bg-color: "#f5f6f7";
+  }
+  .fc-toolbar-title {
+    font-size: 18px !important;
+  }
+
+  .fc-button {
+    background-color: transparent !important;
+  }
+
+  .fc-daygrid-day-frame .fc-scrollgrid-sync-inner {
+    min-height: 122px;
+  }
+
+  .fc .fc-daygrid-event-harness {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 0 0.5px;
+  }
+
+  .fc-event-title {
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    color: #40444c !important;
+  }
+
+  .fc-daygrid-events {
+    min-height: 90px;
+  }
+}
+
+@media screen and (max-width: 414px) {
+  :root {
+    --fc-daygrid-event-dot-width: 6px;
+    --fc-button-bg-color: "#f5f6f7";
+  }
+  .fc th {
+    font-size: 12px;
+  }
+
+  .fc-toolbar-title {
+    font-size: 12px !important;
+  }
+
+  .fc-button {
+    padding: 0 0.65em;
+  }
+
+  .fc .fc-button .fc-icon {
+    font-size: 1rem;
+  }
+
+  .fc-daygrid-day-frame {
+    min-height: 44px;
+  }
+  .fc-daygrid-day-events {
+    display: flex;
+    justify-content: center;
+    margin: 0px !important;
+  }
+
+  .fc .fc-daygrid-event {
+    height: 10px;
+    display: flex !important;
+    margin-top: 10px;
+    align-items: center !important;
+    overflow: hidden;
+  }
+
+  .fc .fc-daygrid-event-harness {
+    display: flex;
+    justify-content: center;
+  }
+  .fc-direction-ltr .fc-daygrid-event .fc-event-start {
+    margin-left: 0px !important;
+    width: 8px;
+  }
+  .fc-direction-ltr .fc-daygrid-event .fc-event-end {
+    margin-right: 0px !important;
+    width: 8px;
+  }
+  .fc-daygrid-event-dot {
+    margin: 0px !important;
+  }
+  .fc-event-title {
+    display: none !important;
+  }
+  .fc .fc-daygrid-day-number {
+    font-size: 12px;
+  }
+  .fc-daygrid-dot-event {
+    align-items: normal !important;
+    padding: 8px 0 !important;
+  }
 }
 
 @font-face {

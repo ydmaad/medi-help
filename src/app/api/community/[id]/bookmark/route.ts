@@ -41,8 +41,8 @@ export async function POST(
     return NextResponse.json({ error: "인증되지 않은 사용자입니다." });
   }
 
-  console.log("현재 게시글 아이디!!", postId);
-  console.log("현재 유저 아이디!!", userId);
+  // console.log("현재 게시글 아이디!!", postId);
+  // console.log("현재 유저 아이디!!", userId);
 
   try {
     // 기존 북마크 확인

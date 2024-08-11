@@ -90,11 +90,11 @@ export async function POST(req: NextRequest) {
       notes: newMediRecord.notes,
     });
 
-    await sendEmail({
-      to: user.data.email,
-      subject,
-      text: message,
-    });
+    // await sendEmail({
+    //   to: user.data.email,
+    //   subject,
+    //   text: message,
+    // });
 
     return NextResponse.json({ medicationRecords: data }, { status: 201 });
   } catch (err: unknown) {
@@ -165,13 +165,25 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
+    // 먼저 calendar_medicine 테이블에서 참조된 레코드 삭제
+    const { error: bridgeDeleteError } = await supabase
+      .from('calendar_medicine')
+      .delete()
+      .eq('medicine_id', id);
+
+    if (bridgeDeleteError) {
+      console.error("Supabase error while deleting from calendar_medicine:", bridgeDeleteError);
+      return NextResponse.json({ error: bridgeDeleteError.message }, { status: 500 });
+    }
+
+    // 이제 medications 테이블에서 약물을 삭제
     const { data, error } = await supabase
       .from('medications')
       .delete()
       .eq('id', id);
 
     if (error) {
-      console.error("Supabase error:", error);
+      console.error("Supabase error while deleting from medications:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -181,3 +193,4 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
