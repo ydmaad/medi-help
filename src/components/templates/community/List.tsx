@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { differenceInDays, format, formatDistanceToNow } from "date-fns";
-import { hr, ko } from "date-fns/locale";
+import { ko } from "date-fns/locale";
 import { IoIosArrowDown } from "react-icons/io";
 
 type Post = Tables<"posts">;
@@ -176,21 +176,19 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       <div className="space-y-4">
         <div className="flex justify-between">
           <div className="flex items-center">
-            {["전체", "카테고리 01", "카테고리 02", "카테고리 03"].map(
-              (category) => (
-                <button
-                  key={category}
-                  onClick={() => handleCategorySelect(category)}
-                  className={`px-4 py-2 mr-2 rounded-full ${
-                    selectCategory === category
-                      ? "bg-brand-gray-600 text-white"
-                      : "bg-brand-gray-50 text-gray-700"
-                  }`}
-                >
-                  {category}
-                </button>
-              )
-            )}
+            {["전체", "메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategorySelect(category)}
+                className={`px-4 py-2 mr-2 rounded-full ${
+                  selectCategory === category
+                    ? "bg-brand-gray-600 text-white"
+                    : "bg-brand-gray-50 text-gray-700"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
           </div>
           <div className="relative">
             <button
