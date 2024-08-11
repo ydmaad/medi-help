@@ -8,11 +8,13 @@ import { AuthButton } from "@/components/atoms/AuthButton";
 import { useRouter } from "next/navigation";
 
 export const RecoverPasswordForm: React.FC = () => {
+  // 상태 관리
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  // 컴포넌트 마운트 시 세션 확인
   useEffect(() => {
     const handlePasswordReset = async () => {
       console.log("Starting password reset process");
@@ -36,6 +38,7 @@ export const RecoverPasswordForm: React.FC = () => {
     handlePasswordReset();
   }, []);
 
+  // 비밀번호 재설정 핸들러
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Attempting to reset password");
@@ -44,6 +47,7 @@ export const RecoverPasswordForm: React.FC = () => {
       if (error) throw error;
       console.log("Password reset successful", data);
       setMessage("비밀번호가 성공적으로 재설정되었습니다.");
+      // 2초 후 로그인 페이지로 리다이렉트
       setTimeout(() => router.push("/auth/login"), 2000);
     } catch (error) {
       console.error("Password reset error:", error);
@@ -55,10 +59,12 @@ export const RecoverPasswordForm: React.FC = () => {
     }
   };
 
+  // 로딩 중 표시
   if (isLoading) {
     return <div>로딩 중...</div>;
   }
 
+  // 컴포넌트 렌더링
   return (
     <div className="max-w-md mx-auto mt-8">
       <h1 className="text-2xl font-bold mb-4">새 비밀번호 설정</h1>
