@@ -219,57 +219,66 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
             )}
           </div>
         </div>
-
-        {filteredPosts.map((item) => {
-          const imageUrls = getImageUrls(item.img_url);
-          const timeAgo = formatTimeAgo(item.created_at);
-          return (
-            <li key={item.id} className="block">
-              <Link
-                href={`/community/${item.id}`}
-                className="block hover:bg-gray-50 transition duration-150 ease-in-out"
-              >
-                <div className="border rounded-2xl p-4 w-[1000px] h-[150px] my-5">
-                  <div className="flex justify-between">
-                    <div className="flex-grow pr-4">
-                      <h2 className="text-xl font-semibold mb-2">
-                        {item.title}
-                        <span className="text-[#f66555] ml-1">
-                          ({`${item.comment_count}`})
-                        </span>
-                      </h2>
-                      <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
-                        {item.contents}
-                      </p>
-                      <div className="flex justify-between items-center text-sm text-gray-500">
-                        <div className="flex items-center">
-                          <span>{item.user.nickname}</span>
-                          <div className="mx-3 h-4 w-px bg-gray-300"></div>
-                          <span>{timeAgo}</span>
-                          <div className="mx-3 h-4 w-px bg-gray-300"></div>
-                          <span>저장 {item.bookmark_count}</span>
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((item) => {
+            const imageUrls = getImageUrls(item.img_url);
+            const timeAgo = formatTimeAgo(item.created_at);
+            return (
+              <li key={item.id} className="block">
+                <Link
+                  href={`/community/${item.id}`}
+                  className="block hover:bg-gray-50 transition duration-150 ease-in-out"
+                >
+                  <div className="border rounded-2xl p-4 w-[1000px] h-[150px] my-5">
+                    <div className="flex justify-between">
+                      <div className="flex-grow pr-4">
+                        <h2 className="text-xl font-semibold mb-2">
+                          {item.title}
+                          <span className="text-[#f66555] ml-1">
+                            ({`${item.comment_count}`})
+                          </span>
+                        </h2>
+                        <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
+                          {item.contents}
+                        </p>
+                        <div className="flex justify-between items-center text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <span>{item.user.nickname}</span>
+                            <div className="mx-3 h-4 w-px bg-gray-300"></div>
+                            <span>{timeAgo}</span>
+                            <div className="mx-3 h-4 w-px bg-gray-300"></div>
+                            <span>저장 {item.bookmark_count}</span>
+                          </div>
                         </div>
                       </div>
+                      {imageUrls.length > 0 && (
+                        <div className="w-24 h-24 flex-shrink-0">
+                          <Image
+                            src={imageUrls[0]}
+                            alt="Post image"
+                            width={96}
+                            height={96}
+                            className="object-cover w-full h-full rounded"
+                          />
+                        </div>
+                      )}
                     </div>
-                    {imageUrls.length > 0 && (
-                      <div className="w-24 h-24 flex-shrink-0">
-                        <Image
-                          src={imageUrls[0]}
-                          alt="Post image"
-                          width={96}
-                          height={96}
-                          className="object-cover w-full h-full rounded"
-                        />
-                      </div>
-                    )}
                   </div>
-                </div>
-              </Link>
-            </li>
-          );
-        })}
+                </Link>
+              </li>
+            );
+          })
+        ) : (
+          <div className="flex flex-col items-center justify-center h-[400px] text-center">
+            <p className="text-2xl font-semibold text-gray-600 mb-4">
+              <span className="text-brand-primary-500">{searchTerm}</span> 의
+              대한 검색 결과가 없습니다
+            </p>
+            <p className="text-gray-500">다른 키워드로 검색해 주세요.</p>
+          </div>
+        )}
       </div>
-      {totalPages > 1 && (
+      {totalPages > 1 && filteredPosts.length > 0 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

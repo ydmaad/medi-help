@@ -94,7 +94,7 @@ const postComment = async (postId: string, comment: string) => {
   }
 };
 
-const Comments: React.FC<CommentsProps> = ({ postId }) => {
+const Comments = ({ postId }: CommentsProps) => {
   const [comment, setComment] = useState<CommentWithUser[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isEdit, setIsEdit] = useState<{ [key: string]: boolean }>({});
