@@ -19,11 +19,11 @@ import { useRouter } from "next/navigation";
 import AddMediModal from "../calendarModal/AddMediModal"; // 추가된 임포트
 
 const CalendarView = () => {
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [events, setEvents] = useState<EventInput[]>([]);
   const [medicines, setMedicines] = useState<MedicinesType[]>([]);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [viewEvents, setViewEvents] = useState<boolean>(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false); // 추가된 상태
   const [values, setValues] = useState<ValueType>({
     id: uuid(),
     user_id: "",

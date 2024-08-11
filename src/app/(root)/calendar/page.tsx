@@ -1,22 +1,77 @@
 "use client";
 
-import CalendarView from "@/components/templates/calendar/calendarView/CalendarView";
-import CalendarCheckbox from "@/components/templates/calendar/calendarView/CalendarCheckbox";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { supabase } from "@/utils/supabase/client";
 
-const Page = () => {
+interface Post {
+  id: string;
+  title: string;
+  contents: string;
+  created_at: string;
+}
+
+const Posts: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const user = sessionData?.session?.user;
+        if (user) {
+          const { data, error } = await supabase
+            .from("posts")
+            .select("*")
+            .eq("user_id", user.id);
+
+          if (error) {
+            console.error("Error fetching posts:", error);
+          } else {
+            setPosts(data);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user session:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
+
   return (
-    <div className="flex justify-center w-full min-h-screen px-4"> {/* 전체를 감싸는 div */}
-      <div className="flex w-full max-w-6xl"> {/* 캘린더와 체크박스를 묶는 div */}
-        <div className="min-w-[240px] p-4 flex-shrink-0">
-          <CalendarCheckbox />
-        </div>
-        <div className="flex-1 p-4">
-          <CalendarView />
+    <div className="max-w-screen-xl mx-auto px-8 py-4">
+      <div className="flex flex-col gap-4 rounded-2xl bg-gray-50 p-4">
+        <h2 className="text-xl mb-4 text-gray-900">내가 쓴 글</h2>
+        <div className="flex flex-col gap-4">
+          {posts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-gray-50 p-4 rounded-2xl overflow-hidden"
+              style={{ maxHeight: "150px" }}
+            >
+              <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
+              <p className="text-gray-700 overflow-hidden overflow-ellipsis" style={{ whiteSpace: "nowrap" }}>
+                {post.contents}
+              </p>
+              <p className="text-gray-500 text-sm mt-2">{formatDate(post.created_at)}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default Posts;

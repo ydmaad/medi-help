@@ -64,11 +64,11 @@ const MediLists: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full md:w-1/2 lg:w-2/3 p-4 bg-white rounded-md shadow-md">
-      <div className="flex justify-between items-center mb-4">
+    <div className="flex flex-col w-full md:w-1/2 lg:w-2/3 p-4 bg-gray-50 rounded-2xl">
+      <div className="flex justify-between items-center mb-6"> {/* Increased bottom margin */}
         <div className="flex items-center">
-          <h2 className="text-xl cursor-pointer" onClick={handleShowAllClick}>
-            현재 복용 중인 약 <span className="text-blue-500">{mediRecords.length}개</span>
+          <h2 className="text-xl cursor-pointer text-gray-800" onClick={handleShowAllClick}>
+            나의 복용 약 <span className="text-blue-500">{mediRecords.length}개</span>
           </h2>
           {mediRecords.length > 3 && (
             <button
@@ -80,31 +80,31 @@ const MediLists: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> {/* Increased gap */}
         {displayedMediRecords.map((record) => (
           <div
             key={record.id}
-            className="bg-gray-100 p-4 rounded shadow mb-2 flex flex-col items-start"
+            className="bg-gray-50 p-4 rounded-2xl flex flex-col items-start cursor-pointer"
             onClick={() => handleMediClick(record)}
           >
             {record.itemImage ? (
-              <Image
-                src={record.itemImage}
-                alt={record.medi_name || "기본 이미지"}
-                width={200}
-                height={200}
-                className="w-full mb-2 object-contain"
-              />
+              <div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden"> {/* Added bottom margin */}
+                <Image
+                  src={record.itemImage}
+                  alt={record.medi_name || "기본 이미지"}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-xl"
+                />
+              </div>
             ) : (
-              <div className="w-full h-40 mb-2 flex items-center justify-center bg-gray-200">
+              <div className="w-full h-40 mb-4 flex items-center justify-center bg-gray-300 rounded-xl"> {/* Added bottom margin */}
                 <p className="text-gray-500">이미지 없음</p>
               </div>
             )}
-            <p className="text-lg font-semibold">{record.medi_nickname}</p>
-            <p className="text-sm text-gray-500 mt-1">{record.medi_name}</p>
-            <p className="text-sm text-gray-500">
-              {record.start_date} ~ {record.end_date}
-            </p>
+            <p className="text-lg font-semibold mb-2">{record.medi_nickname}</p> {/* Added bottom margin */}
+            <p className="text-sm text-gray-800 mb-1">{record.medi_name}</p> {/* Changed color to gray-800 and added bottom margin */}
+            <p className="text-sm text-blue-500 mb-2">{record.start_date} ~ {record.end_date}</p> {/* Added bottom margin */}
           </div>
         ))}
       </div>

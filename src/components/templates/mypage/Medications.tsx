@@ -48,38 +48,34 @@ const Medications: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-screen-xl mx-auto px-8 py-4 bg-white rounded-md shadow-md">
-      <h2 className="text-xl mb-4">전체 약 목록</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="max-w-screen-xl mx-auto px-8 py-4 bg-white rounded-md">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">복약 리스트</h2> {/* Increased font size and added margin */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {mediRecords.map((record) => (
           <div
             key={record.id}
-            className="bg-gray-100 p-4 rounded shadow mb-2 flex flex-col items-start"
+            className="bg-gray-50 p-4 rounded-2xl mb-4 flex flex-col items-start"
           >
             {record.itemImage ? (
-              <Image
-                src={record.itemImage}
-                alt={record.medi_name || "기본 이미지"}
-                width={200}
-                height={200}
-                className="w-full mb-2 object-contain"
-              />
+              <div className="relative w-full h-32 mb-4 rounded-xl overflow-hidden"> {/* Adjusted height */}
+                <Image
+                  src={record.itemImage}
+                  alt={record.medi_name || "기본 이미지"}
+                  layout="fill"
+                  objectFit="cover"
+                  className="absolute inset-0 rounded-xl"
+                />
+              </div>
             ) : (
-              <div className="w-full h-40 mb-2 flex items-center justify-center bg-gray-200">
+              <div className="w-full h-32 mb-4 flex items-center justify-center bg-gray-200 rounded-xl overflow-hidden"> {/* Adjusted height */}
                 <p className="text-gray-500">이미지 없음</p>
               </div>
             )}
-            <p className="text-lg font-semibold">{record.medi_nickname}</p>
-            <p className="text-sm text-gray-500 mt-1"> 약 이름 | {record.medi_name}</p>
-            <p className="text-sm text-gray-500">
-             복용 기간 |  {record.start_date} ~ {record.end_date}
-            </p>
-            <p className="text-sm text-gray-500 mt-1">메모 | {record.notes}</p>
-            <div className="flex space-x-2 mt-2">
-              {record.times.morning && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">아침</span>}
-              {record.times.afternoon && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">점심</span>}
-              {record.times.evening && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">저녁</span>}
-            </div>
+            <p className="text-lg font-semibold text-gray-900 mb-2">{record.medi_nickname}</p>
+            <p className="text-sm text-gray-800 mb-2">{record.medi_name}</p>
+            <p className="text-sm text-blue-500 mb-2">복용 기간 | {record.start_date} ~ {record.end_date}</p> {/* Added margin above */}
+        
+
           </div>
         ))}
       </div>

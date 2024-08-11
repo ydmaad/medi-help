@@ -3,16 +3,20 @@ import { useAuthStore } from "@/store/auth";
 import React from "react";
 import { TbPencil } from "react-icons/tb";
 
-const UserBoard = () => {
+interface UserBoardProps {
+  className?: string; // className prop 추가
+}
+
+const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
   const { user } = useAuthStore();
 
   return (
-    <div className="flex flex-col items-center w-full md:w-1/2 lg:w-1/3 p-8 bg-white rounded-md text-blue-500 justify-center mr-4">
-      <div className="relative w-48 h-48 rounded-full overflow-hidden aspect-auto mb-6">
+    <div className={`flex flex-col items-center w-full md:w-1/2 lg:w-1/3 p-8 bg-blue-50 rounded-xl text-blue-500 justify-center ${className}`}>
+      <div className="relative w-48 h-48 rounded-full overflow-hidden mb-6">
         <img
           src={user?.avatar ? user.avatar : "/default-avatar.jpg"}
           alt="프로필 이미지"
-          className="w-full h-full absolute z-10"
+          className="w-full h-full object-cover rounded-full"
         />
       </div>
       <div className="flex flex-col items-center">
