@@ -37,7 +37,7 @@ const MagazineImg = ({
 
         <div className="absolute bottom-8 left-1/2 flex flex-col items-center transform -translate-x-1/2 z-10 text-brand-gray-50">
           <BarText />
-          <h1 className="whitespace-nowrap mt-[4px] text-[24px] font-bold ">
+          <h1 className="whitespace-nowrap mt-[4px] text-xl font-bold ">
             {title}
           </h1>
         </div>
