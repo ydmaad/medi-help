@@ -16,12 +16,14 @@ import MobileCalendarView from "@/components/molecules/MobileCalendarView";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import { useRouter } from "next/navigation";
+import AddMediModal from "../calendarModal/AddMediModal"; // 추가된 임포트
 
 const CalendarView = () => {
   const [events, setEvents] = useState<EventInput[]>([]);
   const [medicines, setMedicines] = useState<MedicinesType[]>([]);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false); // 추가된 상태
   const [values, setValues] = useState<ValueType>({
     id: uuid(),
     user_id: "",
@@ -175,12 +177,20 @@ const CalendarView = () => {
       />
       <div className="w-full flex flex-col mt-8">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
-          <button
-            onClick={handleButtonClick}
-            className="absolute w-24 right-12 top-4 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
-          >
-            기록추가
-          </button>
+        <div className="absolute right-12 top-4 flex space-x-2"> {/* 버튼 컨테이너 추가 */}
+        <button
+              onClick={handleButtonClick}
+              className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
+            >
+              기록추가
+            </button>
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="w-24 px-3 py-1 bg-blue-500 text-sm text-white border border-blue-500 rounded-md hover:bg-white hover:text-blue-500 ease-in duration-300 max-[414px]:hidden"
+            >
+              나의 약 등록
+            </button>
+          </div>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"

@@ -41,11 +41,16 @@ const CalendarCheckbox = () => {
 
   return (
     <div>
-      <h2>복용 약 필터</h2>
+      <h1 className="text-4xl font-bold mb-4 flex items-center">
+        <img src="/pencil.png" alt="연필 아이콘" className="w-10 h-10 mr-2" />
+        복약 달력
+      </h1>
+      <h2 className="text-gray-600 text-lg mb-2">복용 약 필터</h2>
       <ul>
         {checkedMedicines.map((medicine) => (
-          <li key={medicine.id}>
-            {medicine.medi_nickname} ({medicine.medi_name})
+          <li key={medicine.id} className="flex items-center mb-2">
+            <input type="checkbox" className="mr-2" />
+            {medicine.medi_nickname} 
           </li>
         ))}
       </ul>
