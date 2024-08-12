@@ -6,7 +6,6 @@ import AddMediModal from "../calendarModal/AddMediModal";
 import EditMediModal from "../calendarModal/EditMediModal";
 import ViewMediModal from "../calendarModal/ViewMediModal";
 import { useAuthStore } from "@/store/auth";
-import PillComponent from "@/components/molecules/MediScheduleCard";
 
 export const MOCK_DATA = [
   {

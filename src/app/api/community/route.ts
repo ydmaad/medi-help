@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
     const contents = formData.get("contents") as string;
     const category = formData.get("category") as string;
 
-    // title, contents 유효성 검사
+    // title, contents, category 유효성 검사
     if (!title || !contents || !category) {
       return NextResponse.json({ error: "제목과 내용은 필수입니다." });
     }
@@ -161,35 +161,20 @@ export async function POST(request: NextRequest) {
     for (const file of files) {
       if (file instanceof File) {
         const fileName = `${Date.now()}_${file.name}`;
-        // console.log(`업로드 시도: ${file.name}`);
 
-        try {
-          const { data: imgUploadData, error: imgUploadError } =
-            await supabase.storage
-              .from("posts_image_url")
-              .upload(fileName, file);
+        const { data: imgUploadData, error: imgUploadError } =
+          await supabase.storage.from("posts_image_url").upload(fileName, file);
 
-          // console.log("Supabase 업로드 결과:", {
-          //   imgUploadData,
-          //   imgUploadError,
-          // });
-
-          if (imgUploadError) {
-            console.error(`이미지 업로드 실패 : ${file.name}`, imgUploadError);
-            continue;
-          }
-          const { data: urlData } = supabase.storage
-            .from("posts_image_url")
-            .getPublicUrl(fileName);
-
-          // console.log("생성된 공개 URL:", urlData.publicUrl);
-          img_url.push(urlData.publicUrl);
-        } catch (uploadError) {
-          console.error(
-            `이미지 업로드 중 예외 발생: ${file.name}`,
-            uploadError
-          );
+        if (imgUploadError) {
+          console.error(`이미지 업로드 실패 : ${file.name}`, imgUploadError);
+          continue;
         }
+
+        const { data: urlData } = supabase.storage
+          .from("posts_image_url")
+          .getPublicUrl(fileName);
+
+        img_url.push(urlData.publicUrl);
       }
     }
 
@@ -198,7 +183,7 @@ export async function POST(request: NextRequest) {
       contents,
       user_id: userId,
       category,
-      img_url: img_url.join(","),
+      img_url,
     };
 
     // 게시글 데이터 등록

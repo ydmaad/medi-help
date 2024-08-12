@@ -1,5 +1,3 @@
-"use client";
-
 import CalendarView from "@/components/templates/calendar/calendarView/CalendarView";
 import MediRecords from "@/components/templates/calendar/calendarView/MediRecords";
 import React from "react";

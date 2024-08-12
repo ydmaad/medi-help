@@ -56,7 +56,7 @@ const CommunityPage = () => {
 
   return (
     <>
-      <div className="max-w-[1000px] mx-auto mt-20">
+      <div className="max-w-[1000px] mx-auto mt-40">
         <div className="flex items-center justify-between mb-10">
           <div className="flex flex-col">
             <button
