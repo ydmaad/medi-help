@@ -6,11 +6,11 @@ import React from "react";
 
 const Page = () => {
   return (
-    <div className="flex min-h-screen mt-[67px]">
-      <div className="max-[414px]:hidden w-1/4 p-4 bg-gray-100 overflow-y-auto">
+    <div className="flex w-full min-h-screen">
+      <div className="max-[414px]:hidden min-w-[240px] min-h-screen p-4 bg-gray-100 overflow-y-auto">
         <MediRecords />
       </div>
-      <div className="w-3/4">
+      <div>
         <CalendarView />
       </div>
     </div>

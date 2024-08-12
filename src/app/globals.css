@@ -10,10 +10,11 @@
   --fc-button-border-color: transparent !important;
 }
 
-.fc-toolbar-title {
+.fc .fc-toolbar-title {
   display: flex;
   align-items: center;
   font-weight: 600;
+  color: #40444c;
 }
 
 .fc-toolbar-chunk {
@@ -26,7 +27,7 @@
 
 .fc-button {
   border: none !important;
-  color: black !important;
+  color: #40444c !important;
   outline: none !important;
 }
 
@@ -50,6 +51,15 @@
   color: #7c7f86; /*gray-600*/
 }
 
+.fc-day-sun a {
+  color: #f66555;
+  text-decoration: none;
+}
+
+i {
+  font-style: normal !important;
+}
+
 @media screen and (min-width: 414px) {
   :root {
     --fc-button-bg-color: "#f5f6f7";
@@ -69,10 +79,14 @@
   .fc .fc-daygrid-event-harness {
     display: flex;
     align-items: center;
+    overflow: hidden;
+    padding: 0 0.5px;
   }
 
   .fc-event-title {
     font-size: 0.8rem;
+    text-overflow: ellipsis;
+    color: #40444c !important;
   }
 
   .fc-daygrid-events {
@@ -142,11 +156,6 @@
   .fc-daygrid-dot-event {
     align-items: normal !important;
     padding: 8px 0 !important;
-  }
-
-  .fc-day-sun a {
-    color: #f66555;
-    text-decoration: none;
   }
 }
 
