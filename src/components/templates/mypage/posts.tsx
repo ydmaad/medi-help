@@ -53,14 +53,14 @@ const Posts: React.FC = () => {
   return (
     <div className="w-full">
       <div className="w-full mx-auto pt-16"> {/* Added pt-16 for more top padding */}
-        <h2 className="text-xl mb-6 text-gray-900">내가 쓴 글</h2> 
+        <h2 className="text-xl mb-6 text-gray-1000">내가 쓴 글</h2> {/* Changed color */}
         <div className="flex flex-col gap-6"> 
           {posts.map((post) => (
             <div
               key={post.id}
               className="bg-gray-50 rounded-xl p-4"
             >
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">{post.title}</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-1000">{post.title}</h3> {/* Changed color */}
               <p className="text-gray-600 mb-2">{post.contents}</p>
               <p className="text-gray-500 text-sm">{formatDate(post.created_at)}</p>
             </div>

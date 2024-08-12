@@ -67,13 +67,13 @@ const MediLists: React.FC = () => {
     <div className="flex flex-col w-full md:w-1/2 lg:w-2/3 p-4 bg-gray-50 rounded-2xl">
       <div className="flex justify-between items-center mb-6"> {/* Increased bottom margin */}
         <div className="flex items-center">
-          <h2 className="text-xl cursor-pointer text-gray-800" onClick={handleShowAllClick}>
-            나의 복용 약 <span className="text-blue-500">{mediRecords.length}개</span>
+          <h2 className="text-xl cursor-pointer text-gray-1000" onClick={handleShowAllClick}> {/* Changed color */}
+            나의 복용 약 <span className="text-primary-500">{mediRecords.length}개</span> {/* Changed color */}
           </h2>
           {mediRecords.length > 3 && (
             <button
               onClick={handleShowAllClick}
-              className="text-blue-500 hover:underline ml-2"
+              className="text-primary-500 hover:underline ml-2" 
             >
               &gt;
             </button>
@@ -98,13 +98,13 @@ const MediLists: React.FC = () => {
                 />
               </div>
             ) : (
-              <div className="w-full h-40 mb-4 flex items-center justify-center bg-gray-300 rounded-xl"> {/* Added bottom margin */}
+              <div className="w-full h-40 mb-4 flex items-center justify-center bg-gray-200 rounded-xl"> {/* Added bottom margin */}
                 <p className="text-gray-500">이미지 없음</p>
               </div>
             )}
-            <p className="text-lg font-semibold mb-2">{record.medi_nickname}</p> {/* Added bottom margin */}
-            <p className="text-sm text-gray-800 mb-1">{record.medi_name}</p> {/* Changed color to gray-800 and added bottom margin */}
-            <p className="text-sm text-blue-500 mb-2">{record.start_date} ~ {record.end_date}</p> {/* Added bottom margin */}
+            <p className="text-lg font-semibold text-gray-1000 mb-2">{record.medi_nickname}</p> {/* Added bottom margin */}
+            <p className="text-sm text-gray-800 mb-1">{record.medi_name}</p> {/* Changed color and added bottom margin */}
+            <p className="text-sm text-primary-500 mb-2">{record.start_date} ~ {record.end_date}</p> {/* Changed color and added bottom margin */}
           </div>
         ))}
       </div>

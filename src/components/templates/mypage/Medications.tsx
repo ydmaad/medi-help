@@ -49,7 +49,7 @@ const Medications: React.FC = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto px-8 py-4 bg-white rounded-md">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">복약 리스트</h2> {/* Increased font size and added margin */}
+      <h2 className="text-2xl font-semibold mb-6 text-gray-1000">복약 리스트</h2> {/* Increased font size and changed color */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {mediRecords.map((record) => (
           <div
@@ -71,11 +71,9 @@ const Medications: React.FC = () => {
                 <p className="text-gray-500">이미지 없음</p>
               </div>
             )}
-            <p className="text-lg font-semibold text-gray-900 mb-2">{record.medi_nickname}</p>
+            <p className="text-lg font-semibold text-gray-1000 mb-2">{record.medi_nickname}</p>
             <p className="text-sm text-gray-800 mb-2">{record.medi_name}</p>
-            <p className="text-sm text-blue-500 mb-2">복용 기간 | {record.start_date} ~ {record.end_date}</p> {/* Added margin above */}
-        
-
+            <p className="text-sm text-primary-500 mb-2">복용 기간 | {record.start_date} ~ {record.end_date}</p> {/* Changed color */}
           </div>
         ))}
       </div>
