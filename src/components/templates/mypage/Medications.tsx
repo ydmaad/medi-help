@@ -6,8 +6,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { supabase } from '@/utils/supabase/client';
 import Image from 'next/image';
-import ViewMediModal from './myPageModal/ViewMediModal';
+
 import EditMediModal from './myPageModal/EditMediModal';
+import MediModal from './myPageModal/MediModal';
 
 interface MediRecord {
   id: string;
@@ -115,7 +116,7 @@ const Medications: React.FC = () => {
       </div>
       {selectedMediRecord && (
         <>
-          <ViewMediModal
+          <MediModal
             isOpen={isViewModalOpen}
             onRequestClose={() => setIsViewModalOpen(false)}
             onEditClick={openEditModal}

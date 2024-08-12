@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase/client';
-import MediInfoModal from './myPageModal/MediInfoModal';
+import MediModal from './myPageModal/MediModal';  // Import the new MediModal component
 
 interface MediRecord {
   id: string;
@@ -22,6 +22,9 @@ interface MediRecord {
   created_at: string;
   itemImage: string | null;
   user_id: string;
+  notification_time?: string[];
+  day_of_week?: string[];
+  repeat?: boolean;
 }
 
 const MediLists: React.FC = () => {
@@ -58,9 +61,10 @@ const MediLists: React.FC = () => {
     router.push('/mypage/Medications');
   };
 
-  const handleMediClick = (record: MediRecord) => {
-    setSelectedMediRecord(record);
-    setIsModalOpen(true);
+
+  const handleEditClick = () => {
+    console.log("Edit clicked");
+    // Handle edit functionality here
   };
 
   return (
@@ -85,7 +89,7 @@ const MediLists: React.FC = () => {
           <div
             key={record.id}
             className="bg-gray-50 p-4 rounded-2xl flex flex-col items-start cursor-pointer"
-            onClick={() => handleMediClick(record)}
+           
           >
             {record.itemImage ? (
               <div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden"> {/* Added bottom margin */}
@@ -109,10 +113,11 @@ const MediLists: React.FC = () => {
         ))}
       </div>
       {selectedMediRecord && (
-        <MediInfoModal
+        <MediModal
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
           mediRecord={selectedMediRecord}
+          onEditClick={handleEditClick}
         />
       )}
     </div>
