@@ -1,28 +1,24 @@
 "use client";
 import { NAME_OF_TIME } from "@/constant/constant";
-import { MedicinesType, ValueType } from "@/types/calendar";
+import { useEventsStore, useValuesStore } from "@/store/calendar";
+import { MedicinesType } from "@/types/calendar";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
-import { EventInput } from "@fullcalendar/core";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface Props {
-  events: EventInput[];
-  values: ValueType;
-  setValues: React.Dispatch<React.SetStateAction<ValueType>>;
   medicine: MedicinesType;
 }
 
-const PillComponent: React.FC<Props> = ({
-  values,
-  setValues,
-  medicine,
-  events,
-}: Props) => {
+const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
   const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [notification, setNotification] = useState<string[]>([""]);
   const { id, time, name } = medicine;
+
+  const { values, setValues } = useValuesStore();
+  const { events } = useEventsStore();
 
   useEffect(() => {
     let timeOfMedicine = Object.keys(time).filter((times) => {
@@ -43,6 +39,33 @@ const PillComponent: React.FC<Props> = ({
   useEffect(() => {
     setViewMedicines({ events, values, setValues, setViewEvents });
   }, [values.start_date, values.medi_time]);
+
+  useEffect(() => {
+    getNotificationTime();
+  }, [values.start_date]);
+
+  const getNotificationTime = () => {
+    if (medicine.notification_time.length !== 0) {
+      medicine.notification_time.map((time) => {
+        let hour = time.split(":")[0];
+        let minute = time.split(":")[1];
+        if (Number(hour) === 0) {
+          setNotification((prev) => [...prev, `오전 12:${minute}`]);
+        }
+
+        if (Number(hour) > 12) {
+          setNotification((prev) => [
+            ...prev,
+            `오후 0${Number(hour) - 12}:${minute}`,
+          ]);
+        }
+
+        if (Number(hour) > 0 && Number(hour) <= 12) {
+          setNotification((prev) => [...prev, `오전 ${hour}:${minute}`]);
+        }
+      });
+    }
+  };
 
   return (
     <div
@@ -72,7 +95,8 @@ const PillComponent: React.FC<Props> = ({
           <span
             className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
           >
-            {`오후 12:00`}
+            {/* {notification[Object.keys(NAME_OF_TIME).indexOf(values.medi_time)]} */}
+            {notification}
           </span>
         </div>
         <div

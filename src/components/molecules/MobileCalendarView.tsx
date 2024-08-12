@@ -1,47 +1,41 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { MedicinesType, ValueType } from "@/types/calendar";
+import { MedicinesType, ValuesType } from "@/types/calendar";
 import axios from "axios";
-import { EventInput } from "@fullcalendar/core";
-import MediCheck from "../atoms/MediCheck";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import FilterComponent from "./FilterComponent";
-import CalendarEditNote from "../atoms/EditNote";
-import PillComponent from "./PillComponent";
 import ViewNote from "../atoms/ViewNote";
+import PillComponent from "./PillComponent";
+import { useRouter } from "next/navigation";
+import {
+  useEditStore,
+  useEventsStore,
+  useMedicinesStore,
+  useValuesStore,
+} from "@/store/calendar";
 
-interface Props {
-  values: ValueType;
-  setValues: React.Dispatch<React.SetStateAction<ValueType>>;
-  events: EventInput[];
-  setEvents: React.Dispatch<React.SetStateAction<EventInput[]>>;
-  medicines: MedicinesType[];
-  setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
-  edit: boolean;
-  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const MobileCalendarView = ({
-  values,
-  setValues,
-  events,
-  setEvents,
-  medicines,
-  setMedicines,
-  edit,
-  setEdit,
-}: Props) => {
+const MobileCalendarView = () => {
   const [tabNumber, setTabNumber] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
+  const { values, setValues } = useValuesStore();
+  const { events, setEvents, updateEvents } = useEventsStore();
+  const { medicines } = useMedicinesStore();
+  const { setEdit } = useEditStore();
+
+  const router = useRouter();
+
   useEffect(() => {
-    let dateArr = values.start_date.split("-");
-    setSelectedDate(`${dateArr[0]}년 ${dateArr[1]}월 ${dateArr[2]}일`);
+    if (values.start_date) {
+      let dateArr = values.start_date.split("-");
+      setSelectedDate(`${dateArr[0]}년 ${dateArr[1]}월 ${dateArr[2]}일`);
+    }
   }, [values.start_date]);
 
   // Route Handler 통해서 POST 하는 함수
-  const postCalendar = async (value: ValueType) => {
+  const postCalendar = async (value: ValuesType) => {
     try {
       const { data } = await axios.post(`/api/calendar`, value);
 
@@ -53,11 +47,11 @@ const MobileCalendarView = ({
       });
 
       if (value.medicine_id.length === 0) {
-        setEvents([...deletedEvents]);
+        updateEvents([...deletedEvents]);
       }
 
       if (value.medicine_id.length !== 0) {
-        setEvents([
+        updateEvents([
           ...deletedEvents,
           {
             groupId: value.id,
@@ -88,7 +82,7 @@ const MobileCalendarView = ({
   // 저장 버튼 onClick 함수
   const handleSubmitButtonClick = () => {
     postCalendar(values);
-    setEdit(!edit);
+    setEdit(false);
     setValues({
       ...values,
       medi_time: "morning",
@@ -99,7 +93,8 @@ const MobileCalendarView = ({
 
   // 작성 버튼 onClick 함수
   const handleWriteButtonClick = () => {
-    setEdit(!edit);
+    setEdit(true);
+    router.push("/calendar/edit");
   };
 
   return (
@@ -110,10 +105,10 @@ const MobileCalendarView = ({
             {selectedDate}
           </div>
           <button
-            onClick={edit ? handleSubmitButtonClick : handleWriteButtonClick}
+            onClick={handleWriteButtonClick}
             className="text-[16px] text-[#279EF9]"
           >
-            {edit ? "저장" : "작성"}
+            작성
           </button>
         </div>
         <div className="flex gap-6 my-6 px-1 text-[16px] font-normal">
@@ -136,49 +131,19 @@ const MobileCalendarView = ({
         </div>
         {tabNumber === 0 ? (
           <div className="flex flex-col gap-4">
-            <FilterComponent values={values} setValues={setValues} />
+            <FilterComponent />
             <div className="flex flex-col items-center w-full gap-2">
-              {edit
-                ? medicines
-                    .filter((medi: MedicinesType) => {
-                      return medi.time[values.medi_time] === true;
-                    })
-                    .map((medicine: MedicinesType, idx: number) => {
-                      return (
-                        <MediCheck
-                          key={idx}
-                          medicine={medicine}
-                          values={values}
-                          setValues={setValues}
-                          idx={idx}
-                        />
-                      );
-                    })
-                : medicines
-                    .filter((medi: MedicinesType) => {
-                      return medi.time[values.medi_time] === true;
-                    })
-                    .map((medicine: MedicinesType, idx: number) => {
-                      return (
-                        <PillComponent
-                          key={idx}
-                          medicine={medicine}
-                          events={events}
-                          values={values}
-                          setValues={setValues}
-                        />
-                      );
-                    })}
+              {medicines
+                .filter((medi: MedicinesType) => {
+                  return medi.time[values.medi_time] === true;
+                })
+                .map((medicine: MedicinesType, idx: number) => {
+                  return <PillComponent key={idx} medicine={medicine} />;
+                })}
             </div>
           </div>
         ) : null}
-        {tabNumber === 1 ? (
-          edit ? (
-            <CalendarEditNote values={values} setValues={setValues} />
-          ) : (
-            <ViewNote values={values} />
-          )
-        ) : null}
+        {tabNumber === 1 ? <ViewNote /> : null}
       </div>
     </>
   );

@@ -1,18 +1,13 @@
-import { ValueType } from "@/types/calendar";
+import { useValuesStore } from "@/store/calendar";
 import React from "react";
 interface Props {
-  values: ValueType;
   handleTimeClick: (time: string) => void;
   time: string;
   children: string;
 }
 
-const ModalFilterButton = ({
-  values,
-  handleTimeClick,
-  time,
-  children,
-}: Props) => {
+const ModalFilterButton = ({ handleTimeClick, time, children }: Props) => {
+  const { values } = useValuesStore();
   return (
     <button
       onClick={() => handleTimeClick(time)}

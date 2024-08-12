@@ -4,36 +4,31 @@ import React, { useEffect, useState } from "react";
 import { EventInput } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
-import FullCalendar from "@fullcalendar/react";
 import axios from "axios";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import DetailModal from "../calendarModal/DetailModal";
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
-import uuid from "react-uuid";
-import { MedicinesType, ValueType } from "@/types/calendar";
+import { MedicinesType } from "@/types/calendar";
 import MobileCalendarView from "@/components/molecules/MobileCalendarView";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
-import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
+import FullCalendar from "@fullcalendar/react";
+import {
+  useCalendarStore,
+  useEventsStore,
+  useMedicinesStore,
+  useValuesStore,
+} from "@/store/calendar";
 
 const CalendarView = () => {
-  const [events, setEvents] = useState<EventInput[]>([]);
-  const [medicines, setMedicines] = useState<MedicinesType[]>([]);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [viewEvents, setViewEvents] = useState<boolean>(false);
-  const [edit, setEdit] = useState<boolean>(false);
-  const [values, setValues] = useState<ValueType>({
-    id: uuid(),
-    user_id: "",
-    medi_time: "morning",
-    medicine_id: [],
-    side_effect: "",
-    start_date: new Date(new Date().getTime() + DATE_OFFSET)
-      .toISOString()
-      .split("T")[0],
-  });
 
   const { user } = useAuthStore();
+  const { values, setValues } = useValuesStore();
+  const { calendar, setCalendar } = useCalendarStore();
+  const { events, setEvents } = useEventsStore();
+  const { medicines, setMedicines } = useMedicinesStore();
 
   type CalendarType = Tables<"calendar">;
   type BridgeType = Tables<"calendar_medicine">;
@@ -41,9 +36,7 @@ const CalendarView = () => {
 
   useEffect(() => {
     if (user) {
-      setValues((prev) => {
-        return { ...prev, user_id: user.id };
-      });
+      setValues({ ...values, user_id: user.id });
     }
   }, [user]);
 
@@ -56,15 +49,11 @@ const CalendarView = () => {
           );
 
           data.medicationRecords.map((record: any) => {
-            setMedicines((prev) => {
-              return [
-                ...prev,
-                {
-                  id: record.id,
-                  name: record.medi_nickname,
-                  time: record.times,
-                },
-              ];
+            setMedicines({
+              id: record.id,
+              name: record.medi_nickname,
+              time: record.times,
+              notification_time: record.notification_time,
             });
           });
           return data;
@@ -78,119 +67,130 @@ const CalendarView = () => {
   }, [user]);
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    const getCalendarData = async () => {
+    const getEventsData = async () => {
       try {
-        const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
+        if (user) {
+          const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
 
-        {
-          data.map((event: EventInput) => {
-            if (event.calendar_medicine.length !== 0) {
-              const setEventList = (time: string) => {
-                let eventList = event.calendar_medicine.filter(
-                  (medicine: any) => {
-                    return medicine.medi_time === time;
-                  }
-                );
+          {
+            data.map((event: EventInput) => {
+              if (event.calendar_medicine.length !== 0) {
+                const setEventList = (time: string) => {
+                  let eventList = event.calendar_medicine.filter(
+                    (medicine: any) => {
+                      return medicine.medi_time === time;
+                    }
+                  );
 
-                let countMedicines = eventList.length;
-                let medicineNickname = eventList[0].medications.medi_nickname;
+                  let countMedicines = eventList.length;
 
-                if (countMedicines !== 0) {
-                  setEvents((prev) => {
-                    return [
-                      ...prev,
-                      {
-                        groupId: event.id,
-                        title:
-                          countMedicines !== 1
-                            ? `${medicineNickname} 외 ${countMedicines - 1}개`
-                            : `${medicineNickname}`,
-                        start: `${event.start_date} ${
-                          TIME_OF_TIME[eventList[0].medi_time]
-                        }`,
-                        backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
-                        extendProps: {
-                          medi_time: eventList[0].medi_time,
-                          medicineList: eventList.map(
-                            (medicine: any) => medicine.medications.id
-                          ),
-                        },
+                  if (countMedicines !== 0) {
+                    let medicineNickname =
+                      eventList[0].medications.medi_nickname;
+                    setEvents({
+                      groupId: event.id,
+                      title:
+                        countMedicines !== 1
+                          ? `${medicineNickname} 외 ${countMedicines - 1}개`
+                          : `${medicineNickname}`,
+                      start: `${event.start_date} ${
+                        TIME_OF_TIME[eventList[0].medi_time]
+                      }`,
+                      backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
+                      extendProps: {
+                        medi_time: eventList[0].medi_time,
+                        medicineList: eventList.map(
+                          (medicine: any) => medicine.medications.id
+                        ),
                       },
-                    ];
-                  });
-                }
-              };
+                    });
+                  }
+                };
 
-              setEventList("morning");
-              setEventList("afternoon");
-              setEventList("evening");
-            }
-          });
+                setEventList("morning");
+                setEventList("afternoon");
+                setEventList("evening");
+              }
+            });
+          }
         }
       } catch (error) {
         console.log("axios error", error);
       }
     };
 
-    getCalendarData();
-  }, [values.user_id]);
+    getEventsData();
+  }, [user]);
 
-  // input 창에 sideEffect Set.
-  const setSideEffect = () => {
-    const getSideEffect = async (start_date: string) => {
+  useEffect(() => {
+    const getCalendarData = async () => {
       try {
-        if (!user) {
-          throw Error("User is required.");
+        if (user) {
+          const { data } = await axios.get(
+            `/api/calendar/sideEffect?user_id=${user.id}`
+          );
+
+          {
+            data.map((info: CalendarType) => {
+              setCalendar({
+                id: info.id,
+                user_id: info.user_id,
+                created_at: info.created_at,
+                side_effect: info.side_effect,
+                start_date: info.start_date,
+              });
+            });
+          }
+          return data;
         }
-
-        const { data } = await axios.get(
-          `/api/calendar/sideEffect/${start_date}?user_id=${user.id}`
-        );
-
-        if (data.length !== 0) {
-          setValues((prev) => {
-            return { ...prev, side_effect: data[0].side_effect };
-          });
-        }
-
-        if (data.length === 0) {
-          setValues((prev) => {
-            return { ...prev, side_effect: "" };
-          });
-        }
-
-        return data;
       } catch (error) {
-        if (isDynamicServerError(error)) {
-          throw error;
-        }
-        console.log("Get SideEffect Error", error);
+        console.log("error", error);
       }
     };
-
-    getSideEffect(values.start_date);
-  };
+    getCalendarData();
+  }, [user]);
 
   // 날짜 클릭 시 , value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
-    const newDate = new Date(event.date.getTime() + DATE_OFFSET)
+    let newDate = new Date(event.date.getTime() + DATE_OFFSET)
       .toISOString()
       .split("T")[0];
 
-    setValues((prev) => {
-      return { ...prev, start_date: newDate, medi_time: "morning" };
+    let filteredCalendar = calendar.filter((cal) => {
+      return cal.start_date === newDate;
+    });
+
+    setValues({
+      ...values,
+      start_date: newDate,
+      medi_time: "morning",
+      side_effect: filteredCalendar.length
+        ? filteredCalendar[0].side_effect
+        : "",
     });
 
     setOpenDetailModal(true);
   };
 
+  // 기록하기 버튼 클릭
   const handleButtonClick = () => {
-    setViewMedicines({ events, values, setValues, setViewEvents });
-    setSideEffect();
+    let today = new Date(new Date().getTime() + DATE_OFFSET)
+      .toISOString()
+      .split("T")[0];
+
+    let filteredCalendar = calendar.filter((cal) => {
+      return cal.start_date === today;
+    });
+
+    setValues({
+      ...values,
+      start_date: today,
+      medi_time: "morning",
+      side_effect: filteredCalendar.length
+        ? filteredCalendar[0].side_effect
+        : "",
+    });
+
     setOpenDetailModal(true);
   };
 
@@ -199,15 +199,6 @@ const CalendarView = () => {
       <DetailModal
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
-        events={events}
-        setEvents={setEvents}
-        values={values}
-        setValues={setValues}
-        medicines={medicines}
-        setMedicines={setMedicines}
-        setSideEffect={setSideEffect}
-        edit={edit}
-        setEdit={setEdit}
       />
       <div className="w-full flex flex-col mt-8">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
@@ -238,16 +229,7 @@ const CalendarView = () => {
             }}
           />
         </div>
-        <MobileCalendarView
-          values={values}
-          setValues={setValues}
-          events={events}
-          setEvents={setEvents}
-          medicines={medicines}
-          setMedicines={setMedicines}
-          edit={edit}
-          setEdit={setEdit}
-        />
+        <MobileCalendarView />
       </div>
     </>
   );

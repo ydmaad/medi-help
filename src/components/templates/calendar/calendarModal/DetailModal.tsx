@@ -7,7 +7,15 @@ import EditModalInner from "@/components/molecules/EditModalInner";
 import ViewModalInner from "@/components/molecules/ViewModalInner";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import { useAuthStore } from "@/store/auth";
-import { MedicinesType, ValueType } from "@/types/calendar";
+import {
+  useCalendarStore,
+  useEditStore,
+  useEventsStore,
+  useMedicinesStore,
+  useValuesStore,
+} from "@/store/calendar";
+import { MedicinesType, ValuesType } from "@/types/calendar";
+import { Tables } from "@/types/supabase";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
@@ -18,43 +26,21 @@ import uuid from "react-uuid";
 interface Props {
   openDetailModal: boolean;
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
-  events: EventInput[];
-  setEvents: React.Dispatch<React.SetStateAction<EventInput[]>>;
-  values: ValueType;
-  setValues: React.Dispatch<React.SetStateAction<ValueType>>;
-  medicines: MedicinesType[];
-  setMedicines: React.Dispatch<React.SetStateAction<MedicinesType[]>>;
-  setSideEffect: () => void;
-  edit: boolean;
-  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DetailModal = ({
-  openDetailModal,
-  setOpenDetailModal,
-  events,
-  setEvents,
-  values,
-  setValues,
-  medicines,
-  setMedicines,
-  setSideEffect,
-  edit,
-  setEdit,
-}: Props) => {
+const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
   const [viewEvents, setViewEvents] = useState<boolean>(false);
 
-  const { user } = useAuthStore();
+  const { values, setValues } = useValuesStore();
+  const { calendar, setCalendar, updateCalendar } = useCalendarStore();
+  const { events, setEvents, updateEvents } = useEventsStore();
+  const { edit, setEdit } = useEditStore();
 
   useEffect(() => {
-    setViewMedicines({ events, values, setValues, setViewEvents });
+    // setViewMedicines({ values, setValues, events, setViewEvents });
+  }, [values.medi_time, values.start_date]);
 
-    if (user) {
-      setSideEffect();
-    }
-  }, [values.start_date, values.medi_time]);
-
-  // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기
+  // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기 : 수정
   useEffect(() => {
     let dateFilteredEvent = events.filter((event: EventInput) => {
       let event_date = new Date(
@@ -68,15 +54,11 @@ const DetailModal = ({
 
     if (dateFilteredEvent.length !== 0) {
       let event_id = dateFilteredEvent[0].groupId as string;
-      setValues((prev) => {
-        return { ...prev, id: event_id };
-      });
+      setValues({ ...values, id: event_id });
     }
 
     if (dateFilteredEvent.length === 0) {
-      setValues((prev) => {
-        return { ...prev, id: uuid() };
-      });
+      setValues({ ...values, id: uuid() });
     }
   }, [values.medicine_id, values.side_effect]);
 
@@ -89,37 +71,43 @@ const DetailModal = ({
       medi_time: "morning",
       medicine_id: [],
       side_effect: "",
-      start_date: new Date(new Date().getTime() + DATE_OFFSET)
-        .toISOString()
-        .split("T")[0],
+      start_date: "",
     });
   };
 
   // Route Handler 통해서 POST 하는 함수
-  const postCalendar = async (value: ValueType) => {
+  const postCalendar = async (value: ValuesType) => {
     try {
-      console.log(value);
       const { data } = await axios.post(`/api/calendar`, value);
 
-      let deletedEvents = events.filter((event) => {
-        return !(
-          event.groupId === value.id &&
-          event.extendProps.medi_time === value.medi_time
-        );
-      });
+      let countMedicines = value.medicine_id.length;
 
-      if (value.medicine_id.length === 0) {
-        setEvents([...deletedEvents]);
+      if (countMedicines === 0) {
+        updateEvents([
+          ...events.filter((event) => {
+            return !(
+              event.groupId === value.id &&
+              event.extendProps.medi_time === value.medi_time
+            );
+          }),
+        ]);
       }
 
-      if (value.medicine_id.length !== 0) {
-        setEvents([
-          ...deletedEvents,
+      if (countMedicines !== 0) {
+        let medicineNickname = data[0][0].medications.medi_nickname;
+        updateEvents([
+          ...events.filter((event) => {
+            return !(
+              event.groupId === value.id &&
+              event.extendProps.medi_time === value.medi_time
+            );
+          }),
           {
             groupId: value.id,
-            title: `${data[0][0].medications.medi_nickname} 외 ${
-              value.medicine_id.length - 1
-            }개`,
+            title:
+              countMedicines !== 1
+                ? `${medicineNickname} 외 ${countMedicines - 1}개`
+                : `${medicineNickname}`,
             start: `${
               new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
                 .toISOString()
@@ -135,6 +123,11 @@ const DetailModal = ({
         ]);
       }
 
+      updateCalendar([
+        ...calendar.filter((cal) => cal.id !== value.id),
+        { ...value, created_at: String(new Date()) },
+      ]);
+
       return data;
     } catch (error) {
       console.log("Post Error", error);
@@ -146,16 +139,18 @@ const DetailModal = ({
     try {
       const res = await axios.delete(`/api/calendar/${id}`);
 
-      let deletedEvents = events.filter((event) => {
-        return (
-          String(event.start).split(" ")[0] !==
-          new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
-            .toISOString()
-            .split("T")[0]
-        );
-      });
+      updateEvents([
+        ...events.filter((event) => {
+          return (
+            String(event.start).split(" ")[0] !==
+            new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+              .toISOString()
+              .split("T")[0]
+          );
+        }),
+      ]);
 
-      setEvents(deletedEvents);
+      updateCalendar([...calendar.filter((cal) => cal.id !== id)]);
 
       return res;
     } catch (error) {
@@ -164,22 +159,17 @@ const DetailModal = ({
   };
 
   // 저장하기 버튼 onClick 함수
-  const handlePostButtonClick = () => {
-    if (values.medicine_id.length === 0) {
-      alert("복용하신 약을 체크해주세요!");
-      return;
-    }
+  const handlePostButtonClick = async () => {
+    const data = await postCalendar(values);
 
-    postCalendar(values);
     setOpenDetailModal(false);
+    setEdit(false);
     setValues({
       ...values,
       medi_time: "morning",
       medicine_id: [],
       side_effect: "",
-      start_date: new Date(new Date().getTime() + DATE_OFFSET)
-        .toISOString()
-        .split("T")[0],
+      start_date: "",
     });
   };
 
@@ -222,12 +212,7 @@ const DetailModal = ({
 
         {edit ? (
           <>
-            <EditModalInner
-              values={values}
-              setValues={setValues}
-              medicines={medicines}
-              setMedicines={setMedicines}
-            />
+            <EditModalInner />
             <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
               <ModalButton
                 handleClick={handleDeleteButtonClick}
@@ -242,13 +227,7 @@ const DetailModal = ({
           </>
         ) : (
           <>
-            <ViewModalInner
-              values={values}
-              setValues={setValues}
-              medicines={medicines}
-              setMedicines={setMedicines}
-              events={events}
-            />
+            <ViewModalInner />
             <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
               <ModalButton handleClick={handleEditButtonClick}>
                 수정

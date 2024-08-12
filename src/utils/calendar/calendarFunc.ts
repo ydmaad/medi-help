@@ -1,18 +1,20 @@
-import { ValueType } from "@/types/calendar";
+import { useValuesStore } from "@/store/calendar";
+import { ValuesType } from "@/types/calendar";
 import { EventInput } from "@fullcalendar/core";
 
 // Medicines Set.
 interface Medicines {
   events: EventInput[];
   setViewEvents: React.Dispatch<React.SetStateAction<boolean>>;
-  values: ValueType;
-  setValues: React.Dispatch<React.SetStateAction<ValueType>>;
+  values: ValuesType;
+  setValues: (data: ValuesType) => void;
 }
+
 export const setViewMedicines = ({
-  events,
-  setViewEvents,
   values,
   setValues,
+  events,
+  setViewEvents,
 }: Medicines) => {
   let editList = events.filter((event) => {
     return event.start?.toString().split(" ")[0] === values.start_date;
@@ -34,10 +36,7 @@ export const setViewMedicines = ({
 
   if (editList.length === 0) {
     setViewEvents(false);
-    setValues({
-      ...values,
-      medicine_id: [],
-    });
+    setValues({ ...values, medicine_id: [] });
   }
 };
 
@@ -46,10 +45,9 @@ export const handleContentChange = (
   event:
     | React.ChangeEvent<HTMLTextAreaElement>
     | React.ChangeEvent<HTMLInputElement>,
-  setValues: React.Dispatch<React.SetStateAction<ValueType>>
+  values: ValuesType,
+  setValues: (data: ValuesType) => void
 ) => {
   const { name, value } = event.target;
-  setValues((prev) => {
-    return { ...prev, [name]: value };
-  });
+  setValues({ ...values, [name]: value });
 };
