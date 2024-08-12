@@ -10,5 +10,14 @@ export type ValueType = {
 export type MedicinesType = {
   id: string;
   name: string;
+  nickname: string;
   time: { [key: string]: boolean };
+  notes: string;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  userId: string;
+  dayOfWeek: string[];
+  notificationTime: string[];
+  repeat: boolean;
 };

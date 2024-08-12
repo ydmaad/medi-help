@@ -15,11 +15,10 @@ import { MedicinesType, ValueType } from "@/types/calendar";
 import MobileCalendarView from "@/components/molecules/MobileCalendarView";
 import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
-import { useRouter } from "next/navigation";
 import AddMediModal from "../calendarModal/AddMediModal"; // 추가된 임포트
 
 const CalendarView = () => {
-  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false); //추가된 부분
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false); // 모달 열림 상태 추가
   const [events, setEvents] = useState<EventInput[]>([]);
   const [medicines, setMedicines] = useState<MedicinesType[]>([]);
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
@@ -143,7 +142,7 @@ const CalendarView = () => {
     getSideEffect(values.start_date);
   };
 
-  // 날짜 클릭 시 , value 에 날짜 set
+  // 날짜 클릭 시, value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
     const newDate = new Date(event.date.getTime() + DATE_OFFSET)
       .toISOString()
@@ -175,17 +174,40 @@ const CalendarView = () => {
         setMedicines={setMedicines}
         setSideEffect={setSideEffect}
       />
+      <AddMediModal
+        isOpen={isAddModalOpen}
+        onRequestClose={() => setIsAddModalOpen(false)} // 모달 닫기 핸들러
+        onAdd={(newMediRecord: MedicinesType) => { // newMediRecord를 MedicinesType으로 설정
+          // 추가된 약 정보 처리
+          setMedicines((prev: MedicinesType[]) => [
+            ...prev,
+            newMediRecord // newMediRecord를 MedicinesType으로 직접 추가
+          ]);
+          // 새로운 약 정보를 추가한 후, 캘린더 이벤트 업데이트 (선택적)
+          const updatedEvent: EventInput = {
+            id: uuid(),
+            title: newMediRecord.nickname,
+            start: values.start_date + " " + TIME_OF_TIME[values.medi_time],
+            backgroundColor: COLOR_OF_TIME[values.medi_time],
+            extendProps: {
+              medi_time: values.medi_time,
+              medicineList: [newMediRecord.id],
+            },
+          };
+          setEvents((prevEvents) => [...prevEvents, updatedEvent]);
+        }}
+      />
       <div className="w-full flex flex-col mt-8">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
-        <div className="absolute right-12 top-4 flex space-x-2"> {/* 버튼 컨테이너 추가 */}
-        <button
+          <div className="absolute right-12 top-4 flex space-x-2"> {/* 버튼 컨테이너 추가 */}
+            <button
               onClick={handleButtonClick}
               className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
             >
               기록추가
             </button>
             <button
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={() => setIsAddModalOpen(true)} // 버튼 클릭 시 모달 열기
               className="w-24 px-3 py-1 bg-blue-500 text-sm text-white border border-blue-500 rounded-md hover:bg-white hover:text-blue-500 ease-in duration-300 max-[414px]:hidden"
             >
               나의 약 등록

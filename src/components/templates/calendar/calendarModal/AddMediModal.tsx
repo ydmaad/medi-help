@@ -19,7 +19,6 @@ interface MediRecord {
   user_id: string;
   day_of_week: string[];
   notification_time: string[];
-  repeat: boolean;
 }
 
 interface AddMediModalProps {
@@ -48,7 +47,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
   const [endDate, setEndDate] = useState("");
   const [dayOfWeek, setDayOfWeek] = useState<string[]>([]);
   const [notificationTime, setNotificationTime] = useState<string[]>([""]);
-  const [repeat, setRepeat] = useState(false);
   const [notificationEnabled, setNotificationEnabled] = useState(false);
 
   useEffect(() => {
@@ -72,12 +70,16 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
 
   const handleAdd = async () => {
     if (!user) return;
-
+  
     const newMediRecord: MediRecord = {
       id: crypto.randomUUID(),
       medi_name: mediName,
       medi_nickname: mediNickname,
-      times,
+      times: {
+        morning: times.morning || false,
+        afternoon: times.afternoon || false,
+        evening: times.evening || false,
+      },
       notes,
       start_date: startDate,
       end_date: endDate,
@@ -85,13 +87,13 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       user_id: user.id,
       day_of_week: notificationEnabled ? dayOfWeek : [],
       notification_time: notificationEnabled ? notificationTime : [],
-      repeat,
     };
-
+  
     try {
       const response = await axios.post("/api/calendar/medi", newMediRecord);
       if (response.status === 201) {
         onAdd(newMediRecord);
+        // Clear form state
         setMediName("");
         setMediNickname("");
         setTimes({ morning: false, afternoon: false, evening: false });
@@ -100,14 +102,13 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         setEndDate("");
         setDayOfWeek([]);
         setNotificationTime([""]);
-        setRepeat(false);
         setNotificationEnabled(false);
         onRequestClose();
       } else {
-        console.error("Failed to add medi record:", response.statusText);
+        console.error("Failed to add record:", response.statusText);
       }
     } catch (error) {
-      console.error("Failed to add medi record:", error);
+      console.error("Failed to add record:", error);
     }
   };
 
@@ -133,17 +134,21 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50 overflow-auto">
+      <div className="bg-white rounded-lg p-8 max-w-md mx-auto z-50">
         <h2 className="text-2xl mb-4">나의 약</h2>
+
+        {/* 약 별명 입력 */}
         <div className="mb-4">
           <input
             type="text"
             placeholder="약 별명(최대 6자)"
             value={mediNickname}
             onChange={(e) => setMediNickname(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
           />
         </div>
+
+        {/* 약 이름 입력 */}
         <div className="mb-4">
           <input
             list="mediNames"
@@ -153,7 +158,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               setMediName(e.target.value);
               setSearchTerm(e.target.value);
             }}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
           />
           <datalist id="mediNames">
             {mediNames
@@ -165,6 +170,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               ))}
           </datalist>
         </div>
+
+        {/* 복용 기간 설정 */}
         <div className="flex space-x-4 mb-4">
           <div className="w-1/2">
             <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -174,7 +181,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
             />
           </div>
           <div className="w-1/2">
@@ -185,10 +192,12 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
             />
           </div>
         </div>
+
+        {/* 복용 시간 설정 */}
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             복용 시간:
@@ -231,6 +240,76 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
             </button>
           </div>
         </div>
+
+        {/* 알림 설정 */}
+        <div className="flex items-center mb-4">
+          <label className="flex items-center">
+            <div
+              onClick={() => setNotificationEnabled(!notificationEnabled)}
+              className={`relative w-12 h-6 flex items-center rounded-full cursor-pointer ${
+                notificationEnabled ? "bg-blue-500" : "bg-gray-200"
+              }`}
+            >
+              <div
+                className={`absolute w-6 h-6 bg-white rounded-full transition-transform transform ${
+                  notificationEnabled ? "translate-x-6" : "translate-x-0"
+                }`}
+              ></div>
+            </div>
+            <span className="ml-2 text-gray-700">알림 설정</span>
+          </label>
+        </div>
+
+        {notificationEnabled && (
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              요일:
+            </label>
+            <div className="flex flex-wrap space-x-2">
+              {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => handleDayOfWeekChange(day)}
+                  className={`px-4 py-2 rounded-lg ${
+                    dayOfWeek.includes(day)
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
+
+            <label className="block text-gray-700 text-sm font-bold mb-2 mt-4">
+              알림 시간:
+            </label>
+            {notificationTime.map((time, index) => (
+              <div key={index} className="flex mb-2">
+                <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => handleNotificationTimeChange(index, e.target.value)}
+                  className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+                />
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setNotificationTime(notificationTime.filter((_, i) => i !== index))
+                    }
+                    className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
+                  >
+                    삭제
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* 메모 입력 */}
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             메모:
@@ -239,86 +318,24 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="간단한 약 정보를 입력해주세요"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none resize-none h-16"
           />
         </div>
-        <div className="mb-4 flex items-center">
-          <label className="block text-gray-700 text-sm font-bold mr-2">
-            알림 설정:
-          </label>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={notificationEnabled}
-              onChange={() => setNotificationEnabled(!notificationEnabled)}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 border border-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
-        {notificationEnabled && (
-          <>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                알림 요일:
-              </label>
-              <div className="flex space-x-2">
-                {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
-                  <button
-                    key={day}
-                    type="button"
-                    onClick={() => handleDayOfWeekChange(day)}
-                    className={`px-4 py-2 rounded-lg ${
-                      dayOfWeek.includes(day)
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200 text-gray-700"
-                    }`}
-                  >
-                    {day}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex-grow mr-2">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  알림 시간:
-                </label>
-                <input
-                  type="time"
-                  value={notificationTime[0]}
-                  onChange={(e) =>
-                    handleNotificationTimeChange(0, e.target.value)
-                  }
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-              <div className="ml-4 flex items-center">
-                <input
-                  type="checkbox"
-                  checked={repeat}
-                  onChange={() => setRepeat(!repeat)}
-                  className="form-checkbox h-5 w-5 text-blue-600"
-                />
-                <label className="ml-2 block text-gray-700 text-sm font-bold">
-                  반복
-                </label>
-              </div>
-            </div>
-          </>
-        )}
-        <div className="flex items-center justify-between">
+
+        <div className="flex justify-between mt-4">
           <button
-            onClick={handleAdd}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            추가하기
-          </button>
-          <button
+            type="button"
             onClick={onRequestClose}
-            className="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
           >
             취소
+          </button>
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            추가
           </button>
         </div>
       </div>
