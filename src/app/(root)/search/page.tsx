@@ -97,40 +97,44 @@ const SearchPage = () => {
   if (error) return <div>오류: {error}</div>;
 
   return (
-    <div className="flex flex-col items-center">
-      <h1 className="text-[32px] font-bold mb-[26px] mt-[80px]">
-        궁금한 약을 검색해 보세요
-      </h1>
-      <div className="mb-[132px]">
-        <SearchBar onSearchChange={handleSearchChange} />
+    <>
+      <div className="flex flex-col items-center">
+        <h1 className="text-[32px] font-bold mb-[26px] mt-[80px]">
+          🔎 궁금한 약을 검색해 보세요
+        </h1>
+        <div className="mb-[132px]">
+          <SearchBar onSearchChange={handleSearchChange} />
+        </div>
       </div>
-      <div className="text-lg mb-4">총 약 수: {totalItems}개</div>
-      <div className="grid grid-cols-4 gap-4 mt-4">
-        {paginatedItems.length > 0 ? (
-          paginatedItems.map((item) => (
-            <MediCard
-              key={item.id}
-              src={item.itemImage}
-              alt={item.itemName}
-              title={item.itemName}
-              subtitle={item.effect}
-              leftText="제조사"
-              rightText={item.entpName}
-              id={item.id}
-            />
-          ))
-        ) : (
-          <div className="col-span-4 text-center">검색 결과가 없습니다.</div>
+      <div className="text-lg mb-4">전체({totalItems})</div>
+      <div className="flex flex-col">
+        <div className="grid grid-cols-4 gap-4 mt-4">
+          {paginatedItems.length > 0 ? (
+            paginatedItems.map((item) => (
+              <MediCard
+                key={item.id}
+                src={item.itemImage}
+                alt={item.itemName}
+                title={item.itemName}
+                subtitle={item.effect}
+                leftText="제조사"
+                rightText={item.entpName}
+                id={item.id}
+              />
+            ))
+          ) : (
+            <div className="col-span-4 text-center">검색 결과가 없습니다.</div>
+          )}
+        </div>
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
-    </div>
+    </>
   );
 };
 
