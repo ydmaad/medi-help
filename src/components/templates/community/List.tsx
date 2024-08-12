@@ -89,7 +89,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       }
     };
     fetchData();
-  }, [searchTerm, currentPage, sortOption, selectCategory]);
+  }, [searchTerm, currentPage, sortOption, selectCategory, setPosts]);
 
   // console.log(posts);
 
@@ -271,8 +271,10 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
         ) : (
           <div>
             <p className="text-brand-gray-1000 font-black text-xl mt-20">
-              <span className="text-brand-primary-500">"{searchTerm}"</span> 에
-              대한 검색 결과{" "}
+              <span className="text-brand-primary-500">
+                &quot;{searchTerm}&quot;
+              </span>{" "}
+              에 대한 검색 결과
               <span className="text-brand-gray-600">
                 ({filteredPosts.length})
               </span>
