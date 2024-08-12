@@ -77,21 +77,21 @@ export default function LoginPage() {
   };
 
   // 구글 로그인 핸들러
-  const handleGoogleLogin = async () => {
-    alert("Google 로그인 기능은 아직 구현되지 않았습니다.");
-  };
-
   // const handleGoogleLogin = async () => {
-  //   try {
-  //     const data = await signInWithGoogle();
-  //     console.log("Google login success:", data);
-  //     // 구글 로그인 후 메인 페이지로 이동
-  //     router.push("/");
-  //   } catch (error) {
-  //     console.error("Google login error:", error);
-  //     setError("구글 로그인 중 오류가 발생했습니다.");
-  //   }
+  //   alert("Google 로그인 기능은 아직 구현되지 않았습니다.");
   // };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const data = await signInWithGoogle();
+      console.log("Google login success:", data);
+      // 구글 로그인 후 메인 페이지로 이동
+      router.push("/");
+    } catch (error) {
+      console.error("Google login error:", error);
+      setError("구글 로그인 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen">
