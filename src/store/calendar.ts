@@ -33,50 +33,40 @@ type CalendarType = Tables<"calendar">;
 
 interface CalendarState {
   calendar: CalendarType[];
-  setCalendar: (data: CalendarType) => void;
-  updateCalendar: (data: CalendarType[]) => void;
+  setCalendar: (data: CalendarType[]) => void;
 }
 
 export const useCalendarStore = create<CalendarState>((set) => ({
   calendar: [],
 
   setCalendar: (data) => {
-    set((prev) => ({ calendar: [...prev.calendar, data] }));
-  },
-
-  updateCalendar: (data) => {
     set(() => ({ calendar: data }));
   },
 }));
 
 interface EventsState {
   events: EventInput[];
-  setEvents: (data: EventInput) => void;
-  updateEvents: (data: EventInput[]) => void;
+  setEvents: (data: EventInput[]) => void;
 }
 
 export const useEventsStore = create<EventsState>((set) => ({
   events: [],
 
   setEvents: (data) => {
-    set((prev) => ({ events: [...prev.events, data] }));
-  },
-
-  updateEvents: (data) => {
     set(() => ({ events: data }));
   },
 }));
 
 interface MedicinesState {
   medicines: MedicinesType[];
-  setMedicines: (data: MedicinesType) => void;
+  setMedicines: (data: MedicinesType[]) => void;
 }
 
 export const useMedicinesStore = create<MedicinesState>((set) => ({
   medicines: [],
 
   setMedicines: (data) => {
-    set((prev) => ({ medicines: [...prev.medicines, data] }));
+    set(() => ({ medicines: data }));
   },
 }));
 

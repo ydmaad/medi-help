@@ -11,7 +11,6 @@ import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import { MedicinesType } from "@/types/calendar";
 import MobileCalendarView from "@/components/molecules/MobileCalendarView";
-import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import FullCalendar from "@fullcalendar/react";
 import {
   useCalendarStore,
@@ -19,6 +18,7 @@ import {
   useMedicinesStore,
   useValuesStore,
 } from "@/store/calendar";
+import uuid from "react-uuid";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
@@ -48,14 +48,18 @@ const CalendarView = () => {
             `/api/calendar/medi?user_id=${user.id}`
           );
 
+          const newMedicines: MedicinesType[] = [];
+
           data.medicationRecords.map((record: any) => {
-            setMedicines({
+            newMedicines.push({
               id: record.id,
               name: record.medi_nickname,
               time: record.times,
               notification_time: record.notification_time,
             });
           });
+
+          setMedicines(newMedicines);
           return data;
         }
       } catch (error) {
@@ -73,6 +77,7 @@ const CalendarView = () => {
           const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
 
           {
+            const newEvents: EventInput[] = [];
             data.map((event: EventInput) => {
               if (event.calendar_medicine.length !== 0) {
                 const setEventList = (time: string) => {
@@ -87,7 +92,7 @@ const CalendarView = () => {
                   if (countMedicines !== 0) {
                     let medicineNickname =
                       eventList[0].medications.medi_nickname;
-                    setEvents({
+                    newEvents.push({
                       groupId: event.id,
                       title:
                         countMedicines !== 1
@@ -112,6 +117,7 @@ const CalendarView = () => {
                 setEventList("evening");
               }
             });
+            setEvents(newEvents);
           }
         }
       } catch (error) {
@@ -131,8 +137,9 @@ const CalendarView = () => {
           );
 
           {
+            const newCalendar: CalendarType[] = [];
             data.map((info: CalendarType) => {
-              setCalendar({
+              newCalendar.push({
                 id: info.id,
                 user_id: info.user_id,
                 created_at: info.created_at,
@@ -140,6 +147,7 @@ const CalendarView = () => {
                 start_date: info.start_date,
               });
             });
+            setCalendar(newCalendar);
           }
           return data;
         }
@@ -160,13 +168,23 @@ const CalendarView = () => {
       return cal.start_date === newDate;
     });
 
+    let editList = events.filter((event) => {
+      return event.start?.toString().split(" ")[0] === newDate;
+    });
+
+    let viewEvent = editList.filter((event: EventInput) => {
+      return event.extendProps.medi_time === "morning";
+    })[0];
+
     setValues({
       ...values,
+      id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
       start_date: newDate,
       medi_time: "morning",
       side_effect: filteredCalendar.length
         ? filteredCalendar[0].side_effect
         : "",
+      medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
     });
 
     setOpenDetailModal(true);
@@ -182,13 +200,23 @@ const CalendarView = () => {
       return cal.start_date === today;
     });
 
+    let editList = events.filter((event) => {
+      return event.start?.toString().split(" ")[0] === today;
+    });
+
+    let viewEvent = editList.filter((event: EventInput) => {
+      return event.extendProps.medi_time === "morning";
+    })[0];
+
     setValues({
       ...values,
+      id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
       start_date: today,
       medi_time: "morning",
       side_effect: filteredCalendar.length
         ? filteredCalendar[0].side_effect
         : "",
+      medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
     });
 
     setOpenDetailModal(true);
@@ -200,7 +228,7 @@ const CalendarView = () => {
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
       />
-      <div className="w-full flex flex-col mt-8">
+      <div className="w-full flex flex-col mt-20">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
           <button
             onClick={handleButtonClick}

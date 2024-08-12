@@ -6,22 +6,16 @@ import ModalTitle from "@/components/atoms/ModalTitle";
 import EditModalInner from "@/components/molecules/EditModalInner";
 import ViewModalInner from "@/components/molecules/ViewModalInner";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
-import { useAuthStore } from "@/store/auth";
 import {
   useCalendarStore,
   useEditStore,
   useEventsStore,
-  useMedicinesStore,
   useValuesStore,
 } from "@/store/calendar";
-import { MedicinesType, ValuesType } from "@/types/calendar";
-import { Tables } from "@/types/supabase";
-import { setViewMedicines } from "@/utils/calendar/calendarFunc";
-import { EventInput } from "@fullcalendar/core";
+import { ValuesType } from "@/types/calendar";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
-import uuid from "react-uuid";
 
 interface Props {
   openDetailModal: boolean;
@@ -32,35 +26,35 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
   const [viewEvents, setViewEvents] = useState<boolean>(false);
 
   const { values, setValues } = useValuesStore();
-  const { calendar, setCalendar, updateCalendar } = useCalendarStore();
-  const { events, setEvents, updateEvents } = useEventsStore();
+  const { calendar, setCalendar } = useCalendarStore();
+  const { events, setEvents } = useEventsStore();
   const { edit, setEdit } = useEditStore();
 
-  useEffect(() => {
-    // setViewMedicines({ values, setValues, events, setViewEvents });
-  }, [values.medi_time, values.start_date]);
+  // useEffect(() => {
+  //   setViewMedicines({ values, setValues, events, setViewEvents });
+  // }, [values.medi_time, values.start_date]);
 
   // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기 : 수정
-  useEffect(() => {
-    let dateFilteredEvent = events.filter((event: EventInput) => {
-      let event_date = new Date(
-        new Date(String(event.start)).getTime() + DATE_OFFSET
-      )
-        .toISOString()
-        .split("T")[0];
+  // useEffect(() => {
+  //   let dateFilteredEvent = events.filter((event: EventInput) => {
+  //     let event_date = new Date(
+  //       new Date(String(event.start)).getTime() + DATE_OFFSET
+  //     )
+  //       .toISOString()
+  //       .split("T")[0];
 
-      return event_date === values.start_date;
-    });
+  //     return event_date === values.start_date;
+  //   });
 
-    if (dateFilteredEvent.length !== 0) {
-      let event_id = dateFilteredEvent[0].groupId as string;
-      setValues({ ...values, id: event_id });
-    }
+  //   if (dateFilteredEvent.length !== 0) {
+  //     let event_id = dateFilteredEvent[0].groupId as string;
+  //     setValues({ ...values, id: event_id });
+  //   }
 
-    if (dateFilteredEvent.length === 0) {
-      setValues({ ...values, id: uuid() });
-    }
-  }, [values.medicine_id, values.side_effect]);
+  //   if (dateFilteredEvent.length === 0) {
+  //     setValues({ ...values, id: uuid() });
+  //   }
+  // }, [values.medicine_id, values.side_effect]);
 
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
@@ -83,7 +77,7 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
       let countMedicines = value.medicine_id.length;
 
       if (countMedicines === 0) {
-        updateEvents([
+        setEvents([
           ...events.filter((event) => {
             return !(
               event.groupId === value.id &&
@@ -95,7 +89,7 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
 
       if (countMedicines !== 0) {
         let medicineNickname = data[0][0].medications.medi_nickname;
-        updateEvents([
+        setEvents([
           ...events.filter((event) => {
             return !(
               event.groupId === value.id &&
@@ -123,7 +117,7 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
         ]);
       }
 
-      updateCalendar([
+      setCalendar([
         ...calendar.filter((cal) => cal.id !== value.id),
         { ...value, created_at: String(new Date()) },
       ]);
@@ -139,7 +133,7 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
     try {
       const res = await axios.delete(`/api/calendar/${id}`);
 
-      updateEvents([
+      setEvents([
         ...events.filter((event) => {
           return (
             String(event.start).split(" ")[0] !==
@@ -150,7 +144,7 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
         }),
       ]);
 
-      updateCalendar([...calendar.filter((cal) => cal.id !== id)]);
+      setCalendar([...calendar.filter((cal) => cal.id !== id)]);
 
       return res;
     } catch (error) {

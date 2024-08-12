@@ -4,7 +4,6 @@ import EditModalInner from "@/components/molecules/EditModalInner";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import { MedicinesType, ValuesType } from "@/types/calendar";
 import React, { useState } from "react";
-import uuid from "react-uuid";
 import { IoIosArrowBack } from "react-icons/io";
 import axios from "axios";
 import { EventInput } from "@fullcalendar/core";
@@ -14,7 +13,7 @@ const MobileEdit = () => {
   const [medicines, setMedicines] = useState<MedicinesType[]>([]);
   const [events, setEvents] = useState<EventInput[]>([]);
   const [edit, setEdit] = useState<boolean>(false);
-  const { values, setValues, clearValues } = useValuesStore();
+  const { values, setValues } = useValuesStore();
 
   // Route Handler 통해서 POST 하는 함수
   const postCalendar = async (value: ValuesType) => {
@@ -65,17 +64,17 @@ const MobileEdit = () => {
   const handleSubmitButtonClick = () => {
     postCalendar(values);
     setEdit(!edit);
-    // setValues({
-    //   ...values,
-    //   medi_time: "morning",
-    //   medicine_id: [],
-    //   side_effect: "",
-    // });
+    setValues({
+      ...values,
+      medi_time: "morning",
+      medicine_id: [],
+      side_effect: "",
+    });
   };
 
   return (
     <>
-      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 mx-auto flex flex-col gap-[20px] bg-white z-20 ">
+      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 mt-20 mx-auto flex flex-col gap-[20px] bg-white z-20 ">
         <div className="flex align-items py-1 mb-2 justify-between gap-2">
           <button>
             <IoIosArrowBack className="text-[20px]" />
@@ -83,7 +82,7 @@ const MobileEdit = () => {
           <ModalTitle>하루 약 기록</ModalTitle>
           <button className="text-[16px] text-[#279EF9]">저장</button>
         </div>
-        <EditModalInner medicines={medicines} setMedicines={setMedicines} />
+        <EditModalInner />
       </div>
     </>
   );

@@ -1,12 +1,34 @@
+"use client";
+
 import React from "react";
 import ModalFilterButton from "../atoms/ModalFilterButton";
-import { useValuesStore } from "@/store/calendar";
+import {
+  useCalendarStore,
+  useEventsStore,
+  useValuesStore,
+} from "@/store/calendar";
+import { EventInput } from "@fullcalendar/core";
 
 const FilterComponent = () => {
+  const { events, setEvents } = useEventsStore();
   const { values, setValues } = useValuesStore();
-  // time Category onClick 함수
+
   const handleTimeClick = (time: string) => {
-    setValues({ ...values, medi_time: time, medicine_id: [] });
+    let editList = events.filter((event) => {
+      return (
+        values.start_date &&
+        event.start?.toString().split(" ")[0] === values.start_date
+      );
+    });
+
+    let viewEvent = editList.filter((event: EventInput) => {
+      return event.extendProps.medi_time === time;
+    })[0];
+    setValues({
+      ...values,
+      medi_time: time,
+      medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
+    });
   };
 
   return (

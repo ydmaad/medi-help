@@ -9,23 +9,60 @@ import ViewNote from "../atoms/ViewNote";
 import PillComponent from "./PillComponent";
 import { useRouter } from "next/navigation";
 import {
+  useCalendarStore,
   useEditStore,
   useEventsStore,
   useMedicinesStore,
   useValuesStore,
 } from "@/store/calendar";
+import { EventInput } from "@fullcalendar/core";
+import uuid from "react-uuid";
+import { fi } from "date-fns/locale";
 
 const MobileCalendarView = () => {
   const [tabNumber, setTabNumber] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
   const { values, setValues } = useValuesStore();
-  const { events, setEvents, updateEvents } = useEventsStore();
+  const { events, setEvents } = useEventsStore();
+  const { calendar, setCalendar } = useCalendarStore();
   const { medicines } = useMedicinesStore();
   const { setEdit } = useEditStore();
 
   const router = useRouter();
+
+  useEffect(() => {
+    let today = new Date(new Date().getTime() + DATE_OFFSET)
+      .toISOString()
+      .split("T")[0];
+
+    if (calendar) {
+      let filteredCalendar = calendar.filter((cal) => {
+        return cal.start_date === today;
+      });
+
+      console.log(filteredCalendar);
+
+      let editList = events?.filter((event) => {
+        return event.start?.toString().split(" ")[0] === today;
+      });
+
+      let viewEvent = editList?.filter((event: EventInput) => {
+        return event.extendProps.medi_time === "morning";
+      })[0];
+
+      setValues({
+        ...values,
+        id: filteredCalendar?.length ? filteredCalendar[0].id : uuid(),
+        start_date: today,
+        medi_time: "morning",
+        side_effect: filteredCalendar.length
+          ? filteredCalendar[0].side_effect
+          : "",
+        medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
+      });
+    }
+  }, [calendar]);
 
   useEffect(() => {
     if (values.start_date) {
@@ -47,11 +84,11 @@ const MobileCalendarView = () => {
       });
 
       if (value.medicine_id.length === 0) {
-        updateEvents([...deletedEvents]);
+        setEvents([...deletedEvents]);
       }
 
       if (value.medicine_id.length !== 0) {
-        updateEvents([
+        setEvents([
           ...deletedEvents,
           {
             groupId: value.id,
@@ -93,6 +130,17 @@ const MobileCalendarView = () => {
 
   // 작성 버튼 onClick 함수
   const handleWriteButtonClick = () => {
+    let filteredCalendar = calendar.filter((cal) => {
+      return cal.start_date === values.start_date;
+    });
+
+    setValues({
+      ...values,
+      medi_time: "morning",
+      side_effect: filteredCalendar.length
+        ? filteredCalendar[0].side_effect
+        : "",
+    });
     setEdit(true);
     router.push("/calendar/edit");
   };
@@ -143,7 +191,7 @@ const MobileCalendarView = () => {
             </div>
           </div>
         ) : null}
-        {tabNumber === 1 ? <ViewNote /> : null}
+        {tabNumber === 1 ? <ViewNote values={values} /> : null}
       </div>
     </>
   );

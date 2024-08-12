@@ -1,8 +1,7 @@
 "use client";
-import { NAME_OF_TIME } from "@/constant/constant";
+import { COLOR_OF_TIME, NAME_OF_TIME } from "@/constant/constant";
 import { useEventsStore, useValuesStore } from "@/store/calendar";
 import { MedicinesType } from "@/types/calendar";
-import { setViewMedicines } from "@/utils/calendar/calendarFunc";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -35,10 +34,6 @@ const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
   useEffect(() => {
     setChecked(values.medicine_id.includes(id));
   }, [values.medicine_id]);
-
-  useEffect(() => {
-    setViewMedicines({ events, values, setValues, setViewEvents });
-  }, [values.start_date, values.medi_time]);
 
   useEffect(() => {
     getNotificationTime();
@@ -88,7 +83,7 @@ const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
         >
           <div
             className={`w-2 h-2 rounded-full ${
-              checked ? "bg-[#BCE1FD]" : "bg-[#E0E2E4]"
+              checked ? "bg-[#bce1fd]" : "bg-[#E0E2E4]"
             } inline-block mr-1`}
           />
           {NAME_OF_TIME[values.medi_time]}
