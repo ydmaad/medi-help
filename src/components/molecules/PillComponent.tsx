@@ -1,6 +1,6 @@
 "use client";
-import { COLOR_OF_TIME, NAME_OF_TIME } from "@/constant/constant";
-import { useEventsStore, useValuesStore } from "@/store/calendar";
+import { NAME_OF_TIME } from "@/constant/constant";
+import { useValuesStore } from "@/store/calendar";
 import { MedicinesType } from "@/types/calendar";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -12,12 +12,10 @@ interface Props {
 const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
-  const [viewEvents, setViewEvents] = useState<boolean>(false);
   const [notification, setNotification] = useState<string[]>([""]);
   const { id, time, name } = medicine;
 
   const { values, setValues } = useValuesStore();
-  const { events } = useEventsStore();
 
   useEffect(() => {
     let timeOfMedicine = Object.keys(time).filter((times) => {

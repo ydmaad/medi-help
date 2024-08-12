@@ -230,12 +230,38 @@ const CalendarView = () => {
       />
       <div className="w-full flex flex-col mt-20">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
-          <button
-            onClick={handleButtonClick}
-            className="absolute w-24 right-12 top-4 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
-          >
-            기록추가
-          </button>
+          <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
+            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-1 text-sm max-[414px]:text-xs ">
+              <div className="flex items-center">
+                <div
+                  className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
+                />
+                아침
+              </div>
+
+              <div className="flex items-center">
+                <div
+                  className={`w-2 h-2 rounded-full bg-[#6ebefb] inline-block mr-1`}
+                />
+                점심
+              </div>
+
+              <div className="flex items-center">
+                <div
+                  className={`w-2 h-2 rounded-full bg-[#103769] inline-block mr-1`}
+                />
+                저녁
+              </div>
+            </div>
+
+            <button
+              onClick={handleButtonClick}
+              className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
+            >
+              기록추가
+            </button>
+          </div>
+
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
