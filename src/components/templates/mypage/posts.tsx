@@ -58,7 +58,7 @@ const Posts: React.FC = () => {
           {posts.map((post) => (
             <div
               key={post.id}
-              className="bg-gray-50 rounded-lg p-4"
+              className="bg-gray-50 rounded-xl p-4"
             >
               <h3 className="text-xl font-semibold mb-2 text-gray-900">{post.title}</h3>
               <p className="text-gray-600 mb-2">{post.contents}</p>
