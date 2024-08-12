@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddMediModal from "../calendarModal/AddMediModal";
-import EditMediModal from "../calendarModal/EditMediModal";
-import ViewMediModal from "../calendarModal/ViewMediModal";
+import EditMediModal from "../../mypage/myPageModal/EditMediModal";
+import ViewMediModal from "../../mypage/myPageModal/ViewMediModal";
 import { useAuthStore } from "@/store/auth";
 import PillComponent from "@/components/molecules/MediScheduleCard";
 

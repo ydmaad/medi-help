@@ -1,3 +1,5 @@
+// src/components/templates/mypage/myPageModal/ViewMediModal.tsx
+
 "use client";
 
 import React from "react";
@@ -46,53 +48,30 @@ const ViewMediModal: React.FC<ViewMediModalProps> = ({
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
         <h2 className="text-2xl mb-4">약 정보</h2>
         <div className="mb-4">
-          <p>
-            <strong>약 이름:</strong> {mediRecord.medi_name}
-          </p>
+          <p><strong>약 이름:</strong> {mediRecord.medi_name}</p>
         </div>
         <div className="mb-4">
-          <p>
-            <strong>약 별명:</strong> {mediRecord.medi_nickname}
-          </p>
+          <p><strong>약 별명:</strong> {mediRecord.medi_nickname}</p>
         </div>
         <div className="mb-4">
-          <p>
-            <strong>복용 시작일:</strong> {mediRecord.start_date}
-          </p>
+          <p><strong>복용 시작일:</strong> {mediRecord.start_date}</p>
         </div>
         <div className="mb-4">
-          <p>
-            <strong>복용 종료일:</strong> {mediRecord.end_date}
-          </p>
+          <p><strong>복용 종료일:</strong> {mediRecord.end_date}</p>
         </div>
         <div className="mb-4">
-          <p>
-            <strong>복용 시간:</strong>{" "}
-            {`
-            ${mediRecord.times.morning ? "아침 " : ""}
-            ${mediRecord.times.afternoon ? "점심 " : ""}
-            ${mediRecord.times.evening ? "저녁 " : ""}
-          `}
-          </p>
+          <p><strong>복용 시간:</strong> {mediRecord.times.morning ? "아침 " : ""}{mediRecord.times.afternoon ? "점심 " : ""}{mediRecord.times.evening ? "저녁 " : ""}</p>
         </div>
         <div className="mb-4">
-          <p>
-            <strong>메모:</strong> {mediRecord.notes}
-          </p>
+          <p><strong>메모:</strong> {mediRecord.notes}</p>
         </div>
         {mediRecord.notification_time && mediRecord.notification_time.length > 0 && (
           <>
             <div className="mb-4">
-              <p>
-                <strong>알림 요일:</strong>{" "}
-                {mediRecord.day_of_week ? mediRecord.day_of_week.join(", ") : "N/A"}
-              </p>
+              <p><strong>알림 요일:</strong> {mediRecord.day_of_week ? mediRecord.day_of_week.join(", ") : "N/A"}</p>
             </div>
             <div className="mb-4">
-              <p>
-                <strong>알림 시간:</strong>{" "}
-                {mediRecord.notification_time ? mediRecord.notification_time.join(", ") : "N/A"}
-              </p>
+              <p><strong>알림 시간:</strong> {mediRecord.notification_time ? mediRecord.notification_time.join(", ") : "N/A"}</p>
             </div>
           </>
         )}
@@ -105,7 +84,7 @@ const ViewMediModal: React.FC<ViewMediModalProps> = ({
           </button>
           <button
             onClick={onRequestClose}
-            className="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             닫기
           </button>

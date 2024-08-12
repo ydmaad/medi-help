@@ -1,10 +1,13 @@
+// src/components/templates/mypage/Medications.tsx
+
 "use client";
 
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import axios from 'axios';
 import { supabase } from '@/utils/supabase/client';
-import MediInfoModal from './myPageModal/MediInfoModal'; // Adjust the import path if necessary
+import Image from 'next/image';
+import ViewMediModal from './myPageModal/ViewMediModal';
+import EditMediModal from './myPageModal/EditMediModal';
 
 interface MediRecord {
   id: string;
@@ -19,26 +22,27 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
-  itemImage: string | null;
+  itemImage?: string | null;
   user_id: string;
+  notification_time?: string[];
+  day_of_week?: string[];
+  repeat?: boolean;
 }
 
 const Medications: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
   const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMediRecords = async () => {
       const session = await supabase.auth.getSession();
-
       if (!session.data.session) {
         console.error("Auth session missing!");
         return;
       }
-
       const userId = session.data.session.user.id;
-
       try {
         const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
         setMediRecords(response.data);
@@ -46,13 +50,36 @@ const Medications: React.FC = () => {
         console.error("Error fetching medi records:", error);
       }
     };
-
     fetchMediRecords();
   }, []);
 
   const handleMediClick = (record: MediRecord) => {
     setSelectedMediRecord(record);
-    setIsModalOpen(true);
+    setIsViewModalOpen(true);
+  };
+
+  const handleUpdate = (updatedMediRecord: MediRecord) => {
+    setMediRecords((prevRecords) =>
+      prevRecords.map((record) =>
+        record.id === updatedMediRecord.id ? updatedMediRecord : record
+      )
+    );
+  };
+
+  const handleDelete = (id: string) => {
+    setMediRecords((prevRecords) =>
+      prevRecords.filter((record) => record.id !== id)
+    );
+  };
+
+  const openEditModal = () => {
+    setIsViewModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setIsViewModalOpen(true);
   };
 
   return (
@@ -87,11 +114,21 @@ const Medications: React.FC = () => {
         ))}
       </div>
       {selectedMediRecord && (
-        <MediInfoModal
-          isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}
-          mediRecord={selectedMediRecord}
-        />
+        <>
+          <ViewMediModal
+            isOpen={isViewModalOpen}
+            onRequestClose={() => setIsViewModalOpen(false)}
+            onEditClick={openEditModal}
+            mediRecord={selectedMediRecord}
+          />
+          <EditMediModal
+            isOpen={isEditModalOpen}
+            onRequestClose={closeEditModal}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+            mediRecord={selectedMediRecord}
+          />
+        </>
       )}
     </div>
   );

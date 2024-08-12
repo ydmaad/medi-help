@@ -12,7 +12,8 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
   const { user } = useAuthStore();
 
   return (
-    <div className={`flex flex-col items-center w-full md:w-1/2 lg:w-1/3 p-8 bg-primary-50 rounded-xl text-primary-500 justify-center ${className}`}>
+    <div className={`flex flex-col items-center w-full md:w-1/2 lg:w-1/3 p-8 bg-blue-50 rounded-xl text-primary-500 justify-center ${className}`}>
+
       <div className="relative w-48 h-48 rounded-full overflow-hidden mb-6">
         <img
           src={user?.avatar ? user.avatar : "/default-avatar.jpg"}
