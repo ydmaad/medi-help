@@ -1,24 +1,44 @@
 import React from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const BgLinear = () => {
+  const { scrollY } = useScroll();
+
+  const bgY = useTransform(scrollY, [0, 1000], [-67, -200]);
+  const bgtopY = useTransform(scrollY, [0, 1000], [-67, -150]);
+  const imgY = useTransform(scrollY, [0, 1000], [-67, -100]);
+  const mascotScale = useTransform(scrollY, [0, 1000], [1, 0.2]);
+  const mascotX = useTransform(scrollY, [0, 1000], [0, -100]);
+  const spaceshipScale = useTransform(scrollY, [0, 1000], [1, 0.2]);
+  const spaceshipX = useTransform(scrollY, [0, 1000], [0, 400]);
+
   return (
-    <div className="relative flex justify-center items-center">
-      <img
+    <div className="relative flex justify-center items-center overflow-hidden h-screen">
+      <motion.img
         src="/mainbg.svg"
         alt="mainbg"
         className="w-full h-[850px] bg-brand-primary-500"
+        style={{ y: bgY }}
       />
-      <img
+      <motion.img
         src="/mascot.svg"
-        alt="bgtop"
+        alt="mascot"
         className="absolute right-16 bottom-48 z-10"
+        style={{ scale: mascotScale, x: mascotX, y: imgY }}
       />
-      <img
+      <motion.img
         src="/spaceship.svg"
-        alt="bgtop"
+        alt="spaceship"
         className="absolute left-32 bottom-48 z-10"
+        style={{ scale: spaceshipScale, x: spaceshipX, y: imgY }}
       />
-      <img src="/bgtop.svg" alt="bgtop" className="absolute bottom-0  w-full" />
+
+      <motion.img
+        src="/bgtop.svg"
+        alt="bgtop"
+        className="absolute bottom-0 w-full"
+        style={{ y: bgtopY }}
+      />
     </div>
   );
 };

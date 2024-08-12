@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import SmCard from "@/components/molecules/SmCard";
 import Title from "@/components/atoms/Title";
+import MagazineTitle from "@/components/atoms/MagazineTitle";
+import Carousel from "@/components/molecules/Carousel";
+import Pagination from "@/components/molecules/Pagination"; // Pagination 컴포넌트 임포트
 
 type Magazine = {
   id: string;
@@ -16,6 +19,8 @@ type Magazine = {
 const MagazinePage = () => {
   const [magazines, setMagazines] = useState<Magazine[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // 페이지당 보여줄 아이템 수
 
   const fetchMagazines = async () => {
     try {
@@ -34,13 +39,41 @@ const MagazinePage = () => {
     fetchMagazines();
   }, []);
 
+  const carouselImages = magazines.map((magazine) => ({
+    src: magazine.imgs_url,
+    alt: magazine.title,
+    title: magazine.title,
+    leftText: magazine.written_by,
+    rightText: magazine.reporting_date,
+    id: magazine.id,
+  }));
+
+  const indexOfLastMagazine = currentPage * itemsPerPage;
+  const indexOfFirstMagazine = indexOfLastMagazine - itemsPerPage;
+  const currentMagazines = magazines.slice(
+    indexOfFirstMagazine,
+    indexOfLastMagazine
+  );
+
+  const totalPages = Math.ceil(magazines.length / itemsPerPage);
+
   return (
     <>
-      <Title>매거진</Title>
+      <Title>👀 메디칼럼</Title>
+      <span className="text-brand-gray-600 font-extrabold mb-[60px]">
+        약에 관련된 모든 이야기를 전해드려요
+      </span>
+      <MagazineTitle text="에디터's PICK!" />
+      {carouselImages.length > 0 ? (
+        <Carousel images={carouselImages} />
+      ) : (
+        <p>슬라이드할 이미지가 없습니다.</p>
+      )}
+      <MagazineTitle text="전체" />
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
         <div className="grid grid-cols-3 gap-4">
-          {magazines.map((magazine) => (
+          {currentMagazines.map((magazine) => (
             <SmCard
               key={magazine.id}
               src={magazine.imgs_url}
@@ -53,6 +86,12 @@ const MagazinePage = () => {
             />
           ))}
         </div>
+        {/* Pagination 컴포넌트 추가 */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </>
   );

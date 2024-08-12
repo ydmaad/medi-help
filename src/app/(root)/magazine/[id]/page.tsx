@@ -1,4 +1,3 @@
-// pages/magazine/[id].tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -59,9 +58,6 @@ const MagazinePage = () => {
         rightText={magazine.reporting_date}
       />
       <div className="flex flex-col p-4 mx-36 mt-[60px] items-center justify-center">
-        <h4 className="text-base text-brand-gray-1000 mb-[36px] ">
-          {magazine.descriptions}
-        </h4>
         <LgImage src={magazine.imgs_url} alt={magazine.title} />
         <h4 className="text-base text-brand-gray-1000 mt-[96px]">
           {magazine.descriptions}

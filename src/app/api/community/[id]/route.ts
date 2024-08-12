@@ -25,6 +25,7 @@ export async function GET(
         contents,
         img_url,
         created_at,
+        category,
         user:user_id (
           nickname,
           avatar,
@@ -108,6 +109,7 @@ export async function PUT(
     const formData = await request.formData();
     const title = formData.get("title") as string;
     const contents = formData.get("contents") as string;
+    const category = formData.get("category") as string;
     // URL 이미지 처리
     const imageUrls = formData.getAll("imageUrl") as string[];
     // 파일 이미지 처리
@@ -145,6 +147,7 @@ export async function PUT(
     const updateData = {
       title,
       contents,
+      category,
       img_url: allImages.join(","),
     };
 

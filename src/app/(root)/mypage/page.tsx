@@ -3,9 +3,7 @@ import React from "react";
 import MediLists from "@/components/templates/mypage/MediLists";
 
 import UserBoard from "@/components/templates/mypage/UserBoard";
-import Post from "@/components/templates/community/Post";
 import Posts from "@/components/templates/mypage/posts";
-
 
 const MyPage: React.FC = () => {
   return (
@@ -15,7 +13,7 @@ const MyPage: React.FC = () => {
         <MediLists />
       </div>
       <div className="mt-8">
-        <Posts/>
+        <Posts />
       </div>
     </div>
   );
