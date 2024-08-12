@@ -40,8 +40,8 @@ const SearchPage = () => {
         throw new Error("네트워크 응답에 문제가 있습니다.");
       }
       const data = await response.json();
-      setAllItems(data.items);
-      setTotalItems(data.totalItems);
+      setAllItems(data.items || []);
+      setTotalItems(data.totalItems || 0);
       setCurrentPage(page);
     } catch (error: any) {
       setError(error.message);
@@ -57,30 +57,14 @@ const SearchPage = () => {
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
     setCurrentPage(1);
+    setAllItems([]);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const filteredItems = searchTerm
-    ? allItems.filter(
-        (item) =>
-          item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.effect.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : allItems;
-
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  const paginatedItems = filteredItems.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  console.log("Filtered Items:", filteredItems);
-  console.log("Paginated Items:", paginatedItems);
-  console.log("Total Items:", totalItems);
-  console.log("Current Page:", currentPage);
 
   if (loading) {
     return (
@@ -100,7 +84,9 @@ const SearchPage = () => {
     );
   }
 
-  if (error) return <div>오류: {error}</div>;
+  if (error) {
+    return <div>오류: {error}</div>;
+  }
 
   return (
     <>
@@ -118,8 +104,8 @@ const SearchPage = () => {
       </div>
       <div className="flex flex-col">
         <div className="grid grid-cols-4 gap-4 mt-4">
-          {filteredItems.length > 0 ? (
-            filteredItems.map((item) => (
+          {allItems.length > 0 ? (
+            allItems.map((item) => (
               <MediCard
                 key={item.id}
                 src={item.itemImage}

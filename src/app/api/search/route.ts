@@ -5,11 +5,13 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const pageNo = parseInt(url.searchParams.get("pageNo") || "1");
   const numOfRows = parseInt(url.searchParams.get("numOfRows") || "20");
+  const searchTerm = url.searchParams.get("searchTerm") || "";
 
   try {
     const { data, error, count } = await supabase
       .from("search_medicine")
       .select("*", { count: "exact" })
+      .ilike("itemName", `%${searchTerm}%`)
       .range((pageNo - 1) * numOfRows, pageNo * numOfRows - 1);
 
     if (error) {
