@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import SearchBar from "@/components/molecules/SearchBar";
 import Pagination from "@/components/molecules/Pagination";
 import MediCard from "@/components/molecules/MediCard";
+import SearchErr from "@/components/atoms/SearchErr";
 
 type Item = {
   itemName: string;
@@ -123,7 +124,9 @@ const SearchPage = () => {
               />
             ))
           ) : (
-            <div className="col-span-4 text-center">검색 결과가 없습니다.</div>
+            <div className="col-span-4 flex justify-center items-center">
+              <SearchErr />
+            </div>
           )}
         </div>
         {totalPages > 1 && (
