@@ -77,6 +77,11 @@ const SearchPage = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
+  console.log("Filtered Items:", filteredItems);
+  console.log("Paginated Items:", paginatedItems);
+  console.log("Total Items:", totalItems);
+  console.log("Current Page:", currentPage);
+
   if (loading) {
     return (
       <div className="flex flex-col items-center">
@@ -100,18 +105,21 @@ const SearchPage = () => {
   return (
     <>
       <div className="flex flex-col items-center">
-        <h1 className="text-[32px] font-bold mb-[26px] mt-[80px]">
+        <h1 className="text-[32px] font-bold mb-[40px] mt-[159px]">
           🔎 궁금한 약을 검색해 보세요
         </h1>
         <div className="mb-[132px]">
           <SearchBar onSearchChange={handleSearchChange} />
         </div>
       </div>
-      <div className="text-lg mb-4">전체({totalItems})</div>
+      <div className="text-[16px] mb-4">
+        <span>전체</span>
+        <span className="text-brand-gray-600">({totalItems})</span>
+      </div>
       <div className="flex flex-col">
         <div className="grid grid-cols-4 gap-4 mt-4">
-          {paginatedItems.length > 0 ? (
-            paginatedItems.map((item) => (
+          {filteredItems.length > 0 ? (
+            filteredItems.map((item) => (
               <MediCard
                 key={item.id}
                 src={item.itemImage}
