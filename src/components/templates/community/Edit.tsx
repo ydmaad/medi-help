@@ -42,7 +42,7 @@ const editPost = async (id: string, formData: FormData) => {
   return await response.json();
 };
 
-const Edit: React.FC<PostEditProps> = ({ id }) => {
+const Edit = ({ id }: PostEditProps) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +64,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
         setTitle(data.title);
         setContents(data.contents);
         if (data.img_url) {
-          const imageUrls = data.img_url.split(",");
+          const imageUrls = data.img_url;
           setCurrentImage(imageUrls);
           setSaveImage(imageUrls);
           // console.log("설정된 이미지 URL:", imageUrls); // 디버깅용
@@ -75,7 +75,6 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
         setLoading(false);
       }
     };
-
     getPost();
   }, [id]);
 
@@ -121,17 +120,19 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
     setSaveImage((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // console.log("현재 게시글:", post);
+  console.log("현재 게시글:", post);
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
+  // console.log("Loading:", loading);
+  // console.log("Error:", error);
+  // console.log("Post:", post);
 
   return (
     <>
       <div className="w-[1000px]  mx-auto p-6">
         <h1 className="text-2xl font-bold  ml-6">글 수정</h1>
-
         <div className="bg-white rounded-lg p-6">
           <input
             type="text"
@@ -160,7 +161,7 @@ const Edit: React.FC<PostEditProps> = ({ id }) => {
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                사진 / 동영상 추가 (최대 50MB)
+                사진 추가 (최대 50MB)
                 <input
                   type="file"
                   multiple

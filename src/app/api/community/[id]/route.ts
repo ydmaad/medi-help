@@ -25,6 +25,7 @@ export async function GET(
         contents,
         img_url,
         created_at,
+        category,
         user:user_id (
           nickname,
           avatar,
@@ -108,6 +109,7 @@ export async function PUT(
     const formData = await request.formData();
     const title = formData.get("title") as string;
     const contents = formData.get("contents") as string;
+    const category = formData.get("category") as string;
     // URL 이미지 처리
     const imageUrls = formData.getAll("imageUrl") as string[];
     // 파일 이미지 처리
@@ -117,7 +119,7 @@ export async function PUT(
     // console.log("기존 이미지", imageUrls);
 
     // 파일 이미지를 supabase storage에 저장
-    let newImageUrl = []; // 스트링만 담긴 배열
+    let newImageUrl = [];
     for (const file of imageFiles) {
       const fileName = `${Date.now()}_${file.name}`;
 
@@ -145,7 +147,8 @@ export async function PUT(
     const updateData = {
       title,
       contents,
-      img_url: allImages.join(","),
+      category,
+      img_url: allImages,
     };
 
     const { data, error } = await supabase

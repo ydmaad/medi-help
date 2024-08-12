@@ -27,14 +27,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "likes_post_id_fkey"
+            foreignKeyName: "bookmark_post_id_fkey"
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "likes_user_id_fkey"
+            foreignKeyName: "bookmark_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -247,26 +247,29 @@ export type Database = {
       }
       posts: {
         Row: {
+          category: string | null
           contents: string
           created_at: string
           id: string
-          img_url: string | null
+          img_url: string[] | null
           title: string
           user_id: string
         }
         Insert: {
+          category?: string | null
           contents: string
           created_at?: string
           id?: string
-          img_url?: string | null
+          img_url?: string[] | null
           title: string
           user_id?: string
         }
         Update: {
+          category?: string | null
           contents?: string
           created_at?: string
           id?: string
-          img_url?: string | null
+          img_url?: string[] | null
           title?: string
           user_id?: string
         }
