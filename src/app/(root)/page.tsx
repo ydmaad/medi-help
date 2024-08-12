@@ -26,7 +26,7 @@ type Post = {
   contents: string;
 };
 
-const Page: React.FC = () => {
+const Page = () => {
   const [magazines, setMagazines] = useState<Magazine[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -65,12 +65,11 @@ const Page: React.FC = () => {
   const limitedMagazines = magazines.slice(0, 3);
   const limitedMainMagazines = magazines.slice(0, 1);
   const limitedSubMagazines = magazines.slice(1, 2);
-
   const limitedPosts = posts.slice(0, 6);
 
   return (
     <>
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 mt-[67px]">
         <BgLinear />
       </div>
       <Hero />
@@ -80,7 +79,7 @@ const Page: React.FC = () => {
       </div>
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 w-full  ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 w-full">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
@@ -123,7 +122,7 @@ const Page: React.FC = () => {
         <LoadMoreButton targetPage="/community" />
       </div>
       <div className="flex justify-center items-center flex-col md:flex-row">
-        <div className="grid grid-cols-1 lg:grid-cols-2  gap-4 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
           {limitedPosts.map((post, index) => (
             <ContentsCard
               key={index}

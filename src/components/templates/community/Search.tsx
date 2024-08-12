@@ -20,7 +20,7 @@ const Search = ({ handleSearch }: SearchProps) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="제목 및 내용, 작성자 등을 검색해세요"
-          className="w-[300px] py-2 pl-10 pr-4 text-sm bg-white border border-brand-primary-300 border-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[300px] py-2 pl-10 pr-4 text-sm bg-white  border-brand-primary-300 border-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <svg
