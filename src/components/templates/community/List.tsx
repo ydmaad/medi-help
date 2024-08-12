@@ -101,11 +101,6 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // img_url을 배열로 만드는 함수
-  // const getImageUrls = (urlArray: string[] | null): string[] => {
-  //   return urlArray || []
-  // };
-
   // 페이지 이동하는 핸들러
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -175,7 +170,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     <>
       <div className="space-y-4">
         <div className="flex justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center ">
             {["전체", "메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
               <button
                 key={category}
@@ -229,7 +224,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                   href={`/community/${item.id}`}
                   className="block hover:bg-gray-50 transition duration-150 ease-in-out"
                 >
-                  <div className="border rounded-2xl p-4 w-[1000px] h-[150px] my-5">
+                  <div className="border rounded-2xl p-4  h-[150px] my-5">
                     <div className="flex justify-between">
                       <div className="flex-grow pr-4">
                         <h2 className="text-xl font-semibold mb-2">
