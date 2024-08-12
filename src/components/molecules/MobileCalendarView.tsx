@@ -71,63 +71,6 @@ const MobileCalendarView = () => {
     }
   }, [values.start_date]);
 
-  // Route Handler 통해서 POST 하는 함수
-  const postCalendar = async (value: ValuesType) => {
-    try {
-      const { data } = await axios.post(`/api/calendar`, value);
-
-      let deletedEvents = events.filter((event) => {
-        return !(
-          event.groupId === value.id &&
-          event.extendProps.medi_time === value.medi_time
-        );
-      });
-
-      if (value.medicine_id.length === 0) {
-        setEvents([...deletedEvents]);
-      }
-
-      if (value.medicine_id.length !== 0) {
-        setEvents([
-          ...deletedEvents,
-          {
-            groupId: value.id,
-            title: `${data[0][0].medications.medi_nickname} 외 ${
-              value.medicine_id.length - 1
-            }개`,
-            start: `${
-              new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
-                .toISOString()
-                .split("T")[0]
-            } ${TIME_OF_TIME[value.medi_time]}`,
-            backgroundColor: COLOR_OF_TIME[value.medi_time],
-            borderColor: COLOR_OF_TIME[value.medi_time],
-            extendProps: {
-              medi_time: value.medi_time,
-              medicineList: value.medicine_id,
-            },
-          },
-        ]);
-      }
-
-      return data;
-    } catch (error) {
-      console.log("Post Error", error);
-    }
-  };
-
-  // 저장 버튼 onClick 함수
-  const handleSubmitButtonClick = () => {
-    postCalendar(values);
-    setEdit(false);
-    setValues({
-      ...values,
-      medi_time: "morning",
-      medicine_id: [],
-      side_effect: "",
-    });
-  };
-
   // 작성 버튼 onClick 함수
   const handleWriteButtonClick = () => {
     let filteredCalendar = calendar.filter((cal) => {

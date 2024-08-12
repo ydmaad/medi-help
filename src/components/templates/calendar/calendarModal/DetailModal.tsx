@@ -30,32 +30,6 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
   const { events, setEvents } = useEventsStore();
   const { edit, setEdit } = useEditStore();
 
-  // useEffect(() => {
-  //   setViewMedicines({ values, setValues, events, setViewEvents });
-  // }, [values.medi_time, values.start_date]);
-
-  // 같은 날짜의 데이터가 이미 있는 경우, id 일치 시키기 : 수정
-  // useEffect(() => {
-  //   let dateFilteredEvent = events.filter((event: EventInput) => {
-  //     let event_date = new Date(
-  //       new Date(String(event.start)).getTime() + DATE_OFFSET
-  //     )
-  //       .toISOString()
-  //       .split("T")[0];
-
-  //     return event_date === values.start_date;
-  //   });
-
-  //   if (dateFilteredEvent.length !== 0) {
-  //     let event_id = dateFilteredEvent[0].groupId as string;
-  //     setValues({ ...values, id: event_id });
-  //   }
-
-  //   if (dateFilteredEvent.length === 0) {
-  //     setValues({ ...values, id: uuid() });
-  //   }
-  // }, [values.medicine_id, values.side_effect]);
-
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);
@@ -154,7 +128,7 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
 
   // 저장하기 버튼 onClick 함수
   const handlePostButtonClick = async () => {
-    const data = await postCalendar(values);
+    postCalendar(values);
 
     setOpenDetailModal(false);
     setEdit(false);
