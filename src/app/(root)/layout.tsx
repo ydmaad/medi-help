@@ -1,13 +1,13 @@
 import { PropsWithChildren } from "react";
 import Header from "@/components/molecules/TopHeader";
+import Footer from "@/components/molecules/Footer";
 
 const RootLayout = ({ children }: PropsWithChildren<{}>) => {
   return (
-    <div className="h-full min-h-screen mt-[67px]">
-      <>
-        <Header />
-        <div className="mx-[140px]">{children}</div>
-      </>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <div className="flex-grow mx-[140px]">{children}</div>
+      <Footer />
     </div>
   );
 };

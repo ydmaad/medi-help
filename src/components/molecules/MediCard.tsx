@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { ImageProvider } from "@/contexts/ImageContext";
 import SmImage from "../atoms/SmImage";
 import CardTitle from "../atoms/CardTitle";
-import CommunitySubTitle from "../atoms/CommunitySubTitle"; // CommunitySubTitle 임포트
+import CommunitySubTitle from "../atoms/CommunitySubTitle";
 import { BarTextProvider } from "@/contexts/BarTextContext";
 import BarText from "../atoms/BarText";
 
@@ -41,7 +41,7 @@ const MediCard = ({
     <ImageProvider value={{ src, alt, title, subtitle }}>
       <BarTextProvider value={barTextValue}>
         <div
-          className="w-[231px] h-[257px] border border-brand-gray-50 rounded-lg p-2 mb-[56px] cursor-pointer"
+          className="w-full  aspect-[231/257] border border-brand-gray-50 rounded-lg p-6 mb-[56px] cursor-pointer"
           onClick={handleClick}
         >
           <SmImage width={183} height={100} />
