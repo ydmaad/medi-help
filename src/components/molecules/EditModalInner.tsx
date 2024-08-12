@@ -45,7 +45,7 @@ const EditModalInner = () => {
         onChange={handleDateChange}
         className="px-24 py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
       />
-      <FilterComponent values={values} setValues={setValues} />
+      <FilterComponent />
       <div className="w-full h-32 min-h-32 grid grid-cols-2 gap-2 overflow-y-auto">
         {medicines
           .filter((medi: MedicinesType) => {

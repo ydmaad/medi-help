@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { ValueType } from "@/types/calendar";
+import { ValuesType } from "@/types/calendar";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const values: ValueType = await req.json();
+    const values: ValuesType = await req.json();
     const { id, side_effect, start_date, user_id, medicine_id, medi_time } =
       values;
 
