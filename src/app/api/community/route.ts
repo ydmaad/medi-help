@@ -11,7 +11,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get("page") || "1");
   const perPage = parseInt(searchParams.get("perPage") || "6");
+  // 페이지 시작 인덱스
   const offset = (page - 1) * perPage;
+  const sortOption = searchParams.get("sort") || "최신순";
 
   try {
     // 총 게시글 수 조회
@@ -23,8 +25,8 @@ export async function GET(request: NextRequest) {
       throw countError;
     }
 
-    // 각 게시글 가져오기
-    const { data: posts, error } = await supabase
+    // 정렬 옵션에 따른 쿼리 설정
+    let query = supabase
       .from("posts")
       .select(
         `
@@ -33,14 +35,32 @@ export async function GET(request: NextRequest) {
         contents,
         img_url,
         created_at,
+        category,
         user:user_id (
           nickname,
           avatar
         )
       `
       )
-      .range(offset, offset + perPage - 1)
-      .order("created_at", { ascending: false });
+      .range(offset, offset + perPage - 1);
+
+    // 정렬 옵션 적용
+    switch (sortOption) {
+      case "최신순":
+        query = query.order("created_at", { ascending: false });
+        break;
+      case "오래된순":
+        query = query.order("created_at", { ascending: true });
+        break;
+      case "인기순":
+        // 인기순은 북마크 수로 정렬하므로, 먼저 북마크 수를 가져와야 합니다.
+        // 이 부분은 아래에서 처리합니다.
+        break;
+      default:
+        query = query.order("created_at", { ascending: false });
+    }
+
+    const { data: posts, error } = await query;
 
     if (error) {
       return NextResponse.json(
@@ -57,40 +77,44 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 각 개시글을 map을 돌려 댓글 수 가져오기
-    const postsWitchCommentCount = await Promise.all(
+    // 댓글 수와 북마크 수 가져오기
+    const postsWithCounts = await Promise.all(
       posts.map(async (post) => {
-        const { count, error } = await supabase
-          .from("comments")
-          .select("id", { count: "exact" })
-          .eq("post_id", post.id);
-        if (error) {
-          console.error("댓글 수 조회 실패 :", error);
-          return { ...post, comment_count: 0 };
-        }
-        return { ...post, comment_count: count };
+        const [commentCount, bookmarkCount] = await Promise.all([
+          supabase
+            .from("comments")
+            .select("id", { count: "exact" })
+            .eq("post_id", post.id)
+            .then(({ count, error }) => (error ? 0 : count)),
+          supabase
+            .from("bookmark")
+            .select("id", { count: "exact" })
+            .eq("post_id", post.id)
+            .then(({ count, error }) => (error ? 0 : count)),
+        ]);
+
+        return {
+          ...post,
+          comment_count: commentCount,
+          bookmark_count: bookmarkCount,
+        };
       })
     );
 
-    // 각 게시글 map 돌려 북마크 수 가져오기
-    const postsWitchBookmarkCount = await Promise.all(
-      postsWitchCommentCount.map(async (post) => {
-        const { count, error } = await supabase
-          .from("bookmark")
-          .select("id", { count: "exact" })
-          .eq("post_id", post.id);
-        if (error) {
-          console.error("북마크 수 조회 실패 : ", error);
-          return { ...post, bookmark_count: 0 };
-        }
-        return { ...post, bookmark_count: count };
-      })
-    );
+    // 인기순 정렬 적용
+    let sortedPosts = postsWithCounts;
+    if (sortOption === "인기순") {
+      sortedPosts.sort((a, b) => {
+        const bookmarkA = a.bookmark_count ?? 0;
+        const bookmarkB = b.bookmark_count ?? 0;
+        return bookmarkB - bookmarkA;
+      });
+    }
 
     return NextResponse.json(
       {
         message: "조회 성공",
-        data: postsWitchBookmarkCount,
+        data: sortedPosts,
         totalPosts: count,
       },
       { status: 200 }
@@ -123,9 +147,10 @@ export async function POST(request: NextRequest) {
     // formData에서 필드 추출
     const title = formData.get("title") as string;
     const contents = formData.get("contents") as string;
+    const category = formData.get("category") as string;
 
     // title, contents 유효성 검사
-    if (!title || !contents) {
+    if (!title || !contents || !category) {
       return NextResponse.json({ error: "제목과 내용은 필수입니다." });
     }
 
@@ -172,6 +197,7 @@ export async function POST(request: NextRequest) {
       title,
       contents,
       user_id: userId,
+      category,
       img_url: img_url.join(","),
     };
 
