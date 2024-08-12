@@ -89,7 +89,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       }
     };
     fetchData();
-  }, [searchTerm, currentPage, sortOption, selectCategory, setPosts]);
+  }, [searchTerm, currentPage, sortOption, selectCategory]);
 
   // console.log(posts);
 
@@ -102,9 +102,9 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   );
 
   // img_url을 배열로 만드는 함수
-  const getImageUrls = (urlString: string | null): string[] => {
-    return urlString ? urlString.split(",").map((url) => url.trim()) : [];
-  };
+  // const getImageUrls = (urlArray: string[] | null): string[] => {
+  //   return urlArray || []
+  // };
 
   // 페이지 이동하는 핸들러
   const handlePageChange = (page: number) => {
@@ -221,7 +221,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
         </div>
         {filteredPosts.length > 0 ? (
           filteredPosts.map((item) => {
-            const imageUrls = getImageUrls(item.img_url);
+            // const imageUrls = getImageUrls(item.img_url);
             const timeAgo = formatTimeAgo(item.created_at);
             return (
               <li key={item.id} className="block">
@@ -251,17 +251,19 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                           </div>
                         </div>
                       </div>
-                      {imageUrls.length > 0 && (
-                        <div className="w-24 h-24 flex-shrink-0">
-                          <Image
-                            src={imageUrls[0]}
-                            alt="Post image"
-                            width={96}
-                            height={96}
-                            className="object-cover w-full h-full rounded"
-                          />
-                        </div>
-                      )}
+                      {item.img_url &&
+                        item.img_url.length > 0 &&
+                        Array.isArray(item.img_url) && (
+                          <div className="w-24 h-24 flex-shrink-0">
+                            <Image
+                              src={item.img_url[0]}
+                              alt="Post image"
+                              width={96}
+                              height={96}
+                              className="object-cover w-full h-full rounded"
+                            />
+                          </div>
+                        )}
                     </div>
                   </div>
                 </Link>
