@@ -89,7 +89,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       }
     };
     fetchData();
-  }, [searchTerm, currentPage, sortOption, selectCategory, setPosts]);
+  }, [searchTerm, currentPage, sortOption, selectCategory]);
 
   // console.log(posts);
 
@@ -100,11 +100,6 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // img_url을 배열로 만드는 함수
-  const getImageUrls = (urlString: string | null): string[] => {
-    return urlString ? urlString.split(",").map((url) => url.trim()) : [];
-  };
 
   // 페이지 이동하는 핸들러
   const handlePageChange = (page: number) => {
@@ -175,7 +170,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     <>
       <div className="space-y-4">
         <div className="flex justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center ">
             {["전체", "메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
               <button
                 key={category}
@@ -221,7 +216,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
         </div>
         {filteredPosts.length > 0 ? (
           filteredPosts.map((item) => {
-            const imageUrls = getImageUrls(item.img_url);
+            // const imageUrls = getImageUrls(item.img_url);
             const timeAgo = formatTimeAgo(item.created_at);
             return (
               <li key={item.id} className="block">
@@ -229,7 +224,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                   href={`/community/${item.id}`}
                   className="block hover:bg-gray-50 transition duration-150 ease-in-out"
                 >
-                  <div className="border rounded-2xl p-4 w-[1000px] h-[150px] my-5">
+                  <div className="border rounded-2xl p-4  h-[150px] my-5">
                     <div className="flex justify-between">
                       <div className="flex-grow pr-4">
                         <h2 className="text-xl font-semibold mb-2">
@@ -251,17 +246,19 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                           </div>
                         </div>
                       </div>
-                      {imageUrls.length > 0 && (
-                        <div className="w-24 h-24 flex-shrink-0">
-                          <Image
-                            src={imageUrls[0]}
-                            alt="Post image"
-                            width={96}
-                            height={96}
-                            className="object-cover w-full h-full rounded"
-                          />
-                        </div>
-                      )}
+                      {item.img_url &&
+                        item.img_url.length > 0 &&
+                        Array.isArray(item.img_url) && (
+                          <div className="w-24 h-24 flex-shrink-0">
+                            <Image
+                              src={item.img_url[0]}
+                              alt="Post image"
+                              width={96}
+                              height={96}
+                              className="object-cover w-full h-full rounded"
+                            />
+                          </div>
+                        )}
                     </div>
                   </div>
                 </Link>
