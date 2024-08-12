@@ -9,7 +9,9 @@ const EditPage = () => {
   const postId = params.id as string;
   return (
     <>
-      <Edit id={postId} />
+      <div className="mt-40">
+        <Edit id={postId} />
+      </div>
     </>
   );
 };
