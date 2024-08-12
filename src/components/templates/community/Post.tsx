@@ -32,6 +32,7 @@ const fetchPost = async ({
     image.forEach((img) => {
       formData.append("image", img);
     });
+    3;
 
     const response = await fetch(`/api/community/`, {
       method: "POST",
@@ -61,6 +62,10 @@ const Post = () => {
   // 게시글을 전송을 요청하는 핸들러
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (!selectCategory) {
+      alert("카테고리를 선택해주세요.");
+      return;
+    }
     // console.log("전송할 데이터!! : ", { title, contents, image });
     await fetchPost({ title, contents, image, category: selectCategory });
   };
@@ -89,7 +94,7 @@ const Post = () => {
       <div className="w-[1000px]  mx-auto p-6">
         <h1 className="text-2xl font-bold  ml-6 my-6">커뮤니티 글쓰기</h1>
         <div className="flex space-x-2 ml-6">
-          {["카테고리 01", "카테고리 02", "카테고리 03"].map((category) => (
+          {["메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
             <button
               key={category}
               onClick={() => handleCategorySelect(category)}
