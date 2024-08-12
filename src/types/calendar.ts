@@ -1,8 +1,8 @@
-export type ValueType = {
+export type ValuesType = {
   id: string;
   user_id: string;
   medi_time: string;
-  side_effect: string;
+  side_effect: string | null;
   start_date: string;
   medicine_id: string[];
 };
@@ -18,6 +18,6 @@ export type MedicinesType = {
   createdAt: string;
   userId: string;
   dayOfWeek: string[];
-  notificationTime: string[];
   repeat: boolean;
+  notification_time: string[];
 };

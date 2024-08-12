@@ -119,7 +119,7 @@ export async function PUT(
     // console.log("기존 이미지", imageUrls);
 
     // 파일 이미지를 supabase storage에 저장
-    let newImageUrl = []; // 스트링만 담긴 배열
+    let newImageUrl = [];
     for (const file of imageFiles) {
       const fileName = `${Date.now()}_${file.name}`;
 
@@ -148,7 +148,7 @@ export async function PUT(
       title,
       contents,
       category,
-      img_url: allImages.join(","),
+      img_url: allImages,
     };
 
     const { data, error } = await supabase

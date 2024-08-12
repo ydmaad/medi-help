@@ -5,7 +5,7 @@ import axios from "axios";
 import AddMediModal from "../calendarModal/AddMediModal";
 import EditMediModal from "../../mypage/myPageModal/EditMediModal";
 import { useAuthStore } from "@/store/auth";
-import PillComponent from "@/components/molecules/MediScheduleCard";
+// import PillComponent from "@/components/molecules/MediScheduleCard";
 import MediModal from "../../mypage/myPageModal/MediModal";
 
 export const MOCK_DATA = [

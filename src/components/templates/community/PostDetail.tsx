@@ -191,9 +191,6 @@ const PostDetail = ({ id }: PostDetailProps) => {
     }
   };
 
-  // img_url을 배열로 만듦
-  const imageUrl = post?.img_url ? post.img_url.split(",") : [];
-
   // 내용 표시 - 단락 구분
   const formatContent = (content: string) => {
     return content.split("\n").map((paragraph, index) => (
@@ -303,7 +300,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
 
         {/* 여러 이미지 표시 */}
         <div className="p-5 flex flex-wrap gap-4">
-          {imageUrl.map((url, index) => (
+          {post.img_url?.map((url, index) => (
             <div key={index}>
               <Image
                 src={url.trim()}

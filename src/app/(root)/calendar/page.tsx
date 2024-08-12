@@ -1,5 +1,3 @@
-"use client";
-
 import CalendarView from "@/components/templates/calendar/calendarView/CalendarView";
 import CalendarCheckbox from "@/components/templates/calendar/calendarView/CalendarCheckbox";
 import React from "react";
