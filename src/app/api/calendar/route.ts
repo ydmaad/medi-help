@@ -61,21 +61,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const { data: BridgeDeleteData, error: BridgeDeleteError } = await supabase
+      .from("calendar_medicine")
+      .delete()
+      .eq("calendar_id", id)
+      .eq("medi_time", medi_time);
+
+    if (BridgeDeleteError) {
+      return NextResponse.json(
+        { error: BridgeDeleteError.message },
+        { status: 500 }
+      );
+    }
+
     if (medicine_id.length !== 0) {
-      const { data: BridgeDeleteData, error: BridgeDeleteError } =
-        await supabase
-          .from("calendar_medicine")
-          .delete()
-          .eq("calendar_id", id)
-          .eq("medi_time", medi_time);
-
-      if (BridgeDeleteError) {
-        return NextResponse.json(
-          { error: BridgeDeleteError.message },
-          { status: 500 }
-        );
-      }
-
       const { data: BridgeInsertData, error: BridgeInsertError } =
         await supabase
           .from("calendar_medicine")
@@ -91,7 +90,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json([BridgeInsertData]);
     }
 
-    return NextResponse.json([CalendarData]);
+    return NextResponse.json([CalendarData, BridgeDeleteData]);
   } catch (error) {
     console.log(error);
   }

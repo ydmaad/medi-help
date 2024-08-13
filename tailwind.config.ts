@@ -42,8 +42,7 @@ const config: Config = {
       },
     },
     screens: {
-      mobile: "375px",
-      desktop: "1280px",
+      desktop: "768px",
     },
   },
   plugins: [],
