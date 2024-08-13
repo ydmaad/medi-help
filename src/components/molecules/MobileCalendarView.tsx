@@ -127,7 +127,7 @@ const MobileCalendarView = () => {
                 })
                 .map((medicine: MedicinesType, idx: number) => {
                   if (!medicine) {
-                    return <div>복용 중인 약이 없습니다.</div>;
+                    return <div key={idx}>복용 중인 약이 없습니다.</div>;
                   }
                   return <PillComponent key={idx} medicine={medicine} />;
                 })}
