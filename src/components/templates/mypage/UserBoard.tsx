@@ -12,9 +12,11 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
   const { user } = useAuthStore();
 
   return (
-    <div className={`flex flex-col items-center w-full md:w-1/2 lg:w-1/3 p-8 bg-blue-50 rounded-xl text-primary-500 justify-center ${className}`}>
-
-      <div className="relative w-48 h-48 rounded-full overflow-hidden mb-6">
+    <div
+      className={`flex flex-col items-center w-full md:w-2/3 lg:w-1/2 p-12 bg-[#e9f5fe] rounded-xl text-primary-500 justify-center ${className}`}
+      style={{ height: 'fit-content' }} // Ensure height adjusts to content
+    >
+      <div className="relative w-60 h-60 rounded-full overflow-hidden mb-8"> {/* Adjusted size */}
         <img
           src={user?.avatar ? user.avatar : "/default-avatar.jpg"}
           alt="프로필 이미지"
@@ -22,11 +24,13 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
         />
       </div>
       <div className="flex flex-col items-center">
-        <div className="text-3xl font-bold text-primary-500">
+        <div className="text-4xl font-bold text-primary-500 mb-2"> {/* Added margin-bottom */}
           {user?.nickname}님
         </div>
-        <div className="text-lg text-gray-800">{user?.email}</div>
-        <button className="w-full min-w-36 py-2 mt-4 flex items-center justify-center gap-2 bg-primary-500 text-white rounded-sm cursor-pointer hover:bg-primary-600 ease-in duration-300">
+        <div className="text-xl text-gray-800 mb-6"> {/* Added margin-bottom */}
+          {user?.email}
+        </div>
+        <button className="w-full min-w-40 py-3 flex items-center justify-center gap-2 bg-[#279ef9] text-[#f5f6f7] rounded-full cursor-pointer hover:bg-[#1e7fe0] ease-in duration-300"> {/* Updated styles */}
           <TbPencil className="text-2xl" />
           프로필 수정
         </button>

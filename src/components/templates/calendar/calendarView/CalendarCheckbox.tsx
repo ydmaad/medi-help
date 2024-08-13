@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/auth";
 import axios from "axios";
@@ -25,13 +27,17 @@ const CalendarCheckbox = () => {
           // 데이터를 가공하여 각 날짜별로 체크된 약들의 목록을 추출
           const allCheckedMedicines: MedicineType[] = [];
           data.forEach((event: EventInput) => {
-            event.calendar_medicine.forEach((medicine: CalendarMedicineType) => {
-              allCheckedMedicines.push(medicine.medications);
-            });
+            event.calendar_medicine.forEach(
+              (medicine: CalendarMedicineType) => {
+                allCheckedMedicines.push(medicine.medications);
+              }
+            );
           });
 
           setCheckedMedicines(allCheckedMedicines);
-          setSelectedMedicines(allCheckedMedicines.map((medicine) => medicine.id)); // 기본값을 체크된 상태로 설정
+          setSelectedMedicines(
+            allCheckedMedicines.map((medicine) => medicine.id)
+          ); // 기본값을 체크된 상태로 설정
         } catch (error) {
           console.log("Error fetching checked medicines", error);
         }
@@ -55,9 +61,9 @@ const CalendarCheckbox = () => {
         <img src="/pencil.png" alt="연필 아이콘" className="w-8 h-8 mr-2" />
         복약 달력
       </h1>
-      <div className="ml-4"> {/* 마진을 주기 위해 감싸는 div */}
+      <div className="ml-4"> 
         <h2 className="text-gray-600 text-lg mb-2">복용 약 필터</h2>
-        <div className="max-h-32 overflow-y-auto"> {/* 3-4개 이후 스크롤을 위해 max-height 설정 */}
+        <div className="max-h-32 overflow-y-auto"> 
           <ul>
             {checkedMedicines.map((medicine) => (
               <li key={medicine.id} className="flex items-center mb-3">

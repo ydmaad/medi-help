@@ -1,5 +1,3 @@
-// src/components/templates/mypage/Medications.tsx
-
 "use client";
 
 import React, { useEffect, useState } from 'react';

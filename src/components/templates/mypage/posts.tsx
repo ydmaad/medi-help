@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { supabase } from "@/utils/supabase/client";
 
 interface Post {
@@ -51,16 +50,16 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="w-full mx-auto pt-16"> {/* Added pt-16 for more top padding */}
-        <h2 className="text-xl mb-6 text-gray-1000">내가 쓴 글</h2> {/* Changed color */}
-        <div className="flex flex-col gap-6"> 
+    <div className="w-full max-w-custom mx-auto px-4 py-4"> {/* Apply custom max-width */}
+      <div className="pt-16">
+        <h2 className="text-xl mb-6 text-gray-1000">내가 쓴 글</h2>
+        <div className="flex flex-col gap-6">
           {posts.map((post) => (
             <div
               key={post.id}
-              className="bg-gray-50 rounded-xl p-4"
+              className="bg-gray-50 rounded-xl p-4 max-w-full" // Ensures the post container is full width
             >
-              <h3 className="text-xl font-semibold mb-2 text-gray-1000">{post.title}</h3> {/* Changed color */}
+              <h3 className="text-xl font-semibold mb-2 text-gray-1000">{post.title}</h3>
               <p className="text-gray-600 mb-2">{post.contents}</p>
               <p className="text-gray-500 text-sm">{formatDate(post.created_at)}</p>
             </div>

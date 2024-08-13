@@ -1,9 +1,9 @@
 "use client";
 
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import { supabase } from '@/utils/supabase/client';
 import MediModal from './myPageModal/MediModal';  // Import the new MediModal component
 
@@ -27,11 +27,15 @@ interface MediRecord {
   repeat?: boolean;
 }
 
-const MediLists: React.FC = () => {
+interface MediListsProps {
+  className?: string; // Add className prop
+}
+
+const MediLists: React.FC<MediListsProps> = ({ className }) => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
   const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
+  const router = useRouter(); // Initialize router
 
   useEffect(() => {
     const fetchMediRecords = async () => {
@@ -58,9 +62,8 @@ const MediLists: React.FC = () => {
   const displayedMediRecords = mediRecords.slice(0, 3);
 
   const handleShowAllClick = () => {
-    router.push('/mypage/Medications');
+    router.push('/mypage/Medications'); // Navigate to the Medications page
   };
-
 
   const handleEditClick = () => {
     console.log("Edit clicked");
@@ -68,50 +71,61 @@ const MediLists: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full md:w-1/2 lg:w-2/3 p-4 bg-gray-50 rounded-2xl">
-      <div className="flex justify-between items-center mb-6"> {/* Increased bottom margin */}
-        <div className="flex items-center">
-          <h2 className="text-xl cursor-pointer text-gray-1000" onClick={handleShowAllClick}> {/* Changed color */}
-            나의 복용 약 <span className="text-primary-500">{mediRecords.length}개</span> {/* Changed color */}
-          </h2>
-          {mediRecords.length > 3 && (
-            <button
+    <div className={`flex flex-col items-center w-full ${className}`}>
+      {/* Wrapper for title and cards */}
+      <div className="bg-[#f5f6f7] p-6 rounded-2xl w-full max-w-7xl h-full" style={{ height: '500px' }}> {/* Set height */}
+        {/* Title section */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-1000 text-left">
+            나의 복용 약 
+            <span className="text-[#279ef9] text-3xl font-bold ml-2">{mediRecords.length}개</span>
+            <button 
               onClick={handleShowAllClick}
-              className="text-primary-500 hover:underline ml-2" 
+              className="text-[#279ef9] text-3xl font-bold ml-1"
             >
               &gt;
             </button>
-          )}
+          </h2>
+        </div>
+
+        {/* Cards section */}
+        <div className="flex gap-8"> {/* Adjust gap */}
+          {displayedMediRecords.map((record) => (
+            <div
+              key={record.id}
+              className="bg-white p-4 rounded-2xl flex flex-col items-start w-64 min-w-[16rem] h-80" // Set height for consistency
+            >
+              <div className="relative w-full h-32 mb-4 rounded-xl overflow-hidden">
+                {record.itemImage ? (
+                  <Image
+                    src={record.itemImage}
+                    alt={record.medi_name || "기본 이미지"}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-xl"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-xl">
+                    <p className="text-gray-500">이미지 없음</p>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col items-start w-full">
+                <p className="text-xl font-semibold text-gray-1000 mb-3 text-left">
+                  {record.medi_nickname}
+                </p>
+                <p className="text-lg text-gray-800 mb-3 text-left">
+                  {record.medi_name}
+                </p>
+                <p className="text-lg mb-4 text-[#279ef9] text-left">
+                  {record.start_date} ~ {record.end_date}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> {/* Increased gap */}
-        {displayedMediRecords.map((record) => (
-          <div
-            key={record.id}
-            className="bg-gray-50 p-4 rounded-2xl flex flex-col items-start cursor-pointer"
-           
-          >
-            {record.itemImage ? (
-              <div className="relative w-full h-40 mb-4 rounded-xl overflow-hidden"> {/* Added bottom margin */}
-                <Image
-                  src={record.itemImage}
-                  alt={record.medi_name || "기본 이미지"}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-xl"
-                />
-              </div>
-            ) : (
-              <div className="w-full h-40 mb-4 flex items-center justify-center bg-gray-200 rounded-xl"> {/* Added bottom margin */}
-                <p className="text-gray-500">이미지 없음</p>
-              </div>
-            )}
-            <p className="text-lg font-semibold text-gray-1000 mb-2">{record.medi_nickname}</p> {/* Added bottom margin */}
-            <p className="text-sm text-gray-800 mb-1">{record.medi_name}</p> {/* Changed color and added bottom margin */}
-            <p className="text-sm text-primary-500 mb-2">{record.start_date} ~ {record.end_date}</p> {/* Changed color and added bottom margin */}
-          </div>
-        ))}
-      </div>
+
       {selectedMediRecord && (
         <MediModal
           isOpen={isModalOpen}
