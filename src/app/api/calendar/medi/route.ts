@@ -90,11 +90,6 @@ export async function POST(req: NextRequest) {
       notes: newMediRecord.notes,
     });
 
-    // await sendEmail({
-    //   to: user.data.email,
-    //   subject,
-    //   text: message,
-    // });
 
     return NextResponse.json({ medicationRecords: data }, { status: 201 });
   } catch (err: unknown) {
