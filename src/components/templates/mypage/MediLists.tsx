@@ -1,11 +1,11 @@
 "use client";
 
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/utils/supabase/client';
-import MediInfoModal from './myPageModal/MediInfoModal';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
+import MediModal from "./myPageModal/MediModal";
 
 interface MediRecord {
   id: string;
@@ -22,11 +22,19 @@ interface MediRecord {
   created_at: string;
   itemImage: string | null;
   user_id: string;
+  notification_time?: string[];
+  day_of_week?: string[];
+  repeat?: boolean;
 }
 
-const MediLists: React.FC = () => {
+interface MediListsProps {
+  className?: string;
+}
+
+const MediLists: React.FC<MediListsProps> = ({ className }) => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
-  const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
+  const [selectedMediRecord, setSelectedMediRecord] =
+    useState<MediRecord | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
 
@@ -42,7 +50,9 @@ const MediLists: React.FC = () => {
       const userId = session.data.session.user.id;
 
       try {
-        const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
+        const response = await axios.get(
+          `/api/mypage/medi/names?user_id=${userId}`
+        );
         setMediRecords(response.data);
       } catch (error) {
         console.error("Error fetching medi records:", error);
@@ -55,64 +65,79 @@ const MediLists: React.FC = () => {
   const displayedMediRecords = mediRecords.slice(0, 3);
 
   const handleShowAllClick = () => {
-    router.push('/mypage/Medications');
+    router.push("/mypage/Medications");
   };
 
-  const handleMediClick = (record: MediRecord) => {
-    setSelectedMediRecord(record);
-    setIsModalOpen(true);
+  const handleEditClick = () => {
+    console.log("Edit clicked");
   };
 
   return (
-    <div className="flex flex-col w-full md:w-1/2 lg:w-2/3 p-4 bg-white rounded-md shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center">
-          <h2 className="text-xl cursor-pointer" onClick={handleShowAllClick}>
-            현재 복용 중인 약 <span className="text-blue-500">{mediRecords.length}개</span>
-          </h2>
-          {mediRecords.length > 3 && (
+    <div
+      className={`flex flex-col items-center w-full ${className}`}
+      style={{ height: "100%" }}
+    >
+      <div className="bg-[#f5f6f7] p-6 rounded-2xl w-full h-full">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-1000 text-left">
+            나의 복용 약
+            <span className="text-[#279ef9] text-3xl font-bold ml-2">
+              {mediRecords.length}개
+            </span>
             <button
               onClick={handleShowAllClick}
-              className="text-blue-500 hover:underline ml-2"
+              className="text-[#279ef9] text-3xl font-bold ml-1"
             >
               &gt;
             </button>
-          )}
+          </h2>
+        </div>
+
+        <div className="flex gap-4 justify-between w-full">
+          {/* 요소들이 가로로 표시되도록 flex-wrap을 사용하지 않고 설정 */}
+          {displayedMediRecords.map((record) => (
+            <div
+              key={record.id}
+              className="bg-white p-4 rounded-2xl flex flex-col items-start w-[30%] min-w-[300px] h-80"
+              // 너비를 고정하여 모든 요소가 가로로 표시되도록 설정
+            >
+              <div className="relative w-full h-32 mb-4 rounded-xl overflow-hidden">
+                {record.itemImage ? (
+                  <Image
+                    src={record.itemImage}
+                    alt={record.medi_name || "기본 이미지"}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-xl"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-xl">
+                    <p className="text-gray-500">이미지 없음</p>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col items-start w-full">
+                <p className="text-xl font-semibold text-gray-1000 mb-3 text-left">
+                  {record.medi_nickname}
+                </p>
+                <p className="text-lg text-gray-800 mb-3 text-left">
+                  {record.medi_name}
+                </p>
+                <p className="text-lg mb-4 text-[#279ef9] text-left">
+                  {record.start_date} ~ {record.end_date}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-        {displayedMediRecords.map((record) => (
-          <div
-            key={record.id}
-            className="bg-gray-100 p-4 rounded shadow mb-2 flex flex-col items-start"
-            onClick={() => handleMediClick(record)}
-          >
-            {record.itemImage ? (
-              <Image
-                src={record.itemImage}
-                alt={record.medi_name || "기본 이미지"}
-                width={200}
-                height={200}
-                className="w-full mb-2 object-contain"
-              />
-            ) : (
-              <div className="w-full h-40 mb-2 flex items-center justify-center bg-gray-200">
-                <p className="text-gray-500">이미지 없음</p>
-              </div>
-            )}
-            <p className="text-lg font-semibold">{record.medi_nickname}</p>
-            <p className="text-sm text-gray-500 mt-1">{record.medi_name}</p>
-            <p className="text-sm text-gray-500">
-              {record.start_date} ~ {record.end_date}
-            </p>
-          </div>
-        ))}
-      </div>
+
       {selectedMediRecord && (
-        <MediInfoModal
+        <MediModal
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
           mediRecord={selectedMediRecord}
+          onEditClick={handleEditClick}
         />
       )}
     </div>
