@@ -1,9 +1,12 @@
+// src/components/templates/mypage/Medications.tsx
 "use client";
 
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import axios from 'axios';
 import { supabase } from '@/utils/supabase/client';
+import Image from 'next/image';
+import EditMediModal from './myPageModal/EditMediModal';
+import MediModal from './myPageModal/MediModal';
 
 interface MediRecord {
   id: string;
@@ -18,24 +21,27 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
-  itemImage: string | null;
+  itemImage?: string | null;
   user_id: string;
+  notification_time?: string[];
+  day_of_week?: string[];
+  repeat?: boolean;
 }
 
 const Medications: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
+  const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMediRecords = async () => {
       const session = await supabase.auth.getSession();
-
       if (!session.data.session) {
         console.error("Auth session missing!");
         return;
       }
-
       const userId = session.data.session.user.id;
-
       try {
         const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
         setMediRecords(response.data);
@@ -43,46 +49,86 @@ const Medications: React.FC = () => {
         console.error("Error fetching medi records:", error);
       }
     };
-
     fetchMediRecords();
   }, []);
 
+  const handleMediClick = (record: MediRecord) => {
+    setSelectedMediRecord(record);
+    setIsViewModalOpen(true);
+  };
+
+  const handleUpdate = (updatedMediRecord: MediRecord) => {
+    setMediRecords((prevRecords) =>
+      prevRecords.map((record) =>
+        record.id === updatedMediRecord.id ? updatedMediRecord : record
+      )
+    );
+  };
+
+  const handleDelete = (id: string) => {
+    setMediRecords((prevRecords) =>
+      prevRecords.filter((record) => record.id !== id)
+    );
+  };
+
+  const openEditModal = () => {
+    setIsViewModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setIsViewModalOpen(true);
+  };
+
   return (
-    <div className="max-w-screen-xl mx-auto px-8 py-4 bg-white rounded-md shadow-md">
-      <h2 className="text-xl mb-4">전체 약 목록</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="max-w-screen-xl mx-auto px-32 py-4">
+      <h2 className="text-3xl font-bold mb-6 mt-20 text-gray-1000 text-left">복약 리스트</h2>
+      <div className="grid grid-cols-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {mediRecords.map((record) => (
           <div
             key={record.id}
-            className="bg-gray-100 p-4 rounded shadow mb-2 flex flex-col items-start"
+            className="bg-white p-4 rounded-2xl flex flex-col items-start cursor-pointer"
+            onClick={() => handleMediClick(record)}
           >
             {record.itemImage ? (
-              <Image
-                src={record.itemImage}
-                alt={record.medi_name || "기본 이미지"}
-                width={200}
-                height={200}
-                className="w-full mb-2 object-contain"
-              />
+              <div className="relative w-72 h-48 mb-4 rounded-xl overflow-hidden">
+                <Image
+                  src={record.itemImage}
+                  alt={record.medi_name || "기본 이미지"}
+                  layout="fill"
+                  objectFit="cover"
+                  className="absolute inset-0 rounded-xl"
+                />
+              </div>
             ) : (
-              <div className="w-full h-40 mb-2 flex items-center justify-center bg-gray-200">
+              <div className="relative w-72 h-48 mb-4 flex items-center justify-center bg-gray-200 rounded-xl overflow-hidden">
                 <p className="text-gray-500">이미지 없음</p>
               </div>
             )}
-            <p className="text-lg font-semibold">{record.medi_nickname}</p>
-            <p className="text-sm text-gray-500 mt-1"> 약 이름 | {record.medi_name}</p>
-            <p className="text-sm text-gray-500">
-             복용 기간 |  {record.start_date} ~ {record.end_date}
-            </p>
-            <p className="text-sm text-gray-500 mt-1">메모 | {record.notes}</p>
-            <div className="flex space-x-2 mt-2">
-              {record.times.morning && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">아침</span>}
-              {record.times.afternoon && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">점심</span>}
-              {record.times.evening && <span className="text-xs bg-blue-200 text-blue-800 rounded px-2 py-1">저녁</span>}
-            </div>
+             <p className="text-xl font-semibold text-gray-1000 mb-3">{record.medi_nickname}</p>
+            <p className="text-md text-gray-800 mb-3">{record.medi_name}</p>
+            <p className="text-md text-[#279ef9] mb-3"> {record.start_date} ~ {record.end_date}</p>
           </div>
         ))}
       </div>
+      {selectedMediRecord && (
+        <>
+          <MediModal
+            isOpen={isViewModalOpen}
+            onRequestClose={() => setIsViewModalOpen(false)}
+            onEditClick={openEditModal}
+            mediRecord={selectedMediRecord}
+          />
+          <EditMediModal
+            isOpen={isEditModalOpen}
+            onRequestClose={closeEditModal}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+            mediRecord={selectedMediRecord}
+          />
+        </>
+      )}
     </div>
   );
 };

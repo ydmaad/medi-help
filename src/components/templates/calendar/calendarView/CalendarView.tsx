@@ -7,6 +7,7 @@ import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import axios from "axios";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import DetailModal from "../calendarModal/DetailModal";
+import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import { MedicinesType } from "@/types/calendar";
@@ -15,13 +16,14 @@ import FullCalendar from "@fullcalendar/react";
 import {
   useCalendarStore,
   useEventsStore,
-  useMedicinesStore,
+  useMedicinesStore, useMediNameFilter,
   useValuesStore,
 } from "@/store/calendar";
 import uuid from "react-uuid";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
+  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
   const [viewEvents, setViewEvents] = useState<boolean>(false);
 
   const { user } = useAuthStore();
@@ -29,6 +31,7 @@ const CalendarView = () => {
   const { calendar, setCalendar } = useCalendarStore();
   const { events, setEvents } = useEventsStore();
   const { medicines, setMedicines } = useMedicinesStore();
+  const { mediNames, setMediNames } = useMediNameFilter();
 
   type CalendarType = Tables<"calendar">;
   type BridgeType = Tables<"calendar_medicine">;
@@ -87,11 +90,15 @@ const CalendarView = () => {
                     }
                   );
 
-                  let countMedicines = eventList.length;
+                  const newEventList = eventList.filter(e => {
+                    return mediNames.includes(e.medications.medi_nickname)
+                  })
+
+                  let countMedicines = newEventList.length;
 
                   if (countMedicines !== 0) {
                     let medicineNickname =
-                      eventList[0].medications.medi_nickname;
+                        newEventList[0].medications.medi_nickname;
                     newEvents.push({
                       groupId: event.id,
                       title:
@@ -99,12 +106,12 @@ const CalendarView = () => {
                           ? `${medicineNickname} 외 ${countMedicines - 1}개`
                           : `${medicineNickname}`,
                       start: `${event.start_date} ${
-                        TIME_OF_TIME[eventList[0].medi_time]
+                        TIME_OF_TIME[newEventList[0].medi_time]
                       }`,
-                      backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
+                      backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
                       extendProps: {
-                        medi_time: eventList[0].medi_time,
-                        medicineList: eventList.map(
+                        medi_time: newEventList[0].medi_time,
+                        medicineList: newEventList.map(
                           (medicine: any) => medicine.medications.id
                         ),
                       },
@@ -126,7 +133,7 @@ const CalendarView = () => {
     };
 
     getEventsData();
-  }, [user]);
+  }, [user, mediNames]);
 
   useEffect(() => {
     const getCalendarData = async () => {
@@ -228,10 +235,18 @@ const CalendarView = () => {
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
       />
+      <AddMediModal
+        isOpen={openAddMediModal}
+        onRequestClose={() => setOpenAddMediModal(false)}
+        onAdd={(newMediRecord) => {
+          // 새로운 약 기록 추가 후 처리 로직
+          console.log("New Medi Record:", newMediRecord);
+        }}
+      />
       <div className="w-full flex flex-col mt-20">
-        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
+        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px]">
           <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
-            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-1 text-sm max-[414px]:text-xs ">
+            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-1 text-sm max-[414px]:text-xs">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
@@ -259,6 +274,13 @@ const CalendarView = () => {
               className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
             >
               기록추가
+            </button>
+
+            <button
+              onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
+              className="w-24 px-3 py-1 bg-blue-500 text-sm text-white border border-blue-500 rounded-md hover:bg-white hover:text-blue-500 ease-in duration-300 max-[414px]:hidden"
+            >
+              나의 약 등록
             </button>
           </div>
 

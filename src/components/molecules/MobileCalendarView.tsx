@@ -124,8 +124,7 @@ const MobileCalendarView = () => {
           <div className="flex flex-col gap-4">
             <FilterComponent />
             <div className="flex flex-col items-center w-full gap-2">
-              {medicines
-                .filter((medi: MedicinesType) => {
+              {medicines?.filter((medi: MedicinesType) => {
                   return medi.time[values.medi_time] === true;
                 })
                 .map((medicine: MedicinesType, idx: number) => {
