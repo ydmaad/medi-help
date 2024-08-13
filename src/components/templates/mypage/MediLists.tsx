@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation'; // Import useRouter
-import { supabase } from '@/utils/supabase/client';
-import MediModal from './myPageModal/MediModal';  // Import the new MediModal component
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
+import MediModal from "./myPageModal/MediModal";
 
 interface MediRecord {
   id: string;
@@ -28,14 +28,15 @@ interface MediRecord {
 }
 
 interface MediListsProps {
-  className?: string; // Add className prop
+  className?: string;
 }
 
 const MediLists: React.FC<MediListsProps> = ({ className }) => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
-  const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
+  const [selectedMediRecord, setSelectedMediRecord] =
+    useState<MediRecord | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
 
   useEffect(() => {
     const fetchMediRecords = async () => {
@@ -49,7 +50,9 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
       const userId = session.data.session.user.id;
 
       try {
-        const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
+        const response = await axios.get(
+          `/api/mypage/medi/names?user_id=${userId}`
+        );
         setMediRecords(response.data);
       } catch (error) {
         console.error("Error fetching medi records:", error);
@@ -62,24 +65,26 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
   const displayedMediRecords = mediRecords.slice(0, 3);
 
   const handleShowAllClick = () => {
-    router.push('/mypage/Medications'); // Navigate to the Medications page
+    router.push("/mypage/Medications");
   };
 
   const handleEditClick = () => {
     console.log("Edit clicked");
-    // Handle edit functionality here
   };
 
   return (
-    <div className={`flex flex-col items-center w-full ${className}`}>
-      {/* Wrapper for title and cards */}
-      <div className="bg-[#f5f6f7] p-6 rounded-2xl w-full max-w-7xl h-full" style={{ height: '500px' }}> {/* Set height */}
-        {/* Title section */}
+    <div
+      className={`flex flex-col items-center w-full ${className}`}
+      style={{ height: "100%" }}
+    >
+      <div className="bg-[#f5f6f7] p-6 rounded-2xl w-full h-full">
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-gray-1000 text-left">
-            나의 복용 약 
-            <span className="text-[#279ef9] text-3xl font-bold ml-2">{mediRecords.length}개</span>
-            <button 
+            나의 복용 약
+            <span className="text-[#279ef9] text-3xl font-bold ml-2">
+              {mediRecords.length}개
+            </span>
+            <button
               onClick={handleShowAllClick}
               className="text-[#279ef9] text-3xl font-bold ml-1"
             >
@@ -88,12 +93,13 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           </h2>
         </div>
 
-        {/* Cards section */}
-        <div className="flex gap-8"> {/* Adjust gap */}
+        <div className="flex gap-4 justify-between w-full">
+          {/* 요소들이 가로로 표시되도록 flex-wrap을 사용하지 않고 설정 */}
           {displayedMediRecords.map((record) => (
             <div
               key={record.id}
-              className="bg-white p-4 rounded-2xl flex flex-col items-start w-64 min-w-[16rem] h-80" // Set height for consistency
+              className="bg-white p-4 rounded-2xl flex flex-col items-start w-[30%] min-w-[300px] h-80"
+              // 너비를 고정하여 모든 요소가 가로로 표시되도록 설정
             >
               <div className="relative w-full h-32 mb-4 rounded-xl overflow-hidden">
                 {record.itemImage ? (
