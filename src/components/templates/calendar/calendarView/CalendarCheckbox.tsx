@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/auth";
 import axios from "axios";
 import { Tables } from "@/types/supabase";
 import { EventInput } from "@fullcalendar/core";
+import {useEventsStore, useMedicinesStore, useMediNameFilter} from "@/store/calendar";
 
 type MedicineType = Tables<"medications">;
 type CalendarMedicineType = {
@@ -15,6 +16,8 @@ type CalendarMedicineType = {
 
 const CalendarCheckbox = () => {
   const { user } = useAuthStore();
+  const { mediNames, setMediNames } = useMediNameFilter();
+  const { events, setEvents } = useEventsStore();
   const [checkedMedicines, setCheckedMedicines] = useState<MedicineType[]>([]);
   const [selectedMedicines, setSelectedMedicines] = useState<string[]>([]);
 
@@ -37,7 +40,8 @@ const CalendarCheckbox = () => {
           setCheckedMedicines(allCheckedMedicines);
           setSelectedMedicines(
             allCheckedMedicines.map((medicine) => medicine.id)
-          ); // 기본값을 체크된 상태로 설정
+          );
+          setMediNames(allCheckedMedicines.map((medicine) => medicine.medi_nickname || ""));
         } catch (error) {
           console.log("Error fetching checked medicines", error);
         }
@@ -47,13 +51,22 @@ const CalendarCheckbox = () => {
     fetchCheckedMedicines();
   }, [user]);
 
-  const handleCheckboxChange = (medicineId: string) => {
+  const handleCheckboxChange = (medicine: MedicineType) => {
     setSelectedMedicines((prev) =>
-      prev.includes(medicineId)
-        ? prev.filter((id) => id !== medicineId)
-        : [...prev, medicineId]
+      prev.includes(medicine.id)
+        ? prev.filter((id) => id !== medicine.id)
+        : [...prev, medicine.id]
     );
+    setMediNames(mediNames.includes(medicine.medi_nickname) ? mediNames.filter((medi_nickname) => medi_nickname !== medicine.medi_nickname)
+        : [...mediNames, medicine.medi_nickname])
   };
+
+  let nonAllowedDuplicates: MedicineType[] = [];
+  checkedMedicines.forEach((medicine) => {
+    if (!nonAllowedDuplicates.find(e => e.medi_nickname === medicine.medi_nickname)) {
+      nonAllowedDuplicates.push(medicine)
+    }
+  })
 
   return (
     <div className="h-full flex flex-col mt-12 overflow-y-auto">
@@ -65,14 +78,14 @@ const CalendarCheckbox = () => {
         <h2 className="text-gray-600 text-lg mb-2">복용 약 필터</h2>
         <div className="max-h-32 overflow-y-auto"> 
           <ul>
-            {checkedMedicines.map((medicine) => (
+            {nonAllowedDuplicates.map((medicine) => (
               <li key={medicine.id} className="flex items-center mb-3">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
                     className="sr-only"
                     checked={selectedMedicines.includes(medicine.id)}
-                    onChange={() => handleCheckboxChange(medicine.id)}
+                    onChange={() => handleCheckboxChange(medicine)}
                   />
                   <div
                     className={`w-5 h-5 flex items-center justify-center border rounded ${
