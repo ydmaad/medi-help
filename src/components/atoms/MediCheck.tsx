@@ -1,18 +1,19 @@
 "use client";
-import { MedicinesType, ValueType } from "@/types/calendar";
+import { MedicinesType } from "@/types/calendar";
 import React, { useEffect, useState } from "react";
 import { NAME_OF_TIME } from "@/constant/constant";
+import { useValuesStore } from "@/store/calendar";
 
 interface Props {
-  values: ValueType;
-  setValues: React.Dispatch<React.SetStateAction<ValueType>>;
   medicine: MedicinesType;
   idx: number;
 }
-const MediCheck = ({ values, setValues, medicine, idx }: Props) => {
+const MediCheck = ({ medicine, idx }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
   const { id, time, name } = medicine;
+
+  const { values, setValues } = useValuesStore();
 
   useEffect(() => {
     let timeOfMedicine = Object.keys(time).filter((times) => {
@@ -32,16 +33,12 @@ const MediCheck = ({ values, setValues, medicine, idx }: Props) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setValues((prev) => {
-        return { ...prev, medicine_id: [...values.medicine_id, id] };
-      });
+      setValues({ ...values, medicine_id: [...values.medicine_id, id] });
     } else {
       let deletedMediName = values.medicine_id.filter(
         (medi_id) => medi_id !== id
       );
-      setValues((prev) => {
-        return { ...prev, medicine_id: deletedMediName };
-      });
+      setValues({ ...values, medicine_id: deletedMediName });
     }
   };
 
@@ -62,19 +59,15 @@ const MediCheck = ({ values, setValues, medicine, idx }: Props) => {
               checked ? "bg-[#BCE1FD]" : "bg-[#E0E2E4]"
             } inline-block mr-1`}
           />
-          {mediTimes.join(", ")}
+          {NAME_OF_TIME[values.medi_time]}
           <span
-            className={
-              checked
-                ? "text-[#279EF9] ml-1 hidden "
-                : "text-[#7C7F86] ml-1 hidden "
-            }
+            className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
           >
             {`오후 12:00`}
           </span>
         </div>
         <div
-          className={`h-full text-sm truncate ${
+          className={`w-[100px] h-full text-sm truncate ${
             checked ? "text-brand-gray-1000" : "text-brand-gray-600"
           }`}
         >

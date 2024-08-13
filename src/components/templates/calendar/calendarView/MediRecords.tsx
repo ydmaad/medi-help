@@ -3,10 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddMediModal from "../calendarModal/AddMediModal";
-import EditMediModal from "../calendarModal/EditMediModal";
-import ViewMediModal from "../calendarModal/ViewMediModal";
 import { useAuthStore } from "@/store/auth";
-import PillComponent from "@/components/molecules/MediScheduleCard";
 
 export const MOCK_DATA = [
   {
@@ -208,29 +205,6 @@ const MediRecords: React.FC = () => {
         나의 약 등록
       </button>
 
-      {selectedMediRecord && (
-        <ViewMediModal
-          key={selectedMediRecord.id}
-          isOpen={isViewModalOpen}
-          onRequestClose={() => setIsViewModalOpen(false)}
-          onEditClick={() => {
-            setIsViewModalOpen(false);
-            setIsEditModalOpen(true);
-          }}
-          mediRecord={selectedMediRecord}
-        />
-      )}
-
-      {selectedMediRecord && (
-        <EditMediModal
-          key={selectedMediRecord.id + "-edit"}
-          isOpen={isEditModalOpen}
-          onRequestClose={() => setIsEditModalOpen(false)}
-          onDelete={handleDeleteMediRecord}
-          onUpdate={handleUpdateMediRecord}
-          mediRecord={selectedMediRecord}
-        />
-      )}
 
       <AddMediModal
         isOpen={isAddModalOpen}

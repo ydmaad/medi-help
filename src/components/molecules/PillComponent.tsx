@@ -1,28 +1,21 @@
 "use client";
 import { NAME_OF_TIME } from "@/constant/constant";
-import { MedicinesType, ValueType } from "@/types/calendar";
-import { setViewMedicines } from "@/utils/calendar/calendarFunc";
-import { EventInput } from "@fullcalendar/core";
+import { useValuesStore } from "@/store/calendar";
+import { MedicinesType } from "@/types/calendar";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface Props {
-  events: EventInput[];
-  values: ValueType;
-  setValues: React.Dispatch<React.SetStateAction<ValueType>>;
   medicine: MedicinesType;
 }
 
-const PillComponent: React.FC<Props> = ({
-  values,
-  setValues,
-  medicine,
-  events,
-}: Props) => {
+const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
-  const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [notification, setNotification] = useState<string[]>([""]);
   const { id, time, name } = medicine;
+
+  const { values, setValues } = useValuesStore();
 
   useEffect(() => {
     let timeOfMedicine = Object.keys(time).filter((times) => {
@@ -41,21 +34,44 @@ const PillComponent: React.FC<Props> = ({
   }, [values.medicine_id]);
 
   useEffect(() => {
-    setViewMedicines({ events, values, setValues, setViewEvents });
-  }, [values.start_date, values.medi_time]);
+    getNotificationTime();
+  }, [values.start_date]);
+
+  const getNotificationTime = () => {
+    if (medicine.notification_time.length !== 0) {
+      medicine.notification_time.map((time) => {
+        let hour = time.split(":")[0];
+        let minute = time.split(":")[1];
+        if (Number(hour) === 0) {
+          setNotification((prev) => [...prev, `오전 12:${minute}`]);
+        }
+
+        if (Number(hour) > 12) {
+          setNotification((prev) => [
+            ...prev,
+            `오후 0${Number(hour) - 12}:${minute}`,
+          ]);
+        }
+
+        if (Number(hour) > 0 && Number(hour) <= 12) {
+          setNotification((prev) => [...prev, `오전 ${hour}:${minute}`]);
+        }
+      });
+    }
+  };
 
   return (
     <div
-      className={`w-full flex py-2 px-4 rounded-[4px] ${
+      className={`w-full h-14 flex py-2 px-2 rounded-[4px] ${
         checked ? "bg-[#E9F5FE]" : "bg-[#F5F6F7]"
       }`}
     >
       <Image
         src={checked ? "/pill-filled.svg" : "/pill-inactive.svg"}
         alt="pill"
-        width={24}
-        height={24}
-        className=" w-auto mr-2"
+        width={6}
+        height={6}
+        className="w-auto mr-2"
       />
       <div className="flex flex-col gap-0.5 font-normal">
         <div
@@ -65,18 +81,19 @@ const PillComponent: React.FC<Props> = ({
         >
           <div
             className={`w-2 h-2 rounded-full ${
-              checked ? "bg-[#BCE1FD]" : "bg-[#E0E2E4]"
+              checked ? "bg-[#bce1fd]" : "bg-[#E0E2E4]"
             } inline-block mr-1`}
           />
-          {mediTimes.join(", ")}
+          {NAME_OF_TIME[values.medi_time]}
           <span
             className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
           >
-            {`오후 12:00`}
+            {/* {notification[Object.keys(NAME_OF_TIME).indexOf(values.medi_time)]} */}
+            {notification}
           </span>
         </div>
         <div
-          className={`text-[14px] ${
+          className={`text-[14px] w-[108px] truncate ${
             checked ? "" : "line-through text-[#7C7F86]"
           }`}
         >
