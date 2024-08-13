@@ -238,7 +238,7 @@ const Comments = ({ postId }: CommentsProps) => {
 
   return (
     <>
-      <div className="max-w-[1000px] p-4 bg-white  border border-gray-300  rounded-lg">
+      <div className="max-w-[1000px] mx-4 p-4 bg-white  border border-gray-300  rounded-lg">
         <div className="flex items-center mb-3">
           <Image
             src={user?.avatar || "/default-avatar.jpg"}
@@ -251,7 +251,7 @@ const Comments = ({ postId }: CommentsProps) => {
         </div>
 
         <textarea
-          className="w-full px-2  focus:outline-none  resize-none"
+          className="w-full text-xs px-2  focus:outline-none  resize-none"
           placeholder={`댓글을 입력해주세요.\n게시글과 무관한 악성 댓글은 삭제될 수 있습니다.`}
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -271,7 +271,7 @@ const Comments = ({ postId }: CommentsProps) => {
         return (
           <div
             key={ment.id}
-            className="my-4 p-4 border border-gray-300 rounded-lg  max-w-[1000px] relative"
+            className="my-4 p-4 mx-4 border border-gray-300 rounded-lg  max-w-[1000px] relative"
           >
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
@@ -342,19 +342,44 @@ const Comments = ({ postId }: CommentsProps) => {
                     {user?.id === ment.user.id && (
                       <>
                         <button
-                          onClick={() => handleDelete(ment.id, ment.user.id)}
-                          className="text-sm text-gray-500 pr-2"
+                          onClick={() =>
+                            handleEdit(ment.id, ment.comment, ment.user.id)
+                          }
+                          className="text-sm text-gray-500 pr-2 hidden desktop:flex"
                         >
-                          삭제
+                          수정
                         </button>
-                        <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
                         <button
                           onClick={() =>
                             handleEdit(ment.id, ment.comment, ment.user.id)
                           }
-                          className="text-sm text-gray-500 pl-2"
+                          className="text-sm text-gray-500 pr-2 flex desktop:hidden"
                         >
-                          수정
+                          <Image
+                            src="/commentUpBtn.svg"
+                            alt="댓글수정버튼"
+                            width={20}
+                            height={20}
+                          ></Image>
+                        </button>
+
+                        <div className="mx-4 h-4.5 w-px bg-gray-300 hidden desktop:flex "></div>
+                        <button
+                          onClick={() => handleDelete(ment.id, ment.user.id)}
+                          className="text-sm text-gray-500 pl-2 hidden desktop:flex"
+                        >
+                          삭제
+                        </button>
+                        <button
+                          onClick={() => handleDelete(ment.id, ment.user.id)}
+                          className="text-sm text-gray-500 pl-2 flex desktop:hidden"
+                        >
+                          <Image
+                            src="/commentDelBtn.svg"
+                            alt="댓글삭제버튼"
+                            width={20}
+                            height={20}
+                          ></Image>
                         </button>
                       </>
                     )}

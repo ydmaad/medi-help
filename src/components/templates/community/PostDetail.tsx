@@ -245,11 +245,27 @@ const PostDetail = ({ id }: PostDetailProps) => {
               {post.category}
             </span>
           </div>
-          <div className="flex items-center ">
-            <h1 className="text-xl font-bold  px-3 desktop:text-[32px]">
-              {post.title}
-            </h1>
-            <button onClick={handleBookmark} className="flex itmes-center">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center">
+              <h1 className="text-xl font-bold px-3 desktop:text-[32px]">
+                {post.title}
+              </h1>
+              <button
+                onClick={handleBookmark}
+                className="hidden desktop:flex items-center ml-2"
+              >
+                <Image
+                  src={isBookmark ? "/bookmark.svg" : "/emptyBookmark.svg"}
+                  alt="북마크 아이콘"
+                  width={40}
+                  height={40}
+                />
+              </button>
+            </div>
+            <button
+              onClick={handleBookmark}
+              className="flex desktop:hidden mr-4 items-center"
+            >
               <Image
                 src={isBookmark ? "/bookmark.svg" : "/emptyBookmark.svg"}
                 alt="북마크 아이콘"

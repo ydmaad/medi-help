@@ -91,7 +91,7 @@ const Post = () => {
 
   return (
     <>
-      <div className="w-[1000px]  mx-auto p-6">
+      <div className="mx-auto">
         <h1 className="text-2xl font-bold  ml-6 my-6">커뮤니티 글쓰기</h1>
         <div className="flex space-x-2 ml-6">
           {["메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
@@ -108,17 +108,17 @@ const Post = () => {
             </button>
           ))}
         </div>
-        <div className="bg-white  rounded-lg p-6">
+        <div className="bg-white w-[335px] desktop:w-[996px] rounded-lg items-center">
           <input
             type="text"
             placeholder="제목을 입력하세요"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
+            className="w-[335px] desktop:w-[996px] px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
           />
 
           {/* 이미지 첨부, 내용 인풋 */}
-          <div className="border border-gray-100 rounded-md my-7">
+          <div className="border border-gray-100 rounded-md my-7 ">
             {/* 이미지 첨부 부분 */}
             <div className="mt-4">
               <label className="inline-flex items-center cursor-pointer text-gray-600 ml-3">
