@@ -7,6 +7,7 @@ import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import axios from "axios";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
 import DetailModal from "../calendarModal/DetailModal";
+import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import { MedicinesType } from "@/types/calendar";
@@ -22,6 +23,7 @@ import uuid from "react-uuid";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
+  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
   const [viewEvents, setViewEvents] = useState<boolean>(false);
 
   const { user } = useAuthStore();
@@ -228,10 +230,27 @@ const CalendarView = () => {
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
       />
-      <div className="flex flex-col mt-20">
-        <div className="relative desktop:w-[812px] aspect-square p-[10px] w-11/12 min-w-[364px] ">
+      <AddMediModal
+        isOpen={openAddMediModal}
+        onRequestClose={() => setOpenAddMediModal(false)}
+        onAdd={(newMediRecord) => {
+          // 새로운 약 기록 추가 후 처리 로직
+          console.log("New Medi Record:", newMediRecord);
+          setMedicines([
+            ...medicines,
+            {
+              id: newMediRecord.id,
+              name: newMediRecord.medi_nickname,
+              time: newMediRecord.times,
+              notification_time: newMediRecord.notification_time,
+            },
+          ]);
+        }}
+      />
+      <div className="w-full flex flex-col mt-20">
+        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px]">
           <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
-            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-[5px] text-sm max-[414px]:text-xs ">
+            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-1 text-sm max-[414px]:text-xs">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
@@ -253,13 +272,21 @@ const CalendarView = () => {
                 저녁
               </div>
             </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
+                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:bg-brand-primary-500 hover:text-white ease-in duration-300 max-[414px]:hidden outline-none"
+              >
+                약 등록
+              </button>
 
-            <button
-              onClick={handleButtonClick}
-              className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 hidden desktop:block"
-            >
-              기록추가
-            </button>
+              <button
+                onClick={handleButtonClick}
+                className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-brand-primary-500 rounded-[4px] hover:bg-white hover:text-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
+              >
+                기록추가
+              </button>
+            </div>
           </div>
 
           <FullCalendar

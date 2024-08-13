@@ -17,7 +17,6 @@ import {
 } from "@/store/calendar";
 import { EventInput } from "@fullcalendar/core";
 import uuid from "react-uuid";
-import { fi } from "date-fns/locale";
 
 const MobileCalendarView = () => {
   const [tabNumber, setTabNumber] = useState<number>(0);
@@ -40,8 +39,6 @@ const MobileCalendarView = () => {
       let filteredCalendar = calendar.filter((cal) => {
         return cal.start_date === today;
       });
-
-      console.log(filteredCalendar);
 
       let editList = events?.filter((event) => {
         return event.start?.toString().split(" ")[0] === today;
@@ -123,7 +120,7 @@ const MobileCalendarView = () => {
         {tabNumber === 0 ? (
           <div className="flex flex-col gap-4">
             <FilterComponent />
-            <div className="flex flex-col items-center w-full h-32 min-h-32 overflow-y-auto gap-2">
+            <div className="flex flex-col items-center w-full gap-2">
               {medicines
                 ?.filter((medi: MedicinesType) => {
                   return medi.time[values.medi_time] === true;
