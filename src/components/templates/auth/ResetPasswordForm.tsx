@@ -49,6 +49,8 @@ export const ResetPasswordForm: React.FC = () => {
       <form onSubmit={handleResetPassword}>
         {/* 이메일 입력 필드 */}
         <AuthInput
+          id="email"
+          name="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

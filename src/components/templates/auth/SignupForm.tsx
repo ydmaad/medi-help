@@ -1,5 +1,6 @@
 // 목적: 회원가입 폼의 전체 구조와 로직을 관리하는 컴포넌트
 // src/components/templates/auth/SignupForm.tsx
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { AuthInput } from "../../atoms/AuthInput";
@@ -7,7 +8,7 @@ import { AuthButton } from "../../atoms/AuthButton";
 import { AuthPrimaryButton } from "../../atoms/AuthPrimaryButton";
 import { AuthErrorMessage } from "../../atoms/AuthErrorMessage";
 import { AuthPasswordInput } from "../../molecules/AuthPasswordInput";
-import { AuthCheckbox } from "../../molecules/AuthCheckbox";
+import { AuthTermsCheckbox } from "../../molecules/AuthTermsCheckbox";
 import { supabase } from "@/utils/supabase/client";
 
 type SignupFormProps = {
@@ -79,15 +80,26 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
     setIsEmailChecked(false);
     setIsEmailAvailable(false);
   }, [email]);
+  // useEffect(() => {
+  //   setIsEmailChecked(false);
+  //   setIsEmailAvailable(false);
+  // }, [email]);
 
   // 닉네임 유효성 검사
   useEffect(() => {
     if (nickname !== "") {
       setNicknameValid(nickname.length >= 2 && nickname.length <= 6);
     } else {
-      setNicknameValid(null);
+      setNicknameValid(null); // 닉네임이 비어있을 때는 null로 설정
     }
   }, [nickname]);
+  // useEffect(() => {
+  //   if (nickname !== "") {
+  //     setNicknameValid(nickname.length >= 2 && nickname.length <= 6);
+  //   } else {
+  //     setNicknameValid(null);
+  //   }
+  // }, [nickname]);
 
   // 이메일 유효성 검사
   useEffect(() => {
@@ -122,21 +134,38 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      nicknameValid &&
-      emailValid &&
-      isEmailChecked &&
-      isEmailAvailable &&
-      passwordValid &&
-      passwordConfirmValid &&
-      agreeTerms &&
-      agreePrivacy
-    ) {
-      onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+    let errors = [];
+    if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
+    if (!emailValid || !isEmailChecked || !isEmailAvailable)
+      errors.push("이메일을 확인해주세요.");
+    if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
+    if (!passwordConfirmValid)
+      errors.push("비밀번호 확인이 일치하지 않습니다.");
+    if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
+
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
     } else {
-      alert("모든 필드를 올바르게 입력하고 이메일 중복 확인을 해주세요.");
+      onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
     }
   };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (
+  //     nicknameValid &&
+  //     emailValid &&
+  //     isEmailChecked &&
+  //     isEmailAvailable &&
+  //     passwordValid &&
+  //     passwordConfirmValid &&
+  //     agreeTerms &&
+  //     agreePrivacy
+  //   ) {
+  //     onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+  //   } else {
+  //     alert("모든 필드를 올바르게 입력하고 이메일 중복 확인을 해주세요.");
+  //   }
+  // };
 
   return (
     <div className="w-full max-w-md">
@@ -152,6 +181,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           </label>
           <AuthInput
             id="nickname"
+            name="nickname" // name 속성 추가
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
@@ -181,6 +211,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           <div className="flex items-center space-x-2">
             <AuthInput
               id="email"
+              name="nickname" // name 속성 추가
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -221,6 +252,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           </label>
           <AuthPasswordInput
             id="password"
+            name="password" // name 속성 추가
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해 주세요."
@@ -243,6 +275,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           </label>
           <AuthPasswordInput
             id="passwordConfirm"
+            name="passwordConfirm" // name 속성 추가
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             placeholder="다시 한번 입력해 주세요."
@@ -260,7 +293,23 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         </div>
 
         {/* 약관 동의 체크박스 */}
-        <AuthCheckbox
+        <AuthTermsCheckbox
+          id="agreeTerms"
+          checked={agreeTerms}
+          onChange={setAgreeTerms}
+          label="이용약관 동의 (필수)"
+          modalTitle="이용약관"
+          modalContent="여기에 이용약관 내용을 넣으세요..."
+        />
+        <AuthTermsCheckbox
+          id="agreePrivacy"
+          checked={agreePrivacy}
+          onChange={setAgreePrivacy}
+          label="개인정보 처리방침 동의 (필수)"
+          modalTitle="개인정보 처리방침"
+          modalContent="여기에 개인정보 처리방침 내용을 넣으세요..."
+        />
+        {/* <AuthCheckbox
           id="agreeTerms"
           checked={agreeTerms}
           onChange={(e) => setAgreeTerms(e.target.checked)}
@@ -271,7 +320,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           checked={agreePrivacy}
           onChange={(e) => setAgreePrivacy(e.target.checked)}
           label="메디헬프 서비스 이용약관 동의 (필수)"
-        />
+        /> */}
 
         {/* 에러 메시지 */}
         {error && <AuthErrorMessage message={error} />}

@@ -69,6 +69,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 이메일 입력 필드 */}
         <AuthInput
+          id="email" // id 추가
+          name="email" // name 추가
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -76,7 +78,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         />
         {/* 비밀번호 입력 필드 */}
         <AuthPasswordInput
-          id="password"
+          id="password" // id 추가
+          name="password" // name 추가
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="비밀번호를 입력하세요"
