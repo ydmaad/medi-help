@@ -1,56 +1,27 @@
-// src/app/api/mypage/medi/[id]/route.ts
-
-import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/utils/supabase/client";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
+export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { id } = params;
   try {
-    const { data, error } = await supabase.from("medications").select().eq("id", id);
+    const { id } = params;
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    return NextResponse.json(data, { status: 200 });
-  } catch (error) {
-    console.log("supabase error", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
-  try {
-    const { data: updatedData, error } = await req.json();
-
-    if (!updatedData) {
-      return NextResponse.json({ error: "No data provided" }, { status: 400 });
+    if (!id) {
+      NextResponse.json("ID is required.");
     }
 
-    const { error: updateError } = await supabase
-      .from("medications")
-      .update(updatedData)
+    const { data, error } = await supabase
+      .from("calendar")
+      .delete()
       .eq("id", id);
 
-    if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
+    if (error) {
+      NextResponse.json({ error: error.message });
     }
-
-    return NextResponse.json({ message: "Record updated successfully" }, { status: 200 });
+    return NextResponse.json(data);
   } catch (error) {
-    console.log("supabase error", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.log("supabase delete error", error);
   }
 }
