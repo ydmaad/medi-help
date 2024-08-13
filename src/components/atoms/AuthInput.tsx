@@ -7,6 +7,7 @@ type AuthInputProps = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
+  required?: boolean; // required를 선택적 prop으로 추가
   className?: string;
 };
 
@@ -16,6 +17,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   value,
   onChange,
   placeholder,
+  required = false, // 기본값을 false로 설정
   className = "",
 }) => (
   <input
@@ -24,6 +26,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
     value={value}
     onChange={onChange}
     placeholder={placeholder}
+    required={required}
     className={
       "w-full px-3 py-2 border border-gray-300 rounded-md ${className}`.trim()"
     }

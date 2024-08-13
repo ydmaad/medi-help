@@ -229,7 +229,7 @@ const CalendarView = () => {
         setOpenDetailModal={setOpenDetailModal}
       />
       <div className="flex flex-col mt-20">
-        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
+        <div className="relative desktop:w-[812px] aspect-square p-[10px] w-11/12 min-w-[364px] ">
           <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
             <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-[5px] text-sm max-[414px]:text-xs ">
               <div className="flex items-center">
@@ -256,7 +256,7 @@ const CalendarView = () => {
 
             <button
               onClick={handleButtonClick}
-              className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
+              className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 hidden desktop:block"
             >
               기록추가
             </button>

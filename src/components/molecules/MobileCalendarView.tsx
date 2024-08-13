@@ -90,9 +90,9 @@ const MobileCalendarView = () => {
 
   return (
     <>
-      <div className="max-[414px]:w-[344px] min-[415px]:hidden p-[10px] mx-[10px] border border-[#F5F6F7] bg-[#FBFBFB]">
+      <div className="w-11/12 min-w-[344px] desktop:hidden p-[10px] mx-[10px] border border-[#F5F6F7] bg-[#FBFBFB]">
         <div className="flex justify-between items-center mt-2 mb-4 px-1">
-          <div className="flex justify-between gap-6 text-[16px] text-[#18181b] font-normal">
+          <div className="flex justify-between gap-6 text-[14px] text-brand-gray-600 font-normal">
             {selectedDate}
           </div>
           <button
@@ -123,9 +123,9 @@ const MobileCalendarView = () => {
         {tabNumber === 0 ? (
           <div className="flex flex-col gap-4">
             <FilterComponent />
-            <div className="flex flex-col items-center w-full gap-2">
+            <div className="flex flex-col items-center w-full h-32 min-h-32 overflow-y-auto gap-2">
               {medicines
-                .filter((medi: MedicinesType) => {
+                ?.filter((medi: MedicinesType) => {
                   return medi.time[values.medi_time] === true;
                 })
                 .map((medicine: MedicinesType, idx: number) => {
