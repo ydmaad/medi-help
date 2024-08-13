@@ -19,8 +19,8 @@
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.45.1",
     "axios": "^1.7.2",
-    "date-fns": "^3.6.0",
-    "framer-motion": "^11.3.24",
+    "date-fns": "framer-motion^3.6.0",
+    "": "^11.3.24",
     "next": "14.2.5",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.14",
@@ -29,6 +29,7 @@
     "react-icons": "^5.2.1",
     "react-modal": "^3.16.1",
     "react-uuid": "^2.0.0",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "web-push": "^3.6.7",
     "zustand": "^4.5.4"
   },

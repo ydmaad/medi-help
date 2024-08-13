@@ -169,13 +169,13 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex justify-between">
-          <div className="flex items-center ">
+        <div className="flex justify-between mx-5">
+          <div className="flex items-center overflow-x-auto scrollbar-hide desktop:overflow-x-visible whitespace-nowrap  pb-2 desktop:pb-0">
             {["전체", "메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
               <button
                 key={category}
                 onClick={() => handleCategorySelect(category)}
-                className={`px-4 py-2 mr-2 rounded-full ${
+                className={`text-xs desktop:text-sm px-4 py-2 mr-2 rounded-full flex-shrink-0 ${
                   selectCategory === category
                     ? "bg-brand-gray-600 text-white"
                     : "bg-brand-gray-50 text-gray-700"
@@ -188,13 +188,15 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
           <div className="relative">
             <button
               onClick={handleOptionOpen}
-              className="flex items-center justify-center text-brand-gray-600"
+              className="flex items-center justify-center text-brand-gray-600 whitespace-nowrap"
             >
-              <span>{sortOption}</span>
-              <IoIosArrowDown />
+              <span className="mx-2 mt-2 text-[10px] desktop:text-sm">
+                {sortOption}
+              </span>
+              <IoIosArrowDown className="flex-shrink-0" />
             </button>
             {isOptionOpen && (
-              <div className="absolute -left-[28px] mt-2 flex h-[120px] w-[100px] flex-col items-center justify-center gap-[0.3rem] border shadow rounded-2xl bg-white z-10">
+              <div className="absolute -left-[28px]  mt-2 flex h-[120px] w-[100px] flex-col items-center justify-center gap-[0.3rem] border shadow rounded-2xl bg-white z-10">
                 {optionList.map((option, index) => (
                   <button
                     key={option}
@@ -202,11 +204,11 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                       handleOptionSelect(option);
                       handleOptionOpen(); // 옵션 선택 후 리스트를 닫습니다.
                     }}
-                    className="text-brand-gray-800 text-sm w-full hover:bg-gray-100"
+                    className="text-brand-gray-800 text-sx desktop:text-sm w-full  hover:bg-gray-100"
                   >
                     {option}
                     {index !== optionList.length - 1 && (
-                      <hr className="mt-[0.3rem] mx-auto w-[4.5rem] border-brand-gray-200" />
+                      <hr className="mt-[0.3rem] mx-auto w-[4.5rem]  border-brand-gray-200" />
                     )}
                   </button>
                 ))}
@@ -222,21 +224,29 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
               <li key={item.id} className="block">
                 <Link
                   href={`/community/${item.id}`}
-                  className="block hover:bg-gray-50 transition duration-150 ease-in-out"
+                  className="block hover:bg-gray-50 transition duration-150 ease-in-out rout rounded "
                 >
-                  <div className="border rounded-2xl p-4  h-[150px] my-5">
+                  <div className="border rounded-2xl p-4 mx-auto h-[125px] w-[335px] desktop:h-[150px] desktop:w-full my-5">
                     <div className="flex justify-between">
                       <div className="flex-grow pr-4">
-                        <h2 className="text-xl font-semibold mb-2">
-                          {item.title}
-                          <span className="text-[#f66555] ml-1">
-                            ({`${item.comment_count}`})
+                        <div className="flex flex-col ">
+                          <span className="text-xs desktop:text-sm text-brand-gray-400 mb-3">
+                            {item.category}
                           </span>
-                        </h2>
-                        <p className="text-gray-600 mb-4 line-clamp-2 h-[48px]">
+                          <div className="flex items-center font-semibold">
+                            <h2 className="text-base desktop:text-lg truncate max-w-[200px] desktop:max-w-full desktop:line-clamp-1">
+                              {item.title}
+                            </h2>
+                            <span className="text-[#f66555] ml-1 flex-shrink-0">
+                              ({`${item.comment_count}`})
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-gray-600 mb-3 line-clamp-1 text-sm  ">
                           {item.contents}
                         </p>
-                        <div className="flex justify-between items-center text-sm text-gray-500">
+                        <div className="flex justify-between items-center text-xs desktop:text-sm text-gray-500">
                           <div className="flex items-center">
                             <span>{item.user.nickname}</span>
                             <div className="mx-3 h-4 w-px bg-gray-300"></div>
@@ -249,13 +259,13 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                       {item.img_url &&
                         item.img_url.length > 0 &&
                         Array.isArray(item.img_url) && (
-                          <div className="w-24 h-24 flex-shrink-0">
+                          <div className="flex justify-center w-[48px] h-[48px] flex-shrink-0 desktop:w-[96px] desktop:h-[96px]">
                             <Image
                               src={item.img_url[0]}
                               alt="Post image"
                               width={96}
                               height={96}
-                              className="object-cover w-full h-full rounded"
+                              className="w-[48px] h-[48px]  desktop:object-cover desktop:w-full desktop:h-full desktop:rounded"
                             />
                           </div>
                         )}

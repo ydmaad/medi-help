@@ -4,6 +4,7 @@ import List from "@/components/templates/community/List";
 import Search from "@/components/templates/community/Search";
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -72,12 +73,27 @@ const CommunityPage = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Search handleSearch={handleSearch} />
+            {/* 데스크톱 버전 (1280px 이상에서 표시) */}
             <Link
               href={`/community/post`}
               onClick={handleUserCheck}
-              className="bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600 flex items-center space-x-2"
+              className="hidden desktop:flex bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600 items-center space-x-2"
             >
               <span>글쓰기</span>
+            </Link>
+
+            {/* 모바일/태블릿 버전 (1280px 미만에서 표시) */}
+            <Link
+              href={`/community/post`}
+              onClick={handleUserCheck}
+              className="desktop:hidden fixed right-4 bottom-20 bg-brand-primary-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-brand-primary-600"
+            >
+              <Image
+                src="/postButton.svg"
+                alt="플로팅버튼"
+                width={30}
+                height={30}
+              ></Image>
             </Link>
           </div>
         </div>
