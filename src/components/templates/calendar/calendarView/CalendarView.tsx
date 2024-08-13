@@ -16,7 +16,8 @@ import FullCalendar from "@fullcalendar/react";
 import {
   useCalendarStore,
   useEventsStore,
-  useMedicinesStore, useMediNameFilter,
+  useMedicinesStore,
+  useMediNameFilter,
   useValuesStore,
 } from "@/store/calendar";
 import uuid from "react-uuid";
@@ -90,15 +91,17 @@ const CalendarView = () => {
                     }
                   );
 
-                  const newEventList = eventList.filter(e => {
-                    return mediNames.includes(e.medications.medi_nickname)
-                  })
+                  console.log(eventList);
+
+                  const newEventList = eventList.filter((e: any) => {
+                    return mediNames.includes(e.medications.medi_nickname);
+                  });
 
                   let countMedicines = newEventList.length;
 
                   if (countMedicines !== 0) {
                     let medicineNickname =
-                        newEventList[0].medications.medi_nickname;
+                      newEventList[0].medications.medi_nickname;
                     newEvents.push({
                       groupId: event.id,
                       title:
@@ -241,12 +244,21 @@ const CalendarView = () => {
         onAdd={(newMediRecord) => {
           // 새로운 약 기록 추가 후 처리 로직
           console.log("New Medi Record:", newMediRecord);
+          setMedicines([
+            ...medicines,
+            {
+              id: newMediRecord.id,
+              name: newMediRecord.medi_nickname,
+              time: newMediRecord.times,
+              notification_time: newMediRecord.notification_time,
+            },
+          ]);
         }}
       />
       <div className="w-full flex flex-col mt-20">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px]">
           <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
-            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-1 text-sm max-[414px]:text-xs">
+            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-[6px] text-sm max-[414px]:text-xs">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
@@ -268,20 +280,21 @@ const CalendarView = () => {
                 저녁
               </div>
             </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
+                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:bg-brand-primary-500 hover:text-white ease-in duration-300 max-[414px]:hidden outline-none"
+              >
+                약 등록
+              </button>
 
-            <button
-              onClick={handleButtonClick}
-              className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-sky-500 rounded-md hover:bg-white hover:text-sky-500 ease-in duration-300 max-[414px]:hidden"
-            >
-              기록추가
-            </button>
-
-            <button
-              onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
-              className="w-24 px-3 py-1 bg-blue-500 text-sm text-white border border-blue-500 rounded-md hover:bg-white hover:text-blue-500 ease-in duration-300 max-[414px]:hidden"
-            >
-              나의 약 등록
-            </button>
+              <button
+                onClick={handleButtonClick}
+                className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-brand-primary-500 rounded-[4px] hover:bg-white hover:text-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
+              >
+                기록추가
+              </button>
+            </div>
           </div>
 
           <FullCalendar
