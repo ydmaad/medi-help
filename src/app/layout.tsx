@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ClientComponent from '@/components/molecules/ClientComponent';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import ClientComponent from "@/components/molecules/ClientComponent";
 
 export const metadata: Metadata = {
   title: "MEDI HELP",

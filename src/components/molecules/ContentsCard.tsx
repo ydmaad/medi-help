@@ -23,7 +23,7 @@ const ContentsCard = ({
   newTitle,
 }: ContentsCardProps) => {
   return (
-    <div className="w-full rounded-[2px] bg-white flex ring-1 items-center p-4 ring-brand-gray-50 mb-[24px] ">
+    <div className="w-full max-h-[121px] rounded-[2px] bg-white flex ring-1 items-center p-4 ring-brand-gray-50 mb-[24px] ">
       <div className="flex-1 flex flex-col justify-between ">
         {newTitle && <NewTitle />}
         {hotTitle && <HotTitle />}
