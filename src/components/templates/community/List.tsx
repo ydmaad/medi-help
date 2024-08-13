@@ -234,7 +234,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                             {item.category}
                           </span>
                           <div className="flex items-center font-semibold">
-                            <h2 className="text-base desktop:text-lg truncate max-w-[200px] desktop:max-w-full desktop:line-clamp-1">
+                            <h2 className="text-base desktop:text-lg truncate max-w-[200px]  desktop:max-w-full desktop:line-clamp-1">
                               {item.title}
                             </h2>
                             <span className="text-[#f66555] ml-1 flex-shrink-0">
@@ -259,7 +259,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                       {item.img_url &&
                         item.img_url.length > 0 &&
                         Array.isArray(item.img_url) && (
-                          <div className="flex justify-center w-[48px] h-[48px] flex-shrink-0 desktop:w-[96px] desktop:h-[96px]">
+                          <div className="flex justify-center my-auto w-[48px] h-[48px] flex-shrink-0 desktop:w-[96px] desktop:h-[96px]">
                             <Image
                               src={item.img_url[0]}
                               alt="Post image"

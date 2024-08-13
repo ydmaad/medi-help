@@ -59,7 +59,21 @@ const CommunityPage = () => {
     <>
       <div className="max-w-[1000px] mx-auto mt-40">
         <div className="flex items-center justify-between mb-10">
-          <div className="flex flex-col">
+          {/* 데스크탑 버전 */}
+          <div className="hidden desktop:flex flex-col">
+            <button
+              onClick={handleReset}
+              className="flex items-center text-3xl font-bold"
+            >
+              <span className="mr-3">&#128172;</span>
+              커뮤니티
+            </button>
+            <span className="text-brand-gray-600 font-extrabold mt-2">
+              약에 대한 이야기를 나누어 보아요
+            </span>
+          </div>
+          {/* 모바일 버전 */}
+          <div className="flex desktop:hidden flex-col ml-5">
             <button
               onClick={handleReset}
               className="flex items-center text-3xl font-bold"
@@ -73,7 +87,7 @@ const CommunityPage = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Search handleSearch={handleSearch} />
-            {/* 데스크톱 버전 (1280px 이상에서 표시) */}
+            {/* 데스트탑 버전 */}
             <Link
               href={`/community/post`}
               onClick={handleUserCheck}
@@ -81,8 +95,7 @@ const CommunityPage = () => {
             >
               <span>글쓰기</span>
             </Link>
-
-            {/* 모바일/태블릿 버전 (1280px 미만에서 표시) */}
+            {/* 모바일 버전 */}
             <Link
               href={`/community/post`}
               onClick={handleUserCheck}
