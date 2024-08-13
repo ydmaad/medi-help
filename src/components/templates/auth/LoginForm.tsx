@@ -102,14 +102,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         </AuthButton>
         {/* 비밀번호 찾기 및 회원가입 링크 */}
         <div className="flex justify-between text-sm mt-4">
-          {/* <button
-            className="text-gray-600"
-            onClick={() =>
-              alert("비밀번호 찾기 기능은 아직 구현되지 않았습니다.")
-            }
-          >
-            비밀번호 찾기
-          </button> */}
           <Link href="/auth/reset" className="text-gray-600 hover:underline">
             비밀번호 찾기
           </Link>
