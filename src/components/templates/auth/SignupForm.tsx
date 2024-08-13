@@ -80,26 +80,15 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
     setIsEmailChecked(false);
     setIsEmailAvailable(false);
   }, [email]);
-  // useEffect(() => {
-  //   setIsEmailChecked(false);
-  //   setIsEmailAvailable(false);
-  // }, [email]);
 
   // 닉네임 유효성 검사
   useEffect(() => {
     if (nickname !== "") {
       setNicknameValid(nickname.length >= 2 && nickname.length <= 6);
     } else {
-      setNicknameValid(null); // 닉네임이 비어있을 때는 null로 설정
+      setNicknameValid(null);
     }
   }, [nickname]);
-  // useEffect(() => {
-  //   if (nickname !== "") {
-  //     setNicknameValid(nickname.length >= 2 && nickname.length <= 6);
-  //   } else {
-  //     setNicknameValid(null);
-  //   }
-  // }, [nickname]);
 
   // 이메일 유효성 검사
   useEffect(() => {
@@ -149,23 +138,6 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
       onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
     }
   };
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (
-  //     nicknameValid &&
-  //     emailValid &&
-  //     isEmailChecked &&
-  //     isEmailAvailable &&
-  //     passwordValid &&
-  //     passwordConfirmValid &&
-  //     agreeTerms &&
-  //     agreePrivacy
-  //   ) {
-  //     onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
-  //   } else {
-  //     alert("모든 필드를 올바르게 입력하고 이메일 중복 확인을 해주세요.");
-  //   }
-  // };
 
   return (
     <div className="w-full max-w-md">
@@ -309,18 +281,6 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           modalTitle="개인정보 처리방침"
           modalContent="여기에 개인정보 처리방침 내용을 넣으세요..."
         />
-        {/* <AuthCheckbox
-          id="agreeTerms"
-          checked={agreeTerms}
-          onChange={(e) => setAgreeTerms(e.target.checked)}
-          label="개인정보처리방침 약관 동의 (필수)"
-        />
-        <AuthCheckbox
-          id="agreePrivacy"
-          checked={agreePrivacy}
-          onChange={(e) => setAgreePrivacy(e.target.checked)}
-          label="메디헬프 서비스 이용약관 동의 (필수)"
-        /> */}
 
         {/* 에러 메시지 */}
         {error && <AuthErrorMessage message={error} />}
