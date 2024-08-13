@@ -228,13 +228,13 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                 >
                   <div className="border rounded-2xl p-4 mx-auto h-[125px] w-[335px] desktop:h-[150px] desktop:w-full my-5">
                     <div className="flex justify-between">
-                      <div className="flex-grow pr-4">
+                      <div className="pr-4 max-w-[940px]">
                         <div className="flex flex-col ">
                           <span className="text-xs desktop:text-sm text-brand-gray-400 mb-3">
                             {item.category}
                           </span>
                           <div className="flex items-center font-semibold">
-                            <h2 className="text-base desktop:text-lg truncate max-w-[200px]  desktop:max-w-full desktop:line-clamp-1">
+                            <h2 className="text-base desktop:text-lg truncate max-w-[200px] desktop:max-w-[940px] ">
                               {item.title}
                             </h2>
                             <span className="text-[#f66555] ml-1 flex-shrink-0">

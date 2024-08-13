@@ -46,8 +46,10 @@ const Edit = ({ id }: PostEditProps) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
-  const [contents, setContents] = useState("");
+  const [title, setTitle] = useState<string>("");
+  const [contents, setContents] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [selectCategory, setSelectCategory] = useState<string>("");
   // 새로 업로드하려는 이미지 파일
   const [image, setImage] = useState<File[]>([]);
   // supabase에서 가져온 기존 이미지
@@ -63,6 +65,7 @@ const Edit = ({ id }: PostEditProps) => {
         setPost(data);
         setTitle(data.title);
         setContents(data.contents);
+        setCategory(data.category);
         if (data.img_url) {
           const imageUrls = data.img_url;
           setCurrentImage(imageUrls);
@@ -89,6 +92,7 @@ const Edit = ({ id }: PostEditProps) => {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("contents", contents);
+      formData.append("category", category);
 
       saveImage.forEach((img, index) => {
         if (typeof img === "string") {
@@ -120,6 +124,12 @@ const Edit = ({ id }: PostEditProps) => {
     setSaveImage((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = (category: string) => {
+    setSelectCategory(category);
+  };
+  console.log(selectCategory);
+
   console.log("현재 게시글:", post);
 
   if (loading) return <div>로딩 중...</div>;
@@ -134,6 +144,21 @@ const Edit = ({ id }: PostEditProps) => {
       <div className="w-[1000px]  mx-auto p-6">
         <h1 className="text-2xl font-bold  ml-6">글 수정</h1>
         <div className="bg-white rounded-lg p-6">
+          <div className="flex space-x-2 mb-6">
+            {["메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategorySelect(category)}
+                className={`px-4 py-2 rounded-full ${
+                  selectCategory === category
+                    ? "bg-brand-gray-600 text-white"
+                    : "bg-brand-gray-50 text-gray-700"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
           <input
             type="text"
             placeholder="제목을 입력하세요"

@@ -241,12 +241,14 @@ const PostDetail = ({ id }: PostDetailProps) => {
       <div className="max-w-3xl mx-auto overflow-hidden mt-20">
         <div className="flex flex-col">
           <div className="text-left px-4 py-2">
-            <span className="text-sm  text-brand-gray-400">
+            <span className="text-lg desktop:text-xl text-brand-gray-400">
               {post.category}
             </span>
           </div>
           <div className="flex items-center ">
-            <h1 className="text-2xl font-bold  px-3">{post.title}</h1>
+            <h1 className="text-xl font-bold  px-3 desktop:text-[32px]">
+              {post.title}
+            </h1>
             <button onClick={handleBookmark} className="flex itmes-center">
               <Image
                 src={isBookmark ? "/bookmark.svg" : "/emptyBookmark.svg"}
@@ -260,17 +262,17 @@ const PostDetail = ({ id }: PostDetailProps) => {
 
         <div className="flex justify-between items-center px-2 py-3">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-extrabold text-brand-gray-800 pl-2">
+            <p className="text-base  font-extrabold text-brand-gray-800 pl-2">
               {post.user?.nickname}
             </p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
-            <p className="text-sm text-brand-gray-600 ml-0">
+            <p className="text-base text-brand-gray-600 ml-0">
               {new Date(post.created_at).toLocaleString()}
             </p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
-            <p className="text-sm text-brand-gray-600 ml-0">
+            <p className="text-base text-brand-gray-600 ml-0">
               저장
-              <span className="text-sm text-brand-primary-400 ml-1">
+              <span className="text-base text-brand-primary-400 ml-1">
                 {post.bookmark_count}
               </span>
             </p>
@@ -281,7 +283,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
             <div className="flex space-x-2">
               <button
                 onClick={handleDelete}
-                className="text-sm text-gray-500 pr-2"
+                className="text-base text-gray-500 pr-2"
               >
                 삭제
               </button>
@@ -289,7 +291,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
               <Link
                 href={`/community/${id}/edit`}
                 onClick={handleEditClick}
-                className="text-sm text-gray-500 pl-2"
+                className="text-base text-gray-500 pl-2"
               >
                 수정
               </Link>
