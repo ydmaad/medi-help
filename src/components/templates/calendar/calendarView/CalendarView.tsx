@@ -228,10 +228,10 @@ const CalendarView = () => {
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
       />
-      <div className="w-full flex flex-col mt-20">
+      <div className="flex flex-col mt-20">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px] ">
           <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
-            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-1 text-sm max-[414px]:text-xs ">
+            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-[5px] text-sm max-[414px]:text-xs ">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}

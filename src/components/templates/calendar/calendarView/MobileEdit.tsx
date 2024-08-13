@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 const MobileEdit = () => {
   const { values, setValues } = useValuesStore();
   const { events, setEvents } = useEventsStore();
-  const { medicines, setMedicines } = useMedicinesStore();
   const { edit, setEdit } = useEditStore();
 
   const router = useRouter();
