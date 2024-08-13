@@ -19,6 +19,7 @@ interface MediRecord {
   user_id: string;
   day_of_week: string[];
   notification_time: string[];
+  repeat: boolean; // 추가된 속성
 }
 
 interface AddMediModalProps {
@@ -87,6 +88,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
       user_id: user.id,
       day_of_week: notificationEnabled ? dayOfWeek : [],
       notification_time: notificationEnabled ? notificationTime : [],
+      repeat: false, 
     };
   
     try {
