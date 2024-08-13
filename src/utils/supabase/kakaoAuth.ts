@@ -20,15 +20,3 @@ export const signInWithKakao = async () => {
     throw error;
   }
 };
-
-// 기존 코드
-// import { supabase } from "../supabase/client";
-
-// export const signInWithKakao = async () => {
-//   const { data, error } = await supabase.auth.signInWithOAuth({
-//     provider: "kakao",
-//   });
-
-//   if (error) throw error;
-//   return data;
-// };
