@@ -85,7 +85,7 @@ const SearchPage = () => {
   }
 
   if (error) {
-    return <div>오류: {error}</div>;
+    return <div className="mt-[90px]">오류: {error}</div>;
   }
 
   return (
