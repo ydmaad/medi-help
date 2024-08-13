@@ -120,12 +120,15 @@ const MobileCalendarView = () => {
         {tabNumber === 0 ? (
           <div className="flex flex-col gap-4">
             <FilterComponent />
-            <div className="flex flex-col items-center w-full gap-2">
+            <div className="flex flex-col items-center w-full h-44 min-h-32 gap-2 overflow-y-auto">
               {medicines
                 ?.filter((medi: MedicinesType) => {
                   return medi.time[values.medi_time] === true;
                 })
                 .map((medicine: MedicinesType, idx: number) => {
+                  if (!medicine) {
+                    return <div>복용 중인 약이 없습니다.</div>;
+                  }
                   return <PillComponent key={idx} medicine={medicine} />;
                 })}
             </div>

@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="2773f5d9-bf93-413d-ae5e-6543e093b4d5" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/molecules/EditModalInner.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/molecules/EditModalInner.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/CalendarCheckbox.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/CalendarCheckbox.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/CalendarView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/CalendarView.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/MediRecords.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/calendar/calendarView/MediRecords.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/calendar.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/calendar.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +31,7 @@
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feat/calendar-mobile-layout",
+    "git-widget-placeholder": "dev",
     "last_opened_file_path": "/Users/jcelee/Desktop/sparta/medi-help",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

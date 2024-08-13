@@ -7,9 +7,9 @@ import SemiTitle from "../atoms/SemiTitle";
 import FilterComponent from "./FilterComponent";
 import EditNote from "../atoms/EditNote";
 import {
-  useCalendarStore,
-  useMedicinesStore,
-  useValuesStore,
+    useCalendarStore,
+    useMedicinesStore, useMediNameFilter,
+    useValuesStore,
 } from "@/store/calendar";
 
 const EditModalInner = () => {

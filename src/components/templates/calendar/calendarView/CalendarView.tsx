@@ -17,6 +17,7 @@ import {
   useCalendarStore,
   useEventsStore,
   useMedicinesStore,
+  useMediNameFilter,
   useValuesStore,
 } from "@/store/calendar";
 import uuid from "react-uuid";
@@ -31,6 +32,7 @@ const CalendarView = () => {
   const { calendar, setCalendar } = useCalendarStore();
   const { events, setEvents } = useEventsStore();
   const { medicines, setMedicines } = useMedicinesStore();
+  const { mediNames, setMediNames } = useMediNameFilter();
 
   type CalendarType = Tables<"calendar">;
   type BridgeType = Tables<"calendar_medicine">;
@@ -89,11 +91,17 @@ const CalendarView = () => {
                     }
                   );
 
-                  let countMedicines = eventList.length;
+                  console.log(eventList);
+
+                  const newEventList = eventList.filter((e: any) => {
+                    return mediNames.includes(e.medications.medi_nickname);
+                  });
+
+                  let countMedicines = newEventList.length;
 
                   if (countMedicines !== 0) {
                     let medicineNickname =
-                      eventList[0].medications.medi_nickname;
+                      newEventList[0].medications.medi_nickname;
                     newEvents.push({
                       groupId: event.id,
                       title:
@@ -101,12 +109,12 @@ const CalendarView = () => {
                           ? `${medicineNickname} 외 ${countMedicines - 1}개`
                           : `${medicineNickname}`,
                       start: `${event.start_date} ${
-                        TIME_OF_TIME[eventList[0].medi_time]
+                        TIME_OF_TIME[newEventList[0].medi_time]
                       }`,
-                      backgroundColor: COLOR_OF_TIME[eventList[0].medi_time],
+                      backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
                       extendProps: {
-                        medi_time: eventList[0].medi_time,
-                        medicineList: eventList.map(
+                        medi_time: newEventList[0].medi_time,
+                        medicineList: newEventList.map(
                           (medicine: any) => medicine.medications.id
                         ),
                       },
@@ -128,7 +136,7 @@ const CalendarView = () => {
     };
 
     getEventsData();
-  }, [user]);
+  }, [user, mediNames]);
 
   useEffect(() => {
     const getCalendarData = async () => {
@@ -250,7 +258,7 @@ const CalendarView = () => {
       <div className="w-full flex flex-col mt-20">
         <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px]">
           <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
-            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-1 text-sm max-[414px]:text-xs">
+            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-[6px] text-sm max-[414px]:text-xs">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
