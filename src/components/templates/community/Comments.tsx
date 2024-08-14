@@ -1,9 +1,17 @@
 "use client";
 
+import CommentInput from "@/components/molecules/CommentInput";
+import { useThrottle } from "@/hooks/useThrottle";
+import {
+  deleteComment,
+  editComment,
+  fetchComment,
+  postComment,
+} from "@/lib/commentsAPI";
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CommentsProps {
   postId: string;
@@ -15,120 +23,9 @@ type CommentWithUser = Comment & {
   user: Pick<User, "avatar" | "nickname" | "id">;
 };
 
-// 학습 필요!!
-type FunctionType<Args extends unknown[], Return> = (...args: Args) => Return;
-
-// 댓글 가져오기 요청
-const fetchComment = async (postId: string) => {
-  const response = await fetch(`/api/community/${postId}/comments`);
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error("댓글을 불러오는데 실패했습니다.");
-  }
-  // 날짜를 기준으로 내림차순 정렬
-  data.data.sort(
-    (a: CommentWithUser, b: CommentWithUser) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
-  return data;
-};
-
-// 댓글 삭제 요청
-const deleteComment = async (postId: string, commentId: string) => {
-  const response = await fetch(`/api/community/${postId}/comments`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ commentId }),
-  });
-
-  if (!response.ok) {
-    throw new Error("댓글 삭제에 실패했습니다.");
-  }
-};
-
-// 댓글 수정 요청
-const editComment = async (
-  comment: string,
-  postId: string,
-  commentId: string
-) => {
-  const response = await fetch(`/api/community/${postId}/comments`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: commentId, comment }),
-  });
-  const data = response.json();
-  if (!response.ok) {
-    throw new Error("댓글 수정에 실패했습니다.");
-  }
-  return data;
-};
-
-// 댓글 등록 요청
-const postComment = async (postId: string, comment: string) => {
-  const user = useAuthStore.getState().user;
-  if (!user) {
-    throw new Error("사용자 인증 정보가 없습니다.");
-  }
-
-  try {
-    const response = await fetch(`/api/community/${postId}/comments`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Id": user.id,
-      },
-      body: JSON.stringify({ post_id: postId, comment }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`오류 : ${response.status} ${response.statusText}`);
-    }
-    const data = await response.json();
-    // console.log(data);
-    return data;
-  } catch (error) {
-    console.error("댓글 등록 오류 =>", error);
-    alert("댓글 등록 실패");
-  }
-};
-
-// 댓글 따닥 방지 훅(useThrottle이라는 커스텀 훅) - 실행할 함수(callback)와 쓰로틀링간격(delay)를 인수로 받음
-function useThrottle<Args extends unknown[], Return>(
-  callback: FunctionType<Args, Return>,
-  delay: number // 밀리초 단위의 시간 간격
-): FunctionType<Args, Return> {
-  // 마지막으로 함수가 실행된 시간을 저장
-  const lastRun = useRef(Date.now());
-  // 메모이제이션된 콜백을 반환 - 불필요한 렌더링 방지
-  return useCallback(
-    // 나중에 이 함수가 호출될 때 전달될 모든 인자를 받아들임
-    (...args: Args): Return => {
-      // 현재 시간을 가져옴
-      const now = Date.now();
-      // 현재 시간과 마지막 실행된 시간을 뺐을 때 delay(2초)보다 크거나 같다면
-      if (now - lastRun.current >= delay) {
-        // 마지막 실행시간을 현재시간으로 업데이트
-        lastRun.current = now;
-        // 원본 콜백함수를 실행하고 그 결과를 반환
-        return callback(...args);
-      }
-      // 타입 안전성을 위해 실제 반환값의 타입을 사용
-      // 이 부분은 실행되지 않지만, TypeScript의 타입 체크를 통과하기 위해 필요
-      return undefined as unknown as Return;
-    },
-    // callback이나 delay가 변경될 때만 새로운 함수를 생성
-    [callback, delay]
-  );
-}
-
 const Comments = ({ postId }: CommentsProps) => {
   const [comment, setComment] = useState<CommentWithUser[]>([]);
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState<string>("");
   const [isEdit, setIsEdit] = useState<{ [key: string]: boolean }>({});
   const [editedComment, setEditedComment] = useState<{ [key: string]: string }>(
     {}
@@ -238,34 +135,13 @@ const Comments = ({ postId }: CommentsProps) => {
 
   return (
     <>
-      <div className="max-w-[1000px] mx-4 p-4 bg-white  border border-gray-300  rounded-lg">
-        <div className="flex items-center mb-3">
-          <Image
-            src={user?.avatar || "/default-avatar.jpg"}
-            alt={"유저 이미지"}
-            width={40}
-            height={40}
-            className="rounded-full mr-3 aspect-square object-cover"
-          />
-          <h2 className="text-l mt-[15px] mb-4">{user?.nickname}</h2>
-        </div>
-
-        <textarea
-          className="w-full text-xs px-2  focus:outline-none  resize-none"
-          placeholder={`댓글을 입력해주세요.\n게시글과 무관한 악성 댓글은 삭제될 수 있습니다.`}
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-        ></textarea>
-
-        <div className="flex justify-end">
-          <button
-            onClick={handleAddComment}
-            className="w-[90px] bg-brand-primary-500 text-white px-4 py-2 rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            작성
-          </button>
-        </div>
-      </div>
+      <CommentInput
+        newComment={newComment}
+        setNewComment={setNewComment}
+        comment={comment}
+        setComment={setComment}
+        postId={postId}
+      ></CommentInput>
 
       {comment?.map((ment) => {
         return (
