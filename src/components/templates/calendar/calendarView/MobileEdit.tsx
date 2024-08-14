@@ -1,7 +1,7 @@
 "use client";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import EditModalInner from "@/components/molecules/EditModalInner";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
+import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import { MedicinesType, ValuesType } from "@/types/calendar";
 import React from "react";
 import { IoIosArrowBack } from "react-icons/io";

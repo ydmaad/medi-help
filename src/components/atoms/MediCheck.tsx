@@ -1,7 +1,7 @@
 "use client";
 import { MedicinesType } from "@/types/calendar";
 import React, { useEffect, useState } from "react";
-import { NAME_OF_TIME } from "@/constant/constant";
+import { NAME_OF_TIME } from "@/constants/constant";
 import { useValuesStore } from "@/store/calendar";
 
 interface Props {

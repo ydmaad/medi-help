@@ -1,5 +1,6 @@
 // 목적: 회원가입 폼의 전체 구조와 로직을 관리하는 컴포넌트
 // src/components/templates/auth/SignupForm.tsx
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { AuthInput } from "../../atoms/AuthInput";
@@ -7,7 +8,9 @@ import { AuthButton } from "../../atoms/AuthButton";
 import { AuthPrimaryButton } from "../../atoms/AuthPrimaryButton";
 import { AuthErrorMessage } from "../../atoms/AuthErrorMessage";
 import { AuthPasswordInput } from "../../molecules/AuthPasswordInput";
-import { AuthCheckbox } from "../../molecules/AuthCheckbox";
+import { AuthTermsCheckbox } from "../../molecules/AuthTermsCheckbox";
+import { termsOfService } from "@/constants/termsOfService";
+import { privacyPolicy } from "@/constants/privacyPolicy";
 import { supabase } from "@/utils/supabase/client";
 
 type SignupFormProps = {
@@ -102,8 +105,10 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   // 비밀번호 유효성 검사
   useEffect(() => {
     if (password !== "") {
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      const passwordRegex = /^(?=.*[\d!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+      // 보안강도 높은 비번 유효성 검사 코드
+      // const passwordRegex =
+      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       setPasswordValid(passwordRegex.test(password));
     } else {
       setPasswordValid(null);
@@ -122,19 +127,19 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   // 폼 제출 핸들러
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      nicknameValid &&
-      emailValid &&
-      isEmailChecked &&
-      isEmailAvailable &&
-      passwordValid &&
-      passwordConfirmValid &&
-      agreeTerms &&
-      agreePrivacy
-    ) {
-      onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+    let errors = [];
+    if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
+    if (!emailValid || !isEmailChecked || !isEmailAvailable)
+      errors.push("이메일을 확인해주세요.");
+    if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
+    if (!passwordConfirmValid)
+      errors.push("비밀번호 확인이 일치하지 않습니다.");
+    if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
+
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
     } else {
-      alert("모든 필드를 올바르게 입력하고 이메일 중복 확인을 해주세요.");
+      onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
     }
   };
 
@@ -152,6 +157,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           </label>
           <AuthInput
             id="nickname"
+            name="nickname" // name 속성 추가
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
@@ -181,6 +187,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           <div className="flex items-center space-x-2">
             <AuthInput
               id="email"
+              name="nickname" // name 속성 추가
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -221,14 +228,15 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           </label>
           <AuthPasswordInput
             id="password"
+            name="password" // name 속성 추가
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해 주세요."
           />
           {passwordValid === false && (
             <p className="text-red-500 text-sm mt-1">
-              비밀번호는 알파벳 대,소문자,숫자,특수문자를 포함하여 8자
-              이상이어야 합니다.
+              비밀번호는 6자 이상이며, 숫자나 특수문자를 하나 이상 포함해야
+              합니다.
             </p>
           )}
         </div>
@@ -243,6 +251,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           </label>
           <AuthPasswordInput
             id="passwordConfirm"
+            name="passwordConfirm" // name 속성 추가
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             placeholder="다시 한번 입력해 주세요."
@@ -260,17 +269,21 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         </div>
 
         {/* 약관 동의 체크박스 */}
-        <AuthCheckbox
+        <AuthTermsCheckbox
           id="agreeTerms"
           checked={agreeTerms}
-          onChange={(e) => setAgreeTerms(e.target.checked)}
-          label="개인정보처리방침 약관 동의 (필수)"
+          onChange={setAgreeTerms}
+          label="이용약관 동의 (필수)"
+          modalTitle="이용약관"
+          modalContent={termsOfService}
         />
-        <AuthCheckbox
+        <AuthTermsCheckbox
           id="agreePrivacy"
           checked={agreePrivacy}
-          onChange={(e) => setAgreePrivacy(e.target.checked)}
-          label="메디헬프 서비스 이용약관 동의 (필수)"
+          onChange={setAgreePrivacy}
+          label="개인정보 처리방침 동의 (필수)"
+          modalTitle="개인정보 처리방침"
+          modalContent={privacyPolicy}
         />
 
         {/* 에러 메시지 */}

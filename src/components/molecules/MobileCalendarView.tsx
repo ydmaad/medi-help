@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { MedicinesType, ValuesType } from "@/types/calendar";
 import axios from "axios";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
+import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import FilterComponent from "./FilterComponent";
 import ViewNote from "../atoms/ViewNote";
 import PillComponent from "./PillComponent";
