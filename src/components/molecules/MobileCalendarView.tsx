@@ -17,7 +17,6 @@ import {
 } from "@/store/calendar";
 import { EventInput } from "@fullcalendar/core";
 import uuid from "react-uuid";
-import { fi } from "date-fns/locale";
 
 const MobileCalendarView = () => {
   const [tabNumber, setTabNumber] = useState<number>(0);
@@ -40,8 +39,6 @@ const MobileCalendarView = () => {
       let filteredCalendar = calendar.filter((cal) => {
         return cal.start_date === today;
       });
-
-      console.log(filteredCalendar);
 
       let editList = events?.filter((event) => {
         return event.start?.toString().split(" ")[0] === today;
@@ -90,9 +87,9 @@ const MobileCalendarView = () => {
 
   return (
     <>
-      <div className="max-[414px]:w-[344px] min-[415px]:hidden p-[10px] mx-[10px] border border-[#F5F6F7] bg-[#FBFBFB]">
+      <div className="w-11/12 min-w-[344px] desktop:hidden p-[10px] mx-[10px] border border-[#F5F6F7] bg-[#FBFBFB]">
         <div className="flex justify-between items-center mt-2 mb-4 px-1">
-          <div className="flex justify-between gap-6 text-[16px] text-[#18181b] font-normal">
+          <div className="flex justify-between gap-6 text-[14px] text-brand-gray-600 font-normal">
             {selectedDate}
           </div>
           <button
@@ -123,12 +120,15 @@ const MobileCalendarView = () => {
         {tabNumber === 0 ? (
           <div className="flex flex-col gap-4">
             <FilterComponent />
-            <div className="flex flex-col items-center w-full gap-2">
+            <div className="flex flex-col items-center w-full h-44 min-h-32 gap-2 overflow-y-auto">
               {medicines
-                .filter((medi: MedicinesType) => {
+                ?.filter((medi: MedicinesType) => {
                   return medi.time[values.medi_time] === true;
                 })
                 .map((medicine: MedicinesType, idx: number) => {
+                  if (!medicine) {
+                    return <div key={idx}>복용 중인 약이 없습니다.</div>;
+                  }
                   return <PillComponent key={idx} medicine={medicine} />;
                 })}
             </div>

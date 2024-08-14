@@ -69,9 +69,9 @@ const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
       <Image
         src={checked ? "/pill-filled.svg" : "/pill-inactive.svg"}
         alt="pill"
-        width={20}
-        height={20}
-        className=" w-auto mr-2"
+        width={6}
+        height={6}
+        className="w-auto mr-2"
       />
       <div className="flex flex-col gap-0.5 font-normal">
         <div
@@ -93,7 +93,7 @@ const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
           </span>
         </div>
         <div
-          className={`text-[14px] ${
+          className={`text-[14px] w-[108px] truncate ${
             checked ? "" : "line-through text-[#7C7F86]"
           }`}
         >
