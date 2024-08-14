@@ -1,22 +1,23 @@
 import { useThrottle } from "@/hooks/useThrottle";
 import { fetchComment, postComment } from "@/lib/commentsAPI";
+import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import Image from "next/image";
-import React from "react";
-
-interface CommentInputProps {
-  newComment: string;
-  setNewComment: (comment: string) => void;
-  comment: string;
-  setComment: () => void;
-  postId: string;
-}
+import React, { Dispatch, SetStateAction } from "react";
 
 type Comment = Tables<"comments">;
 type User = Tables<"users">;
 type CommentWithUser = Comment & {
   user: Pick<User, "avatar" | "nickname" | "id">;
 };
+
+interface CommentInputProps {
+  newComment: string;
+  setNewComment: (comment: string) => void;
+  comment: CommentWithUser[];
+  setComment: Dispatch<SetStateAction<CommentWithUser[]>>;
+  postId: string;
+}
 
 export const CommentInput = ({
   newComment,
@@ -25,6 +26,8 @@ export const CommentInput = ({
   setComment,
   postId,
 }: CommentInputProps) => {
+  const { user } = useAuthStore();
+
   // 댓글 달기 핸들러
   const handleAddComment = useThrottle(async () => {
     if (!newComment.trim()) {
@@ -42,6 +45,9 @@ export const CommentInput = ({
       alert("댓글 추가에 실패했습니다. 다시 시도해 주세요.");
     }
   }, 2000);
+
+  // console.log(comment);
+
   return (
     <>
       <div className="max-w-[1000px] mx-4 p-4 bg-white  border border-gray-300  rounded-lg">
