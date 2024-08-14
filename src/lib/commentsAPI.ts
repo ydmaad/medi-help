@@ -1,11 +1,5 @@
 import { useAuthStore } from "@/store/auth";
-import { Tables } from "@/types/supabase";
-
-type Comment = Tables<"comments">;
-type User = Tables<"users">;
-type CommentWithUser = Comment & {
-  user: Pick<User, "avatar" | "nickname" | "id">;
-};
+import { CommentWithUser } from "@/types/communityTypes";
 
 // 댓글 가져오기 요청
 export const fetchComment = async (postId: string) => {
@@ -83,5 +77,83 @@ export const postComment = async (postId: string, comment: string) => {
   } catch (error) {
     console.error("댓글 등록 오류 =>", error);
     alert("댓글 등록 실패");
+  }
+};
+
+// 게시글 id를 받아 게시글 데이터 요청
+// 따로 분리해서 재사용할 수 있는 부분(PostDetail, Edit)
+export const fetchDetailPost = async (id: string) => {
+  try {
+    const response = await fetch(`/api/community/${id}`);
+    if (!response.ok) {
+      throw new Error("게시글 불러오는데 실패했습니다");
+    }
+    const { data } = await response.json();
+    console.log("수정하려고 불러온 데이터 :", data);
+    return data[0];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+// 게시글 수정 요청
+export const editPost = async (id: string, formData: FormData) => {
+  const response = await fetch(`/api/community/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("게시글 수정에 실패했습니다.");
+  }
+  return await response.json();
+};
+
+// 게시글 등록 요청
+export const fetchPost = async ({
+  title,
+  contents,
+  image,
+  category,
+}: {
+  title: string;
+  contents: string;
+  image: File[];
+  category: string;
+}) => {
+  const user = useAuthStore.getState().user;
+
+  if (!user) {
+    throw new Error("사용자 인증 정보가 없습니다.");
+  }
+
+  try {
+    // formData로 전송할 데이터 변경
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("contents", contents);
+    formData.append("category", category);
+    image.forEach((img) => {
+      formData.append("image", img);
+    });
+    3;
+
+    const response = await fetch(`/api/community/`, {
+      method: "POST",
+      headers: { "User-id": user.id },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    alert("게시글이 등록되었습니다!");
+    window.location.href = "/community";
+    return data;
+  } catch (error) {
+    console.error("게시글 등록 오류 =>", error);
+    alert("게시글 등록 실패");
   }
 };

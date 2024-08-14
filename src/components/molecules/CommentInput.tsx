@@ -1,15 +1,10 @@
 import { useThrottle } from "@/hooks/useThrottle";
 import { fetchComment, postComment } from "@/lib/commentsAPI";
 import { useAuthStore } from "@/store/auth";
-import { Tables } from "@/types/supabase";
+import { CommentWithUser } from "@/types/communityTypes";
+
 import Image from "next/image";
 import React, { Dispatch, SetStateAction } from "react";
-
-type Comment = Tables<"comments">;
-type User = Tables<"users">;
-type CommentWithUser = Comment & {
-  user: Pick<User, "avatar" | "nickname" | "id">;
-};
 
 interface CommentInputProps {
   newComment: string;

@@ -1,63 +1,17 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth";
+import CategorySelect from "@/components/molecules/CategorySelect";
+import { fetchPost } from "@/lib/commentsAPI";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-
-// 게시글 등록 요청
-const fetchPost = async ({
-  title,
-  contents,
-  image,
-  category,
-}: {
-  title: string;
-  contents: string;
-  image: File[];
-  category: string;
-}) => {
-  const user = useAuthStore.getState().user;
-
-  if (!user) {
-    throw new Error("사용자 인증 정보가 없습니다.");
-  }
-
-  try {
-    // formData로 전송할 데이터 변경
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("contents", contents);
-    formData.append("category", category);
-    image.forEach((img) => {
-      formData.append("image", img);
-    });
-    3;
-
-    const response = await fetch(`/api/community/`, {
-      method: "POST",
-      headers: { "User-id": user.id },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
-    }
-    const data = await response.json();
-    alert("게시글이 등록되었습니다!");
-    window.location.href = "/community";
-    return data;
-  } catch (error) {
-    console.error("게시글 등록 오류 =>", error);
-    alert("게시글 등록 실패");
-  }
-};
 
 const Post = () => {
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
   const [image, setImage] = useState<File[]>([]);
   const [selectCategory, setSelectCategory] = useState<string>("");
+  const categories = ['메디톡', '궁금해요','건강 꿀팀']
 
   // 게시글을 전송을 요청하는 핸들러
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -114,21 +68,7 @@ const Post = () => {
       <h1 className="text-[24px] font-black  hidden desktop:flex ">
         커뮤니티 글쓰기
       </h1>
-      <div className="flex space-x-2 ">
-        {["메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
-          <button
-            key={category}
-            onClick={() => handleCategorySelect(category)}
-            className={`px-4 py-2 w-[100px] text-[12px] desktop:text-[14px]  my-3 rounded-full ${
-              selectCategory === category
-                ? "bg-brand-gray-600 text-white"
-                : "bg-brand-gray-50 text-gray-700"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
+<CategorySelect categories={categories} selectCategory={selectCategory} onSelectCategory={handleCategorySelect}></CategorySelect>
       <div className="bg-white w-[335px] desktop:w-[996px] rounded-lg items-center">
         <input
           type="text"
