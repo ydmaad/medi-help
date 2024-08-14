@@ -5,7 +5,7 @@ import { EventInput } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import axios from "axios";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
+import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import DetailModal from "../calendarModal/DetailModal";
 import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
 import { useAuthStore } from "@/store/auth";
