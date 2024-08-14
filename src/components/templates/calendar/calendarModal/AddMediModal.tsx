@@ -140,7 +140,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         {/* 닫기 버튼 */}
         <button
           onClick={onRequestClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className="absolute top-4 right-4 text-brand-gray-1000"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +158,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
           </svg>
         </button>
 
-        <h2 className="text-2xl mb-4">나의 약</h2>
+        <h2 className="text-2xl mb-4 text-brand-gray-800">나의 약</h2>
 
         {/* 약 별명 입력 */}
         <div className="mb-4">
@@ -167,7 +167,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
             placeholder="약 별명(최대 6자)"
             value={mediNickname}
             onChange={(e) => setMediNickname(e.target.value)}
-            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+            className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
           />
         </div>
 
@@ -181,7 +181,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               setMediName(e.target.value);
               setSearchTerm(e.target.value);
             }}
-            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+            className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
           />
           <datalist id="mediNames">
             {mediNames
@@ -194,45 +194,19 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
           </datalist>
         </div>
 
-        {/* 복용 기간 설정 */}
-        <div className="flex space-x-4 mb-4">
-          <div className="w-1/2 flex items-center">
-            <div className="flex items-center">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-3/4" // 너비 조정
-              />
-              <span className="ml-3 text-gray-500 ">부터</span>
-            </div>
-          </div>
-          <div className="w-1/2 flex items-center">
-            <div className="flex items-center">
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none w-3/4" // 너비 조정
-              />
-              <span className="ml-3 text-gray-500 ">까지</span>
-            </div>
-          </div>
-        </div>
-
         {/* 복용 시간 설정 */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            복용 시간:
+          <label className="block text-brand-gray-600 text-sm font-bold mb-2">
+            나의 약 등록
           </label>
-          <div className="flex space-x-4 justify-between w-full">
+          <div className="flex space-x-4 text-brand-gray-800 justify-between w-full">
             <button
               type="button"
               onClick={() => setTimes({ ...times, morning: !times.morning })}
               className={`px-4 py-2 rounded-full ${
                 times.morning
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
+                  ? "bg-brand-primary-500 text-white"
+                  : "bg-brand-gray-50 text-brand-gray-800"
               } w-1/3`}
             >
               아침
@@ -244,8 +218,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               }
               className={`px-4 py-2 rounded-full ${
                 times.afternoon
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
+                  ? "bg-brand-primary-500 text-white"
+                  : "bg-brand-gray-50 text-brand-gray-800"
               } w-1/3`}
             >
               점심
@@ -255,8 +229,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               onClick={() => setTimes({ ...times, evening: !times.evening })}
               className={`px-4 py-2 rounded-full ${
                 times.evening
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-700"
+                  ? "bg-brand-primary-500 text-white"
+                  : "bg-brand-gray-50 text-brand-gray-800"
               } w-1/3`}
             >
               저녁
@@ -264,13 +238,40 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
           </div>
         </div>
 
+        {/* 복용 기간 설정 */}
+        <div className="flex space-x-4 mb-4">
+          <div className="w-1/2 flex items-center">
+            <div className="flex items-center">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="border rounded py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none w-3/4" // 너비 조정
+              />
+              <span className="ml-3 text-brand-gray-800 ">부터</span>
+            </div>
+          </div>
+          <div className="w-1/2 flex items-center">
+            <div className="flex items-center">
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="border rounded py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none w-3/4" // 너비 조정
+              />
+              <span className="ml-3 text-brand-gray-800 ">까지</span>
+            </div>
+          </div>
+        </div>
+
         {/* 알림 설정 */}
         <div className="flex items-center mb-4">
           <label className="flex items-center">
+          <span className="ml-2 text-brand-gray-600">알림 설정 </span>
             <div
               onClick={() => setNotificationEnabled(!notificationEnabled)}
-              className={`relative w-12 h-6 flex items-center rounded-full cursor-pointer ${
-                notificationEnabled ? "bg-blue-500" : "bg-gray-200"
+              className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
+                notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
               }`}
             >
               <div
@@ -279,16 +280,13 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                 }`}
               ></div>
             </div>
-            <span className="ml-2 text-gray-700">알림 설정</span>
           </label>
         </div>
 
         {notificationEnabled && (
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              요일:
-            </label>
-            <div className="flex flex-wrap space-x-2">
+           
+            <div className="flex flex-wrap space-x-2 mb-5">
               {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
                 <button
                   key={day}
@@ -296,8 +294,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                   onClick={() => handleDayOfWeekChange(day)}
                   className={`px-4 py-2 rounded-full ${
                     dayOfWeek.includes(day)
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-700"
+                      ? "bg-brand-primary-500 text-white"
+                      : "bg-brand-gray-50 text-brand-gray-800"
                   }`}
                 >
                   {day}
@@ -305,9 +303,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               ))}
             </div>
 
-            <label className="block text-gray-700 text-sm font-bold mb-2 mt-4">
-              알림 시간:
-            </label>
+        
             {notificationTime.map((time, index) => (
               <div key={index} className="flex mb-2">
                 <input
@@ -316,21 +312,9 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                   onChange={(e) =>
                     handleNotificationTimeChange(index, e.target.value)
                   }
-                  className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+                  className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                 />
-                {index > 0 && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setNotificationTime(
-                        notificationTime.filter((_, i) => i !== index)
-                      )
-                    }
-                    className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
-                  >
-                    삭제
-                  </button>
-                )}
+                
               </div>
             ))}
           </div>
@@ -338,21 +322,21 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
 
         {/* 메모 입력 */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
+          <label className="block text-brand-gray-600 text-sm font-bold mb-2">
             메모:
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="약에 대한 간단한 기록"
-            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none resize-none h-16"
+            className="border rounded w-full py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none resize-none h-16"
           />
         </div>
         <div className="flex justify-center mt-4">
           <button
             type="button"
             onClick={handleAdd}
-            className="px-6 py-2 bg-blue-500 text-white rounded w-40"
+            className="px-6 py-2 bg-brand-primary-500 text-white rounded w-40"
           >
             저장
           </button>
