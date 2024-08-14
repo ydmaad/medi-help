@@ -271,7 +271,13 @@ const Comments = ({ postId }: CommentsProps) => {
         return (
           <div
             key={ment.id}
-            className="my-4 p-4 mx-4 border border-gray-300 rounded-lg  max-w-[1000px] relative"
+            className={`my-4 p-4 mx-4 border border-gray-300 rounded-lg  max-w-[1000px] relative ${
+              user?.id === ment.user.id && "bg-brand-gray-50"
+            } ${
+              isEdit && user?.id === ment.user.id
+                ? "bg-white"
+                : "bg-brand-gray-50"
+            }`}
           >
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
@@ -284,7 +290,7 @@ const Comments = ({ postId }: CommentsProps) => {
                       height={40}
                       className="rounded-full mr-3 aspect-square object-cover"
                     />
-                    <div className="text-l mt-[15px] mb-4">
+                    <div className="text-[16px] mt-[15px] mb-4">
                       {ment.user.nickname}
                     </div>
                   </div>
