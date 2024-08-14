@@ -102,7 +102,7 @@ const Medications: React.FC = () => {
         {currentRecords.map((record) => (
           <div
             key={record.id}
-            className="bg-white border border-brand-gray-50 p-4 rounded-2xl flex flex-col items-start cursor-pointer w-full h-[300px] min-w-[150px] flex-shrink-0"
+            className="bg-white border border-brand-gray-50 p-4 rounded-2xl flex flex-col items-start cursor-pointer w-full h-[300px] min-w-[150px] flex-shrink-0 overflow-hidden"
             onClick={() => handleMediClick(record)}
           >
             {record.itemImage ? (
@@ -123,9 +123,9 @@ const Medications: React.FC = () => {
               </div>
             )}
             <div className="flex flex-col justify-between flex-grow mt-2">
-              <p className="text-lg font-semibold text-gray-1000 mb-1 overflow-hidden text-ellipsis whitespace-nowrap">{record.medi_nickname}</p>
-              <p className="text-sm text-gray-800 mb-1 overflow-hidden text-ellipsis whitespace-nowrap">{record.medi_name}</p>
-              <p className="text-sm text-[#279ef9] overflow-hidden text-ellipsis whitespace-nowrap">{record.start_date} ~ {record.end_date}</p>
+              <p className="text-lg font-semibold text-gray-1000 mb-1 truncate">{record.medi_nickname}</p>
+              <p className="text-sm text-gray-800 mb-1 truncate">{record.medi_name}</p>
+              <p className="text-sm text-[#279ef9] truncate">{record.start_date} ~ {record.end_date}</p>
             </div>
           </div>
         ))}

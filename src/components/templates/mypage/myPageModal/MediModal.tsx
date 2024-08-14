@@ -29,10 +29,18 @@ interface MediModalProps {
   onEditClick: () => void;
 }
 
-const MediModal: React.FC<MediModalProps> = ({ isOpen, onRequestClose, mediRecord, onEditClick }) => {
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(":");
-    return `${hours}:${minutes}`;
+const MediModal: React.FC<MediModalProps> = ({
+  isOpen,
+  onRequestClose,
+  mediRecord,
+  onEditClick,
+}) => {
+  const formatTimes = () => {
+    const times = [];
+    if (mediRecord.times.morning) times.push("아침");
+    if (mediRecord.times.afternoon) times.push("점심");
+    if (mediRecord.times.evening) times.push("저녁");
+    return times.join(", ");
   };
 
   return (
@@ -43,7 +51,7 @@ const MediModal: React.FC<MediModalProps> = ({ isOpen, onRequestClose, mediRecor
       className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto relative">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg mx-auto relative">
         <button
           type="button"
           onClick={onRequestClose}
@@ -51,60 +59,45 @@ const MediModal: React.FC<MediModalProps> = ({ isOpen, onRequestClose, mediRecor
         >
           <FaTimes className="text-xl" />
         </button>
-        
-        <h2 className="text-2xl mb-4">약 정보</h2>
 
-        <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">약 별명:</label>
-          <p className="text-gray-700">{mediRecord.medi_nickname}</p>
+        <div className="mb-6 flex justify-between items-center">
+          <h2 className="text-2xl font-bold">{mediRecord.medi_nickname}</h2>
         </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">약 이름:</label>
-          <p className="text-gray-700">{mediRecord.medi_name}</p>
-        </div>
-
-        <div className="flex space-x-4 mb-4">
-          <div className="w-1/2">
-            <label className="block text-sm font-bold mb-2">복용 시작일:</label>
-            <p className="text-gray-700">{mediRecord.start_date}</p>
+        {/* Grouping the sections */}
+        <div className="mb-12 grid gap-4">
+          <div className="grid grid-cols-[25%_3%_72%] items-center">
+            <p className="text-gray-700 font-semibold">약 이름</p>
+            <p className="text-left">|</p>
+            <p className="text-gray-700">{mediRecord.medi_name}</p>
           </div>
-          <div className="w-1/2">
-            <label className="block text-sm font-bold mb-2">복용 종료일:</label>
-            <p className="text-gray-700">{mediRecord.end_date}</p>
+
+          <div className="grid grid-cols-[25%_3%_72%] items-center">
+            <p className="text-gray-700 font-semibold">복용 시간대</p>
+            <p className="text-left">|</p>
+            <p className="text-gray-700">{formatTimes()}</p>
+          </div>
+
+          <div className="grid grid-cols-[25%_3%_72%] items-center">
+            <p className="text-gray-700 font-semibold">복용 기간</p>
+            <p className="text-left">|</p>
+            <p className="text-gray-700">
+              {mediRecord.start_date} ~ {mediRecord.end_date}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-[25%_3%_72%] items-center">
+            <p className="text-gray-700 font-semibold">메모</p>
+            <p className="text-left">|</p>
+            <p className="text-gray-700">{mediRecord.notes}</p>
           </div>
         </div>
 
-        <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">복용 시간:</label>
-          <p className="text-gray-700">
-            {mediRecord.times.morning && "아침 "} 
-            {mediRecord.times.afternoon && "점심 "} 
-            {mediRecord.times.evening && "저녁 "}
-          </p>
-        </div>
-
-        {mediRecord.notification_time && mediRecord.repeat && (
-          <div className="mb-4">
-            <label className="block text-sm font-bold mb-2">알림 시간:</label>
-            {mediRecord.notification_time.map((time, index) => (
-              <p key={index} className="text-gray-700">
-                {formatTime(time)}
-              </p>
-            ))}
-          </div>
-        )}
-
-        <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">메모:</label>
-          <p className="text-gray-700">{mediRecord.notes}</p>
-        </div>
-
-        <div className="flex justify-end space-x-4">
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex justify-center w-full">
           <button
             type="button"
             onClick={onEditClick}
-            className="bg-blue-500 text-white px-4 py-2 rounded flex items-center"
+            className="bg-blue-500 text-white px-6 py-2 rounded flex items-center"
           >
             <FaEdit className="mr-2" /> 편집
           </button>

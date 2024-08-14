@@ -36,6 +36,9 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
   const [selectedMediRecord, setSelectedMediRecord] =
     useState<MediRecord | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [displayedMediRecords, setDisplayedMediRecords] = useState<
+    MediRecord[]
+  >([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -61,45 +64,44 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
 
     fetchMediRecords();
   }, []);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setDisplayedMediRecords(mediRecords.slice(0, 3));
+    };
 
-  const displayedMediRecords = mediRecords.slice(0, 3);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [mediRecords]);
 
   const handleShowAllClick = () => {
     router.push("/mypage/Medications");
   };
 
-  const handleEditClick = () => {
-    console.log("Edit clicked");
-  };
-
   return (
-    <div
-      className={`flex flex-col items-center w-full ${className}`}
-      style={{ height: "100%" }}
-    >
+    <div className={`flex flex-col items-center w-full ${className}`}>
       <div className="bg-[#f5f6f7] p-6 rounded-2xl w-full h-full">
         <div className="mb-6">
           <h2
             className="text-2xl font-semibold text-gray-1000 text-left cursor-pointer"
             onClick={handleShowAllClick}
           >
-            나의 복용 약
-            <span className="text-[#279ef9] text-3xl font-bold ml-2">
+            <span className="text-gray-1000">나의 복용약 </span>
+            <span className="text-[#279ef9] text-3xl font-bold">
               {mediRecords.length}개
             </span>
-            <span className="text-[#279ef9] text-3xl font-bold ml-1">
-              &gt;
-            </span>
+            <span className="text-[#279ef9] text-3xl font-bold ml-2">&gt;</span>
           </h2>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="grid grid-cols-1 desktop:grid-cols-3 gap-4">
           {displayedMediRecords.map((record) => (
             <div
               key={record.id}
-              className="bg-white p-4 rounded-2xl flex flex-col items-start w-[250px] h-[300px]"
+              className="bg-white p-4 rounded-2xl flex flex-col items-start w-full"
             >
-              <div className="relative w-full h-1/2 mb-4 rounded-xl overflow-hidden">
+              <div className="relative w-full aspect-square mb-4 rounded-xl overflow-hidden">
                 {record.itemImage ? (
                   <Image
                     src={record.itemImage}
@@ -114,7 +116,7 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
                   </div>
                 )}
               </div>
-              <div className="flex flex-col items-start w-full h-1/2">
+              <div className="flex flex-col items-start w-full">
                 <p className="text-xl font-semibold text-gray-1000 mb-2 text-left">
                   {record.medi_nickname}
                 </p>
@@ -135,7 +137,7 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
           mediRecord={selectedMediRecord}
-          onEditClick={handleEditClick}
+          onEditClick={() => console.log("Edit clicked")}
         />
       )}
     </div>
