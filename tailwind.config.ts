@@ -45,6 +45,7 @@ const config: Config = {
       desktop: "768px",
     },
   },
-  plugins: [],
+
+  plugins: [require("tailwind-scrollbar-hide")],
 };
 export default config;

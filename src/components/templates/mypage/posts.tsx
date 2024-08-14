@@ -50,14 +50,14 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-custom mx-auto px-4 py-2"> {/* Apply custom max-width */}
+    <div className="w-full max-w-custom mx-auto py-2"> {/* Apply custom max-width */}
       <div className="pt-16">
         <h2 className="text-2xl font-semibold mb-6 text-gray-1000">내가 쓴 글</h2> {/* Increased font size and weight */}
         <div className="flex flex-col gap-6">
           {posts.map((post) => (
             <div
               key={post.id}
-              className="bg-gray-50 rounded-xl p-4 max-w-full" // Ensures the post container is full width
+              className="bg-[#f5f6f7] rounded-xl p-4 max-w-full" // Ensures the post container is full width
             >
               <h3 className="text-xl font-semibold mb-2 text-gray-1000">{post.title}</h3>
               <p className="text-gray-600 mb-2">{post.contents}</p>

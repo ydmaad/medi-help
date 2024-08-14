@@ -1,34 +1,36 @@
 // 목적: 인증 관련 입력 필드를 위한 재사용 가능한 컴포넌트
-import React from "react";
+
+import React, { ChangeEvent } from "react";
 
 type AuthInputProps = {
-  id?: string;
+  id: string;
+  name: string;
   type: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
-  required?: boolean; // required를 선택적 prop으로 추가
+  required?: boolean;
   className?: string;
 };
 
 export const AuthInput: React.FC<AuthInputProps> = ({
   id,
+  name,
   type,
   value,
   onChange,
   placeholder,
-  required = false, // 기본값을 false로 설정
+  required = false,
   className = "",
 }) => (
   <input
     id={id}
+    name={name}
     type={type}
     value={value}
     onChange={onChange}
     placeholder={placeholder}
     required={required}
-    className={
-      "w-full px-3 py-2 border border-gray-300 rounded-md ${className}`.trim()"
-    }
+    className={`w-full px-3 py-2 border border-gray-300 rounded-md ${className}`.trim()}
   />
 );

@@ -24,6 +24,7 @@ const CalendarCheckbox = () => {
   const { events, setEvents } = useEventsStore();
   const [checkedMedicines, setCheckedMedicines] = useState<MedicineType[]>([]);
   const [selectedMedicines, setSelectedMedicines] = useState<string[]>([]);
+  const [showAllMedicines, setShowAllMedicines] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCheckedMedicines = async () => {
@@ -84,66 +85,114 @@ const CalendarCheckbox = () => {
   });
 
   return (
-    <div className="h-full flex flex-col mt-12 overflow-y-auto">
-      <h1 className="text-[32px] text-brand-gray-1000 font-bold mb-[20px] flex items-center">
+    <>
+      {/* '복약 달력'을 div 밖으로 빼서 상단에 배치 */}
+      <div className="flex items-center mt-12">
         <img src="/pencil.png" alt="연필 아이콘" className="w-8 h-8 mr-2" />
-        복약 달력
-      </h1>
-      <div className="ml-4">
-        <h2 className="text-gray-600 text-lg mb-2">복용 약 필터</h2>
-        <div className="max-h-32 overflow-y-auto">
-          <ul>
-            {nonAllowedDuplicates.map((medicine) => (
-              <li key={medicine.id} className="flex items-center mb-3">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={selectedMedicines.includes(medicine.id)}
-                    onChange={() => handleCheckboxChange(medicine)}
-                  />
-                  <div
-                    className={`w-5 h-5 flex items-center justify-center border rounded ${
-                      selectedMedicines.includes(medicine.id)
-                        ? "bg-gray-600 border-gray-600"
-                        : "bg-gray-50 border-gray-50"
-                    }`}
-                  >
-                    <svg
-                      className={`w-4 h-4 ${
+        <h1 className="text-[32px] text-brand-gray-1000 font-bold">
+          복약 달력
+        </h1>
+      </div>
+      <div className="h-full flex flex-col overflow-y-auto">
+        <div className="ml-4">
+          <h2 className="text-brand-gray-600 text-lg mt-6 mb-2">복용 약 필터</h2>
+          <div
+            className={`${
+              showAllMedicines ? "max-h-full" : "max-h-32"
+            } overflow-y-auto transition-max-height duration-300`}
+          >
+            <ul>
+              {nonAllowedDuplicates.map((medicine) => (
+                <li key={medicine.id} className="flex items-center mb-3">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={selectedMedicines.includes(medicine.id)}
+                      onChange={() => handleCheckboxChange(medicine)}
+                    />
+                    <div
+                      className={`w-5 h-5 flex items-center justify-center border rounded ${
                         selectedMedicines.includes(medicine.id)
-                          ? "text-gray-50"
-                          : "text-gray-200"
+                          ? "bg-brand-gray-600 border-brand-gray-600"
+                          : "bg-brand-gray-50 border-brand-gray-50"
                       }`}
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <span
-                    className={`ml-3 text-lg ${
-                      selectedMedicines.includes(medicine.id)
-                        ? "text-gray-800"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    {medicine.medi_nickname}
-                  </span>
-                </label>
-              </li>
-            ))}
-          </ul>
+                      <svg
+                        className={`w-4 h-4 ${
+                          selectedMedicines.includes(medicine.id)
+                            ? "text-brand-gray-50"
+                            : "text-brand-gray-200"
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <span
+                      className={`ml-3 text-lg ${
+                        selectedMedicines.includes(medicine.id)
+                          ? "text-brand-gray-800"
+                          : "text-brand-gray-400"
+                      }`}
+                    >
+                      {medicine.medi_nickname}
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {/* 아이콘을 추가하여 목록을 확장/축소하는 버튼 */}
+          <div className="flex justify-center mt-2">
+            <button
+              onClick={() => setShowAllMedicines((prev) => !prev)}
+              className="text-brand-gray-200 focus:outline-none"
+            >
+              {showAllMedicines ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 15l-7-7-7 7"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 9l7 7 7-7"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

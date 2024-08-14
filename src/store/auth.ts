@@ -28,21 +28,3 @@ export const useAuthStore = create<AuthState>((set) => ({
   // 인증 정보를 초기화하는 액션 (로그아웃 시 사용)
   clearAuth: () => set(() => ({ user: null })),
 }));
-
-// 기존 코드
-// import { Tables } from "@/types/supabase";
-// import { create } from "zustand";
-
-// type User = Tables<"users">;
-
-// interface AuthState {
-//   user: User | null;
-//   setUser: (user: User | null) => void;
-//   clearAuth: () => void;
-// }
-
-// export const useAuthStore = create<AuthState>((set) => ({
-//   user: null,
-//   setUser: (user) => set({ user }),
-//   clearAuth: () => set({ user: null }),
-// }));

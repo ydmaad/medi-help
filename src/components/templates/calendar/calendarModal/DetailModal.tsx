@@ -5,7 +5,7 @@ import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import EditModalInner from "@/components/molecules/EditModalInner";
 import ViewModalInner from "@/components/molecules/ViewModalInner";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constant/constant";
+import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import {
   useCalendarStore,
   useEditStore,
