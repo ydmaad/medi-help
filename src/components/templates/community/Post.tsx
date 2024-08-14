@@ -140,7 +140,7 @@ const Post = () => {
 
         {/* 이미지 첨부, 내용 인풋 */}
         <div className="border border-gray-100 rounded-md mt-3 mb-4 desktop:mb-7 ">
-          {/* 이미지 첨부 부분 */}
+          {/* 데스크탑 버전 이미지 첨부 부분 */}
           <div className="mt-4 hidden desktop:flex">
             <label className="inline-flex items-center cursor-pointer text-gray-600 ml-3 mb-2">
               <Image
@@ -196,6 +196,7 @@ const Post = () => {
           </div>
         </div>
         {/* 이미지 첨부, 내용 인풋=============================== */}
+        {/* 버튼 */}
         <div className=" border border-brand-gray-600 rounded py-3 flex desktop:hidden items-center justify-center ">
           <label className="inline-flex items-center cursor-pointer text-gray-600">
             <Image
@@ -234,7 +235,6 @@ const Post = () => {
                   alt="이미지삭제버튼"
                   width={24}
                   height={24}
-                  className="w-[24px] h-[24px] "
                 ></Image>
               </button>
             </div>
