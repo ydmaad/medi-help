@@ -5,7 +5,11 @@ import { useAuthStore } from "@/store/auth";
 import axios from "axios";
 import { Tables } from "@/types/supabase";
 import { EventInput } from "@fullcalendar/core";
-import {useEventsStore, useMedicinesStore, useMediNameFilter} from "@/store/calendar";
+import {
+  useEventsStore,
+  useMedicinesStore,
+  useMediNameFilter,
+} from "@/store/calendar";
 
 type MedicineType = Tables<"medications">;
 type CalendarMedicineType = {
@@ -41,7 +45,9 @@ const CalendarCheckbox = () => {
           setSelectedMedicines(
             allCheckedMedicines.map((medicine) => medicine.id)
           );
-          setMediNames(allCheckedMedicines.map((medicine) => medicine.medi_nickname || ""));
+          setMediNames(
+            allCheckedMedicines.map((medicine) => medicine.medi_nickname || "")
+          );
         } catch (error) {
           console.log("Error fetching checked medicines", error);
         }
@@ -57,26 +63,35 @@ const CalendarCheckbox = () => {
         ? prev.filter((id) => id !== medicine.id)
         : [...prev, medicine.id]
     );
-    setMediNames(mediNames.includes(medicine.medi_nickname) ? mediNames.filter((medi_nickname) => medi_nickname !== medicine.medi_nickname)
-        : [...mediNames, medicine.medi_nickname])
+    setMediNames(
+      mediNames.includes(medicine.medi_nickname)
+        ? mediNames.filter(
+            (medi_nickname) => medi_nickname !== medicine.medi_nickname
+          )
+        : [...mediNames, medicine.medi_nickname]
+    );
   };
 
   let nonAllowedDuplicates: MedicineType[] = [];
   checkedMedicines.forEach((medicine) => {
-    if (!nonAllowedDuplicates.find(e => e.medi_nickname === medicine.medi_nickname)) {
-      nonAllowedDuplicates.push(medicine)
+    if (
+      !nonAllowedDuplicates.find(
+        (e) => e.medi_nickname === medicine.medi_nickname
+      )
+    ) {
+      nonAllowedDuplicates.push(medicine);
     }
-  })
+  });
 
   return (
     <div className="h-full flex flex-col mt-12 overflow-y-auto">
-      <h1 className="text-4xl font-bold mb-4 flex items-center">
+      <h1 className="text-[32px] text-brand-gray-1000 font-bold mb-[20px] flex items-center">
         <img src="/pencil.png" alt="연필 아이콘" className="w-8 h-8 mr-2" />
         복약 달력
       </h1>
-      <div className="ml-4"> 
+      <div className="ml-4">
         <h2 className="text-gray-600 text-lg mb-2">복용 약 필터</h2>
-        <div className="max-h-32 overflow-y-auto"> 
+        <div className="max-h-32 overflow-y-auto">
           <ul>
             {nonAllowedDuplicates.map((medicine) => (
               <li key={medicine.id} className="flex items-center mb-3">

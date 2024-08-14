@@ -67,7 +67,7 @@ const MediCheck = ({ medicine, idx }: Props) => {
           </span>
         </div>
         <div
-          className={`h-full text-sm truncate ${
+          className={`w-[100px] h-full text-sm truncate ${
             checked ? "text-brand-gray-1000" : "text-brand-gray-600"
           }`}
         >

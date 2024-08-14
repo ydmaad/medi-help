@@ -31,6 +31,10 @@
   outline: none !important;
 }
 
+.fc-button:hover {
+  background-color: transparent !important;
+}
+
 .fc .fc-scrollgrid {
   border: 1px solid #f5f6f7 !important; /*gray-50*/
   box-shadow: inset 1px !important;
@@ -70,6 +74,10 @@ i {
 
   .fc-button {
     background-color: transparent !important;
+  }
+
+  .fc .fc-daygrid-day-frame {
+    min-height: 100px !important;
   }
 
   .fc-daygrid-day-frame .fc-scrollgrid-sync-inner {
@@ -115,8 +123,9 @@ i {
     font-size: 1rem;
   }
 
-  .fc-daygrid-day-frame {
+  .fc .fc-daygrid-day-frame {
     min-height: 44px;
+    max-height: 64px;
   }
   .fc-daygrid-day-events {
     display: flex;
