@@ -15,7 +15,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
 
   return (
     <div
-      className={`flex flex-col items-center w-full p-6 bg-[#e9f5fe] rounded-xl text-primary-500 ${className}`}
+      className={`flex flex-col items-center w-full p-6 bg-[#e9f5fe] rounded-xl ${className}`}
     >
       <div className="w-24 h-24 desktop:w-60 desktop:h-60 rounded-full overflow-hidden mb-4">
         <img

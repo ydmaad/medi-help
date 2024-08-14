@@ -78,8 +78,8 @@ const Posts: React.FC = () => {
               <h3 className="text-xl font-semibold mb-2 text-gray-1000">
                 {post.title}
               </h3>
-              <p className="text-gray-600 mb-2">{post.contents}</p>
-              <p className="text-gray-500 text-sm">{formatDate(post.created_at)}</p>
+              <p className="text-brand-gray-600 mb-2">{post.contents}</p>
+              <p className="text-brand-gray-500 text-sm">{formatDate(post.created_at)}</p>
             </div>
           ))}
         </div>
@@ -88,7 +88,7 @@ const Posts: React.FC = () => {
         <div className="flex justify-center mt-4 space-x-1">
           <button
             onClick={handlePrevPage}
-            className={`px-4 py-2 ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700'}`}
+            className={`px-4 py-2 ${currentPage === 1 ? 'text-brand-gray-400 cursor-not-allowed' : 'text-brand-gray-700'}`}
             disabled={currentPage === 1}
           >
             &lt;
@@ -97,14 +97,14 @@ const Posts: React.FC = () => {
             <button
               key={index}
               onClick={() => setCurrentPage(index + 1)}
-              className={`px-4 py-2 ${currentPage === index + 1 ? 'text-blue-600' : 'text-gray-700'}`}
+              className={`px-4 py-2 ${currentPage === index + 1 ? 'text-brand-primary-600' : 'text-brand-gray-700'}`}
             >
               {index + 1}
             </button>
           ))}
           <button
             onClick={handleNextPage}
-            className={`px-4 py-2 ${indexOfLastPost >= posts.length ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700'}`}
+            className={`px-4 py-2 ${indexOfLastPost >= posts.length ? 'text-brand-gray-400 cursor-not-allowed' : 'text-brand-gray-700'}`}
             disabled={indexOfLastPost >= posts.length}
           >
             &gt;
