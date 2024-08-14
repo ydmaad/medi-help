@@ -79,29 +79,27 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
     >
       <div className="bg-[#f5f6f7] p-6 rounded-2xl w-full h-full">
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-1000 text-left">
+          <h2
+            className="text-2xl font-semibold text-gray-1000 text-left cursor-pointer"
+            onClick={handleShowAllClick}
+          >
             나의 복용 약
             <span className="text-[#279ef9] text-3xl font-bold ml-2">
               {mediRecords.length}개
             </span>
-            <button
-              onClick={handleShowAllClick}
-              className="text-[#279ef9] text-3xl font-bold ml-1"
-            >
+            <span className="text-[#279ef9] text-3xl font-bold ml-1">
               &gt;
-            </button>
+            </span>
           </h2>
         </div>
 
-        <div className="flex gap-4 justify-between w-full">
-          {/* 요소들이 가로로 표시되도록 flex-wrap을 사용하지 않고 설정 */}
+        <div className="flex items-center gap-4">
           {displayedMediRecords.map((record) => (
             <div
               key={record.id}
-              className="bg-white p-4 rounded-2xl flex flex-col items-start w-[30%] min-w-[300px] h-80"
-              // 너비를 고정하여 모든 요소가 가로로 표시되도록 설정
+              className="bg-white p-4 rounded-2xl flex flex-col items-start w-[250px] h-[300px]"
             >
-              <div className="relative w-full h-32 mb-4 rounded-xl overflow-hidden">
+              <div className="relative w-full h-1/2 mb-4 rounded-xl overflow-hidden">
                 {record.itemImage ? (
                   <Image
                     src={record.itemImage}
@@ -116,14 +114,14 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
                   </div>
                 )}
               </div>
-              <div className="flex flex-col items-start w-full">
-                <p className="text-xl font-semibold text-gray-1000 mb-3 text-left">
+              <div className="flex flex-col items-start w-full h-1/2">
+                <p className="text-xl font-semibold text-gray-1000 mb-2 text-left">
                   {record.medi_nickname}
                 </p>
-                <p className="text-lg text-gray-800 mb-3 text-left">
+                <p className="text-lg text-gray-800 mb-2 text-left">
                   {record.medi_name}
                 </p>
-                <p className="text-lg mb-4 text-[#279ef9] text-left">
+                <p className="text-lg text-[#279ef9] text-left">
                   {record.start_date} ~ {record.end_date}
                 </p>
               </div>
