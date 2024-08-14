@@ -66,7 +66,7 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto py-4 px-4">
+    <div className="w-full max-w-screen-xl mx-auto py-4 ">
       <div className="pt-16">
         <h2 className="text-2xl font-semibold mb-6 text-gray-1000">내가 쓴 글</h2>
         <div className="flex flex-col gap-6">
