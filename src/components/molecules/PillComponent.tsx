@@ -1,5 +1,5 @@
 "use client";
-import { NAME_OF_TIME } from "@/constant/constant";
+import { NAME_OF_TIME } from "@/constants/constant";
 import { useValuesStore } from "@/store/calendar";
 import { MedicinesType } from "@/types/calendar";
 import Image from "next/image";

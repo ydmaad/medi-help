@@ -9,6 +9,8 @@ import { AuthPrimaryButton } from "../../atoms/AuthPrimaryButton";
 import { AuthErrorMessage } from "../../atoms/AuthErrorMessage";
 import { AuthPasswordInput } from "../../molecules/AuthPasswordInput";
 import { AuthTermsCheckbox } from "../../molecules/AuthTermsCheckbox";
+import { termsOfService } from "@/constants/termsOfService";
+import { privacyPolicy } from "@/constants/privacyPolicy";
 import { supabase } from "@/utils/supabase/client";
 
 type SignupFormProps = {
@@ -271,7 +273,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           onChange={setAgreeTerms}
           label="이용약관 동의 (필수)"
           modalTitle="이용약관"
-          modalContent="여기에 이용약관 내용을 넣으세요..."
+          modalContent={termsOfService}
         />
         <AuthTermsCheckbox
           id="agreePrivacy"
@@ -279,7 +281,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           onChange={setAgreePrivacy}
           label="개인정보 처리방침 동의 (필수)"
           modalTitle="개인정보 처리방침"
-          modalContent="여기에 개인정보 처리방침 내용을 넣으세요..."
+          modalContent={privacyPolicy}
         />
 
         {/* 에러 메시지 */}

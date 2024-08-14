@@ -16,18 +16,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg max-w-md w-full">
-        <h2 className="text-xl font-bold mb-4">{title}</h2>
-        <div className="max-h-60 overflow-y-auto mb-4">
-          <p>{content}</p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="p-4 border-b">
+          <h2 className="text-xl font-semibold">{title}</h2>
         </div>
-        <button
-          onClick={onClose}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          닫기
-        </button>
+        <div className="p-4 overflow-y-auto flex-grow">
+          <div className="prose prose-sm max-w-none">
+            {content.split("\n\n").map((paragraph, index) => (
+              <p key={index} className="mb-4">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+        <div className="p-4 border-t">
+          <button
+            onClick={onClose}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+          >
+            닫기
+          </button>
+        </div>
       </div>
     </div>
   );
