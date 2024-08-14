@@ -80,51 +80,49 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
     router.push("/mypage/Medications");
   };
 
+ 
   return (
     <div className={`flex flex-col items-center w-full ${className}`}>
-      <div className="bg-[#f5f6f7] p-6 rounded-2xl w-full h-full">
-        <div className="mb-6">
+      <div className="bg-[#f5f6f7] p-4 desktop:p-6 rounded-2xl w-full h-full">
+        <div className="mb-4 desktop:mb-6">
           <h2
-            className="text-2xl font-semibold text-gray-1000 text-left cursor-pointer"
+            className="text-xl desktop:text-2xl font-semibold text-gray-1000 text-left cursor-pointer"
             onClick={handleShowAllClick}
           >
             <span className="text-gray-1000">나의 복용약 </span>
-            <span className="text-[#279ef9] text-3xl font-bold">
+            <span className="text-[#279ef9] text-2xl desktop:text-3xl font-bold">
               {mediRecords.length}개
             </span>
-            <span className="text-[#279ef9] text-3xl font-bold ml-2">&gt;</span>
+            <span className="text-[#279ef9] text-2xl desktop:text-3xl font-bold ml-2">&gt;</span>
           </h2>
         </div>
 
-<div className="grid grid-cols-2 desktop:grid-cols-3 gap-4">
-  {displayedMediRecords.map((record) => (
+        <div className="grid grid-cols-2 desktop:grid-cols-3 gap-3 desktop:gap-6">
+          {displayedMediRecords.map((record) => (
             <div
               key={record.id}
-              className="bg-white p-4 rounded-2xl flex flex-col items-start w-full"
+              className="bg-white border border-brand-gray-50 p-2 desktop:p-4 rounded-2xl flex flex-col items-start cursor-pointer w-full aspect-[4/5]"
             >
-              <div className="relative w-full aspect-square mb-4 rounded-xl overflow-hidden">
+              <div className="relative w-full pb-[66.67%] mb-2">
                 {record.itemImage ? (
-                  <Image
-                    src={record.itemImage}
-                    alt={record.medi_name || "기본 이미지"}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-xl"
-                  />
+                  <div className="absolute inset-0 rounded-xl overflow-hidden">
+                    <Image
+                      src={record.itemImage}
+                      alt={record.medi_nickname || "약 이미지"}
+                      layout="fill"
+                      objectFit="cover"
+                    />
+                  </div>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-xl">
-                    <p className="text-gray-500">이미지 없음</p>
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-xl">
+                    <p className="text-brand-gray-400 text-xs desktop:text-sm">이미지 없음</p>
                   </div>
                 )}
               </div>
-              <div className="flex flex-col items-start w-full">
-                <p className="text-xl font-semibold text-gray-1000 mb-2 text-left">
-                  {record.medi_nickname}
-                </p>
-                <p className="text-lg text-gray-800 mb-2 text-left">
-                  {record.medi_name}
-                </p>
-                <p className="text-lg text-[#279ef9] text-left">
+              <div className="flex flex-col justify-start flex-grow w-full mt-2">
+                <p className="text-sm desktop:text-base font-bold text-brand-gray-1000 line-clamp-1">{record.medi_nickname}</p>
+                <p className="text-xs desktop:text-sm text-brand-gray-800 line-clamp-1 mt-1">{record.medi_name}</p>
+                <p className="text-xs desktop:text-sm text-brand-primary-500 mt-auto">
                   {record.start_date} ~ {record.end_date}
                 </p>
               </div>
@@ -132,6 +130,7 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           ))}
         </div>
       </div>
+
 
       {selectedMediRecord && (
         <MediModal
