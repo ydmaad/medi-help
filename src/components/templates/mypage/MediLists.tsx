@@ -64,12 +64,13 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
 
     fetchMediRecords();
   }, []);
-  
+
   useEffect(() => {
     const handleResize = () => {
-      setDisplayedMediRecords(mediRecords.slice(0, 3));
+      const isMobile = window.innerWidth < 768; // 모바일 기준 너비 설정
+      setDisplayedMediRecords(mediRecords.slice(0, isMobile ? 4 : 3));
     };
-
+  
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -95,8 +96,8 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 desktop:grid-cols-3 gap-4">
-          {displayedMediRecords.map((record) => (
+<div className="grid grid-cols-2 desktop:grid-cols-3 gap-4">
+  {displayedMediRecords.map((record) => (
             <div
               key={record.id}
               className="bg-white p-4 rounded-2xl flex flex-col items-start w-full"
