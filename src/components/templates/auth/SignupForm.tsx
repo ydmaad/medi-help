@@ -105,7 +105,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   // 비밀번호 유효성 검사
   useEffect(() => {
     if (password !== "") {
-      const passwordRegex = /^(?=.*[\d!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+      const passwordRegex =
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
       // 보안강도 높은 비번 유효성 검사 코드
       // const passwordRegex =
       //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -235,7 +236,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           />
           {passwordValid === false && (
             <p className="text-red-500 text-sm mt-1">
-              비밀번호는 6자 이상이며, 숫자나 특수문자를 하나 이상 포함해야
+              비밀번호는 영문자, 숫자, 특수문자를 포함하여 최소 6자 이상이어야
               합니다.
             </p>
           )}
