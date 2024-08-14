@@ -118,8 +118,9 @@ const Medications: React.FC = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-4">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6 mt-20 text-brand-gray-1000 text-left">복약 리스트</h2>
-      <div className={`grid ${
+      <div className="mx-auto max-w-[calc(100%-2rem)]"> {/* 새로운 div 추가 */}
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 ml-7 mt-20 text-brand-gray-1000 text-left">복약 리스트</h2>
+        <div className={`grid ${
   isMobile 
     ? 'grid-cols-2 gap-4 justify-items-center' 
     : 'grid-cols-5 gap-6'
@@ -202,8 +203,10 @@ const Medications: React.FC = () => {
           />
         </>
       )}
+      </div>
     </div>
   );
+  
 };
 
 export default Medications;
