@@ -1,5 +1,6 @@
+import { POST_PER_PAGE } from "@/constants/constant";
 import { useAuthStore } from "@/store/auth";
-import { CommentWithUser } from "@/types/communityTypes";
+import { BookmarkData, CommentWithUser } from "@/types/communityTypes";
 
 // 댓글 가져오기 요청
 export const fetchComment = async (postId: string) => {
@@ -80,8 +81,7 @@ export const postComment = async (postId: string, comment: string) => {
   }
 };
 
-// 게시글 id를 받아 게시글 데이터 요청
-// 따로 분리해서 재사용할 수 있는 부분(PostDetail, Edit)
+// 게시글 상세 데이터 요청
 export const fetchDetailPost = async (id: string) => {
   try {
     const response = await fetch(`/api/community/${id}`);
@@ -156,4 +156,56 @@ export const fetchPost = async ({
     console.error("게시글 등록 오류 =>", error);
     alert("게시글 등록 실패");
   }
+};
+
+// 게시글 삭제 요청
+export const deletePost = async (id: string) => {
+  const response = await fetch(`/api/community/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw Error("게시글 삭제에 실패했습니다.");
+  }
+};
+
+// 북마크 상태 확인 요청
+export const statusBookmark = async (
+  postId: string
+): Promise<BookmarkData[]> => {
+  const response = await fetch(`/api/community/${postId}/bookmark`);
+  if (!response.ok) {
+    throw new Error("북마크 상태 확인 실패");
+  }
+  const result = await response.json();
+  return result.data;
+};
+
+// 북마크 토글 요청
+export const fetchBookmark = async (postId: string, userId: string) => {
+  try {
+    const response = await fetch(`/api/community/${postId}/bookmark`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "User-Id": userId,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("북마크 토글 실패");
+    }
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.log("북마크 토글 중 오류 : ", error);
+    throw error;
+  }
+};
+
+// 게시글 불러오는 요청
+export const fetchPosts = async (page: number, sortOption: string) => {
+  const res = await fetch(
+    `/api/community?page=${page}&perPage=${POST_PER_PAGE}&sort=${sortOption}`
+  );
+  const result = await res.json();
+  return { data: result.data, totalPosts: result.totalPosts };
 };

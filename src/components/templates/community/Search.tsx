@@ -1,3 +1,5 @@
+"use client";
+
 import CommunitySearch from "@/components/molecules/CommunitySearch";
 import React, { useState } from "react";
 
@@ -11,6 +13,7 @@ const Search = ({ handleSearch }: SearchProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleSearch(searchTerm);
+    console.log(searchTerm);
   };
 
   return (
@@ -20,6 +23,7 @@ const Search = ({ handleSearch }: SearchProps) => {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         ></CommunitySearch>
+        <button type="submit" style={{ display: "none" }}></button>
       </form>
     </>
   );
