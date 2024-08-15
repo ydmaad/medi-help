@@ -80,7 +80,11 @@ const CommunityPage = () => {
             </span>
           </div>
           <div className="flex items-center space-x-4">
-            <Search handleSearch={handleSearch} />
+            <Search
+              handleSearch={handleSearch}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
 
             {/* 데스트탑 버전 */}
             <Link
