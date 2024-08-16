@@ -1,25 +1,36 @@
 "use client";
 
+import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 
 interface CommunitySearchProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  handleSearch: (term: string) => void;
 }
 
 const CommunitySearch = ({
   searchTerm,
   setSearchTerm,
+  handleSearch,
 }: CommunitySearchProps) => {
-  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
 
   const toggleSearch = () => {
+    setSearchTerm("");
     setIsSearchOpen(!isSearchOpen);
   };
 
   const searchTermReset = () => {
     setSearchTerm("");
+  };
+
+  const handleKeyboardDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.keyCode === 13) {
+      handleSearch(searchTerm);
+    }
+    // console.log(e);
   };
   return (
     <>
@@ -53,15 +64,18 @@ const CommunitySearch = ({
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="제목 및 내용, 작성자 등을 검색하세요"
                 className="w-[291px] border-solid border-2 border-brand-primary-300 py-2 pl-4 pr-10 text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onKeyDown={handleKeyboardDown}
               />
               <div className="absolute inset-y-0 right-11 pr-3 flex items-center">
                 {searchTerm.length === 0 ? (
-                  <Image
-                    src="/magnifier.svg"
-                    alt="돋보기이미지"
-                    width={20}
-                    height={20}
-                  ></Image>
+                  <button type="submit">
+                    <Image
+                      src="/magnifier.svg"
+                      alt="돋보기이미지"
+                      width={20}
+                      height={20}
+                    ></Image>
+                  </button>
                 ) : (
                   <button onClick={searchTermReset} type="button">
                     <Image

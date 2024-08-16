@@ -4,6 +4,7 @@ import PostFloatingBtn from "@/components/molecules/PostFloatingBtn";
 import List from "@/components/templates/community/List";
 import Search from "@/components/templates/community/Search";
 import { useAuthStore } from "@/store/auth";
+import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
 import { PostWithUser } from "@/types/communityTypes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,6 +16,7 @@ const CommunityPage = () => {
   const [allPosts, setAllPosts] = useState<PostWithUser[]>([]);
   const { user } = useAuthStore();
   const router = useRouter();
+  const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
 
   useEffect(() => {
     const fectchAllPosts = async () => {
@@ -47,6 +49,7 @@ const CommunityPage = () => {
       router.push("/community/post");
     }
   };
+  console.log(isSearchOpen);
 
   return (
     <>
@@ -65,20 +68,23 @@ const CommunityPage = () => {
               약에 대한 이야기를 나누어 보아요
             </span>
           </div>
+          {isSearchOpen ? null : (
+            <div className="flex desktop:hidden flex-col ml-5">
+              <button
+                onClick={handleReset}
+                className="flex items-center text-3xl font-bold"
+              >
+                <span className="mr-3">&#128172;</span>
+                커뮤니티
+              </button>
+              <span className="text-brand-gray-600 font-extrabold mt-2">
+                약에 대한 이야기를 나누어 보아요
+              </span>
+            </div>
+          )}
 
           {/* 모바일 버전 */}
-          <div className="flex desktop:hidden flex-col ml-5">
-            <button
-              onClick={handleReset}
-              className="flex items-center text-3xl font-bold"
-            >
-              <span className="mr-3">&#128172;</span>
-              커뮤니티
-            </button>
-            <span className="text-brand-gray-600 font-extrabold mt-2">
-              약에 대한 이야기를 나누어 보아요
-            </span>
-          </div>
+
           <div className="flex items-center space-x-4">
             <Search
               handleSearch={handleSearch}

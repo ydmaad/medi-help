@@ -1,7 +1,7 @@
 "use client";
 
 import CommunitySearch from "@/components/molecules/CommunitySearch";
-import React from "react";
+import React, { useState } from "react";
 
 interface SearchProps {
   handleSearch: (term: string) => void;
@@ -9,20 +9,21 @@ interface SearchProps {
   setSearchTerm: (term: string) => void;
 }
 
-const Search = ({ handleSearch, searchTerm, setSearchTerm }: SearchProps) => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSearch(searchTerm);
-  };
+const Search = ({ handleSearch }: SearchProps) => {
+  const [newSearchTerm, setNewSearchTerm] = useState<string>("");
+
+  // 추후 커뮤니티서치 여기로 합치기!!!(굳이 나눌 필요 없음)
+  console.log(newSearchTerm);
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex items-center">
+      <div className="flex items-center">
         <CommunitySearch
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
+          searchTerm={newSearchTerm}
+          setSearchTerm={setNewSearchTerm}
+          handleSearch={handleSearch}
         ></CommunitySearch>
-      </form>
+      </div>
     </>
   );
 };
