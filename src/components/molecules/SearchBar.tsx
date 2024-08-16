@@ -16,13 +16,20 @@ const SearchBar = ({ onSearchChange }: SearchBarProps) => {
     onSearchChange(searchTerm);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearchButtonClick();
+    }
+  };
+
   return (
     <div className="relative flex items-center border-3 border-brand-primary-300 rounded-full">
       <input
         type="text"
         placeholder="복용 중인 약에 대해 검색해 보세요"
-        className=" aspect-[792/56] w-[792px]  rounded-full p-4 border-0 focus:outline-none ring-2 ring-brand-primary-300 focus:ring-brand-primary-500 placeholder:text-gray-500"
+        className="aspect-[792/56] w-[335px] desktop:w-[792px] rounded-full p-4 border-0 focus:outline-none ring-2 ring-brand-primary-300 focus:ring-brand-primary-500 placeholder:text-gray-500"
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
       />
       <div className="absolute right-2">
         <SearchButton
