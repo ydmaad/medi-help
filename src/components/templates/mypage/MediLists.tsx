@@ -83,7 +83,13 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
  
   return (
     <div className={`flex flex-col items-center w-full ${className}`}>
-      <div className="bg-[#f5f6f7] p-4 desktop:p-6 rounded-2xl w-full h-full">
+      <div 
+        className="bg-[#f5f6f7] p-4 desktop:p-6 rounded-2xl w-full h-full"
+        style={{ 
+          aspectRatio: '671 / 352',
+          minHeight: '352px', // UserBoard의 높이와 맞춤
+        }}
+      >
         <div className="mb-4 desktop:mb-6">
           <h2
             className="text-xl desktop:text-2xl font-semibold text-gray-1000 text-left cursor-pointer"
@@ -97,13 +103,17 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 desktop:grid-cols-3 gap-3 desktop:gap-6">
+        <div className="grid grid-cols-2 desktop:grid-cols-3 gap-3 desktop:gap-6 h-[calc(100%-2rem)]">
           {displayedMediRecords.map((record) => (
             <div
               key={record.id}
-              className="bg-white border border-brand-gray-50 p-2 desktop:p-4 rounded-2xl flex flex-col items-start cursor-pointer w-full aspect-[4/5]"
+              className="bg-white border border-brand-gray-50 p-2 desktop:p-4 rounded-2xl flex flex-col items-start cursor-pointer w-full"
+              style={{ aspectRatio: '180 / 217' }}
             >
-              <div className="relative w-full pb-[66.67%] mb-2">
+              <div 
+                className="relative w-full mb-2"
+                style={{ aspectRatio: '148 / 84' }}
+              >
                 {record.itemImage ? (
                   <div className="absolute inset-0 rounded-xl overflow-hidden">
                     <Image
@@ -119,10 +129,18 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
                   </div>
                 )}
               </div>
-              <div className="flex flex-col justify-start flex-grow w-full mt-2">
+              <div 
+                className="flex flex-col justify-start w-full"
+                style={{ aspectRatio: '148 / 60' }}
+              >
                 <p className="text-sm desktop:text-base font-bold text-brand-gray-1000 line-clamp-1">{record.medi_nickname}</p>
                 <p className="text-xs desktop:text-sm text-brand-gray-800 line-clamp-1 mt-1">{record.medi_name}</p>
-                <p className="text-xs desktop:text-sm text-brand-primary-500 mt-auto">
+              </div>
+              <div 
+                className="mt-auto w-full"
+                style={{ aspectRatio: '149 / 17' }}
+              >
+                <p className="text-xs desktop:text-sm text-brand-primary-500">
                   {record.start_date} ~ {record.end_date}
                 </p>
               </div>
@@ -130,7 +148,6 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           ))}
         </div>
       </div>
-
 
       {selectedMediRecord && (
         <MediModal
