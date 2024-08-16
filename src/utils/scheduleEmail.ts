@@ -47,7 +47,8 @@ async function sendScheduledEmails() {
     `)
     .not('day_of_week', 'is', null)
     .not('notification_time', 'is', null)
-
+    .not('is_sent', 'is', null)
+      
   if (error) {
     console.error('Failed to fetch medication records:', error);
     return;
@@ -75,11 +76,20 @@ async function sendScheduledEmails() {
       });
 
       try {
+
+        await supabase
+        .from('medications')
+        .update({is_sent : true})
+        .eq('id', mediRecord.id);
+
         await sendEmail({
           to: userEmail,
           subject,
           text: message,
         });
+
+       
+        //테이블 값 수정시키는 로직 추가
         console.log(`Email sent to ${userEmail} for medication ${mediRecord.medi_nickname}`);
       } catch (emailError) {
         console.error('Failed to send email:', emailError);
