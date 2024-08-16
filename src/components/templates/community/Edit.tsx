@@ -1,47 +1,17 @@
 "use client";
 
-import { Tables } from "@/types/supabase";
+import { editPost, fetchDetailPost } from "@/lib/commentsAPI";
+import { Post } from "@/types/communityTypes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-type Post = Tables<"posts">;
-
 interface PostEditProps {
   id: string;
 }
 
-// 게시글 id를 받아 게시글 데이터 요청
-// 따로 분리해서 재사용할 수 있는 부분(PostDetail, Edit)
-const fetchDetailPost = async (id: string) => {
-  try {
-    const response = await fetch(`/api/community/${id}`);
-    if (!response.ok) {
-      throw new Error("게시글 불러오는데 실패했습니다");
-    }
-    const { data } = await response.json();
-    console.log("수정하려고 불러온 데이터 :", data);
-    return data[0];
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-// 게시글 수정 요청
-const editPost = async (id: string, formData: FormData) => {
-  const response = await fetch(`/api/community/${id}`, {
-    method: "PUT",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error("게시글 수정에 실패했습니다.");
-  }
-  return await response.json();
-};
-
+// id: post의 id
 const Edit = ({ id }: PostEditProps) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
@@ -128,9 +98,10 @@ const Edit = ({ id }: PostEditProps) => {
   const handleCategorySelect = (category: string) => {
     setSelectCategory(category);
   };
-  console.log(selectCategory);
+  
+  // console.log(selectCategory);
 
-  console.log("현재 게시글:", post);
+  // console.log("현재 게시글:", post);
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;

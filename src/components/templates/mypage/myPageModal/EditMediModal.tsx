@@ -97,7 +97,6 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
 
   const handleSave = async () => {
     try {
-      // Update record on the server
       const response = await axios.put(`/api/mypage/medi/${formData.id}`, {
         ...formData,
         repeat: notificationEnabled,
@@ -105,7 +104,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       
       if (response.status === 200) {
         onUpdate(formData);
-        onRequestClose();
+        onRequestClose(); // 수정 후 모달 닫기
       } else {
         console.error("Failed to update record:", response.statusText);
       }
@@ -116,12 +115,11 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
 
   const handleDelete = async () => {
     try {
-      // Delete record on the server
       const response = await axios.delete(`/api/mypage/medi/${formData.id}`);
       
       if (response.status === 200) {
         onDelete(formData.id);
-        onRequestClose();  // 모달을 강제로 닫음
+        onRequestClose();  // Close the modal
       } else {
         console.error("Failed to delete record:", response.statusText);
       }
@@ -157,20 +155,41 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto z-50">
-        <h2 className="text-2xl mb-4">약 수정</h2>
+      <div className="bg-white rounded-lg p-8 max-w-md mx-auto z-50 relative">
+        {/* 닫기 버튼 */}
+        <button
+          onClick={onRequestClose}
+          className="absolute top-4 right-4 text-gray-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        <h2 className="text-2xl mb-4">나의 약</h2>
 
         {/* 약 별명 입력 */}
         <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">약 별명:</label>
-          <input
-            type="text"
-            name="medi_nickname"
-            value={formData.medi_nickname}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </div>
+  <input
+    type="text"
+    name="medi_nickname"
+    value={formData.medi_nickname}
+    onChange={handleChange}
+    placeholder="약 별명(최대 6자)"
+    className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
+  />
+</div>
 
         {/* 약 이름 입력 */}
         <div className="mb-4">
@@ -180,7 +199,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
             name="medi_name"
             value={formData.medi_name}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
           />
         </div>
 
@@ -193,7 +212,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
               name="start_date"
               value={formData.start_date}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
             />
           </div>
           <div className="w-1/2">
@@ -203,14 +222,14 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
               name="end_date"
               value={formData.end_date}
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
             />
           </div>
         </div>
 
         {/* 복용 시간 설정 */}
         <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">복용 시간:</label>
+          <label className="block text-sm font-bold mb-2">나의 약 등록:</label>
           <div className="flex items-center">
             <label className="inline-flex items-center">
               <input
@@ -247,22 +266,22 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
 
         {/* 알림 설정 */}
         <div className="flex items-center mb-4">
-          <label className="flex items-center">
-            <div
-              onClick={handleNotificationEnabledChange}
-              className={`relative w-12 h-6 flex items-center rounded-full cursor-pointer ${
-                notificationEnabled ? "bg-blue-500" : "bg-gray-200"
-              }`}
-            >
-              <div
-                className={`absolute w-6 h-6 bg-white rounded-full transition-transform transform ${
-                  notificationEnabled ? "translate-x-6" : "translate-x-0"
-                }`}
-              ></div>
-            </div>
-            <span className="ml-2 text-gray-700">알림 설정</span>
-          </label>
-        </div>
+  <label className="flex items-center">
+    <span className="ml-2 text-brand-gray-600">알림 설정 </span>
+    <div
+      onClick={handleNotificationEnabledChange}
+      className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
+        notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
+      }`}
+    >
+      <div
+        className={`absolute w-6 h-6 bg-white rounded-full transition-transform transform ${
+          notificationEnabled ? "translate-x-6" : "translate-x-0"
+        }`}
+      ></div>
+    </div>
+  </label>
+</div>
 
         {notificationEnabled && (
           <div className="mb-4">
@@ -273,9 +292,9 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
                   key={day}
                   type="button"
                   onClick={() => handleDayOfWeekChange(day)}
-                  className={`px-4 py-2 rounded-lg ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${
                     (formData.day_of_week || []).includes(day)
-                      ? "bg-blue-500 text-white"
+                      ? "bg-blue-500"
                       : "bg-gray-200 text-gray-700"
                   }`}
                 >
@@ -291,7 +310,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
                   type="time"
                   value={time}
                   onChange={(e) => handleNotificationTimeChange(index, e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
                 />
                 {index > 0 && (
                   <button
@@ -304,49 +323,35 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
                 )}
               </div>
             ))}
-            <button
-              type="button"
-              onClick={handleAddNotificationTime}
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              알림 시간 추가
-            </button>
           </div>
         )}
 
         {/* 메모 입력 */}
         <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">메모:</label>
+          <label className="block text-sm text-brand-gray-600 font-bold mb-2">메모</label>
           <textarea
             name="notes"
             value={formData.notes}
             onChange={handleChange}
-            placeholder="간단한 약 정보를 입력해주세요"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none h-16"
+            placeholder="약에 대한 간단한 기록"
+            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none resize-none h-16"
           />
         </div>
 
-        <div className="flex justify-between mt-4">
+        <div className="flex justify-center space-x-4 mt-4">
           <button
             type="button"
-            onClick={onRequestClose}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+            onClick={handleDelete}
+            className="px-4 py-2 bg-brand-primary-50 text-brand-primary-500"
           >
-            취소
+            삭제
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="px-4 py-2 bg-brand-primary-500 text-brand-primary-50"
           >
-            저장
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="px-4 py-2 bg-red-500 text-white rounded"
-          >
-            삭제
+            수정
           </button>
         </div>
       </div>
