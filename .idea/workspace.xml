@@ -5,9 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2773f5d9-bf93-413d-ae5e-6543e093b4d5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/provider.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/atoms/SwitchCase.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/atoms/Toast.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hooks/useTimeout.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hooks/useToast.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/templates/mypage/UserBoard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/templates/mypage/UserBoard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/molecules/Hero.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/molecules/Hero.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -30,7 +36,7 @@
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feat/my-profile",
+    "git-widget-placeholder": "feat/toast-ui",
     "last_opened_file_path": "/Users/jcelee/Desktop/sparta/medi-help",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
