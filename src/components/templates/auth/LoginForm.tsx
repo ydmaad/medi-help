@@ -1,5 +1,5 @@
-// 목적: 로그인 폼의 전체 구조와 로직을 관리하는 컴포넌트
-// src/components/templates/auth/LoginForm.tsx
+// // 목적: 로그인 폼의 전체 구조와 로직을 관리하는 컴포넌트
+// // src/components/templates/auth/LoginForm.tsx
 
 import React, { useState, useEffect } from "react";
 import { AuthInput } from "../../atoms/AuthInput";

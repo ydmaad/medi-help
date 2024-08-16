@@ -1,21 +1,14 @@
 "use client";
 
+import PostFloatingBtn from "@/components/molecules/PostFloatingBtn";
 import List from "@/components/templates/community/List";
 import Search from "@/components/templates/community/Search";
 import { useAuthStore } from "@/store/auth";
-import { Tables } from "@/types/supabase";
-import Image from "next/image";
+import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
+import { PostWithUser } from "@/types/communityTypes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-type Post = Tables<"posts">;
-type User = Tables<"users">;
-
-type PostWithUser = Post & { user: Pick<User, "avatar" | "nickname"> } & {
-  comment_count: number;
-  bookmark_count: number;
-};
 
 const CommunityPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,17 +16,19 @@ const CommunityPage = () => {
   const [allPosts, setAllPosts] = useState<PostWithUser[]>([]);
   const { user } = useAuthStore();
   const router = useRouter();
-
-  const fectchAllPosts = async () => {
-    const res = await fetch(`/api/community`);
-    const data = await res.json();
-    setAllPosts(data);
-  };
+  const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
 
   useEffect(() => {
+    const fectchAllPosts = async () => {
+      const res = await fetch(`/api/community`);
+      const data = await res.json();
+      setAllPosts(data);
+    };
+
     fectchAllPosts();
   }, []);
 
+  // 게시글 리스트 리셋
   const handleReset = () => {
     setSearchTerm("");
     allPosts;
@@ -41,7 +36,7 @@ const CommunityPage = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    // console.log("검색어가 업데이트 돼는 부분!?!?", term);
+    console.log("검색어가 업데이트 돼는 부분!?!?", term);
   };
 
   // 로그인 안 되어 있으면 로그인 페이지로 리다이렉트
@@ -54,11 +49,12 @@ const CommunityPage = () => {
       router.push("/community/post");
     }
   };
+  console.log(isSearchOpen);
 
   return (
     <>
-      <div className="max-w-[1000px] mx-auto mt-40">
-        <div className="flex items-center justify-between mb-10">
+      <div className="max-w-[1000px] mx-auto mt-[118px] desktop:mt-40">
+        <div className="flex items-center justify-between mb-7 desktop:mb-[60px]">
           {/* 데스크탑 버전 */}
           <div className="hidden desktop:flex flex-col">
             <button
@@ -72,21 +68,30 @@ const CommunityPage = () => {
               약에 대한 이야기를 나누어 보아요
             </span>
           </div>
+          {isSearchOpen ? null : (
+            <div className="flex desktop:hidden flex-col ml-5">
+              <button
+                onClick={handleReset}
+                className="flex items-center text-3xl font-bold"
+              >
+                <span className="mr-3">&#128172;</span>
+                커뮤니티
+              </button>
+              <span className="text-brand-gray-600 font-extrabold mt-2">
+                약에 대한 이야기를 나누어 보아요
+              </span>
+            </div>
+          )}
+
           {/* 모바일 버전 */}
-          <div className="flex desktop:hidden flex-col ml-5">
-            <button
-              onClick={handleReset}
-              className="flex items-center text-3xl font-bold"
-            >
-              <span className="mr-3">&#128172;</span>
-              커뮤니티
-            </button>
-            <span className="text-brand-gray-600 font-extrabold mt-2">
-              약에 대한 이야기를 나누어 보아요
-            </span>
-          </div>
+
           <div className="flex items-center space-x-4">
-            <Search handleSearch={handleSearch} />
+            <Search
+              handleSearch={handleSearch}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
+
             {/* 데스트탑 버전 */}
             <Link
               href={`/community/post`}
@@ -95,22 +100,17 @@ const CommunityPage = () => {
             >
               <span>글쓰기</span>
             </Link>
-            {/* 모바일 버전 */}
-            <Link
-              href={`/community/post`}
-              onClick={handleUserCheck}
-              className="desktop:hidden fixed right-4 bottom-20 bg-brand-primary-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-brand-primary-600"
-            >
-              <Image
-                src="/postButton.svg"
-                alt="플로팅버튼"
-                width={30}
-                height={30}
-              ></Image>
-            </Link>
+
+            {/* 플로팅 버튼 */}
+            <PostFloatingBtn onUserCheck={handleUserCheck}></PostFloatingBtn>
           </div>
         </div>
-        <List searchTerm={searchTerm} posts={posts} setPosts={setPosts} />
+        <List
+          key={searchTerm}
+          searchTerm={searchTerm}
+          posts={posts}
+          setPosts={setPosts}
+        />
       </div>
     </>
   );

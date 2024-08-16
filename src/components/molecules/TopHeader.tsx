@@ -44,13 +44,18 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-20 flex flex-row items-center justify-between p-4 bg-brand-gray-50 h-[67px] shadow-md">
-      <Logo />
-      <div className="absolute left-1/2 transform -translate-x-1/2">
-        <Navigation />
-      </div>
-      <LoginNav />
-    </header>
+    <>
+      <header className="fixed top-0 left-0 right-0 z-20  flex desktop:hidden flex-row items-center justify-between p-4 bg-brand-gray-50 h-[67px] shadow-md">
+        <Logo />
+      </header>
+      <header className="fixed top-0 left-0 right-0 z-20 hidden desktop:flex flex-row items-center justify-between p-4 bg-brand-gray-50 h-[67px] shadow-md">
+        <Logo />
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <Navigation />
+        </div>
+        <LoginNav />
+      </header>
+    </>
   );
 };
 
