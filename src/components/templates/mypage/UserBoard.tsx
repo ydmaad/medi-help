@@ -1,4 +1,3 @@
-// src/components/templates/mypage/UserBoard.tsx
 "use client";
 
 import { AuthUser, useAuthStore } from "@/store/auth";
@@ -28,7 +27,6 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
     }
   }, [user]);
 
-  // 아바타 이미지 변경 핸들러
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -37,7 +35,6 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
     }
   };
 
-  // 편집 취소 핸들러
   const handleCancelEdit = () => {
     setEditMode(false);
     setNewAvatar(null);
@@ -52,36 +49,32 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
     try {
       let avatarUrl = user.avatar;
 
-      // 새 아바타 이미지가 있으면 업로드
       if (newAvatar) {
         const fileName = `avatar_${user.id}_${Date.now()}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("avatars")
-          .upload(fileName, newAvatar);
+        const { data: imgUploadData, error: imgUploadError } =
+          await supabase.storage.from("avatars").upload(fileName, newAvatar);
 
-        if (uploadError) throw uploadError;
+        if (imgUploadError) throw imgUploadError;
 
         const { data: urlData } = supabase.storage
           .from("avatars")
           .getPublicUrl(fileName);
 
-        avatarUrl = urlData.publicUrl;
+        avatarUrl = urlData?.publicUrl;
       }
 
-      // 사용자 정보 업데이트
-      const { data, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from("users")
         .update({ nickname: newNickname, avatar: avatarUrl })
-        .eq("id", user.id)
-        .select()
-        .single();
+        .eq("id", user.id);
 
       if (updateError) throw updateError;
 
-      if (data) {
-        setUser({ ...user, ...data } as AuthUser);
-      }
-
+      setUser({
+        ...user,
+        nickname: newNickname,
+        avatar: avatarUrl,
+      } as AuthUser);
       setEditMode(false);
     } catch (error) {
       console.error("프로필 업데이트 에러", error);
