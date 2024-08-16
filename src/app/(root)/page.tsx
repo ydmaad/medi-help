@@ -9,6 +9,8 @@ import LoadMoreButton from "@/components/atoms/LoadMoreButton";
 import MainTitle from "@/components/atoms/MainTitle";
 import ContentsCard from "@/components/molecules/ContentsCard";
 import BgLinear from "@/components/atoms/BgLinear";
+import TertiCarousel from "@/components/molecules/TertiCarousel";
+import Slider from "react-slick";
 
 type Magazine = {
   id: string;
@@ -67,6 +69,13 @@ const Page = () => {
   const limitedSubMagazines = magazines.slice(1, 2);
   const limitedPosts = posts.slice(0, 6);
 
+  const settings = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    centerMode: true,
+  };
   return (
     <>
       <div className="absolute inset-0 z-0 mt-[67px]">
@@ -77,9 +86,9 @@ const Page = () => {
         <MainTitle text="매디칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
-      <div className="flex flex-col items-center">
+      <div className="flex-col items-center hidden desktop:flex">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 w-full">
+        <div className="grid grid-cols-1 desktop:grid-cols-2 w-full">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
@@ -103,7 +112,7 @@ const Page = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[26px] w-full">
+        <div className="grid grid-cols-1 desktop:grid-cols-3 gap-[26px] w-full">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -117,12 +126,29 @@ const Page = () => {
           ))}
         </div>
       </div>
+      {/*데탑때만 보임*/}
+      <div className=" overflow-hidden desktop:hidden w-full ">
+        <Slider {...settings}>
+          {limitedMagazines.map((magazine, index) => (
+            <TertiCarousel
+              key={index}
+              src={magazine.imgs_url}
+              alt={magazine.title}
+              title={magazine.title}
+              leftText={magazine.written_by}
+              rightText={magazine.reporting_date}
+              id={magazine.id}
+            />
+          ))}
+        </Slider>
+      </div>
+
       <div className="flex justify-between mb-[10px]">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
-      <div className="flex justify-center items-center flex-col md:flex-row">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+      <div className="flex justify-center items-center flex-col desktop:flex-row">
+        <div className="grid grid-cols-1 desktop:grid-cols-2 gap-4 w-full">
           {limitedPosts.map((post, index) => (
             <ContentsCard
               key={index}
