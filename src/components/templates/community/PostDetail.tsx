@@ -49,7 +49,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
     loadPost();
   }, [id]);
 
-  // console.log(post);
+  console.log(post);
 
   // 북마크한 게시글과 유저가 일치하는지 확인
   useEffect(() => {
@@ -279,6 +279,14 @@ const PostDetail = ({ id }: PostDetailProps) => {
 
         <div className="p-5 max-w-[1000px] ">
           <div>{formatContent(post.contents)}</div>
+        </div>
+        <div className="mx-[18px] mb-[4px]">
+          <p className="text-[14px] desktop:text-[16px] text-brand-gray-600">
+            전체 댓글
+            <span className="text-[14px] desktop:text-[16px] ml-[5px] font-black text-brand-primary-500">
+              {post.comment_count}개
+            </span>
+          </p>
         </div>
 
         <Comments postId={id} />

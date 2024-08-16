@@ -107,9 +107,10 @@ const CommentItem = ({
               }`}
             >
               <div className="flex justify-between items-start">
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex  justify-center items-center">
+                <div className="flex justify-between mb-2 flex-col w-[702px]">
+                  {/* 아바타 + 닉네임 + 수정,삭제 버튼 */}
+                  <div className="flex justify-between ">
+                    <div className="flex items-center">
                       <Image
                         src={ment.user?.avatar || "/default-avatar.jpg"}
                         alt={"유저 이미지"}
@@ -121,103 +122,124 @@ const CommentItem = ({
                         {ment.user.nickname}
                       </div>
                     </div>
-                    <div className="flex flex-shrink-0 items-center space-x-2">
-                      {isEdit[ment.id] ? (
-                        <button
-                          onClick={() => handleCancelEdit(ment.id)}
-                          className="text-sm text-gray-500  absolute top-6 right-6"
-                        >
-                          취소
-                        </button>
-                      ) : (
-                        <button className="hidden">취소</button>
-                      )}
+                    <div>
+                      <div className="flex space-x-2">
+                        {!isEdit[ment.id] && (
+                          <>
+                            {user?.id === ment.user.id && (
+                              <>
+                                <button
+                                  onClick={() =>
+                                    handleEdit(
+                                      ment.id,
+                                      ment.comment,
+                                      ment.user.id
+                                    )
+                                  }
+                                  className="text-sm text-gray-500 pr-2 hidden desktop:flex"
+                                >
+                                  수정
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleEdit(
+                                      ment.id,
+                                      ment.comment,
+                                      ment.user.id
+                                    )
+                                  }
+                                  className="text-sm text-gray-500 pr-2 flex desktop:hidden"
+                                >
+                                  <Image
+                                    src="/commentUpBtn.svg"
+                                    alt="댓글수정버튼"
+                                    width={20}
+                                    height={20}
+                                  ></Image>
+                                </button>
+
+                                <div className="mx-4 h-4.5 w-px bg-gray-300 hidden desktop:flex "></div>
+                                <button
+                                  onClick={() =>
+                                    handleDelete(ment.id, ment.user.id)
+                                  }
+                                  className="text-sm text-gray-500 pl-2 hidden desktop:flex"
+                                >
+                                  삭제
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleDelete(ment.id, ment.user.id)
+                                  }
+                                  className="text-sm text-gray-500 pl-2 flex desktop:hidden"
+                                >
+                                  <Image
+                                    src="/commentDelBtn.svg"
+                                    alt="댓글삭제버튼"
+                                    width={20}
+                                    height={20}
+                                  ></Image>
+                                </button>
+                              </>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  {/* 아바타 + 닉네임 + 수정,삭제 버튼 */}
+
                   {/* 수정모드 삼항연산자 */}
-                  {isEdit[ment.id] ? (
-                    // 수정모드일때 (true)
-                    <>
-                      <textarea
-                        value={editedComment[ment.id] || ment.comment}
-                        onChange={(e) =>
-                          setEditedComment((prev) => ({
-                            ...prev,
-                            [ment.id]: e.target.value,
-                          }))
-                        }
-                        className="w-[600px] h-[50px] px-2 focus:outline-none resize-none bg-brand-gray-50"
-                      />
-                      <div className="absolute bottom-2 right-4">
-                        <button
-                          onClick={() => handleSaveEdit(ment.id)}
-                          className="w-[90px] mb-2 bg-brand-primary-500 text-white px-4 py-2 rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-brand-primary-600"
-                        >
-                          수정
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    // 일반 모드일 떼(false) - 원래 댓글 내용 표시
-                    <>
-                      <div className="mt-1 w-full">
-                        {formatContent(ment.comment)}
-                      </div>
-                      <div className="text-gray-500 mt-3 text-sm">
-                        {new Date(ment.created_at).toLocaleString()}
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="flex space-x-2">
-                  {!isEdit[ment.id] && (
-                    <>
-                      {user?.id === ment.user.id && (
-                        <>
+                  {/* 댓글 내용 */}
+                  <div>
+                    {isEdit[ment.id] ? (
+                      // 수정모드일때 (true)
+                      <>
+                        <textarea
+                          value={editedComment[ment.id] || ment.comment}
+                          onChange={(e) =>
+                            setEditedComment((prev) => ({
+                              ...prev,
+                              [ment.id]: e.target.value,
+                            }))
+                          }
+                          className="w-full h-[50px] text-[14px] px-2 focus:outline-none resize-none bg-brand-gray-50"
+                        />
+                        <div className="absolute bottom-2 right-4">
                           <button
-                            onClick={() =>
-                              handleEdit(ment.id, ment.comment, ment.user.id)
-                            }
-                            className="text-sm text-gray-500 pr-2 hidden desktop:flex"
+                            onClick={() => handleSaveEdit(ment.id)}
+                            className="w-[90px] mb-2 bg-brand-primary-500 text-white px-4 py-2 rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-brand-primary-600"
                           >
                             수정
                           </button>
-                          <button
-                            onClick={() =>
-                              handleEdit(ment.id, ment.comment, ment.user.id)
-                            }
-                            className="text-sm text-gray-500 pr-2 flex desktop:hidden"
-                          >
-                            <Image
-                              src="/commentUpBtn.svg"
-                              alt="댓글수정버튼"
-                              width={20}
-                              height={20}
-                            ></Image>
-                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      // 일반 모드일 떼(false) - 원래 댓글 내용 표시
+                      <>
+                        <div className="mt-1 w-full text-[14px]">
+                          {formatContent(ment.comment)}
+                        </div>
+                        <div className="text-gray-500 mt-3 text-sm">
+                          {new Date(ment.created_at).toLocaleString()}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  {/* 댓글 내용 */}
 
-                          <div className="mx-4 h-4.5 w-px bg-gray-300 hidden desktop:flex "></div>
-                          <button
-                            onClick={() => handleDelete(ment.id, ment.user.id)}
-                            className="text-sm text-gray-500 pl-2 hidden desktop:flex"
-                          >
-                            삭제
-                          </button>
-                          <button
-                            onClick={() => handleDelete(ment.id, ment.user.id)}
-                            className="text-sm text-gray-500 pl-2 flex desktop:hidden"
-                          >
-                            <Image
-                              src="/commentDelBtn.svg"
-                              alt="댓글삭제버튼"
-                              width={20}
-                              height={20}
-                            ></Image>
-                          </button>
-                        </>
-                      )}
-                    </>
-                  )}
+                  <div className="flex flex-shrink-0 items-center space-x-2">
+                    {isEdit[ment.id] ? (
+                      <button
+                        onClick={() => handleCancelEdit(ment.id)}
+                        className="text-sm text-gray-500  absolute top-6 right-6"
+                      >
+                        취소
+                      </button>
+                    ) : (
+                      <button className="hidden">취소</button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
