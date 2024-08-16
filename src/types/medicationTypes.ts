@@ -18,5 +18,6 @@ export interface MediRecord {
     notification_time?: string[];
     day_of_week?: string[];
     repeat?: boolean;
+    is_sent?: false;
   }
   
