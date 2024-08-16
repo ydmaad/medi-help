@@ -15,9 +15,9 @@ const PostItem = ({ item }: PostItemProps) => {
       <li key={item.id} className="block mx-auto">
         <Link
           href={`/community/${item.id}`}
-          className="block hover:bg-gray-50 transition duration-150 ease-in-out rout rounded "
+          className="block transition duration-150 ease-in-out rout rounded "
         >
-          <div className="border rounded-2xl p-[16px] desktop:p-[20px] h-[125px] w-[335px] desktop:h-[164px] desktop:w-full mx-[16px] mb-[16px]">
+          <div className="border rounded-2xl p-[16px] desktop:p-[20px] h-[125px] w-[335px] desktop:h-[164px] desktop:w-full mx-[16px] mb-[16px] hover:bg-gray-50">
             <div className="flex justify-between">
               <div className="pr-4 max-w-[940px]">
                 <div className="flex flex-col ">
