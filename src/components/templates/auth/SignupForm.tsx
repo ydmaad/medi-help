@@ -145,8 +145,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   };
 
   return (
-    <div className="w-full max-w-md">
-      <h2 className="text-2xl font-bold text-center mb-6">회원 가입</h2>
+    <div className="w-[335px] desktop:w-full max-w-md mt-[155px]">
+      <h2 className="text-[28px] font-bold text-center mb-6">회원 가입</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 닉네임 입력 필드 */}
         <div>
@@ -171,7 +171,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             </p>
           )}
           {nicknameValid === true && (
-            <p className="text-green-500 text-sm mt-1">
+            <p className="text-green-500 text-[12px] mt-1">
               사용할 수 있는 닉네임입니다.
             </p>
           )}
@@ -197,23 +197,23 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             />
             <AuthPrimaryButton
               onClick={handleEmailCheck}
-              className="h-[42px] w-1/3 px-2"
+              className="h-[48px] w-[80px] desktop:w-[86px] px-2"
             >
               중복확인
             </AuthPrimaryButton>
           </div>
           {emailValid === false && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 text-[12px] mt-1">
               올바른 이메일 형식이 아닙니다.
             </p>
           )}
           {isEmailChecked && isEmailAvailable && (
-            <p className="text-green-500 text-xs mt-1">
+            <p className="text-green-500 text-[12px] mt-1">
               사용 가능한 이메일입니다.
             </p>
           )}
           {isEmailChecked && !isEmailAvailable && (
-            <p className="text-red-500 text-xs mt-1">
+            <p className="text-red-500 text-[12px] mt-1">
               이미 사용 중인 이메일입니다.
             </p>
           )}
@@ -235,9 +235,8 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             placeholder="비밀번호를 입력해 주세요."
           />
           {passwordValid === false && (
-            <p className="text-red-500 text-sm mt-1">
-              비밀번호는 영문자, 숫자, 특수문자를 포함하여 최소 6자 이상이어야
-              합니다.
+            <p className="text-red-500 text-[12px] mt-1">
+              영문자, 숫자, 특수문자 포함 6자 이상
             </p>
           )}
         </div>
@@ -258,12 +257,12 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             placeholder="다시 한번 입력해 주세요."
           />
           {passwordConfirmValid === false && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 text-[12px] mt-1">
               비밀번호가 일치하지 않습니다.
             </p>
           )}
           {passwordConfirmValid === true && (
-            <p className="text-green-500 text-sm mt-1">
+            <p className="text-green-500 text-[12px] mt-1">
               비밀번호가 일치합니다.
             </p>
           )}
@@ -291,7 +290,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         {error && <AuthErrorMessage message={error} />}
 
         {/* 회원가입 버튼 */}
-        <AuthButton type="submit" className="w-full">
+        <AuthButton type="submit" className="w-full text-[18px]">
           회원가입
         </AuthButton>
       </form>

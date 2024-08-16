@@ -1,5 +1,5 @@
-// 목적: 로그인 폼의 전체 구조와 로직을 관리하는 컴포넌트
-// src/components/templates/auth/LoginForm.tsx
+// // 목적: 로그인 폼의 전체 구조와 로직을 관리하는 컴포넌트
+// // src/components/templates/auth/LoginForm.tsx
 
 import React, { useState, useEffect } from "react";
 import { AuthInput } from "../../atoms/AuthInput";
@@ -64,8 +64,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md">
-      <h2 className="text-2xl font-bold text-center mb-6">로그인</h2>
+    <div className="w-[335px] desktop:w-full max-w-md">
+      <h2 className="text-[28px] font-bold text-center mb-6">로그인</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 이메일 입력 필드 */}
         <AuthInput
@@ -97,11 +97,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           />
         </div>
         {/* 로그인 버튼 */}
-        <AuthButton type="submit" className="w-full bg-blue-500 text-white">
+        <AuthButton type="submit" className=" bg-brand-primary-500 text-white">
           로그인
         </AuthButton>
         {/* 비밀번호 찾기 및 회원가입 링크 */}
-        <div className="flex justify-between text-sm mt-4">
+        <div className="flex w-full justify-between text-sm mt-4">
           <Link href="/auth/reset" className="text-gray-600 hover:underline">
             비밀번호 찾기
           </Link>
@@ -116,15 +116,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">간편 로그인</span>
+          <div className="relative flex justify-center text-sm ">
+            <span className="px-2 text-[16px] bg-white text-gray-500">
+              간편 로그인
+            </span>
           </div>
         </div>
         <div className="mt-6">
           {/* 구글 로그인 버튼 */}
           <button
             onClick={onGoogleLogin}
-            className="w-full py-2 px-4 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 flex items-center justify-center"
+            className="w-full h-[45px] text-[14px] py-2 px-4 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 flex items-center justify-center"
           >
             <Image
               src="/google_icon.svg"
@@ -138,7 +140,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           {/* 카카오 로그인 버튼 */}
           <button
             onClick={onKakaoLogin}
-            className="w-full mt-2 py-2 px-4 border border-transparent rounded-md text-white bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center"
+            className="w-full h-[45px] text-[14px] mt-2 py-2 px-4 border border-transparent rounded-md text-white bg-yellow-400 hover:bg-yellow-500 flex items-center justify-center"
           >
             <Image
               src="/kakao_icon.svg"
