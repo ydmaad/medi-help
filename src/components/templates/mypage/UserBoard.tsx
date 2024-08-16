@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthUser, useAuthStore } from "@/store/auth";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TbPencil, TbCamera } from "react-icons/tb";
 import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
@@ -11,16 +11,14 @@ interface UserBoardProps {
 }
 
 const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
-  // 상태 관리
   const [isEditMode, setEditMode] = useState(false);
   const [newNickname, setNewNickname] = useState("");
   const [newAvatar, setNewAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const { user, setUser } = useAuthStore();
 
-  const defaultAvatarPath = "/yunjili.png";
+  const defaultAvatarPath = "/default-avatar.jpg";
 
-  // 사용자 정보 초기화
   useEffect(() => {
     if (user) {
       setNewNickname(user.nickname || "");
@@ -42,7 +40,6 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
     setNewNickname(user?.nickname || "");
   };
 
-  // 프로필 수정 함수
   const editProfile = async () => {
     if (!user) return;
 
@@ -85,83 +82,54 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
   if (!user) return null;
 
   return (
-    <div className={`w-[301px] h-[352px] perspective-1000 ${className}`}>
-      <div
-        className={`relative w-full h-full transition-transform duration-500 ${
-          isEditMode ? "my-rotate-y-180" : ""
-        }`}
-        style={{ transformStyle: "preserve-3d" }}
-      >
-        {/* 프로필 카드 (앞면) */}
-        <div className="absolute backface-hidden w-full h-full">
-          <div className="bg-[#f0f8ff] rounded-lg p-6 shadow-md w-full h-full flex flex-col items-center justify-center">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
-              <Image
-                src={user.avatar || defaultAvatarPath}
-                alt="프로필 이미지"
-                width={96}
-                height={96}
-                className="object-cover w-full h-full"
-              />
-            </div>
-            <h2 className="text-xl font-semibold mb-1">{user.nickname}</h2>
-            <p className="text-sm text-gray-600 mb-4">{user.email}</p>
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300 flex items-center"
-              onClick={() => setEditMode(true)}
+    <div
+      className={`flex items-center justify-center border-[2px] rounded-xl text-primary-500 ${className} ${
+        isEditMode ? "bg-[#ffffff] border-[#6EBEFB]" : "bg-[#e9f5fe]"
+      } desktop:w-[301px] desktop:h-[352px] w-full desktop:p-6 p-4`}
+      style={{
+        aspectRatio: "335 / 128",
+      }}
+    >
+      {isEditMode ? (
+        <div className="flex flex-col items-center w-full">
+          <div className="relative w-[120px] h-[120px] rounded-full mb-4">
+            <Image
+              src={avatarPreview || user.avatar || defaultAvatarPath}
+              alt="프로필 이미지"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-full"
+            />
+            <label
+              htmlFor="avatar-upload"
+              className="absolute right-0 bottom-0 bg-[#40444C] rounded-full w-[40px] h-[40px] flex justify-center items-center cursor-pointer"
             >
-              <TbPencil className="mr-2" />
-              프로필 수정
-            </button>
-          </div>
-        </div>
-
-        {/* 프로필 수정 카드 (뒷면) */}
-        <div className="absolute top-0 left-0 w-full h-full my-rotate-y-180 backface-hidden">
-          <div className="bg-white rounded-lg p-6 shadow-md w-full h-full flex flex-col items-center justify-center">
-            <div className="relative w-24 h-24 mb-4">
-              <div className="w-full h-full rounded-full overflow-hidden">
-                <Image
-                  src={avatarPreview || user.avatar || defaultAvatarPath}
-                  alt="프로필 이미지"
-                  width={96}
-                  height={96}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              {/* 카메라 아이콘 (이미지 변경 버튼) */}
-              <label
-                htmlFor="avatar-upload"
-                className="absolute -bottom-2 -right-2 bg-blue-500 rounded-full p-2 cursor-pointer shadow-lg hover:bg-blue-600 transition-colors duration-300"
-              >
-                <TbCamera className="text-white text-xl" />
-              </label>
-              <input
-                type="file"
-                id="avatar-upload"
-                className="hidden"
-                onChange={handleAvatarChange}
-                accept="image/*"
-              />
-            </div>
-            {/* 닉네임 입력 필드 */}
+              <TbCamera className="text-[20px] text-[#ffffff]" />
+            </label>
             <input
-              type="text"
+              type="file"
+              id="avatar-upload"
+              className="hidden"
+              onChange={handleAvatarChange}
+              accept="image/*"
+            />
+          </div>
+          <div className="flex flex-col items-center w-[180px]">
+            <input
               value={newNickname}
               onChange={(e) => setNewNickname(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 mb-4 w-full"
-              placeholder="새 닉네임"
+              className="border border-[#E0E2E4] px-3 py-2 rounded-[4px] mb-4 w-full text-center"
+              placeholder="새 닉네임 입력"
             />
-            {/* 취소 및 저장 버튼 */}
-            <div className="flex space-x-2 w-full">
+            <div className="flex justify-between items-center gap-2 w-full">
               <button
-                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-300 flex-1"
+                className="w-full py-2 flex items-center justify-center gap-1 bg-[#E9F5FE] text-[#279ef9] rounded-[4px] cursor-pointer text-sm"
                 onClick={handleCancelEdit}
               >
                 취소
               </button>
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300 flex-1"
+                className="w-full py-2 flex items-center justify-center gap-1 bg-[#279ef9] text-[#f5f6f7] rounded-[4px] cursor-pointer text-sm"
                 onClick={editProfile}
               >
                 저장
@@ -169,7 +137,66 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* 웹 사이즈 레이아웃 */}
+          <div className="hidden desktop:flex flex-col items-center w-full">
+            <div className="relative w-[120px] h-[120px] rounded-full mb-4">
+              <Image
+                src={user.avatar || defaultAvatarPath}
+                alt="프로필 이미지"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-full"
+              />
+            </div>
+            <div className="flex flex-col items-center w-[180px]">
+              <div className="text-xl font-bold text-primary-500 mb-1 text-center">
+                {user.nickname}님
+              </div>
+              <div className="text-sm text-gray-800 mb-4 text-center">
+                {user.email}
+              </div>
+              <button
+                className="mt-5 w-[253px] h-[40px] flex items-center justify-center gap-2 bg-[#279ef9] text-[#f5f6f7] rounded-[4px] cursor-pointer hover:bg-[#1e7fe0] ease-in duration-300 text-sm"
+                onClick={() => setEditMode(true)}
+              >
+                <TbPencil className="text-xl" />
+                프로필 수정
+              </button>
+            </div>
+          </div>
+
+          {/* 모바일 사이즈 레이아웃 */}
+          <div className="flex desktop:hidden items-center justify-center w-full h-full">
+            <div className="flex items-center justify-center w-full max-w-[335px]">
+              <div className="relative w-[80px] h-[80px]">
+                <Image
+                  src={user.avatar || defaultAvatarPath}
+                  alt="프로필 이미지"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+                <button
+                  className="absolute -bottom-1 -right-1 w-[28px] h-[28px] bg-[#279ef9] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#1e7fe0] ease-in duration-300"
+                  onClick={() => setEditMode(true)}
+                >
+                  <TbPencil className="text-white w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex flex-col ml-4" style={{ width: "154px" }}>
+                <div className="text-[16px] font-bold text-primary-500 truncate">
+                  {user.nickname}님
+                </div>
+                <div className="text-[12px] text-gray-800 truncate mt-1">
+                  {user.email}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
