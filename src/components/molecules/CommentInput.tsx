@@ -45,7 +45,7 @@ export const CommentInput = ({
 
   return (
     <>
-      <div className="max-w-[1000px] mx-4 p-4 bg-white  border border-gray-300  rounded-lg">
+      <div className="max-w-[996px] mx-4 p-4 bg-white  border border-gray-300  rounded-lg">
         <div className="flex items-center mb-3">
           <Image
             src={user?.avatar || "/default-avatar.jpg"}
@@ -67,9 +67,9 @@ export const CommentInput = ({
         <div className="flex justify-end">
           <button
             onClick={handleAddComment}
-            className="w-[90px] bg-brand-primary-500 text-white px-4 py-2 rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-[90px]   px-4 py-2 rounded-lg  focus:outline-none focus:ring-2 focus:ring-brand-primary-600 ${newComment.length > 0 ? "bg-brand-primary-500 text-white hover:bg-brand-primary-600" : "bg-brand-gray-200 text-brand-gray-600"}`}
           >
-            작성
+            등록
           </button>
         </div>
       </div>

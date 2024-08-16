@@ -100,7 +100,7 @@ const CommentItem = ({
           return (
             <div
               key={ment.id}
-              className={`my-4 p-4 mx-4 border border-gray-300 rounded-lg  max-w-[1000px] relative  ${
+              className={`my-4 p-4 mx-4 border border-gray-300 rounded-lg  max-w-[996px] relative  ${
                 isEdit && user?.id === ment.user.id
                   ? "bg-brand-gray-50"
                   : "bg-white"
@@ -146,12 +146,12 @@ const CommentItem = ({
                             [ment.id]: e.target.value,
                           }))
                         }
-                        className="w-[700px] h-[50px] px-2 focus:outline-none resize-none"
+                        className="w-[600px] h-[50px] px-2 focus:outline-none resize-none bg-brand-gray-50"
                       />
                       <div className="absolute bottom-2 right-4">
                         <button
                           onClick={() => handleSaveEdit(ment.id)}
-                          className="w-[90px] mb-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-[90px] mb-2 bg-brand-primary-500 text-white px-4 py-2 rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-brand-primary-600"
                         >
                           수정
                         </button>
