@@ -97,7 +97,7 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
             </span>
           </h2>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-4 justify-items-center">
             {displayedMediRecords.map((record) => (
               <div
                 key={record.id}
@@ -121,14 +121,14 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
                 </div>
                 <div className="flex flex-col justify-between flex-grow">
                   <div>
-                    <p className="text-sm font-bold text-brand-gray-1000 line-clamp-1">
+                    <p className="text-[14px] font-bold text-brand-gray-1000 line-clamp-1">
                       {record.medi_nickname}
                     </p>
-                    <p className="text-xs text-brand-gray-800 line-clamp-1 mt-1">
+                    <p className="text-[12px] text-brand-gray-800 line-clamp-1 mt-1">
                       {record.medi_name}
                     </p>
                   </div>
-                  <p className="text-xs text-brand-primary-500 truncate mt-2 px-1">
+                  <p className="text-[12px] text-brand-primary-500 truncate mt-2 px-1">
                     {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
                   </p>
                 </div>
