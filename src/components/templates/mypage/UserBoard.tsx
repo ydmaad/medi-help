@@ -82,10 +82,10 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
   if (!user) return null;
 
   return (
-    <div className={`${className} w-full h-full`}>
+    <div className={`${className} w-[301px] h-[352px]`}>
       {/* 데스크탑 버전 */}
       <div className="hidden desktop:flex h-full">
-        <div className="w-[301px] h-full perspective-1000">
+        <div className="w-full h-full perspective-1000">
           <div
             className={`relative w-full h-full transition-transform duration-500 ${
               isEditMode ? "my-rotate-y-180" : ""
@@ -103,12 +103,12 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                     className="rounded-full"
                   />
                 </div>
-                <div className="text-xl font-bold text-primary-500 mb-1">
+                <div className="text-2xl font-bold text-primary-500 mb-1">
                   {user.nickname}
                 </div>
-                <div className="text-sm text-gray-600 mb-4">{user.email}</div>
+                <div className="text-sm font-bold text-gray-600 mb-4">{user.email}</div>
                 <button
-                  className="mt-2 w-full py-2 bg-[#279ef9] text-white rounded-md cursor-pointer text-sm flex items-center justify-center"
+                  className="mt-2 w-[253px] h-[40px] py-2 px-3 bg-[#279ef9] text-white rounded-md cursor-pointer text-sm flex items-center justify-center"
                   onClick={() => setEditMode(true)}
                 >
                   <TbPencil className="mr-2" />
@@ -171,7 +171,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
         </div>
       </div>
 
-      {/* 모바일 버전 */}
+      {/* 모바일 버전 (기존 코드 유지) */}
       <div className="desktop:hidden w-full">
         <div className="bg-[#e9f5fe] rounded-xl border-[2px] border-transparent w-full p-4">
           {!isEditMode ? (
