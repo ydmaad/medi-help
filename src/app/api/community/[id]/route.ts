@@ -43,23 +43,32 @@ export async function GET(
       );
     }
 
-    // 각 게시글 map 돌려 북마크 수 가져오기
-    const postsWitchBookmarkCount = await Promise.all(
+    // 댓글 수와 북마크 수 가져오기
+    const postsWithCounts = await Promise.all(
       posts.map(async (post) => {
-        const { count, error } = await supabase
-          .from("bookmark")
-          .select("id", { count: "exact" })
-          .eq("post_id", post.id);
-        if (error) {
-          console.error("북마크 수 조회 실패 : ", error);
-          return { ...post, bookmark_count: 0 };
-        }
-        return { ...post, bookmark_count: count };
+        const [commentCount, bookmarkCount] = await Promise.all([
+          supabase
+            .from("comments")
+            .select("id", { count: "exact" })
+            .eq("post_id", post.id)
+            .then(({ count, error }) => (error ? 0 : count)),
+          supabase
+            .from("bookmark")
+            .select("id", { count: "exact" })
+            .eq("post_id", post.id)
+            .then(({ count, error }) => (error ? 0 : count)),
+        ]);
+
+        return {
+          ...post,
+          comment_count: commentCount,
+          bookmark_count: bookmarkCount,
+        };
       })
     );
 
     return NextResponse.json(
-      { message: "조회 성공", data: postsWitchBookmarkCount },
+      { message: "조회 성공", data: postsWithCounts },
       { status: 200 }
     );
   } catch (error) {

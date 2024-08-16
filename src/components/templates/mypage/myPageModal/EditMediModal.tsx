@@ -104,7 +104,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       
       if (response.status === 200) {
         onUpdate(formData);
-        onRequestClose();
+        onRequestClose(); // 수정 후 모달 닫기
       } else {
         console.error("Failed to update record:", response.statusText);
       }
@@ -181,15 +181,15 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
 
         {/* 약 별명 입력 */}
         <div className="mb-4">
-          <label className="block text-sm font-bold mb-2">약 별명:</label>
-          <input
-            type="text"
-            name="medi_nickname"
-            value={formData.medi_nickname}
-            onChange={handleChange}
-            className="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none"
-          />
-        </div>
+  <input
+    type="text"
+    name="medi_nickname"
+    value={formData.medi_nickname}
+    onChange={handleChange}
+    placeholder="약 별명(최대 6자)"
+    className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
+  />
+</div>
 
         {/* 약 이름 입력 */}
         <div className="mb-4">
@@ -266,22 +266,22 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
 
         {/* 알림 설정 */}
         <div className="flex items-center mb-4">
-          <label className="flex items-center">
-            <div
-              onClick={handleNotificationEnabledChange}
-              className={`relative w-12 h-6 flex items-center rounded-full cursor-pointer ${
-                notificationEnabled ? "bg-blue-500" : "bg-gray-200"
-              }`}
-            >
-              <div
-                className={`absolute w-6 h-6 bg-white rounded-full transition-transform transform ${
-                  notificationEnabled ? "translate-x-6" : "translate-x-0"
-                }`}
-              ></div>
-            </div>
-            <span className="ml-2 text-gray-700">알림 설정</span>
-          </label>
-        </div>
+  <label className="flex items-center">
+    <span className="ml-2 text-brand-gray-600">알림 설정 </span>
+    <div
+      onClick={handleNotificationEnabledChange}
+      className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
+        notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
+      }`}
+    >
+      <div
+        className={`absolute w-6 h-6 bg-white rounded-full transition-transform transform ${
+          notificationEnabled ? "translate-x-6" : "translate-x-0"
+        }`}
+      ></div>
+    </div>
+  </label>
+</div>
 
         {notificationEnabled && (
           <div className="mb-4">

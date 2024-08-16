@@ -1,119 +1,23 @@
 "use client";
 
-import { Tables } from "@/types/supabase";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Comments from "./Comments";
 import Image from "next/image";
 import { useAuthStore } from "@/store/auth";
-
-type Post = Tables<"posts">;
-type User = Tables<"users">;
-type PostWithUser = Post & {
-  user: Pick<User, "avatar" | "nickname" | "id">;
-} & {
-  bookmark_count: number;
-};
+import { PostWithUser } from "@/types/communityTypes";
+import {
+  deletePost,
+  fetchBookmark,
+  fetchDetailPost,
+  statusBookmark,
+} from "@/lib/commentsAPI";
+import { PostDetailSkeleton } from "@/components/molecules/CommunitySkeleton";
 
 interface PostDetailProps {
   id: string;
 }
-
-type BookmarkData = Tables<"bookmark">;
-
-// 게시글 id를 받아 게시글 데이터 요청
-// 따로 분리해서 재사용할 수 있는 부분(PostDetail, Edit)
-const fetchDetailPost = async (id: string) => {
-  try {
-    const response = await fetch(`/api/community/${id}`);
-    if (!response.ok) {
-      throw new Error("게시글 불러오는데 실패했습니다");
-    }
-    const { data } = await response.json();
-    return data[0];
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-// 게시글 삭제 요청
-const deletePost = async (id: string) => {
-  const response = await fetch(`/api/community/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw Error("게시글 삭제에 실패했습니다.");
-  }
-};
-
-// 북마크 상태 확인 요청
-const statusBookmark = async (postId: string): Promise<BookmarkData[]> => {
-  const response = await fetch(`/api/community/${postId}/bookmark`);
-  if (!response.ok) {
-    throw new Error("북마크 상태 확인 실패");
-  }
-  const result = await response.json();
-  return result.data;
-};
-
-// 북마크 토글 요청
-const fetchBookmark = async (postId: string, userId: string) => {
-  try {
-    const response = await fetch(`/api/community/${postId}/bookmark`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "User-Id": userId,
-      },
-    });
-    if (!response.ok) {
-      throw new Error("북마크 토글 실패");
-    }
-    const result = await response.json();
-    return result.data;
-  } catch (error) {
-    console.log("북마크 토글 중 오류 : ", error);
-    throw error;
-  }
-};
-
-// 게시글 상세페이지 스켈레톤
-const PostDetailSkeleton = () => {
-  return (
-    <div className="max-w-3xl mx-auto mt-20 animate-pulse">
-      {/* 카테고리 */}
-      <div className="h-5 bg-gray-200 rounded w-24 mb-2"></div>
-      {/* 제목 */}
-      <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
-      {/* 작성자 정보 */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex space-x-4">
-          <div className="h-5 bg-gray-200 rounded w-32"></div>
-          <div className="h-5 bg-gray-200 rounded w-40"></div>
-          <div className="h-5 bg-gray-200 rounded w-24"></div>
-        </div>
-        <div className="flex space-x-2">
-          <div className="h-5 bg-gray-200 rounded w-16"></div>
-          <div className="h-5 bg-gray-200 rounded w-16"></div>
-        </div>
-      </div>
-      {/* 이미지 */}
-      <div className="h-64 bg-gray-200 rounded w-1/2 mb-6"></div>
-      {/* 게시글 내용 */}
-      <div className="space-y-2 mb-8">
-        <div className="h-4 bg-gray-200 rounded w-full"></div>
-        <div className="h-4 bg-gray-200 rounded w-full"></div>
-        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-        <div className="h-4 bg-gray-200 rounded w-full"></div>
-        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-      </div>
-      {/* 댓글 */}
-      <div className="h-40 bg-gray-200 rounded w-full"></div>
-    </div>
-  );
-};
 
 // 게시글 아이디를 프롭스로 받음
 const PostDetail = ({ id }: PostDetailProps) => {
@@ -123,6 +27,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
   const route = useRouter();
   const { user } = useAuthStore();
   const [isBookmark, setIsBookmark] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   // 게시글 불러오기
   useEffect(() => {
@@ -163,7 +68,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
       }
     };
     checkBookmarkUser();
-  }, [user, post]);
+  }, [user, post, id]);
 
   // useEffect(() => {
   //   console.log("현재 로그인 유저", user?.id);
@@ -232,6 +137,10 @@ const PostDetail = ({ id }: PostDetailProps) => {
     }
   };
 
+  const handleOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
   if (loading) return <PostDetailSkeleton />;
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
@@ -264,7 +173,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
             </div>
             <button
               onClick={handleBookmark}
-              className="flex desktop:hidden mr-4 items-center"
+              className="flex desktop:hidden mr-5 items-center"
             >
               <Image
                 src={isBookmark ? "/bookmark.svg" : "/emptyBookmark.svg"}
@@ -282,8 +191,11 @@ const PostDetail = ({ id }: PostDetailProps) => {
               {post.user?.nickname}
             </p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
-            <p className="text-base text-brand-gray-600 ml-0">
+            <p className="hidden desktop:flex text-[16px] text-brand-gray-600 ml-0">
               {new Date(post.created_at).toLocaleString()}
+            </p>
+            <p className="flex desktop:hidden text-[16px] text-brand-gray-600 ml-0">
+              {new Date(post.created_at).toLocaleDateString()}
             </p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
             <p className="text-base text-brand-gray-600 ml-0">
@@ -295,24 +207,57 @@ const PostDetail = ({ id }: PostDetailProps) => {
           </div>
 
           {/* 버튼 */}
-          {user?.id === post.user.id && (
-            <div className="flex space-x-2">
-              <button
-                onClick={handleDelete}
-                className="text-base text-gray-500 pr-2"
-              >
-                삭제
+          <div className="flex relative desktop:hidden mr-5">
+            {user?.id === post.user.id && (
+              <button onClick={handleOpen}>
+                <Image
+                  src="/3Dot.svg"
+                  alt="점3개버튼"
+                  width={24}
+                  height={24}
+                ></Image>
               </button>
-              <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
-              <Link
-                href={`/community/${id}/edit`}
-                onClick={handleEditClick}
-                className="text-base text-gray-500 pl-2"
-              >
-                수정
-              </Link>
-            </div>
-          )}
+            )}
+            {isOpen && user?.id === post.user.id && (
+              <div className="absolute -left-[27px] top-[15px]  flex h-[66px] w-[77px] flex-col items-center justify-center gap-[0.3rem] border shadow rounded-md bg-white z-10">
+                <Link
+                  href={`/community/${id}/edit`}
+                  onClick={handleEditClick}
+                  className="text-[12px] text-brand-gray-800"
+                >
+                  수정
+                </Link>
+                <div className="h-px w-[48px] bg-gray-300"></div>
+
+                <button
+                  onClick={handleDelete}
+                  className="text-[12px] text-brand-gray-800"
+                >
+                  삭제
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="hidden desktop:flex">
+            {user?.id === post.user.id && (
+              <div className="flex space-x-2">
+                <button
+                  onClick={handleDelete}
+                  className="text-base text-gray-500 pr-2"
+                >
+                  삭제
+                </button>
+                <div className="mx-4 h-4.5 w-px bg-gray-300"></div>
+                <Link
+                  href={`/community/${id}/edit`}
+                  onClick={handleEditClick}
+                  className="text-base text-gray-500 pl-2"
+                >
+                  수정
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
         {/* 버튼 ===================== */}
 
@@ -334,6 +279,14 @@ const PostDetail = ({ id }: PostDetailProps) => {
 
         <div className="p-5 max-w-[1000px] ">
           <div>{formatContent(post.contents)}</div>
+        </div>
+        <div className="mx-[18px] mb-[4px]">
+          <p className="text-[14px] desktop:text-[16px] text-brand-gray-600">
+            전체 댓글
+            <span className="text-[14px] desktop:text-[16px] ml-[5px] font-black text-brand-primary-500">
+              {post.comment_count}개
+            </span>
+          </p>
         </div>
 
         <Comments postId={id} />
