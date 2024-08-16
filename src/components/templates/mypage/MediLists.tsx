@@ -82,9 +82,7 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
 
   return (
     <div className={`flex flex-col items-center w-full ${className}`}>
-      <div
-        className="bg-[#f5f6f7] p-4 desktop:p-6 rounded-2xl w-full overflow-hidden aspect-[335/448] min-h-[448px] desktop:aspect-[671/352] desktop:min-h-[352px]"
-      >
+      <div className="bg-[#f5f6f7] p-4 desktop:p-6 rounded-2xl w-full overflow-hidden">
         <div className="mb-4 desktop:mb-6">
           <h2
             className="text-lg desktop:text-2xl font-semibold text-gray-1000 text-left cursor-pointer"
@@ -100,14 +98,16 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 desktop:grid-cols-3 gap-2 desktop:gap-6 h-full">
+        <div className="grid grid-cols-2 desktop:grid-cols-3 gap-3 desktop:gap-4">
           {displayedMediRecords.map((record) => (
             <div
               key={record.id}
-              className="bg-white border border-brand-gray-50 p-2 desktop:p-4 rounded-xl flex flex-col items-start cursor-pointer w-full aspect-[159/200]"
+              className="bg-white border border-gray-200 p-2 desktop:p-3 rounded-xl flex flex-col items-start cursor-pointer w-full"
+              style={{ aspectRatio: '1 / 1.2' }}
             >
               <div
-                className="relative w-full mb-2 aspect-[148/84]"
+                className="relative w-full mb-2"
+                style={{ aspectRatio: '16 / 9' }}
               >
                 {record.itemImage ? (
                   <Image
@@ -119,23 +119,20 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                    <p className="text-brand-gray-400 text-[10px] desktop:text-sm">
-                      이미지 없음
-                    </p>
+                    <p className="text-gray-400 text-xs">이미지 없음</p>
                   </div>
                 )}
               </div>
               <div className="flex flex-col justify-between w-full flex-grow">
                 <div>
-                  <p className="text-xs desktop:text-base font-bold text-brand-gray-1000 line-clamp-1">
+                  <p className="text-base desktop:text-lg font-bold text-gray-900 line-clamp-1">
                     {record.medi_nickname}
                   </p>
-                  <p className="text-[10px] desktop:text-sm text-brand-gray-800 line-clamp-1 mt-0.5">
+                  <p className="text-sm desktop:text-base text-gray-600 line-clamp-1 mt-0.5">
                     {record.medi_name}
                   </p>
                 </div>
-                {/* 간격 줄이기 */}
-                <p className="text-[10px] desktop:text-sm text-brand-primary-500 truncate mt-0.5">
+                <p className="text-xs desktop:text-sm text-blue-500 truncate mt-1">
                   {record.start_date} ~ {record.end_date}
                 </p>
               </div>
