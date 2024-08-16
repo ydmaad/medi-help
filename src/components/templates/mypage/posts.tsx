@@ -66,20 +66,26 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="w-[996px] mx-auto py-4">
+    <div className="w-full desktop:w-[996px] mx-auto py-4">
       <div className="pt-16">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-1000">내가 쓴 글</h2>
-        <div className="flex flex-col gap-6">
+        <h2 className="text-[16px] desktop:text-2xl font-bold mb-6 text-gray-1000">
+          내가 쓴 글
+        </h2>
+        <div className="flex flex-col gap-6 items-center">
           {currentPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-[#f5f6f7] rounded-xl p-5 w-full h-[121px]"
+              className="bg-[#f5f6f7] rounded-xl p-4 w-full h-[119px] desktop:h-[121px] mobile:max-w-[335px] mobile:mx-auto"
             >
-              <h3 className="text-[16px] font-bold mb-[9px] text-brand-gray-1000">
+              <h3 className="text-[14px] desktop:text-base font-bold mb-2 text-brand-gray-1000 px-2">
                 {post.title}
               </h3>
-              <p className="text-[12px] text-brand-gray-600 mb-2">{post.contents}</p>
-              <p className="text-[12px] text-brand-gray-400">{formatDate(post.created_at)}</p>
+              <p className="text-[12px] desktop:text-sm text-brand-gray-600 mb-2 line-clamp-2">
+                {post.contents}
+              </p>
+              <p className="text-[12px] desktop:text-sm text-brand-gray-600">
+                {formatDate(post.created_at)}
+              </p>
             </div>
           ))}
         </div>
@@ -88,23 +94,38 @@ const Posts: React.FC = () => {
         <div className="flex justify-center mt-4 space-x-1">
           <button
             onClick={handlePrevPage}
-            className={`px-4 py-2 ${currentPage === 1 ? 'text-brand-gray-400 cursor-not-allowed' : 'text-brand-gray-700'}`}
+            className={`px-4 py-2 ${
+              currentPage === 1
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
             disabled={currentPage === 1}
           >
             &lt;
           </button>
-          {Array.from({ length: Math.ceil(posts.length / postsPerPage) }, (_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`px-4 py-2 ${currentPage === index + 1 ? 'text-brand-primary-600' : 'text-brand-gray-700'}`}
-            >
-              {index + 1}
-            </button>
-          ))}
+          {Array.from(
+            { length: Math.ceil(posts.length / postsPerPage) },
+            (_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-4 py-2 ${
+                  currentPage === index + 1
+                    ? "text-brand-primary-600"
+                    : "text-brand-gray-700"
+                }`}
+              >
+                {index + 1}
+              </button>
+            )
+          )}
           <button
             onClick={handleNextPage}
-            className={`px-4 py-2 ${indexOfLastPost >= posts.length ? 'text-brand-gray-400 cursor-not-allowed' : 'text-brand-gray-700'}`}
+            className={`px-4 py-2 ${
+              indexOfLastPost >= posts.length
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
             disabled={indexOfLastPost >= posts.length}
           >
             &gt;

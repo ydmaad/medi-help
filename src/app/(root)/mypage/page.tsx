@@ -17,7 +17,7 @@ const MyPage = () => {
       </div>
       
       {/* 모바일 사이즈 레이아웃 */}
-      <div className="flex flex-col gap-8 mb-8 desktop:hidden">
+      <div className="flex flex-col gap-10 mb-8 desktop:hidden">
         <UserBoard className="w-full" />
         <MediLists className="w-full" />
       </div>
