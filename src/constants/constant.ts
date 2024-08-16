@@ -17,3 +17,5 @@ export const TIME_OF_TIME: { [key: string]: string } = {
 };
 
 export const DATE_OFFSET = 1000 * 60 * 60 * 9;
+
+export const POST_PER_PAGE = 6;
