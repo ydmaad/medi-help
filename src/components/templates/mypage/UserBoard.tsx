@@ -40,53 +40,57 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
 
   const editProfile = async () => {
     if (!user) return;
-  
+
     try {
       let avatarUrl = user.avatar;
-  
+
       if (newAvatar) {
         const fileName = `avatar_${user.id}_${Date.now()}`;
-        const { data: imgUploadData, error: imgUploadError } = await supabase.storage
-          .from("avatars") // "posts_image_url" 대신 "avatars" 사용
-          .upload(fileName, newAvatar);
-  
+        const { data: imgUploadData, error: imgUploadError } =
+          await supabase.storage.from("avatars").upload(fileName, newAvatar);
+
         if (imgUploadError) throw imgUploadError;
-  
+
         const { data: urlData } = supabase.storage
           .from("avatars")
           .getPublicUrl(fileName);
-  
+
         avatarUrl = urlData?.publicUrl;
       }
-  
+
       const { error: updateError } = await supabase
-        .from("users") // "user" 대신 "users" 사용
+        .from("users")
         .update({ nickname: newNickname, avatar: avatarUrl })
         .eq("id", user.id);
-  
+
       if (updateError) throw updateError;
-  
-      setUser({ ...user, nickname: newNickname, avatar: avatarUrl } as AuthUser);
+
+      setUser({
+        ...user,
+        nickname: newNickname,
+        avatar: avatarUrl,
+      } as AuthUser);
       setEditMode(false);
     } catch (error) {
       console.error("프로필 업데이트 에러", error);
       alert("프로필 업데이트에 실패했습니다.");
     }
   };
-  
-  
 
   if (!user) return null;
 
   return (
     <div
-      className={`flex flex-col items-center w-full p-6 rounded-xl text-primary-500 justify-center border-[2px] ${className} ${
+      className={`flex items-center justify-center border-[2px] rounded-xl text-primary-500 ${className} ${
         isEditMode ? "bg-[#ffffff] border-[#6EBEFB]" : "bg-[#e9f5fe]"
-      }`}
+      } desktop:w-[301px] desktop:h-[352px] w-full desktop:p-6 p-4`}
+      style={{
+        aspectRatio: '335 / 128',
+      }}
     >
       {isEditMode ? (
         <div className="flex flex-col items-center w-full">
-          <div className="relative w-60 h-60 rounded-full mb-8">
+          <div className="relative w-[120px] h-[120px] rounded-full mb-4">
             <Image
               src={avatarPreview || user.avatar || "/default-avatar.jpg"}
               alt="프로필 이미지"
@@ -94,9 +98,9 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
               objectFit="cover"
               className="rounded-full"
             />
-            <div className="absolute right-0 bottom-0 bg-[#40444C] rounded-full w-[80px] h-[80px] flex justify-center items-center">
+            <div className="absolute right-0 bottom-0 bg-[#40444C] rounded-full w-[40px] h-[40px] flex justify-center items-center">
               <label htmlFor="avatar-upload" className="cursor-pointer">
-                <TbPencil className="text-[36px] text-[#ffffff]" />
+                <TbPencil className="text-[20px] text-[#ffffff]" />
               </label>
               <input
                 type="file"
@@ -107,22 +111,22 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
               />
             </div>
           </div>
-          <div className="flex flex-col items-center w-full max-w-md">
+          <div className="flex flex-col items-center w-[180px]">
             <input
               value={newNickname}
               onChange={(e) => setNewNickname(e.target.value)}
-              className="border border-[#E0E2E4] px-5 py-3 rounded-[4px] mb-8 w-full text-center"
+              className="border border-[#E0E2E4] px-3 py-2 rounded-[4px] mb-4 w-full text-center"
               placeholder="새 닉네임 입력"
             />
-            <div className="flex justify-between items-center gap-4 w-full">
+            <div className="flex justify-between items-center gap-2 w-full">
               <button
-                className="w-full py-3 flex items-center justify-center gap-2 bg-[#E9F5FE] text-[#279ef9] rounded-[4px] cursor-pointer"
+                className="w-full py-2 flex items-center justify-center gap-1 bg-[#E9F5FE] text-[#279ef9] rounded-[4px] cursor-pointer text-sm"
                 onClick={handleCancelEdit}
               >
                 취소
               </button>
               <button
-                className="w-full py-3 flex items-center justify-center gap-2 bg-[#279ef9] text-[#f5f6f7] rounded-[4px] cursor-pointer"
+                className="w-full py-2 flex items-center justify-center gap-1 bg-[#279ef9] text-[#f5f6f7] rounded-[4px] cursor-pointer text-sm"
                 onClick={editProfile}
               >
                 저장
@@ -130,39 +134,66 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
             </div>
           </div>
         </div>
-       ) : (
-        <div className="flex flex-row desktop:flex-col items-center w-full">
-          <div className="relative w-32 h-32 desktop:w-48 desktop:h-48 rounded-full overflow-visible mb-0 desktop:mb-6 mr-4 desktop:mr-0">
-            <Image
-              src={user.avatar || "/default-avatar.jpg"}
-              alt="프로필 이미지"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-full"
-            />
-            <button
-              className="absolute -bottom-3 -right-3 w-12 h-12 bg-[#279ef9] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#1e7fe0] ease-in duration-300 desktop:hidden shadow-md"
-              onClick={() => setEditMode(true)}
-            >
-              <TbPencil className="text-2xl text-white" />
-            </button>
-          </div>
-          <div className="flex flex-col items-start desktop:items-center">
-            <div className="text-xl desktop:text-4xl font-bold text-primary-500 mb-1 desktop:mb-2">
-              {user.nickname}님
+      ) : (
+        <>
+          {/* 웹 사이즈 레이아웃 */}
+          <div className="hidden desktop:flex flex-col items-center w-full">
+            <div className="relative w-[120px] h-[120px] rounded-full mb-4">
+              <Image
+                src={user.avatar || "/default-avatar.jpg"}
+                alt="프로필 이미지"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-full"
+              />
             </div>
-            <div className="text-base desktop:text-xl text-gray-800 desktop:mb-6">
-              {user.email}
+            <div className="flex flex-col items-center w-[180px]">
+              <div className="text-xl font-bold text-primary-500 mb-1 text-center">
+                {user.nickname}님
+              </div>
+              <div className="text-sm text-gray-800 mb-4 text-center">
+                {user.email}
+              </div>
+              <button
+                className="mt-5 w-[253px] h-[40px] flex items-center justify-center gap-2 bg-[#279ef9] text-[#f5f6f7] rounded-[4px] cursor-pointer hover:bg-[#1e7fe0] ease-in duration-300 text-sm"
+                onClick={() => setEditMode(true)}
+              >
+                <TbPencil className="text-xl" />
+                프로필 수정
+              </button>
             </div>
-            <button
-              className="hidden desktop:flex w-full max-w-[300px] mt-4 py-3 items-center justify-center gap-2 bg-[#279ef9] text-[#f5f6f7] rounded-[4px] cursor-pointer hover:bg-[#1e7fe0] ease-in duration-300"
-              onClick={() => setEditMode(true)}
-            >
-              <TbPencil className="text-2xl" />
-              프로필 수정
-            </button>
           </div>
-        </div>
+
+        
+          {/* 모바일 사이즈 레이아웃 */}
+          <div className="flex desktop:hidden items-center justify-center w-full h-full">
+            <div className="flex items-center justify-center w-full max-w-[335px]">
+              <div className="relative w-[80px] h-[80px]">
+                <Image
+                  src={user.avatar || "/default-avatar.jpg"}
+                  alt="프로필 이미지"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+                <button
+                  className="absolute -bottom-1 -right-1 w-[28px] h-[28px] bg-[#279ef9] rounded-full flex items-center justify-center cursor-pointer hover:bg-[#1e7fe0] ease-in duration-300"
+                  onClick={() => setEditMode(true)}
+                >
+                  <TbPencil className="text-white w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex flex-col ml-4" style={{ width: '154px' }}>
+                <div className="text-[16px] font-bold text-primary-500 truncate">
+                  {user.nickname}님
+                </div>
+                <div className="text-[12px] text-gray-800 truncate mt-1">
+                  {user.email}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
