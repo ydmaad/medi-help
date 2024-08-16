@@ -125,14 +125,14 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
               </div>
               <div className="flex flex-col justify-between w-full flex-grow">
                 <div>
-                  <p className="text-sm desktop:text-base font-bold text-gray-900 line-clamp-1">
+                  <p className="text-base desktop:text-lg font-bold text-gray-900 line-clamp-1">
                     {record.medi_nickname}
                   </p>
-                  <p className="text-xs desktop:text-sm text-gray-600 line-clamp-1 mt-0.5">
+                  <p className="text-sm desktop:text-base text-gray-600 line-clamp-1 mt-0.5">
                     {record.medi_name}
                   </p>
                 </div>
-                <p className="text-xs text-blue-500 mb-3 truncate mt-1">
+                <p className="text-xs desktop:text-sm text-blue-500 mb-3 truncate mt-1">
                   {record.start_date} ~ {record.end_date}
                 </p>
               </div>
