@@ -73,6 +73,8 @@ export const RecoverPasswordForm: React.FC = () => {
       ) : (
         <form onSubmit={handleResetPassword}>
           <AuthInput
+            id="password" // id 추가
+            name="password" // name 추가
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

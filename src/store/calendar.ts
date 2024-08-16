@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { MedicinesType, ValuesType } from "@/types/calendar";
 import uuid from "react-uuid";
-import { DATE_OFFSET } from "@/constant/constant";
+import { DATE_OFFSET } from "@/constants/constant";
 import { Tables } from "@/types/supabase";
 import { EventInput } from "@fullcalendar/core";
 

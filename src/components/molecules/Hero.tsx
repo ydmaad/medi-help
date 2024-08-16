@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import SearchBar from "./SearchBar";
 import Mouse from "@/components/atoms/mouse";
+import { useToast } from "@/hooks/useToast";
 
 const Hero = () => {
   const router = useRouter();
@@ -11,6 +12,8 @@ const Hero = () => {
       router.push(`/search?query=${encodeURIComponent(searchTerm)}`);
     }
   };
+
+  const { toast } = useToast();
 
   return (
     <>
@@ -31,7 +34,18 @@ const Hero = () => {
           <SearchBar onSearchChange={handleSearchChange} />
         </div>
       </div>
+      <button
+        onClick={() => {
+          toast.success("토스트가 제대로 나와요");
+        }}
+      >
+        토스트 테스트
+      </button>
+      <div className="mb-[120px] z-10 ">
+        <SearchBar onSearchChange={handleSearchChange} />
+      </div>
     </>
+    
   );
 };
 

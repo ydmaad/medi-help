@@ -40,11 +40,34 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      perspective: {
+        "1000": "1000px",
+      },
+      rotate: {
+        "y-180": "180deg",
+      },
     },
     screens: {
       desktop: "768px",
     },
   },
-  plugins: [],
+  plugins: [
+    require("tailwind-scrollbar-hide"),
+    plugin(function ({ addUtilities }: PluginAPI) {
+      const newUtilities = {
+        ".backface-hidden": {
+          "backface-visibility": "hidden",
+        },
+        ".preserve-3d": {
+          "transform-style": "preserve-3d",
+        },
+        ".my-rotate-y-180": {
+          transform: "rotateY(180deg)",
+        },
+      };
+      addUtilities(newUtilities);
+    }),
+  ],
 };
+
 export default config;

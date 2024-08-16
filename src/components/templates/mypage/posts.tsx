@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 
 interface Post {
@@ -12,6 +12,8 @@ interface Post {
 
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 3;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,21 +51,64 @@ const Posts: React.FC = () => {
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
+  // Get current posts
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+
+  // Change page
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
   return (
-    <div className="w-full max-w-custom mx-auto px-4 py-2"> {/* Apply custom max-width */}
+    <div className="w-full max-w-screen-xl mx-auto py-4 ">
       <div className="pt-16">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-1000">내가 쓴 글</h2> {/* Increased font size and weight */}
+        <h2 className="text-2xl font-semibold mb-6 text-gray-1000">내가 쓴 글</h2>
         <div className="flex flex-col gap-6">
-          {posts.map((post) => (
+          {currentPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-gray-50 rounded-xl p-4 max-w-full" // Ensures the post container is full width
+              className="bg-[#f5f6f7] rounded-xl p-4 max-w-full"
             >
-              <h3 className="text-xl font-semibold mb-2 text-gray-1000">{post.title}</h3>
-              <p className="text-gray-600 mb-2">{post.contents}</p>
-              <p className="text-gray-500 text-sm">{formatDate(post.created_at)}</p>
+              <h3 className="text-xl font-semibold mb-2 text-gray-1000">
+                {post.title}
+              </h3>
+              <p className="text-brand-gray-600 mb-2">{post.contents}</p>
+              <p className="text-brand-gray-500 text-sm">{formatDate(post.created_at)}</p>
             </div>
           ))}
+        </div>
+
+        {/* Pagination Buttons */}
+        <div className="flex justify-center mt-4 space-x-1">
+          <button
+            onClick={handlePrevPage}
+            className={`px-4 py-2 ${currentPage === 1 ? 'text-brand-gray-400 cursor-not-allowed' : 'text-brand-gray-700'}`}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+          {Array.from({ length: Math.ceil(posts.length / postsPerPage) }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`px-4 py-2 ${currentPage === index + 1 ? 'text-brand-primary-600' : 'text-brand-gray-700'}`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={handleNextPage}
+            className={`px-4 py-2 ${indexOfLastPost >= posts.length ? 'text-brand-gray-400 cursor-not-allowed' : 'text-brand-gray-700'}`}
+            disabled={indexOfLastPost >= posts.length}
+          >
+            &gt;
+          </button>
         </div>
       </div>
     </div>

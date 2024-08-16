@@ -1,53 +1,25 @@
 "use client";
 
-import { Tables } from "@/types/supabase";
+import { editPost, fetchDetailPost } from "@/lib/commentsAPI";
+import { Post } from "@/types/communityTypes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-type Post = Tables<"posts">;
-
 interface PostEditProps {
   id: string;
 }
 
-// 게시글 id를 받아 게시글 데이터 요청
-// 따로 분리해서 재사용할 수 있는 부분(PostDetail, Edit)
-const fetchDetailPost = async (id: string) => {
-  try {
-    const response = await fetch(`/api/community/${id}`);
-    if (!response.ok) {
-      throw new Error("게시글 불러오는데 실패했습니다");
-    }
-    const { data } = await response.json();
-    console.log("수정하려고 불러온 데이터 :", data);
-    return data[0];
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-// 게시글 수정 요청
-const editPost = async (id: string, formData: FormData) => {
-  const response = await fetch(`/api/community/${id}`, {
-    method: "PUT",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error("게시글 수정에 실패했습니다.");
-  }
-  return await response.json();
-};
-
+// id: post의 id
 const Edit = ({ id }: PostEditProps) => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
-  const [contents, setContents] = useState("");
+  const [title, setTitle] = useState<string>("");
+  const [contents, setContents] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [selectCategory, setSelectCategory] = useState<string>("");
   // 새로 업로드하려는 이미지 파일
   const [image, setImage] = useState<File[]>([]);
   // supabase에서 가져온 기존 이미지
@@ -63,6 +35,7 @@ const Edit = ({ id }: PostEditProps) => {
         setPost(data);
         setTitle(data.title);
         setContents(data.contents);
+        setCategory(data.category);
         if (data.img_url) {
           const imageUrls = data.img_url;
           setCurrentImage(imageUrls);
@@ -89,6 +62,7 @@ const Edit = ({ id }: PostEditProps) => {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("contents", contents);
+      formData.append("category", category);
 
       saveImage.forEach((img, index) => {
         if (typeof img === "string") {
@@ -120,7 +94,14 @@ const Edit = ({ id }: PostEditProps) => {
     setSaveImage((prev) => prev.filter((_, i) => i !== index));
   };
 
-  console.log("현재 게시글:", post);
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = (category: string) => {
+    setSelectCategory(category);
+  };
+  
+  // console.log(selectCategory);
+
+  // console.log("현재 게시글:", post);
 
   if (loading) return <div>로딩 중...</div>;
   if (error) return <div>에러: {error}</div>;
@@ -131,94 +112,168 @@ const Edit = ({ id }: PostEditProps) => {
 
   return (
     <>
-      <div className="w-[1000px]  mx-auto p-6">
-        <h1 className="text-2xl font-bold  ml-6">글 수정</h1>
-        <div className="bg-white rounded-lg p-6">
-          <input
-            type="text"
-            placeholder="제목을 입력하세요"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
-          />
+      <div className="flex desktop:hidden justify-between space-x-4 mb-6 ">
+        <Link href={`/community/`}>
+          <Image
+            src="/postCancel.svg"
+            alt="게시글등록취소"
+            width={26}
+            height={26}
+          ></Image>
+        </Link>
+        <div className=" text-center ">
+          <h1 className="text-[18px] font-black ">글 수정</h1>
+        </div>
+        <button
+          onClick={handleEdit}
+          className="text-[18px] text-brand-primary-500  hover:text-brand-primary-700"
+        >
+          등록
+        </button>
+      </div>
 
-          {/* 이미지 첨부, 내용 인풋 */}
-          <div className="border border-gray-100 rounded-md my-7">
-            {/* 이미지 첨부 부분 */}
-            <div className="mt-4">
-              <label className="inline-flex items-center cursor-pointer text-gray-600 ml-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                사진 추가 (최대 50MB)
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
+      <h1 className="text-[24px] font-black  hidden desktop:flex">글 수정</h1>
+      <div className="flex space-x-2">
+        {["메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
+          <button
+            key={category}
+            onClick={() => handleCategorySelect(category)}
+            className={`px-4 py-2 w-[100px] text-[12px] desktop:text-[14px]  my-3 rounded-full ${
+              selectCategory === category
+                ? "bg-brand-gray-600 text-white"
+                : "bg-brand-gray-50 text-gray-700"
+            }`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+      <div className="bg-white w-[335px] desktop:w-[996px] rounded-lg items-center">
+        <input
+          type="text"
+          placeholder="제목을 입력하세요"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-[335px] desktop:w-[996px] px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
+        />
 
-            {/* 등록할 이미지 미리보기 */}
-            <div className="mb-4 flex flex-wrap">
-              {saveImage.map((img, index) => (
-                <div key={index} className="w-24 h-24 m-2 relative">
-                  <Image
-                    src={
-                      typeof img === "string" ? img : URL.createObjectURL(img)
-                    }
-                    alt={`Preview ${index}`}
-                    fill
-                    sizes="(max-width: 96px) 100vw, 96px"
-                    style={{ objectFit: "cover" }}
-                  />
-                  <button
-                    onClick={() => handleRemoveImage(index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                    style={{ transform: "translate(50%, -50%)" }}
-                  >
-                    X
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className="mb-4">
-              <textarea
-                placeholder="내용을 입력하세요"
-                value={contents}
-                onChange={(e) => setContents(e.target.value)}
-                className="w-full h-[500px] px-3 py-2 focus:outline-none resize-none"
+        {/* 이미지 첨부, 내용 인풋 */}
+        <div className="border border-gray-100 rounded-md mt-3 mb-4 desktop:mb-7">
+          {/* 데스크탑 버전 이미지 첨부 부분 */}
+          <div className="mt-4 hidden desktop:flex">
+            <label className="inline-flex items-center cursor-pointer text-gray-600 ml-3 mb-2">
+              <Image
+                src="/addImage.svg"
+                alt="이미지추가버튼"
+                width={20}
+                height={20}
+                className="mr-1"
+              ></Image>
+              사진 추가 (최대 50MB)
+              <input
+                type="file"
+                multiple
+                onChange={handleImageChange}
+                className="hidden"
               />
-            </div>
+            </label>
           </div>
 
-          {/* 버튼 */}
-          <div className="flex justify-center space-x-4">
-            <Link
-              href={`/community/${id}`}
-              className="bg-gray-100 w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-gray-300 inline-flex items-center justify-center"
-            >
-              취소
-            </Link>
-            <button
-              onClick={handleEdit}
-              className="bg-blue-500 text-white w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
-            >
-              완료
-            </button>
+          {/* 데스크탑 버전 등록할 이미지 미리보기 */}
+          <div className="mb-4 flex-wrap hidden desktop:flex">
+            {saveImage.map((img, index) => (
+              <div key={index} className="w-24 h-24 m-2 relative">
+                <Image
+                  src={typeof img === "string" ? img : URL.createObjectURL(img)}
+                  alt={`Preview ${index}`}
+                  fill
+                  sizes="(max-width: 96px) 100vw, 96px"
+                  style={{ objectFit: "cover" }}
+                />
+                <button
+                  onClick={() => handleRemoveImage(index)}
+                  className="absolute top-[17px] left-[40px] text-white  flex items-center justify-center text-xs"
+                  style={{ transform: "translate(50%, -50%)" }}
+                >
+                  <Image
+                    src="/imageDelBtn.svg"
+                    alt="이미지삭제버튼"
+                    width={38}
+                    height={38}
+                  ></Image>
+                </button>
+              </div>
+            ))}
           </div>
+          <div className="mb-4">
+            <textarea
+              placeholder="내용을 입력하세요"
+              value={contents}
+              onChange={(e) => setContents(e.target.value)}
+              className="w-full h-[345px] desktop:h-[277px] mt-2 desktop:mt-0 text-[14px] px-3 focus:outline-none resize-none"
+            />
+          </div>
+        </div>
+
+        {/* 버튼 */}
+        <div className=" border border-brand-gray-600 rounded py-3 flex desktop:hidden items-center justify-center ">
+          <label className="inline-flex items-center cursor-pointer text-gray-600">
+            <Image
+              src="/addImage.svg"
+              alt="이미지추가버튼"
+              width={20}
+              height={20}
+              className="mr-1"
+            ></Image>
+            이미지 추가 (최대 50MB)
+            <input
+              type="file"
+              multiple
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
+        </div>
+
+        <div className="mt-4 flex flex-wrap desktop:hidden">
+          {saveImage.map((img, index) => (
+            <div key={index} className="w-[60px] h-[60px] relative mr-2">
+              <Image
+                src={typeof img === "string" ? img : URL.createObjectURL(img)}
+                alt={`Preview ${index}`}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-md"
+              />
+              <button
+                onClick={() => handleRemoveImage(index)}
+                className="absolute top-[13px] left-[20px] text-white flex items-center justify-center text-xs"
+                style={{ transform: "translate(50%, -50%)" }}
+              >
+                <Image
+                  src="/imageDelBtn.svg"
+                  alt="이미지삭제버튼"
+                  width={24}
+                  height={24}
+                ></Image>
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden desktop:flex justify-center space-x-4">
+          <Link
+            href={`/community/${id}`}
+            className="bg-brand-primary-50 text-brand-primary-500 w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-gray-300 inline-flex items-center justify-center"
+          >
+            취소
+          </Link>
+          <button
+            onClick={handleEdit}
+            className="bg-brand-primary-500 text-white w-[100px] px-4 py-2 rounded-md shadow-sm hover:bg-blue-600"
+          >
+            완료
+          </button>
         </div>
       </div>
     </>
