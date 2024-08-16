@@ -132,7 +132,7 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
                     {record.medi_name}
                   </p>
                 </div>
-                <p className="text-xs desktop:text-sm text-blue-500 mb-3 truncate mt-1">
+                <p className="text-xs desktop:text-sm text-blue-500 truncate mt-1">
                   {record.start_date} ~ {record.end_date}
                 </p>
               </div>

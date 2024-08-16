@@ -1,4 +1,3 @@
-// src/components/templates/mypage/UserBoard.tsx
 "use client";
 
 import { AuthUser, useAuthStore } from "@/store/auth";
@@ -12,7 +11,6 @@ interface UserBoardProps {
 }
 
 const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
-  // 상태 관리
   const [isEditMode, setEditMode] = useState(false);
   const [newNickname, setNewNickname] = useState("");
   const [newAvatar, setNewAvatar] = useState<File | null>(null);
@@ -21,14 +19,12 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
 
   const defaultAvatarPath = "/default-avatar.jpg";
 
-  // 사용자 정보 초기화
   useEffect(() => {
     if (user) {
       setNewNickname(user.nickname || "");
     }
   }, [user]);
 
-  // 아바타 이미지 변경 핸들러
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -37,7 +33,6 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
     }
   };
 
-  // 편집 취소 핸들러
   const handleCancelEdit = () => {
     setEditMode(false);
     setNewAvatar(null);
@@ -45,7 +40,6 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
     setNewNickname(user?.nickname || "");
   };
 
-  // 프로필 수정 함수
   const editProfile = async () => {
     if (!user) return;
 
@@ -88,18 +82,18 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
   if (!user) return null;
 
   return (
-    <div className={`${className} w-full`}>
+    <div className={`${className} w-full h-full`}>
       {/* 데스크탑 버전 */}
-      <div className="hidden desktop:block">
-        <div className="w-[301px] perspective-1000">
+      <div className="hidden desktop:flex h-full">
+        <div className="w-[301px] h-full perspective-1000">
           <div
-            className={`relative w-full transition-transform duration-500 ${
+            className={`relative w-full h-full transition-transform duration-500 ${
               isEditMode ? "my-rotate-y-180" : ""
             } preserve-3d`}
           >
             {/* 프로필 카드 (앞면) */}
-            <div className="absolute backface-hidden w-full">
-              <div className="bg-[#e9f5fe] rounded-xl border-[2px] border-transparent w-full flex flex-col items-center justify-center p-6">
+            <div className="absolute backface-hidden w-full h-full">
+              <div className="bg-[#e9f5fe] rounded-xl border-[2px] border-transparent w-full h-full flex flex-col items-center justify-center p-6">
                 <div className="relative w-[120px] h-[120px] rounded-full mb-4">
                   <Image
                     src={user.avatar || defaultAvatarPath}
@@ -124,8 +118,8 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
             </div>
 
             {/* 프로필 수정 카드 (뒷면) */}
-            <div className="absolute top-0 left-0 w-full my-rotate-y-180 backface-hidden">
-              <div className="bg-white rounded-xl border-[2px] border-[#6EBEFB] w-full flex flex-col items-center justify-center p-6">
+            <div className="absolute top-0 left-0 w-full h-full my-rotate-y-180 backface-hidden">
+              <div className="bg-white rounded-xl border-[2px] border-[#6EBEFB] w-full h-full flex flex-col items-center justify-center p-6">
                 <div className="relative w-[120px] h-[120px] rounded-full mb-4">
                   <Image
                     src={avatarPreview || user.avatar || defaultAvatarPath}
@@ -178,7 +172,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
       </div>
 
       {/* 모바일 버전 */}
-      <div className="desktop:hidden">
+      <div className="desktop:hidden w-full">
         <div className="bg-[#e9f5fe] rounded-xl border-[2px] border-transparent w-full p-4">
           {!isEditMode ? (
             <div className="flex items-center justify-between">
