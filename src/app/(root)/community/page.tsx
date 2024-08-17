@@ -67,6 +67,7 @@ const CommunityPage = () => {
               약에 대한 이야기를 나누어 보아요
             </span>
           </div>
+          {/* 모바일 버전에서 검색토글 열렸을때 */}
           {isSearchOpen ? null : (
             <div className="flex desktop:hidden flex-col">
               <button
@@ -84,24 +85,23 @@ const CommunityPage = () => {
 
           {/* 모바일 버전 */}
 
-          <div className="flex items-center space-x-4">
-            <Search
-              handleSearch={handleSearch}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-            />
-
+          <div className="flex flex-row">
+            <div>
+              <Search handleSearch={handleSearch} />
+            </div>
             {/* 데스트탑 버전 */}
-            <Link
-              href={`/community/post`}
-              onClick={handleUserCheck}
-              className="hidden desktop:flex bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600 items-center space-x-2"
-            >
-              <span>글쓰기</span>
-            </Link>
+            <div>
+              <Link
+                href={`/community/post`}
+                onClick={handleUserCheck}
+                className="hidden desktop:flex bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600 items-center space-x-2"
+              >
+                <span>글쓰기</span>
+              </Link>
 
-            {/* 플로팅 버튼 */}
-            <PostFloatingBtn onUserCheck={handleUserCheck}></PostFloatingBtn>
+              {/* 플로팅 버튼 */}
+              <PostFloatingBtn onUserCheck={handleUserCheck}></PostFloatingBtn>
+            </div>
           </div>
         </div>
         <List
