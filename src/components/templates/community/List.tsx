@@ -134,8 +134,10 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
         <div>
           {isSearchOpen ? (
             <p className="text-brand-gray-1000 font-black text-[14px] desktop:text-[16px] desktop:mt-20 mx-[25px] ">
-              <span className="text-brand-primary-500 ">'{searchTerm}'</span>에
-              대한 검색 결과
+              <span className="text-brand-primary-500 ">
+                &rsquo;{searchTerm}&rsquo;
+              </span>
+              에 대한 검색 결과
               <span className="text-brand-gray-600 ml-[5px] ">
                 ({filteredPosts.length})
               </span>
