@@ -49,7 +49,7 @@ export default function SearchPage() {
         {data.itemName}
       </h1>
       <DrugDetailCard
-        imageUrl={data.itemImage} // 실제 이미지 URL
+        imageUrl={data.itemImage}
         altText="약 이미지 설명"
         category="처방약"
         classification="일반의약품"
