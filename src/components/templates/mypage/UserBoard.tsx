@@ -121,7 +121,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
             {/* 프로필 수정 카드 (뒷면) */}
             <div className="absolute top-0 left-0 w-full h-full my-rotate-y-180 backface-hidden">
               <div className="bg-white rounded-xl border-[2px] border-brand-primary-300 w-full h-full flex flex-col items-center justify-center p-6">
-                <div className="relative w-[120px] h-[120px] shadow-md rounded-full mb-4">
+                <div className="relative w-[120px] h-[120px] rounded-full shadow-md mb-4">
                   <Image
                     src={avatarPreview || user.avatar || defaultAvatarPath}
                     alt="프로필 이미지"
@@ -146,21 +146,21 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                 <input
                   value={newNickname}
                   onChange={(e) => setNewNickname(e.target.value)}
-                  className="border border-[#e0e2e4] px-3 py-2 rounded-md mb-4 w-full text-center"
+                  className="text-[18px] border border-brand-gray-200 px-3 py-2 rounded mt-4 mb-1 w-full text-center"
                   placeholder="새 닉네임 입력"
                 />
-                <div className="text-sm text-green-500 mb-4">
+                <div className="text-[14px] text-[#3FDE9C] mb-4">
                   사용 가능한 닉네임입니다.
                 </div>
                 <div className="flex justify-between items-center gap-2 w-full">
                   <button
-                    className="w-full py-2 bg-[#e9f5fe] text-[#279ef9] rounded-md cursor-pointer text-sm"
+                    className="w-full py-2 bg-brand-primary-50 text-brand-primary-500 rounded-md cursor-pointer text-[16px]"
                     onClick={handleCancelEdit}
                   >
                     취소
                   </button>
                   <button
-                    className="w-full py-2 bg-[#279ef9] text-white rounded-md cursor-pointer text-sm"
+                    className="w-full py-2 bg-brand-primary-500 text-white rounded-md cursor-pointer text-[16px]"
                     onClick={editProfile}
                   >
                     저장
