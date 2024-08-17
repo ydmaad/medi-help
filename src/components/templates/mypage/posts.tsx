@@ -66,20 +66,20 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto py-4 ">
+    <div className="w-[996px] mx-auto py-4">
       <div className="pt-16">
         <h2 className="text-2xl font-semibold mb-6 text-gray-1000">내가 쓴 글</h2>
         <div className="flex flex-col gap-6">
           {currentPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-[#f5f6f7] rounded-xl p-4 max-w-full"
+              className="bg-[#f5f6f7] rounded-xl p-5 w-full h-[121px]"
             >
-              <h3 className="text-xl font-semibold mb-2 text-gray-1000">
+              <h3 className="text-[16px] font-bold mb-[9px] text-brand-gray-1000">
                 {post.title}
               </h3>
-              <p className="text-brand-gray-600 mb-2">{post.contents}</p>
-              <p className="text-brand-gray-500 text-sm">{formatDate(post.created_at)}</p>
+              <p className="text-[12px] text-brand-gray-600 mb-2">{post.contents}</p>
+              <p className="text-[12px] text-brand-gray-400">{formatDate(post.created_at)}</p>
             </div>
           ))}
         </div>

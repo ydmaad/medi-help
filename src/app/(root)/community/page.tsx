@@ -49,11 +49,10 @@ const CommunityPage = () => {
       router.push("/community/post");
     }
   };
-  console.log(isSearchOpen);
 
   return (
     <>
-      <div className="max-w-[1000px] mx-auto mt-[118px] desktop:mt-40">
+      <div className="max-w-[996px] mx-auto mt-[118px] desktop:mt-40">
         <div className="flex items-center justify-between mb-7 desktop:mb-[60px]">
           {/* 데스크탑 버전 */}
           <div className="hidden desktop:flex flex-col">
@@ -69,7 +68,7 @@ const CommunityPage = () => {
             </span>
           </div>
           {isSearchOpen ? null : (
-            <div className="flex desktop:hidden flex-col ml-5">
+            <div className="flex desktop:hidden flex-col">
               <button
                 onClick={handleReset}
                 className="flex items-center text-3xl font-bold"

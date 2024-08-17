@@ -33,12 +33,9 @@ interface MediListsProps {
 
 const MediLists: React.FC<MediListsProps> = ({ className }) => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
-  const [selectedMediRecord, setSelectedMediRecord] =
-    useState<MediRecord | null>(null);
+  const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [displayedMediRecords, setDisplayedMediRecords] = useState<
-    MediRecord[]
-  >([]);
+  const [displayedMediRecords, setDisplayedMediRecords] = useState<MediRecord[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,9 +50,7 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
       const userId = session.data.session.user.id;
 
       try {
-        const response = await axios.get(
-          `/api/mypage/medi/names?user_id=${userId}`
-        );
+        const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
         setMediRecords(response.data);
       } catch (error) {
         console.error("Error fetching medi records:", error);
@@ -80,64 +75,66 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
     router.push("/mypage/Medications");
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '.');
+  };
+
   return (
-    <div className={`flex flex-col items-center w-full ${className}`}>
-      <div className="bg-[#f5f6f7] p-4 desktop:p-6 rounded-2xl w-full overflow-hidden">
-        <div className="mb-4 desktop:mb-6">
+    <div className={`${className} w-[671px] h-[352px]`}>
+      <div className="w-full h-full overflow-hidden rounded-2xl bg-white desktop:bg-brand-gray-50 desktop:shadow-md">
+        <div className="p-4 desktop:p-6">
           <h2
-            className="text-lg desktop:text-2xl font-semibold text-gray-1000 text-left cursor-pointer"
+            className="text-base desktop:text-base font-semibold text-brand-gray-1000 text-left cursor-pointer mb-4 desktop:mb-6 px-2 flex items-center"
             onClick={handleShowAllClick}
           >
-            <span className="text-gray-1000">나의 복용약 </span>
-            <span className="text-[#279ef9] text-xl desktop:text-3xl font-bold">
+            <span className="text-brand-gray-1000 text-[16px]">나의 복용약 </span>
+            <span className="text-[#279ef9] font-bold text-[20px] ml-1">
               {mediRecords.length}개
             </span>
-            <span className="text-[#279ef9] text-xl desktop:text-3xl font-bold ml-2">
+            <span className="text-[#279ef9] font-bold text-[20px] ml-1">
               &gt;
             </span>
           </h2>
-        </div>
 
-        <div className="grid grid-cols-2 desktop:grid-cols-3 gap-3 desktop:gap-4">
-          {displayedMediRecords.map((record) => (
-            <div
-              key={record.id}
-              className="bg-white border border-gray-200 p-2 desktop:p-3 rounded-xl flex flex-col items-start cursor-pointer w-full"
-              style={{ aspectRatio: '1 / 1.2' }}
-            >
+          <div className="grid grid-cols-3 gap-4 justify-items-center">
+            {displayedMediRecords.map((record) => (
               <div
-                className="relative w-full mb-2"
-                style={{ aspectRatio: '16 / 9' }}
+                key={record.id}
+                className="bg-white border border-brand-gray-50 rounded-xl flex flex-col w-[180px] h-[217px] p-4"
               >
-                {record.itemImage ? (
-                  <Image
-                    src={record.itemImage}
-                    alt={record.medi_nickname || "약 이미지"}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                    <p className="text-gray-400 text-xs">이미지 없음</p>
+                <div className="w-[148px] h-[84px] mb-2">
+                  {record.itemImage ? (
+                    <Image
+                      src={record.itemImage}
+                      alt={record.medi_nickname || "약 이미지"}
+                      width={148}
+                      height={84}
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
+                      <p className="text-brand-gray-400 text-xs">이미지 없음</p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col justify-between flex-grow">
+                  <div>
+                    <p className="text-[14px] font-bold text-brand-gray-1000 line-clamp-1">
+                      {record.medi_nickname}
+                    </p>
+                    <p className="text-[12px] text-brand-gray-800 line-clamp-1 mt-1">
+                      {record.medi_name}
+                    </p>
                   </div>
-                )}
-              </div>
-              <div className="flex flex-col justify-between w-full flex-grow">
-                <div>
-                  <p className="text-base desktop:text-lg font-bold text-gray-900 line-clamp-1">
-                    {record.medi_nickname}
-                  </p>
-                  <p className="text-sm desktop:text-base text-gray-600 line-clamp-1 mt-0.5">
-                    {record.medi_name}
+                  <p className="text-[12px] text-brand-primary-500 truncate mt-2 px-1">
+                    {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
                   </p>
                 </div>
-                <p className="text-xs desktop:text-sm text-blue-500 truncate mt-1">
-                  {record.start_date} ~ {record.end_date}
-                </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
