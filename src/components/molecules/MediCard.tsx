@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import { ImageProvider } from "@/contexts/ImageContext";
 import SmImage from "../atoms/SmImage";
 import CardTitle from "../atoms/CardTitle";
-import CommunitySubTitle from "../atoms/CommunitySubTitle";
 import { BarTextProvider } from "@/contexts/BarTextContext";
 import BarText from "../atoms/BarText";
 
@@ -41,12 +40,11 @@ const MediCard = ({
     <ImageProvider value={{ src, alt, title, subtitle }}>
       <BarTextProvider value={barTextValue}>
         <div
-          className="w-[231px] h-[257px] mr-[24px] border border-brand-gray-50 rounded-lg p-6 mb-[32px] cursor-pointer"
+          className="w-[160px] h-[205px] desktop:w-[231px] desktop:h-[257px] desktop:mr-[24px] desktop:p-6 mr-[16px] p-4 border border-brand-gray-50 rounded-lg   mb-[16px] desktop:mb-[32px] cursor-pointer"
           onClick={handleClick}
         >
-          <SmImage width={183} height={100} />
+          <SmImage className="w-[128px] h-[80px] desktop:w-[183px] desktop:h-[100px]" />
           <CardTitle />
-          <CommunitySubTitle text={subtitle} />
           <div className="text-brand-gray-600">
             <BarText />
           </div>
