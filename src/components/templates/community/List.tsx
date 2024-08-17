@@ -131,8 +131,17 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
           </div>
         )}
 
+        {/* 작업중!!!!!!! */}
         <div>
-          {isSearchOpen ? (
+          {isSearchOpen && searchTerm.length === 0 ? (
+            <p className="text-[14px] ml-[8px]">
+              전체
+              <span className="text-brand-gray-600 ml-[8px]">
+                ({filteredPosts.length})
+              </span>
+            </p>
+          ) : null}
+          {/* {isSearchOpen ? (
             <p className="text-brand-gray-1000 font-black text-[14px] desktop:text-[16px] desktop:mt-20 mx-[25px] ">
               <span className="text-brand-primary-500 ">
                 &rsquo;{searchTerm}&rsquo;
@@ -142,7 +151,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                 ({filteredPosts.length})
               </span>
             </p>
-          ) : null}
+          ) : null} */}
         </div>
 
         {/* 게시글 리스트 그리는 곳 */}

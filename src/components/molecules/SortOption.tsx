@@ -30,7 +30,7 @@ const SortOption = ({
 
   return (
     <>
-      <div className="relative mr-[20px] desktop:mr-0">
+      <div className="relative desktop:mr-0">
         <button
           onClick={handleOptionOpen}
           className="flex items-center justify-center text-brand-gray-600 whitespace-nowrap"
