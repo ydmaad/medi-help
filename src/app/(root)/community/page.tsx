@@ -49,7 +49,6 @@ const CommunityPage = () => {
       router.push("/community/post");
     }
   };
-  console.log(isSearchOpen);
 
   return (
     <>
