@@ -82,7 +82,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
   if (!user) return null;
 
   return (
-    <div className={`${className} w-[301px] h-[352px]`}>
+    <div className={`${className} w-[301px] h-auto desktop:h-[352px]`}>
       {/* 데스크탑 버전 */}
       <div className="hidden desktop:flex h-full">
         <div className="w-full h-full perspective-1000">
@@ -93,8 +93,8 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
           >
             {/* 프로필 카드 (앞면) */}
             <div className="absolute backface-hidden w-full h-full">
-              <div className="bg-[#e9f5fe] rounded-xl border-[2px] border-transparent w-full h-full flex flex-col items-center justify-center p-6">
-                <div className="relative w-[120px] h-[120px] rounded-full mb-4">
+              <div className="bg-brand-primary-50 rounded-[20px] border-[1px] border-transparent w-full h-full flex flex-col items-center justify-center p-6">
+                <div className="relative w-[120px] h-[120px] rounded-full shadow-md mb-1">
                   <Image
                     src={user.avatar || defaultAvatarPath}
                     alt="프로필 이미지"
@@ -103,15 +103,16 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                     className="rounded-full"
                   />
                 </div>
-                <div className="text-2xl font-bold text-primary-500 mb-1">
+                <div className="text-[24px] text-center w-full font-bold text-brand-gray-1000 mt-4 mb-1">
                   {user.nickname}
                 </div>
-                <div className="text-sm font-bold text-gray-600 mb-4">{user.email}</div>
+                <div className="text-[14px] text-brand-gray-1000">
+                  {user.email}
+                </div>
                 <button
-                  className="mt-2 w-[253px] h-[40px] py-2 px-3 bg-[#279ef9] text-white rounded-md cursor-pointer text-sm flex items-center justify-center"
+                  className="mt-[30px] mb-[1px] w-[253px] h-[40px] py-2.5 px-3 bg-brand-primary-500 text-white rounded cursor-pointer text-[16px] flex items-center justify-center"
                   onClick={() => setEditMode(true)}
                 >
-                  <TbPencil className="mr-2" />
                   프로필 수정
                 </button>
               </div>
@@ -119,8 +120,8 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
 
             {/* 프로필 수정 카드 (뒷면) */}
             <div className="absolute top-0 left-0 w-full h-full my-rotate-y-180 backface-hidden">
-              <div className="bg-white rounded-xl border-[2px] border-[#6EBEFB] w-full h-full flex flex-col items-center justify-center p-6">
-                <div className="relative w-[120px] h-[120px] rounded-full mb-4">
+              <div className="bg-white rounded-xl border-[2px] border-brand-primary-300 w-full h-full flex flex-col items-center justify-center p-6">
+                <div className="relative w-[120px] h-[120px] shadow-md rounded-full mb-4">
                   <Image
                     src={avatarPreview || user.avatar || defaultAvatarPath}
                     alt="프로필 이미지"
@@ -130,9 +131,9 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                   />
                   <label
                     htmlFor="avatar-upload"
-                    className="absolute bottom-0 right-0 bg-[#279ef9] rounded-full p-2 cursor-pointer"
+                    className="absolute bottom-0 right-0 bg-brand-gray-800 rounded-full p-2 cursor-pointer"
                   >
-                    <TbCamera className="text-white text-xl" />
+                    <TbCamera className="text-white text-[24px]" />
                   </label>
                   <input
                     type="file"
@@ -177,7 +178,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
           {!isEditMode ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <div className="relative w-[80px] h-[80px] rounded-full">
+                <div className="relative w-[80px] h-[80px] shadow-md rounded-full">
                   <Image
                     src={user.avatar || defaultAvatarPath}
                     alt="프로필 이미지"
@@ -204,7 +205,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <div className="relative w-[120px] h-[120px] rounded-full mb-4">
+              <div className="relative w-[120px] h-[120px] shadow-md rounded-full mb-4">
                 <Image
                   src={avatarPreview || user.avatar || defaultAvatarPath}
                   alt="프로필 이미지"
