@@ -98,12 +98,12 @@ const SearchPage = () => {
           <SearchBar onSearchChange={handleSearchChange} />
         </div>
       </div>
-      <div className="text-[16px] mb-4">
+      <div className="text-[16px] mb-4 flex max-w-[1000px] mx-auto">
         <span>전체</span>
         <span className="text-brand-gray-600">({totalItems})</span>
       </div>
-      <div className="flex flex-col">
-        <div className="grid grid-cols-4 gap-4 mt-4">
+      <div className="flex justify-center items-center">
+        <div className="grid grid-cols-4  mt-4  h-auto">
           {allItems.length > 0 ? (
             allItems.map((item) => (
               <MediCard
@@ -123,14 +123,14 @@ const SearchPage = () => {
             </div>
           )}
         </div>
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
       </div>
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 };

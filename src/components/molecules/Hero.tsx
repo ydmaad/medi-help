@@ -41,11 +41,7 @@ const Hero = () => {
       >
         토스트 테스트
       </button>
-      <div className="mb-[120px] z-10 ">
-        <SearchBar onSearchChange={handleSearchChange} />
-      </div>
     </>
-    
   );
 };
 

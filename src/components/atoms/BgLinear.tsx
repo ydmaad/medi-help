@@ -14,7 +14,7 @@ const BgLinear = () => {
 
   return (
     <>
-      <div className="relative hidden desktop:flex justify-center items-center overflow-hidden h-screen">
+      <div className="relative hidden desktop:flex overflow-hidden h-screen">
         <motion.img
           src="/mainbg.svg"
           alt="mainbg"
