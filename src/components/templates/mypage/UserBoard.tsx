@@ -286,6 +286,84 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
               </div>
               <input
                 value={newNickname}
+                onChange={(e) => setNewNickname(e.target.value)}
+                className="border border-[#e0e2e4] px-3 py-2 rounded-md mb-4 w-full text-center"
+                placeholder="새 닉네임 입력"
+              />
+              <div className="flex justify-between items-center gap-2 w-full">
+                <button
+                  className="w-full py-2 bg-[#e9f5fe] text-[#279ef9] rounded-md cursor-pointer text-sm"
+                  onClick={handleCancelEdit}
+                >
+                  취소
+                </button>
+                <button
+                  className="w-full py-2 bg-[#279ef9] text-white rounded-md cursor-pointer text-sm"
+                  onClick={editProfile}
+                >
+                  저장
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      {/* <div className="desktop:hidden w-full">
+        <div className="w-[335px] h-[128px] bg-[#e9f5fe] rounded-xl border-[2px] border-transparent w-full p-4">
+          {!isEditMode ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="relative w-[80px] h-[80px] shadow-md rounded-full">
+                  <Image
+                    src={user.avatar || defaultAvatarPath}
+                    alt="프로필 이미지"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-full"
+                  />
+                </div>
+                <div className="ml-4">
+                  <div className="text-[16px] font-bold text-primary-500">
+                    {user.nickname}
+                  </div>
+                  <div className="text-[12px] text-gray-600 mt-1">
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+              <button
+                className="w-[28px] h-[28px] bg-[#279ef9] rounded-full flex items-center justify-center cursor-pointer"
+                onClick={() => setEditMode(true)}
+              >
+                <TbPencil className="text-white w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <div className="relative w-[120px] h-[120px] shadow-md rounded-full mb-4">
+                <Image
+                  src={avatarPreview || user.avatar || defaultAvatarPath}
+                  alt="프로필 이미지"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+                <label
+                  htmlFor="mobile-avatar-upload"
+                  className="absolute bottom-0 right-0 bg-[#279ef9] rounded-full p-2 cursor-pointer"
+                >
+                  <TbCamera className="text-white text-xl" />
+                </label>
+                <input
+                  type="file"
+                  id="mobile-avatar-upload"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                  accept="image/*"
+                />
+              </div>
+              <input
+                value={newNickname}
                 onChange={handleNicknameChange}
                 className="border border-[#e0e2e4] px-3 py-2 rounded-md mb-4 w-full text-center"
                 placeholder="새 닉네임 입력"
@@ -298,7 +376,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                 </div>
               )}
               {/* 모바일 버전 버튼 컨테이너에도 상단 마진 추가 */}
-              <div className="flex justify-between items-center gap-2 w-full mt-6">
+      {/* <div className="flex justify-between items-center gap-2 w-full mt-6">
                 <button
                   className="w-full py-2 bg-[#e9f5fe] text-[#279ef9] rounded-md cursor-pointer text-sm"
                   onClick={handleCancelEdit}
@@ -316,7 +394,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
