@@ -61,20 +61,11 @@ export default function SearchPage() {
         color="흰색"
         size="10mm"
       />
-      <DropDownCard
-        title="효능 효과"
-        buttonImage="/dropdownbtn.svg"
-        hiddenText={[data.efcyQesitm]}
-      />
-      <DropDownCard
-        title="용법 및 용량"
-        buttonImage="/dropdownbtn.svg"
-        hiddenText={[data.useMethodQesitm]}
-      />
+      <DropDownCard title="효능 효과" hiddenText={[data.efcyQesitm]} />
+      <DropDownCard title="용법 및 용량" hiddenText={[data.useMethodQesitm]} />
 
       <DropDownCard
         title="사용상 주의사항"
-        buttonImage="/dropdownbtn.svg"
         hiddenText={[
           data.atpnQesitm,
           data.intrcQesitm,
