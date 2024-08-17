@@ -1,18 +1,14 @@
-"use client";
-
 import React from "react";
 
 interface CommunitySubTitleProps {
   text: string;
-  lineClamp: string;
 }
-
-const CommunitySubTitle = ({ text, lineClamp }: CommunitySubTitleProps) => {
+const CommunitySubTitle = ({ text }: CommunitySubTitleProps) => {
   return (
-    <div
-      className={`text-gray-800 text-[12px] desktop:text-[16px] ${lineClamp} overflow-hidden text-ellipsis mt-[2px]`}
-    >
-      {text}
+    <div className="w-[290px] overflow-hidden">
+      <h2 className="text-base text-left line-clamp-2 overflow-hidden text-brand-gray-800 text-ellipsis  ">
+        {text}
+      </h2>
     </div>
   );
 };

@@ -85,12 +85,6 @@ const SearchPage = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center">
-        <h1 className="text-[32px] font-bold mb-[26px] mt-[80px]">
-          궁금한 약을 검색해 보세요
-        </h1>
-        <div className="mb-[132px]">
-          <SearchBar onSearchChange={handleSearchChange} />
-        </div>
         <div className="grid grid-cols-4 gap-4 mt-4 w-[1000px] h-auto">
           {Array.from({ length: itemsPerPage }).map((_, index) => (
             <SkeletonCard key={index} />
@@ -107,14 +101,21 @@ const SearchPage = () => {
   return (
     <>
       <div className="flex flex-col items-center">
-        <h1 className="text-[32px] font-bold mb-[40px] mt-[159px]">
+        <h1 className="hidden desktop:flex text-[32px] font-bold mb-[40px] mt-[159px]">
           🔎 궁금한 약을 검색해 보세요
         </h1>
-        <div className="mb-[132px]">
+      </div>
+      <div className="flex max-w-[335px]  mx-auto">
+        <h1 className="desktop:hidden text-[32px]  font-bold mb-[20px] mt-[96px]">
+          🔎 약 검색
+        </h1>
+      </div>
+      <div className="flex flex-col items-center">
+        <div className="desktop:mb-[40px] mb-[24px]">
           <SearchBar onSearchChange={handleSearchChange} />
         </div>
       </div>
-      <div className="text-[16px] mb-4 flex max-w-[1000px] mx-auto">
+      <div className="text-[16px] mb-[8px] desktop:mb-4 flex max-w-[335px] desktop:max-w-[1000px] mx-auto">
         <p className="text-brand-gray-1000 font-black text-xl">
           {searchTerm ? (
             <>
@@ -136,7 +137,7 @@ const SearchPage = () => {
       </div>
 
       <div className="flex justify-center items-center">
-        <div className="grid grid-cols-2 desktop:grid-cols-4 mt-4 h-auto">
+        <div className="grid grid-cols-2 desktop:grid-cols-4">
           {allItems.length > 0 ? (
             allItems.map((item) => (
               <MediCard
