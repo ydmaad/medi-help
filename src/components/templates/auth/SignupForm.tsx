@@ -166,7 +166,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           />
           {nicknameValid === false && (
-            <p className="text-red-500 text-sm mt-1">
+            <p className="text-red-500 text-[12px] mt-1">
               사용할 수 없는 닉네임입니다.
             </p>
           )}
@@ -185,7 +185,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           >
             이메일 입력
           </label>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 mt-[16px]">
             <AuthInput
               id="email"
               name="nickname" // name 속성 추가
@@ -236,7 +236,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           />
           {passwordValid === false && (
             <p className="text-red-500 text-[12px] mt-1">
-              영문자, 숫자, 특수문자 포함 6자 이상
+              영문자, 숫자, 특수문자 포함하여 최소 6자 이상이어야 합니다.
             </p>
           )}
         </div>
