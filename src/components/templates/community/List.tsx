@@ -69,7 +69,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log(searchTerm);
+  // console.log(searchTerm);
 
   // 페이지 이동하는 핸들러
   const handlePageChange = (page: number) => {
@@ -112,7 +112,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="mt-[16px]">
         {/* 카테고리 선택 */}
         {isSearchOpen ? null : (
           <div className="flex justify-between">
@@ -131,27 +131,45 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
           </div>
         )}
 
-        {/* 작업중!!!!!!! */}
-        <div>
-          {isSearchOpen && searchTerm.length === 0 ? (
-            <p className="text-[14px] ml-[8px]">
+        <div className="hidden desktop:flex mb-[8px]">
+          {searchTerm.length === 0 ? (
+            <p className="text-[16px] ml-[8px] text-left">
               전체
               <span className="text-brand-gray-600 ml-[8px]">
                 ({filteredPosts.length})
               </span>
             </p>
           ) : null}
-          {/* {isSearchOpen ? (
-            <p className="text-brand-gray-1000 font-black text-[14px] desktop:text-[16px] desktop:mt-20 mx-[25px] ">
-              <span className="text-brand-primary-500 ">
-                &rsquo;{searchTerm}&rsquo;
-              </span>
-              에 대한 검색 결과
-              <span className="text-brand-gray-600 ml-[5px] ">
+          {searchTerm.length !== 0 ? (
+            <p className="text-[16px] ml-[8px] font-black text-left text-brand-primary-500">
+              &rsquo;{searchTerm}&rsquo;
+              <span className="text-brand-gray-1000"> 에 대한 검색 결과</span>
+              <span className="text-brand-gray-600 ml-[8px]">
                 ({filteredPosts.length})
               </span>
             </p>
-          ) : null} */}
+          ) : null}
+        </div>
+
+        {/* 모바일 버전 검색 결과 */}
+        <div className="flex desktop:hidden">
+          {isSearchOpen && searchTerm.length === 0 ? (
+            <p className="text-[14px] ml-[8px] text-left">
+              전체
+              <span className="text-brand-gray-600 ml-[8px]">
+                ({filteredPosts.length})
+              </span>
+            </p>
+          ) : null}
+          {isSearchOpen && searchTerm.length !== 0 ? (
+            <p className="text-[14px] ml-[8px] text-left text-brand-primary-500">
+              &rsquo;{searchTerm}&rsquo;
+              <span className="text-brand-gray-1000">에 대한 검색 결과</span>
+              <span className="text-brand-gray-600 ml-[8px]">
+                ({filteredPosts.length})
+              </span>
+            </p>
+          ) : null}
         </div>
 
         {/* 게시글 리스트 그리는 곳 */}

@@ -1,5 +1,3 @@
-// src/store/auth.ts
-
 import { create } from "zustand";
 
 // AuthState 인터페이스는 인증 관련 상태와 액션을 정의합니다.

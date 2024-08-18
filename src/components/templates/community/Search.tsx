@@ -1,18 +1,21 @@
 "use client";
 
 import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
+import { PostWithUser } from "@/types/communityTypes";
 import Image from "next/image";
 import React, { useState } from "react";
 
 interface SearchProps {
   handleSearch: (term: string) => void;
+  allPosts: PostWithUser[];
 }
 
-const Search = ({ handleSearch }: SearchProps) => {
+const Search = ({ handleSearch, allPosts }: SearchProps) => {
   const [newSearchTerm, setNewSearchTerm] = useState<string>("");
   const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
 
   const toggleSearch = () => {
+    allPosts;
     setNewSearchTerm("");
     setIsSearchOpen(!isSearchOpen);
   };
@@ -27,6 +30,8 @@ const Search = ({ handleSearch }: SearchProps) => {
     }
   };
 
+  // console.log(newSearchTerm);
+
   return (
     <>
       {/* 웹 버전 */}
@@ -36,7 +41,8 @@ const Search = ({ handleSearch }: SearchProps) => {
           value={newSearchTerm}
           onChange={(e) => setNewSearchTerm(e.target.value)}
           placeholder="제목 및 내용, 작성자 등을 검색하세요"
-          className="w-[300px] border-solid border-2 border-brand-primary-300 py-2 pl-10 pr-4 text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-[300px] border-solid border-2 border-brand-primary-300 py-2 pl-10 pr-4 text-sm bg-white rounded-full focus:outline-none"
+          onKeyDown={handleKeyboardDown}
         />
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Image
@@ -58,7 +64,7 @@ const Search = ({ handleSearch }: SearchProps) => {
                 value={newSearchTerm}
                 onChange={(e) => setNewSearchTerm(e.target.value)}
                 placeholder="제목 및 내용, 작성자 등을 검색하세요"
-                className="w-[291px] border-solid border-2 border-brand-primary-300 py-2 pl-4 pr-10 text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-[291px] border-solid border-2 border-brand-primary-300 py-2 pl-4 pr-10 text-sm bg-white rounded-full focus:outline-none "
                 onKeyDown={handleKeyboardDown}
               />
               <div className="absolute inset-y-0 right-11 pr-3 flex items-center">
