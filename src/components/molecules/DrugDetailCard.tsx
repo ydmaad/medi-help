@@ -36,7 +36,7 @@ const DrugDetailCard = ({
     <>
       {/*데스크탑*/}
       <div className="hidden desktop:flex  justify-center items-center ">
-        <div className="flex desktop:w-[996px] desktop:h-[380px] bg-white rounded-[16px] border border-brand-gray-50 desktop:mt-[40px] ">
+        <div className="flex w-[996px] desktop:h-[380px] bg-white rounded-[16px] border border-brand-gray-50 desktop:mt-[40px] ">
           <div className="flex desktop:w-[418px] desktop:h-[230px] my-[75px] ml-[60px] mr-[90px]">
             <img
               src={imageUrl}
