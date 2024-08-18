@@ -45,9 +45,12 @@ export default function SearchPage() {
 
   return (
     <div className="text-center mt-[67px]">
-      <h1 className="text-brand-gray-1000 text-[32px] font-bold mt-[159px]">
+      <h1 className="text-brand-gray-1000 text-[20px] desktop:text-[32px] font-bold mt-[116px] desktop:mt-[159px]">
         {data.itemName}
       </h1>
+      <h2 className="text-brand-gray-600 text-[16px] desktop:text-[24px] font-bold mt-[4px] ">
+        [ 추후 영어이름 ]
+      </h2>
       <DrugDetailCard
         imageUrl={data.itemImage}
         altText="약 이미지 설명"
@@ -60,6 +63,8 @@ export default function SearchPage() {
         shape="원형"
         color="흰색"
         size="10mm"
+        line="-"
+        mark="226"
       />
       <DropDownCard title="효능 효과" hiddenText={[data.efcyQesitm]} />
       <DropDownCard title="용법 및 용량" hiddenText={[data.useMethodQesitm]} />
