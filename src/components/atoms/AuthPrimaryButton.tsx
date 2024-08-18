@@ -21,8 +21,9 @@ export const AuthPrimaryButton: React.FC<AuthPrimaryButtonProps> = ({
   const baseStyles = "py-2 font-semibold text-[18px] rounded";
   const activeStyles = "bg-brand-primary-500 text-white";
   const inactiveStyles = "bg-brand-gray-200 text-brand-gray-600";
+  const scaleValue = "w-[86px] h-[48px]";
 
-  const buttonStyles = `${baseStyles} ${isActive ? activeStyles : inactiveStyles} ${className}`;
+  const buttonStyles = `${baseStyles} ${isActive ? activeStyles : inactiveStyles} ${className} ${scaleValue}`;
 
   return (
     <button onClick={onClick} type={type} className={buttonStyles}>
