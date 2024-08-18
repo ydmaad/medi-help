@@ -28,7 +28,10 @@ const ContentsCard = ({
         {newTitle && <NewTitle />}
         {hotTitle && <HotTitle />}
         <CommunityTitle text={communityTitle} />
-        <CommunitySubTitle text={subTitle} />
+        <CommunitySubTitle
+          text={subTitle}
+          hasImage={!!(imageSrc && imageSrc.length > 0)}
+        />
       </div>
       <div className="desktop:h-[106px] ml-[14px] desktop:ml-[48px] flex-shrink-0 mt-[25px] desktop:mt-[0px]">
         <ContentsImage src={imageSrc} />
