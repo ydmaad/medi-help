@@ -23,7 +23,7 @@ const LoadMoreButton = ({ targetPage }: LoadMoreButtonProps) => {
       <img
         src="/extraleftbtn.svg"
         alt="더보기버튼"
-        className="w-[20px] h-[20px] ml-[4px]"
+        className="flex desktop:hidden w-[20px] h-[20px] ml-[4px]"
       />
     </button>
   );
