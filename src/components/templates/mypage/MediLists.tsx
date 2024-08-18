@@ -88,11 +88,11 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
             className="text-[16px] font-bold text-brand-gray-1000 text-left cursor-pointer mb-2 flex items-center"
             onClick={handleShowAllClick}
           >
-            <span>나의 복용약</span>
-            <span className="text-[#279ef9] ml-1">
+            <span className="mb-3 text-[16px]">나의 복용약</span>
+            <span className="text-[#279ef9] ml-1 mb-3 text-[16px]">
               {mediRecords.length}개
             </span>
-            <span className="text-[#279ef9] ml-1">
+            <span className="text-[#279ef9] ml-1 mb-3 text-[16px]">
               &gt;
             </span>
           </h2>
