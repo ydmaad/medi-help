@@ -1,7 +1,8 @@
 import React from "react";
+import Slider from "react-slick";
 import { useRouter } from "next/navigation";
 import { ImageProvider } from "@/contexts/ImageContext";
-import TertiImage from "../atoms/TertiImage";
+import TertiCarouselImage from "../atoms/TertiCarouselImage";
 import CardTitle from "../atoms/CardTitle";
 import { BarTextProvider } from "@/contexts/BarTextContext";
 import BarText from "../atoms/BarText";
@@ -37,8 +38,8 @@ const TertiCarousel = ({
   return (
     <ImageProvider value={{ src, alt, title, subtitle: null }}>
       <BarTextProvider value={barTextValue}>
-        <div className="w-[94%] " onClick={handleClick}>
-          <TertiImage />
+        <div className="w-full" onClick={handleClick}>
+          <TertiCarouselImage />
           <CardTitle />
           <div className="text-brand-gray-600 text-center mb-2">
             <BarText />

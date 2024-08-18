@@ -9,10 +9,9 @@ import LoadMoreButton from "@/components/atoms/LoadMoreButton";
 import MainTitle from "@/components/atoms/MainTitle";
 import ContentsCard from "@/components/molecules/ContentsCard";
 import BgLinear from "@/components/atoms/BgLinear";
-import TertiCarousel from "@/components/molecules/TertiCarousel";
-import Slider from "react-slick";
+import Slider from "@/components/atoms/Slider";
 
-type Magazine = {
+export type Magazine = {
   id: string;
   title: string;
   imgs_url: string;
@@ -23,7 +22,7 @@ type Magazine = {
 type Post = {
   id: string;
   title: string;
-  img_url: string;
+  img_url: string[] | null;
   created_at: string;
   contents: string;
 };
@@ -69,20 +68,13 @@ const Page = () => {
   const limitedSubMagazines = magazines.slice(1, 2);
   const limitedPosts = posts.slice(0, 6);
 
-  const settings = {
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    centerMode: true,
-  };
   return (
     <>
       <div className="absolute inset-0 z-0 mt-[67px]">
         <BgLinear />
       </div>
       <Hero />
-      <div className="flex justify-between max-w-[1000px] mx-auto mb-[10px]">
+      <div className="flex justify-between max-w-[335px] desktop:max-w-[1000px] mx-auto mb-[10px]">
         <MainTitle text="매디칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
@@ -129,22 +121,10 @@ const Page = () => {
       </div>
       {/*데탑때만 보임*/}
       <div className=" overflow-hidden desktop:hidden w-full  ">
-        <Slider {...settings}>
-          {limitedMagazines.map((magazine, index) => (
-            <TertiCarousel
-              key={index}
-              src={magazine.imgs_url}
-              alt={magazine.title}
-              title={magazine.title}
-              leftText={magazine.written_by}
-              rightText={magazine.reporting_date}
-              id={magazine.id}
-            />
-          ))}
-        </Slider>
+        <Slider limitedMagazines={limitedMagazines} />
       </div>
 
-      <div className="flex justify-between mb-[10px] max-w-[1000px] mx-auto">
+      <div className="flex justify-between mb-[10px] max-w-[335px] desktop:max-w-[1000px] mx-auto">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
@@ -156,7 +136,9 @@ const Page = () => {
               hotTitle={null}
               newTitle="✨ NEW"
               communityTitle={post.title}
-              imageSrc={post.img_url}
+              imageSrc={
+                post.img_url && post.img_url.length > 0 ? post.img_url[0] : null
+              }
               subTitle={post.contents}
             />
           ))}
