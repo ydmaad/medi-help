@@ -37,7 +37,7 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
       <button
         type="button"
         onClick={() => setShowPassword(!showPassword)}
-        className="absolute top-1/2 right-0 pr-3 flex items-center "
+        className="absolute inset-y-0 right-0 pr-3 flex items-center "
       >
         <Image
           src={showPassword ? "/close_eye_icon.svg" : "/open_eye_icon.svg"}
