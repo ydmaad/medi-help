@@ -255,10 +255,10 @@ const CalendarView = () => {
           ]);
         }}
       />
-      <div className="w-full flex flex-col mt-20">
-        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px]">
-          <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
-            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-[6px] text-sm max-[414px]:text-xs">
+      <div className="w-full flex flex-col items-center gap-4 mt-20">
+        <div className="relative min-w-[364px]">
+          <div className="absolute w-2/3 flex items-center justify-normal desktop:justify-between right-0 desktop:top-1 ">
+            <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1150px]:hidden max-[769px]:flex">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
@@ -272,7 +272,6 @@ const CalendarView = () => {
                 />
                 점심
               </div>
-
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#103769] inline-block mr-1`}
@@ -280,10 +279,10 @@ const CalendarView = () => {
                 저녁
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 ">
               <button
                 onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
-                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:bg-brand-primary-500 hover:text-white ease-in duration-300 max-[414px]:hidden outline-none"
+                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:bg-brand-primary-500 hover:text-white ease-in duration-300 hidden desktop:block outline-none"
               >
                 약 등록
               </button>

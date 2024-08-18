@@ -168,11 +168,11 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
     <Modal
       isOpen={openDetailModal}
       onRequestClose={handleCloseButtonClick}
-      className="fixed h-screen inset-0 flex items-center justify-items-center max-[414px]:hidden "
-      overlayClassName="fixed inset-0 bg-black/[0.6] z-40 max-[414px]:hidden "
+      className="fixed h-screen inset-0 m-20 hidden desktop:block "
+      overlayClassName="fixed inset-0 bg-black/[0.6] z-40 hidden desktop:block "
       ariaHideApp={false}
     >
-      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 mx-auto flex flex-col gap-[20px] bg-white rounded-sm z-20 drop-shadow-xl ">
+      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 m-auto flex flex-col gap-[20px] bg-white rounded-sm z-20 drop-shadow-xl ">
         <div className="flex align-items py-1 justify-between gap-2">
           <ModalTitle>하루 약 기록</ModalTitle>
           <ModalCloseButton handleCloseButtonClick={handleCloseButtonClick} />

@@ -7,9 +7,10 @@ import SemiTitle from "../atoms/SemiTitle";
 import FilterComponent from "./FilterComponent";
 import EditNote from "../atoms/EditNote";
 import {
-    useCalendarStore,
-    useMedicinesStore, useMediNameFilter,
-    useValuesStore,
+  useCalendarStore,
+  useMedicinesStore,
+  useMediNameFilter,
+  useValuesStore,
 } from "@/store/calendar";
 
 const EditModalInner = () => {
@@ -43,7 +44,7 @@ const EditModalInner = () => {
         type="date"
         value={values.start_date}
         onChange={handleDateChange}
-        className="max-[414px]:w-full bg-[#fff] mx-auto px-24 py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
+        className="w-full desktop:w-auto bg-[#fff] mx-auto px-32 py-3 desktop:px-24 desktop:py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
       />
       <FilterComponent />
       <div className="w-full h-32 min-h-32 grid grid-cols-2 gap-2 overflow-y-auto">

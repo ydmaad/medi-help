@@ -87,14 +87,14 @@ const MobileEdit = () => {
 
   return (
     <>
-      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 mt-20 mx-auto flex flex-col gap-[20px] bg-white z-20 ">
+      <div className="min-w-96 h-5/8 min-h-[480px] py-6 desktop:px-6 mt-20 flex flex-col gap-[20px] bg-white z-20 ">
         <div className="flex align-items py-1 mb-2 justify-between gap-2">
           <button onClick={handleBackButtonClick}>
-            <IoIosArrowBack className="text-[20px]" />
+            <IoIosArrowBack className="text-[20px] hover:text-primary-500" />
           </button>
           <ModalTitle>하루 약 기록</ModalTitle>
           <button
-            className="text-[16px] text-[#279EF9]"
+            className="text-[16px] text-brand-primary-500 hover:text-brand-gray-800"
             onClick={handleSubmitButtonClick}
           >
             저장

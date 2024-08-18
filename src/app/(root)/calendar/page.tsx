@@ -4,16 +4,11 @@ import React from "react";
 
 const Page = () => {
   return (
-    <div className="flex justify-center w-full min-h-screen px-4 mt-4">
-      {" "}
-      <div className="flex w-full min-h-screen">
-        <div className="max-[414px]:hidden min-w-[240px] min-h-screen p-4 mt-[20px]">
-          <CalendarCheckbox />
-        </div>
-        <div>
-          <CalendarView />
-        </div>
+    <div className="flex w-full min-h-screen justify-center px-4 mt-4">
+      <div className="hidden desktop:block min-w-[240px] min-h-screen p-4 mt-[20px]">
+        <CalendarCheckbox />
       </div>
+      <CalendarView />
     </div>
   );
 };
