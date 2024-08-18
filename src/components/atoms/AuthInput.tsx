@@ -31,6 +31,6 @@ export const AuthInput: React.FC<AuthInputProps> = ({
     onChange={onChange}
     placeholder={placeholder}
     required={required}
-    className={`w-full h-[48px] text-[16px] desktop:text-[18px] px-3 py-2 border border-gray-300 rounded-md ${className}`.trim()}
+    className={`w-full h-[48px] text-[16px] desktop:text-[18px] px-3 py-2 border-[1px] border-brand-gray-200 text-brand-gray-1000 rounded ${className}`.trim()}
   />
 );

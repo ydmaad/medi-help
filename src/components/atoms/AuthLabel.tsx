@@ -7,7 +7,7 @@ type AuthLabelProps = {
 };
 
 export const AuthLabel: React.FC<AuthLabelProps> = ({ htmlFor, children }) => (
-  <label htmlFor={htmlFor} className="text-[14px] text-gray-600">
+  <label htmlFor={htmlFor} className="text-[14px] text-brand-gray-800">
     {children}
   </label>
 );

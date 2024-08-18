@@ -145,7 +145,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   };
 
   return (
-    <div className="w-[335px] desktop:w-full max-w-md mt-[155px]">
+    <div className="w-[335px] desktop:w-[386px] max-w-md mt-[155px]">
       <h2 className="text-[28px] font-bold text-center mb-6">회원 가입</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 닉네임 입력 필드 */}
@@ -185,15 +185,15 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           >
             이메일 입력
           </label>
-          <div className="flex items-center space-x-2 mt-[16px]">
+          <div className="flex items-center space-x-2">
             <AuthInput
               id="email"
-              name="nickname" // name 속성 추가
+              name="nickname"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@도메인.com"
-              className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
+              className="w-[240px] desktop:w-[290px] px-3 py-2 border border-gray-300 rounded-md"
             />
             <AuthPrimaryButton
               onClick={handleEmailCheck}
