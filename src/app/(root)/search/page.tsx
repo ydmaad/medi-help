@@ -15,9 +15,14 @@ type Item = {
 };
 
 const SkeletonCard = () => (
-  <div className="border border-brand-gray-300 rounded-lg overflow-hidden animate-pulse h-[200px]">
-    <div className="bg-gray-200 h-full w-full" />
-  </div>
+  <>
+    <div className="hidden desktop:flex border border-brand-gray-300 rounded-lg overflow-hidden animate-pulse w-[231px] h-[257px]">
+      <div className="bg-gray-200 h-full w-full" />
+    </div>
+    <div className="flex desktop:hidden border border-brand-gray-300 rounded-lg overflow-hidden animate-pulse w-[160px] h-[205px] ">
+      <div className="bg-gray-200 h-full w-full" />
+    </div>
+  </>
 );
 
 const SearchPage = () => {
@@ -27,7 +32,7 @@ const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(20);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(8);
 
   useEffect(() => {
     const updateItemsPerPage = () => {
@@ -84,13 +89,42 @@ const SearchPage = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center">
-        <div className="grid grid-cols-4 gap-4 mt-4 w-[1000px] h-auto">
-          {Array.from({ length: itemsPerPage }).map((_, index) => (
-            <SkeletonCard key={index} />
-          ))}
+      <>
+        <div className="hidden desktop:flex flex-col items-center">
+          <div className="flex flex-col items-center">
+            <h1 className="hidden desktop:flex text-[32px] font-bold mb-[40px] mt-[159px]">
+              🔎 궁금한 약을 검색해 보세요
+            </h1>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="desktop:mb-[40px] mb-[24px]">
+              <SearchBar onSearchChange={handleSearchChange} />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-4 mt-4 w-[1000px] h-auto">
+            {Array.from({ length: itemsPerPage }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
         </div>
-      </div>
+        <div className="flex max-w-[335px]  mx-auto">
+          <h1 className="text-[32px]  font-bold mb-[20px] mt-[96px]">
+            🔎 약 검색
+          </h1>
+        </div>
+        <div className="flex desktop:hidden flex-col items-center">
+          <div className="flex flex-col items-center">
+            <div className="desktop:mb-[40px] mb-[24px]">
+              <SearchBar onSearchChange={handleSearchChange} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mt-4 w-[335px] h-auto">
+            {Array.from({ length: itemsPerPage }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
+        </div>
+      </>
     );
   }
 
