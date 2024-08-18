@@ -45,6 +45,20 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isEmailAvailable, setIsEmailAvailable] = useState(false);
 
+  // 폼 유효성 검사 함수
+  const isFormValid = () => {
+    return (
+      nicknameValid === true &&
+      emailValid === true &&
+      isEmailChecked &&
+      isEmailAvailable &&
+      passwordValid === true &&
+      passwordConfirmValid === true &&
+      agreeTerms &&
+      agreePrivacy
+    );
+  };
+
   // 이메일 중복 확인 함수
   const checkEmail = async (email: string) => {
     const { data, error } = await supabase
@@ -128,23 +142,42 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   }, [password, passwordConfirm]);
 
   // 폼 제출 핸들러
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let errors = [];
-    if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
-    if (!emailValid || !isEmailChecked || !isEmailAvailable)
-      errors.push("이메일을 확인해주세요.");
-    if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
-    if (!passwordConfirmValid)
-      errors.push("비밀번호 확인이 일치하지 않습니다.");
-    if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
-
-    if (errors.length > 0) {
-      alert(errors.join("\n"));
-    } else {
+    if (isFormValid()) {
       onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+    } else {
+      // 에러 메시지 표시 로직
+      let errors = [];
+      if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
+      if (!emailValid || !isEmailChecked || !isEmailAvailable)
+        errors.push("이메일을 확인해주세요.");
+      if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
+      if (!passwordConfirmValid)
+        errors.push("비밀번호 확인이 일치하지 않습니다.");
+      if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
+
+      alert(errors.join("\n"));
     }
   };
+
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   let errors = [];
+  //   if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
+  //   if (!emailValid || !isEmailChecked || !isEmailAvailable)
+  //     errors.push("이메일을 확인해주세요.");
+  //   if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
+  //   if (!passwordConfirmValid)
+  //     errors.push("비밀번호 확인이 일치하지 않습니다.");
+  //   if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
+
+  //   if (errors.length > 0) {
+  //     alert(errors.join("\n"));
+  //   } else {
+  //     onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+  //   }
+  // };
 
   return (
     <div className="w-[336px] desktop:w-[386px] max-w-md">
@@ -203,13 +236,15 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
                 emailValid !== false && (!isEmailChecked || isEmailAvailable)
               }
             />
-            <AuthPrimaryButton
-              onClick={handleEmailCheck}
-              className="px-2 h-[48px] w-[86px] ml-[10px]"
-              isActive={emailValid !== true}
-            >
-              중복확인
-            </AuthPrimaryButton>
+            <div>
+              <AuthPrimaryButton
+                onClick={handleEmailCheck}
+                className="px-1 ml-[10px]"
+                isActive={emailValid !== true}
+              >
+                중복확인
+              </AuthPrimaryButton>
+            </div>
           </div>
           {emailValid === false && (
             <p className="text-[#F66555] text-[12px] mt-1">
@@ -306,9 +341,30 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         {error && <AuthErrorMessage message={error} />}
 
         {/* 회원가입 버튼 */}
-        <AuthButton type="submit" className="w-full text-[18px]">
+        <button
+          type="submit"
+          className={`w-full h-[48px] text-[18px] font-semibold rounded-md transition-colors duration-300 ${
+            isFormValid()
+              ? "!bg-brand-primary-500 !text-white hover:!bg-brand-primary-600"
+              : "!bg-brand-gray-200 !text-brand-gray-600"
+          }`}
+        >
           회원가입
-        </AuthButton>
+        </button>
+        {/* <AuthButton
+          type="submit"
+          className={`w-full text-[18px] font-semibold transition-colors duration-300 ${
+            isFormValid()
+              ? "text-white bg-brand-primary-500 hover:bg-brand-primary-600"
+              : "text-brand-gray-600 bg-brand-gray-200"
+          }`}
+        >
+          회원가입
+        </AuthButton> */}
+        {/* 에러 메시지 */}
+        {error && (
+          <p className="mt-4 text-center text-sm text-[#F66555]">{error}</p>
+        )}
       </form>
     </div>
   );

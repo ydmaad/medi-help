@@ -17,17 +17,17 @@ export const RecoverPasswordForm: React.FC = () => {
   // 컴포넌트 마운트 시 세션 확인
   useEffect(() => {
     const handlePasswordReset = async () => {
-      console.log("Starting password reset process");
+      // console.log("Starting password reset process");
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log("Current session:", session);
+      // console.log("Current session:", session);
 
       if (session) {
-        console.log("Valid session found");
+        // console.log("Valid session found");
         setMessage("비밀번호를 재설정할 수 있습니다.");
       } else {
-        console.log("No valid session found");
+        // console.log("No valid session found");
         setMessage(
           "유효하지 않은 접근입니다. 비밀번호 재설정 이메일을 다시 요청해 주세요."
         );
@@ -73,8 +73,8 @@ export const RecoverPasswordForm: React.FC = () => {
       ) : (
         <form onSubmit={handleResetPassword}>
           <AuthInput
-            id="password" // id 추가
-            name="password" // name 추가
+            id="password"
+            name="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
