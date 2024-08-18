@@ -11,6 +11,7 @@ const CardTitle = () => {
   }
 
   const { title, subtitle } = context;
+
   const [isLoading, setIsLoading] = useState(true);
   const [lineClamp, setLineClamp] = useState<string>("line-clamp-3");
 
