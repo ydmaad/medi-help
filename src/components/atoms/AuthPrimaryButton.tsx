@@ -30,31 +30,3 @@ export const AuthPrimaryButton: React.FC<AuthPrimaryButtonProps> = ({
     </button>
   );
 };
-
-// 기존 코드
-// import React from "react";
-
-// type AuthPrimaryButtonProps = {
-//   onClick?: () => void;
-//   type?: "button" | "submit" | "reset";
-//   className?: string;
-//   disabled?: boolean;
-//   children: React.ReactNode;
-// };
-
-// export const AuthPrimaryButton: React.FC<AuthPrimaryButtonProps> = ({
-//   onClick,
-//   type = "button",
-//   className = "",
-//   disabled = false,
-//   children,
-// }) => (
-//   <button
-//     onClick={onClick}
-//     type={type}
-//     className={`py-2 bg-brand-primary-500 text-white font-semibold text-[18px] rounded ${className}`}
-//     disabled={disabled}
-//   >
-//     {children}
-//   </button>
-// );

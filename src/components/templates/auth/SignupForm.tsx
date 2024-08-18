@@ -227,7 +227,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             </p>
           )}
           {isEmailChecked && !isEmailAvailable && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               이미 사용 중인 이메일입니다.
             </p>
           )}
@@ -250,7 +250,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             isValid={passwordValid !== false}
           />
           {passwordValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               영문자, 숫자, 특수문자 포함하여 최소 6자 이상이어야 합니다.
             </p>
           )}
