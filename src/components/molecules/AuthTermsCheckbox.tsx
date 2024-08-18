@@ -38,7 +38,7 @@ export const AuthTermsCheckbox: React.FC<AuthTermsCheckboxProps> = ({
       <button
         type="button"
         onClick={() => setIsModalOpen(true)}
-        className="ml-2 flex items-center"
+        className="ml-1"
       >
         <Image src="/signarrow.svg" alt="약관 보기" width={20} height={20} />
       </button>
