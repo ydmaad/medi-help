@@ -13,7 +13,19 @@ interface Post {
 const Posts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 3;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const postsPerPage = isMobile ? 4 : 3;
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -65,7 +77,6 @@ const Posts: React.FC = () => {
     setCurrentPage(currentPage - 1);
   };
 
-  
   return (
     <div className="w-full flex justify-center desktop:block">
       <div className="w-[335px] desktop:w-[996px]">

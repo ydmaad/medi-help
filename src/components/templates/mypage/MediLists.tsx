@@ -142,15 +142,6 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           </div>
         </div>
       </div>
-
-      {selectedMediRecord && (
-        <MediModal
-          isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}
-          mediRecord={selectedMediRecord}
-          onEditClick={() => console.log("Edit clicked")}
-        />
-      )}
     </div>
   );
 };

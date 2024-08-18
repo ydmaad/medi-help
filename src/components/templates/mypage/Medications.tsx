@@ -114,77 +114,85 @@ const Medications: React.FC = () => {
 
 
   const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
-
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-4">
-      <div className="mx-auto max-w-[calc(100%-2rem)]"> {/* 새로운 div 추가 */}
-        <h2 className="text-2xl md:text-3xl font-bold mb-6 ml-7 mt-20 text-brand-gray-1000 text-left">복약 리스트</h2>
-        <div className={`grid ${
-  isMobile 
-    ? 'grid-cols-2 gap-4 justify-items-center' 
-    : 'grid-cols-5 gap-6'
-} mx-auto max-w-[calc(100%-2rem)]`}>
-  {currentRecords.map((record) => (
-    <div
-      key={record.id}
-      className="bg-white border border-brand-gray-50 p-3 md:p-4 rounded-2xl flex flex-col items-start cursor-pointer w-full h-full min-h-[190px] md:min-h-[300px] max-w-[170px] md:max-w-none flex-shrink-0"
-      onClick={() => handleMediClick(record)}
-    >
-      <div className="relative w-full pb-[66.67%] mb-2">
-        {record.itemImage ? (
-          <div className="absolute inset-1 rounded-xl overflow-hidden">
-            <Image
-              src={record.itemImage}
-              alt={record.medi_nickname || "약 이미지"}
-              layout="fill"
-              objectFit="cover"
-            />
-          </div>
-        ) : (
-          <div className="absolute inset-1 flex items-center justify-center bg-gray-200 rounded-xl">
-            <p className="text-brand-gray-400 text-xs md:text-sm">이미지 없음</p>
-          </div>
-        )}
+      <div className="mx-auto w-[996px]">
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-brand-gray-1000 text-left">복약 리스트</h2>
+        <div className="grid grid-cols-5 gap-x-6 gap-y-6">
+          {currentRecords.map((record) => (
+            <div
+              key={record.id}
+              className="w-[180px] h-[217px] bg-white border border-brand-gray-50 p-4 rounded-2xl flex flex-col items-start cursor-pointer"
+              onClick={() => handleMediClick(record)}
+            >
+              <div className="w-[148px] h-[84px] mb-2">
+                {record.itemImage ? (
+                  <div className="w-full h-full rounded-xl overflow-hidden">
+                    <Image
+                      src={record.itemImage}
+                      alt={record.medi_nickname || "약 이미지"}
+                      width={148}
+                      height={84}
+                      objectFit="cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-xl">
+                    <p className="text-brand-gray-400 text-xs">이미지 없음</p>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col justify-start w-full">
+                <p className="text-[14px] font-bold text-brand-gray-1000 line-clamp-1 mb-1">{record.medi_nickname}</p>
+                <p className="text-[12px] text-brand-gray-800 line-clamp-1 mb-4">{record.medi_name}</p>
+                <p className="text-[12px] text-brand-primary-500 px-1">
+                  {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-center mt-4 space-x-1">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className={`px-4 py-2 ${
+              currentPage === 1
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+          {Array.from(
+            { length: Math.ceil(mediRecords.length / ITEMS_PER_PAGE) },
+            (_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(index + 1)}
+                className={`px-4 py-2 ${
+                  currentPage === index + 1
+                    ? "text-brand-primary-600"
+                    : "text-brand-gray-700"
+                }`}
+              >
+                {index + 1}
+              </button>
+            )
+          )}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className={`px-4 py-2 ${
+              currentPage === totalPages
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
+        </div>
       </div>
-      <div className="flex flex-col justify-start flex-grow w-full space-y-0.5">
-        <p className="text-base md:text-lg font-bold text-brand-gray-1000 line-clamp-2">{record.medi_nickname}</p>
-        <p className="text-sm md:text-base text-brand-gray-800 line-clamp-1">{record.medi_name}</p>
-        <p className="text-sm md:text-sm text-brand-primary-500 line-clamp-1">
-          {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
-        </p>
-      </div>
-    </div>
-  ))}
-</div>
-<div className="flex justify-center mt-4 space-x-1">
-  <button
-    className="px-4 py-2 text-brand-gray-400"
-    disabled={currentPage === 1}
-    onClick={() => handlePageChange(currentPage - 1)}
-  >
-    &lt;
-  </button>
-  {pageNumbers.map((pageNumber) => (
-    <button
-      key={pageNumber}
-      className={`px-4 py-2 ${
-        currentPage === pageNumber 
-          ? 'text-brand-gray-1000 font-bold' 
-          : 'text-brand-gray-400'
-      }`}
-      onClick={() => handlePageChange(pageNumber)}
-    >
-      {pageNumber}
-    </button>
-  ))}
-  <button
-    className="px-4 py-2 text-brand-gray-400"
-    disabled={currentPage === totalPages}
-    onClick={() => handlePageChange(currentPage + 1)}
-  >
-    &gt;
-  </button>
-</div>
     {selectedMediRecord && (
         <>
           <MediModal
@@ -203,7 +211,6 @@ const Medications: React.FC = () => {
         </>
       )}
       </div>
-    </div>
   );
   
 };
