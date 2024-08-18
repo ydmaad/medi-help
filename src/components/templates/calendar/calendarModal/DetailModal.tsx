@@ -14,25 +14,40 @@ import {
 } from "@/store/calendar";
 import { ValuesType } from "@/types/calendar";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import { useToast } from "@/hooks/useToast";
+import { Tables } from "@/types/supabase";
+
+type CalendarType = Tables<"calendar">;
 
 interface Props {
   openDetailModal: boolean;
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
+  viewEvents: boolean;
+  setViewEvents: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
-  const [viewEvents, setViewEvents] = useState<boolean>(false);
-
+const DetailModal = ({
+  viewEvents,
+  setViewEvents,
+  openDetailModal,
+  setOpenDetailModal,
+}: Props) => {
   const { values, setValues } = useValuesStore();
   const { calendar, setCalendar } = useCalendarStore();
   const { events, setEvents } = useEventsStore();
   const { edit, setEdit } = useEditStore();
 
+  const { toast } = useToast();
+
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);
+    let deletedCalendar: CalendarType[] = calendar.filter(
+      (data) => data.start_date !== values.start_date
+    );
+    setCalendar(deletedCalendar);
     setEdit(false);
     setValues({
       ...values,
@@ -128,7 +143,19 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
 
   // 저장하기 버튼 onClick 함수
   const handlePostButtonClick = async () => {
+    if (values.side_effect?.trim() === "" && values.medicine_id.length === 0) {
+      toast.warning("복용하신 약이나 노트를 입력해주세요 !");
+      return;
+    }
+
+    setValues({
+      ...values,
+      side_effect: values.side_effect ? values.side_effect.trim() : "",
+    });
+
     postCalendar(values);
+
+    toast.success("복용 기록이 저장되었습니다.");
 
     setOpenDetailModal(false);
     setEdit(false);
@@ -145,6 +172,8 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
   const handleDeleteButtonClick = () => {
     if (confirm(`${values.start_date}의 기록을 모두 삭제하시겠습니까 ? `)) {
       deleteCalendar(values.id);
+
+      toast.success("선택하신 날짜의 복용 기록이 삭제되었습니다.");
 
       setOpenDetailModal(false);
       setValues({
@@ -168,8 +197,8 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
     <Modal
       isOpen={openDetailModal}
       onRequestClose={handleCloseButtonClick}
-      className="fixed h-screen inset-0 m-20 hidden desktop:block "
-      overlayClassName="fixed inset-0 bg-black/[0.6] z-40 hidden desktop:block "
+      className="fixed h-screen inset-0 m-20 hidden desktop:block outline-none "
+      overlayClassName="fixed inset-0 bg-black/[0.6] z-20 hidden desktop:block "
       ariaHideApp={false}
     >
       <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 m-auto flex flex-col gap-[20px] bg-white rounded-sm z-20 drop-shadow-xl ">
@@ -180,7 +209,10 @@ const DetailModal = ({ openDetailModal, setOpenDetailModal }: Props) => {
 
         {edit ? (
           <>
-            <EditModalInner />
+            <EditModalInner
+              viewEvents={viewEvents}
+              setViewEvents={setViewEvents}
+            />
             <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
               <ModalButton
                 handleClick={handleDeleteButtonClick}

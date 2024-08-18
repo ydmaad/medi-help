@@ -91,8 +91,6 @@ const CalendarView = () => {
                     }
                   );
 
-                  console.log(eventList);
-
                   const newEventList = eventList.filter((e: any) => {
                     return mediNames.includes(e.medications.medi_nickname);
                   });
@@ -186,6 +184,12 @@ const CalendarView = () => {
       return event.extendProps.medi_time === "morning";
     })[0];
 
+    if (filteredCalendar.length || editList.length) {
+      setViewEvents(true);
+    } else {
+      setViewEvents(false);
+    }
+
     setValues({
       ...values,
       id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
@@ -237,6 +241,8 @@ const CalendarView = () => {
       <DetailModal
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
+        viewEvents={viewEvents}
+        setViewEvents={setViewEvents}
       />
       <AddMediModal
         isOpen={openAddMediModal}
@@ -257,8 +263,8 @@ const CalendarView = () => {
       />
       <div className="w-full flex flex-col items-center gap-4 mt-20">
         <div className="relative min-w-[364px]">
-          <div className="absolute w-2/3 flex items-center justify-normal desktop:justify-between right-0 desktop:top-1 ">
-            <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1150px]:hidden max-[769px]:flex">
+          <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-normal desktop:top-1 ">
+            <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
