@@ -65,6 +65,7 @@ const Posts: React.FC = () => {
     setCurrentPage(currentPage - 1);
   };
 
+  
   return (
     <div className="w-full flex justify-center desktop:block">
       <div className="w-[335px] desktop:w-[996px]">
@@ -75,15 +76,15 @@ const Posts: React.FC = () => {
           {currentPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-[#f5f6f7] rounded-xl p-4 w-full h-[119px] desktop:h-[121px]"
+              className="bg-[#f5f6f7] rounded-xl p-4 w-full h-[119px] desktop:h-auto desktop:py-5"
             >
-              <h3 className="text-[14px] desktop:text-base font-bold mb-2 text-brand-gray-1000 px-2">
+              <h3 className="text-[14px] desktop:text-base font-bold mb-2 desktop:mb-[9px] text-brand-gray-1000">
                 {post.title}
               </h3>
-              <p className="text-[12px] desktop:text-sm text-brand-gray-600 mb-2 line-clamp-2">
+              <p className="text-[12px] desktop:text-xs text-brand-gray-600 mb-2 desktop:mb-[9px] line-clamp-2">
                 {post.contents}
               </p>
-              <p className="text-[12px] desktop:text-sm text-brand-gray-600">
+              <p className="text-[12px] desktop:text-xs text-brand-gray-400">
                 {formatDate(post.created_at)}
               </p>
             </div>
