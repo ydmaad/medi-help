@@ -66,7 +66,7 @@ const Header = () => {
         </div>
         <LoginNav />
       </header>
-      <div className="absolute z-20">
+      <div className="absolute z-20 desktop:hidden">
         <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
       </div>
     </>
