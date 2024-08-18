@@ -124,7 +124,7 @@ const Page = () => {
         <Slider limitedMagazines={limitedMagazines} />
       </div>
 
-      <div className="flex justify-between mb-[10px] max-w-[335px] desktop:max-w-[1000px] mx-auto">
+      <div className="flex justify-between mb-[10px] max-w-[335px]  mt-[60px] desktop:max-w-[1000px] mx-auto">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
