@@ -23,7 +23,7 @@ const MyPage = () => {
       </div>
       
       {/* Posts는 항상 아래에 배치 */}
-      <div className="mt-8">
+      <div className="mt-10 desktop:mt-8">
         <Posts />
       </div>
     </div>

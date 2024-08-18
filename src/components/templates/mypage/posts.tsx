@@ -66,8 +66,8 @@ const Posts: React.FC = () => {
   };
 
   return (
-    <div className="w-full desktop:w-[996px] mx-auto py-4">
-      <div className="pt-16">
+    <div className="w-full flex justify-center desktop:block">
+      <div className="w-[335px] desktop:w-[996px]">
         <h2 className="text-[16px] desktop:text-2xl font-bold mb-6 text-gray-1000">
           내가 쓴 글
         </h2>
@@ -75,7 +75,7 @@ const Posts: React.FC = () => {
           {currentPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-[#f5f6f7] rounded-xl p-4 w-full h-[119px] desktop:h-[121px] mobile:max-w-[335px] mobile:mx-auto"
+              className="bg-[#f5f6f7] rounded-xl p-4 w-full h-[119px] desktop:h-[121px]"
             >
               <h3 className="text-[14px] desktop:text-base font-bold mb-2 text-brand-gray-1000 px-2">
                 {post.title}
