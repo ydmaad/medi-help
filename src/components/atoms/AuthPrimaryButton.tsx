@@ -7,7 +7,7 @@ type AuthPrimaryButtonProps = {
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   className?: string;
-  disabled?: boolean;
+  isActive?: boolean;
   children: React.ReactNode;
 };
 
@@ -15,15 +15,46 @@ export const AuthPrimaryButton: React.FC<AuthPrimaryButtonProps> = ({
   onClick,
   type = "button",
   className = "",
-  disabled = false,
+  isActive = true,
   children,
-}) => (
-  <button
-    onClick={onClick}
-    type={type}
-    className={`py-2 bg-brand-primary-500 text-white font-semibold text-[18px] rounded ${className}`}
-    disabled={disabled}
-  >
-    {children}
-  </button>
-);
+}) => {
+  const baseStyles = "py-2 font-semibold text-[18px] rounded";
+  const activeStyles = "bg-brand-primary-500 text-white";
+  const inactiveStyles = "bg-brand-gray-200 text-brand-gray-600";
+
+  const buttonStyles = `${baseStyles} ${isActive ? activeStyles : inactiveStyles} ${className}`;
+
+  return (
+    <button onClick={onClick} type={type} className={buttonStyles}>
+      {children}
+    </button>
+  );
+};
+
+// 기존 코드
+// import React from "react";
+
+// type AuthPrimaryButtonProps = {
+//   onClick?: () => void;
+//   type?: "button" | "submit" | "reset";
+//   className?: string;
+//   disabled?: boolean;
+//   children: React.ReactNode;
+// };
+
+// export const AuthPrimaryButton: React.FC<AuthPrimaryButtonProps> = ({
+//   onClick,
+//   type = "button",
+//   className = "",
+//   disabled = false,
+//   children,
+// }) => (
+//   <button
+//     onClick={onClick}
+//     type={type}
+//     className={`py-2 bg-brand-primary-500 text-white font-semibold text-[18px] rounded ${className}`}
+//     disabled={disabled}
+//   >
+//     {children}
+//   </button>
+// );

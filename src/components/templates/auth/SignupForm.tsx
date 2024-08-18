@@ -196,7 +196,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@도메인.com"
-              className="w-[240px] desktop:w-[290px] px-3 py-2 text-brand-gray-600"
+              className="w-[240px] desktop:w-[290px] px-3 py-2 text-brand-gray-1000"
               isValid={
                 emailValid !== false && (!isEmailChecked || isEmailAvailable)
               }
@@ -204,6 +204,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             <AuthPrimaryButton
               onClick={handleEmailCheck}
               className="h-[48px] w-[80px] desktop:w-[86px] px-2"
+              isActive={emailValid !== true}
             >
               중복확인
             </AuthPrimaryButton>
@@ -211,6 +212,11 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           {emailValid === false && (
             <p className="text-[#F66555] text-[12px] mt-1">
               올바른 이메일 형식이 아닙니다.
+            </p>
+          )}
+          {emailValid === true && !isEmailChecked && (
+            <p className="text-[#F66555] text-[12px] mt-1">
+              이메일 중복 확인이 필요합니다.
             </p>
           )}
           {isEmailChecked && isEmailAvailable && (
