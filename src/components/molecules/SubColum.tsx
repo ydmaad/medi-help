@@ -12,7 +12,7 @@ const SubColum = ({
   title,
   leftText,
   rightText,
-  id, // id를 props로 추가합니다.
+  id,
 }: {
   src: string;
   alt: string;

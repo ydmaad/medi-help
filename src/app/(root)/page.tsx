@@ -82,13 +82,13 @@ const Page = () => {
         <BgLinear />
       </div>
       <Hero />
-      <div className="flex justify-between mb-[10px]">
+      <div className="flex justify-between max-w-[1000px] mx-auto mb-[10px]">
         <MainTitle text="매디칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
-      <div className="flex-col items-center hidden desktop:flex">
+      <div className="hidden desktop:flex flex-col justify-center items-center ">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-1 desktop:grid-cols-2 w-full">
+        <div className="flex ">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
@@ -112,7 +112,8 @@ const Page = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-1 desktop:grid-cols-3 gap-[26px] w-full">
+
+        <div className="grid grid-cols-3">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -127,7 +128,7 @@ const Page = () => {
         </div>
       </div>
       {/*데탑때만 보임*/}
-      <div className=" overflow-hidden desktop:hidden w-full ">
+      <div className=" overflow-hidden desktop:hidden w-full  ">
         <Slider {...settings}>
           {limitedMagazines.map((magazine, index) => (
             <TertiCarousel
@@ -143,12 +144,12 @@ const Page = () => {
         </Slider>
       </div>
 
-      <div className="flex justify-between mb-[10px]">
+      <div className="flex justify-between mb-[10px] max-w-[1000px] mx-auto">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
-      <div className="flex justify-center items-center flex-col desktop:flex-row">
-        <div className="grid grid-cols-1 desktop:grid-cols-2 gap-4 w-full">
+      <div className="flex justify-center items-center flex-col desktop:flex-row max-w-[1000px] mx-auto">
+        <div className="grid grid-cols-1 desktop:grid-cols-2 gap-4 ">
           {limitedPosts.map((post, index) => (
             <ContentsCard
               key={index}
