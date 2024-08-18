@@ -6,23 +6,23 @@ import CardSubTitle from "./CardSubTitle";
 const CardTitle = () => {
   const context = useContext(ImageContext);
 
-  if (!context) {
-    return null;
-  }
-
-  const { title, subtitle } = context;
-
   const [isLoading, setIsLoading] = useState(true);
   const [lineClamp, setLineClamp] = useState<string>("line-clamp-3");
 
+  const { title = "", subtitle = "" } = context || {};
+
   useEffect(() => {
-    if (title.length > 12) {
+    if (title && title.length > 12) {
       setLineClamp("line-clamp-2");
     } else {
       setLineClamp("line-clamp-3");
     }
     setIsLoading(false);
   }, [title]);
+
+  if (!context) {
+    return null;
+  }
 
   return (
     <>
