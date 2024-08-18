@@ -11,6 +11,7 @@ type AuthInputProps = {
   placeholder: string;
   required?: boolean;
   className?: string;
+  isValid?: boolean;
 };
 
 export const AuthInput: React.FC<AuthInputProps> = ({
@@ -22,6 +23,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   placeholder,
   required = false,
   className = "",
+  isValid = true,
 }) => (
   <input
     id={id}
@@ -31,6 +33,8 @@ export const AuthInput: React.FC<AuthInputProps> = ({
     onChange={onChange}
     placeholder={placeholder}
     required={required}
-    className={`w-full px-3 py-2 border border-gray-300 rounded-md ${className}`.trim()}
+    className={`w-full h-[48px] text-[16px] desktop:text-[18px] px-3 py-2 border-[1px] focus:outline-none ${
+      isValid ? "border-brand-gray-200" : "border-[#F66555]"
+    } text-brand-gray-1000 rounded ${className}`.trim()}
   />
 );

@@ -12,7 +12,7 @@ const TitleInput = ({ title, setTitle }: TitleInputProps) => {
       placeholder="제목을 입력하세요"
       value={title}
       onChange={(e) => setTitle(e.target.value)}
-      className="w-[335px] desktop:w-[996px] px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
+      className="w-full px-4 py-2 border rounded-md border-gray-300 text-lg focus:outline-none"
     />
   );
 };

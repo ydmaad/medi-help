@@ -12,20 +12,17 @@ const PostItem = ({ item }: PostItemProps) => {
   const timeAgo = formatTimeAgo(item.created_at);
   return (
     <>
-      <li key={item.id} className="block mx-auto">
-        <Link
-          href={`/community/${item.id}`}
-          className="block transition duration-150 ease-in-out rout rounded "
-        >
-          <div className="border rounded-2xl p-[16px] desktop:p-[20px] h-[125px] w-[335px] desktop:h-[164px] desktop:w-full mx-[16px] mb-[16px] hover:bg-gray-50">
+      <li key={item.id} className="block">
+        <Link href={`/community/${item.id}`}>
+          <div className="border mx-auto rounded-2xl p-[16px] desktop:p-[20px] h-[125px] desktop:h-[164px] w-[335px]  desktop:w-full mt-[8px] desktop:mt-0 mb-[16px] transition duration-150 ease-in-out hover:bg-gray-50">
             <div className="flex justify-between">
               <div className="pr-4 max-w-[940px]">
                 <div className="flex flex-col ">
                   <span className="text-[12px] desktop:text-[14px] text-brand-gray-400 mb-[4px] desktop:mb-[8px]">
                     {item.category}
                   </span>
-                  <div className="flex items-center font-semibold">
-                    <h2 className="text-[16px] desktop:text-[18px] mb-[4px] truncate max-w-[200px] desktop:max-w-[940px] ">
+                  <div className="flex mb-[4px] items-center font-semibold">
+                    <h2 className="text-[16px] desktop:text-[18px]  truncate max-w-[200px] desktop:max-w-[940px] ">
                       {item.title}
                     </h2>
                     <span className="text-[#f66555] text-[16px] desktop:text-[18px] ml-1 flex-shrink-0">

@@ -12,7 +12,7 @@ const PostFloatingBtn = ({ onUserCheck }: PostFloatingBtnProps) => {
       <Link
         href={`/community/post`}
         onClick={onUserCheck}
-        className="desktop:hidden fixed right-4 bottom-20 bg-brand-primary-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-brand-primary-600"
+        className="desktop:hidden fixed right-10 bottom-16 bg-brand-primary-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-brand-primary-600"
       >
         <Image
           src="/postButton.svg"

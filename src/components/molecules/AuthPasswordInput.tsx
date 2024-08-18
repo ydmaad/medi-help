@@ -11,6 +11,7 @@ type AuthPasswordInputProps = {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   className?: string;
+  isValid?: boolean;
 };
 
 export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
@@ -20,6 +21,7 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
   onChange,
   placeholder,
   className = "",
+  isValid = true,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,6 +35,7 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         className="w-full pr-10"
+        isValid={isValid}
       />
       <button
         type="button"

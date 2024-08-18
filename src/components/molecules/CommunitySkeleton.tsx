@@ -2,7 +2,7 @@ import React from "react";
 
 export const PostListSkeleton = () => {
   return (
-    <li className="border p-4 w-[1000px] h-[150px] my-5 animate-pulse">
+    <li className="border p-4 w-full h-[150px] my-10 animate-pulse">
       <div className="flex justify-between">
         <div className="flex-grow pr-4">
           <div className="h-7 bg-gray-200 rounded w-3/4 mb-2"></div>
