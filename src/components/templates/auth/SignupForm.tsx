@@ -341,7 +341,17 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         {error && <AuthErrorMessage message={error} />}
 
         {/* 회원가입 버튼 */}
-        <AuthButton
+        <button
+          type="submit"
+          className={`w-full h-[48px] text-[18px] font-semibold rounded-md transition-colors duration-300 ${
+            isFormValid()
+              ? "!bg-brand-primary-500 !text-white hover:!bg-brand-primary-600"
+              : "!bg-brand-gray-200 !text-brand-gray-600"
+          }`}
+        >
+          회원가입
+        </button>
+        {/* <AuthButton
           type="submit"
           className={`w-full text-[18px] font-semibold transition-colors duration-300 ${
             isFormValid()
@@ -350,7 +360,11 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           }`}
         >
           회원가입
-        </AuthButton>
+        </AuthButton> */}
+        {/* 에러 메시지 */}
+        {error && (
+          <p className="mt-4 text-center text-sm text-[#F66555]">{error}</p>
+        )}
       </form>
     </div>
   );

@@ -21,7 +21,7 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
   <button
     type={type}
     onClick={onClick}
-    className={`w-full bg-brand-primary-500 text-white py-2 rounded-md ${className} ${
+    className={`w-full bg-brand-primary-500 text-white py-2 rounded ${className} ${
       disabled ? "opacity-50 cursor-not-allowed" : ""
     }`}
     disabled={disabled}
