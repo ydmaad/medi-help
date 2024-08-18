@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { AuthPasswordInput } from "@/components/molecules/AuthPasswordInput";
 import { useRouter } from "next/navigation";
+import { PasswordChangedSuccess } from "./PasswordChangedSuccess";
 
 export const RecoverPasswordForm: React.FC = () => {
   // 상태 관리
@@ -15,6 +16,7 @@ export const RecoverPasswordForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
+  const [isPasswordChanged, setIsPasswordChanged] = useState(false);
   const router = useRouter();
 
   // 컴포넌트 마운트 시 세션 확인
@@ -64,9 +66,8 @@ export const RecoverPasswordForm: React.FC = () => {
     try {
       const { data, error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      setMessage("비밀번호가 성공적으로 재설정되었습니다.");
-      // 2초 후 로그인 페이지로 리다이렉트
-      setTimeout(() => router.push("/auth/login"), 2000);
+      // 비밀번호 변경 성공 시 상태 업데이트
+      setIsPasswordChanged(true);
     } catch (error) {
       console.error("Password reset error:", error);
       setMessage("비밀번호 재설정 중 오류가 발생했습니다. 다시 시도해 주세요.");
@@ -76,6 +77,11 @@ export const RecoverPasswordForm: React.FC = () => {
   // 로딩 중 표시
   if (isLoading) {
     return <div>로딩 중...</div>;
+  }
+
+  // 비밀번호 변경 성공 시 새로운 컴포넌트 렌더링
+  if (isPasswordChanged) {
+    return <PasswordChangedSuccess />;
   }
 
   // 컴포넌트 렌더링
