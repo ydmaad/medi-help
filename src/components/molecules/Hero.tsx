@@ -2,7 +2,6 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import SearchBar from "./SearchBar";
 import Mouse from "@/components/atoms/mouse";
-import { useToast } from "@/hooks/useToast";
 
 const Hero = () => {
   const router = useRouter();
@@ -12,8 +11,6 @@ const Hero = () => {
       router.push(`/search?query=${encodeURIComponent(searchTerm)}`);
     }
   };
-
-  const { toast } = useToast();
 
   return (
     <>

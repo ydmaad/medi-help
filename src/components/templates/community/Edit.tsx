@@ -1,5 +1,6 @@
 "use client";
 
+import CategorySelect from "@/components/molecules/CategorySelect";
 import { editPost, fetchDetailPost } from "@/lib/commentsAPI";
 import { Post } from "@/types/communityTypes";
 import Image from "next/image";
@@ -27,6 +28,7 @@ const Edit = ({ id }: PostEditProps) => {
   // 수파베이스에 저장할 스테이트 생성 (image + currentImage) -> 파일 + 문자열 타입으로!!
   const [saveImage, setSaveImage] = useState<(File | string)[]>([]);
   const router = useRouter();
+  const categories = ["메디톡", "궁금해요", "건강 꿀팁"];
 
   useEffect(() => {
     const getPost = async () => {
@@ -98,7 +100,7 @@ const Edit = ({ id }: PostEditProps) => {
   const handleCategorySelect = (category: string) => {
     setSelectCategory(category);
   };
-  
+
   // console.log(selectCategory);
 
   // console.log("현재 게시글:", post);
@@ -133,28 +135,20 @@ const Edit = ({ id }: PostEditProps) => {
       </div>
 
       <h1 className="text-[24px] font-black  hidden desktop:flex">글 수정</h1>
-      <div className="flex space-x-2">
-        {["메디톡", "궁금해요", "건강 꿀팁"].map((category) => (
-          <button
-            key={category}
-            onClick={() => handleCategorySelect(category)}
-            className={`px-4 py-2 w-[100px] text-[12px] desktop:text-[14px]  my-3 rounded-full ${
-              selectCategory === category
-                ? "bg-brand-gray-600 text-white"
-                : "bg-brand-gray-50 text-gray-700"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-      <div className="bg-white w-[335px] desktop:w-[996px] rounded-lg items-center">
+
+      <CategorySelect
+        categories={categories}
+        selectCategory={selectCategory}
+        onSelectCategory={handleCategorySelect}
+      ></CategorySelect>
+
+      <div className="bg-white max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
         <input
           type="text"
           placeholder="제목을 입력하세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-[335px] desktop:w-[996px] px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
+          className="w-full px-4 py-2 border rounded-md border-gray-300  text-lg focus:outline-none"
         />
 
         {/* 이미지 첨부, 내용 인풋 */}

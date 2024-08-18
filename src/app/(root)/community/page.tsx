@@ -50,10 +50,12 @@ const CommunityPage = () => {
     }
   };
 
+  // console.log(searchTerm);
+
   return (
     <>
       <div className="max-w-[996px] mx-auto mt-[118px] desktop:mt-40">
-        <div className="flex items-center justify-between mb-7 desktop:mb-[60px]">
+        <div className="flex items-center justify-between mb-[20px] desktop:mb-[40px]">
           {/* 데스크탑 버전 */}
           <div className="hidden desktop:flex flex-col">
             <button
@@ -85,16 +87,18 @@ const CommunityPage = () => {
 
           {/* 모바일 버전 */}
 
-          <div className="flex flex-row">
+          <div
+            className={`flex flex-row desktop:mx-0 ${isSearchOpen ? "mx-auto" : "mx-0"} `}
+          >
             <div>
-              <Search handleSearch={handleSearch} />
+              <Search handleSearch={handleSearch} allPosts={allPosts} />
             </div>
             {/* 데스트탑 버전 */}
             <div>
               <Link
                 href={`/community/post`}
                 onClick={handleUserCheck}
-                className="hidden desktop:flex bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600 items-center space-x-2"
+                className="hidden desktop:flex ml-[24px] bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600"
               >
                 <span>글쓰기</span>
               </Link>

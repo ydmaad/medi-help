@@ -100,14 +100,14 @@ const CommentItem = ({
           return (
             <div
               key={ment.id}
-              className={`my-4 p-4 mx-4 border border-gray-300 rounded-lg  max-w-[996px] relative  ${
+              className={`my-4 p-4  border border-gray-300 rounded-lg  max-w-[996px] relative  ${
                 isEdit && user?.id === ment.user.id
                   ? "bg-brand-gray-50"
                   : "bg-white"
               }`}
             >
-              <div className="flex justify-between items-start">
-                <div className="flex justify-between mb-2 flex-col w-[702px]">
+              <div className="flex justify-between">
+                <div className="flex justify-between mb-2 flex-col w-full">
                   {/* 아바타 + 닉네임 + 수정,삭제 버튼 */}
                   <div className="flex justify-between ">
                     <div className="flex items-center">
@@ -123,63 +123,68 @@ const CommentItem = ({
                       </div>
                     </div>
                     <div>
-                      <div className="flex space-x-2">
+                      <div className="flex">
                         {!isEdit[ment.id] && (
                           <>
                             {user?.id === ment.user.id && (
                               <>
-                                <button
-                                  onClick={() =>
-                                    handleEdit(
-                                      ment.id,
-                                      ment.comment,
-                                      ment.user.id
-                                    )
-                                  }
-                                  className="text-sm text-gray-500 pr-2 hidden desktop:flex"
-                                >
-                                  수정
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleEdit(
-                                      ment.id,
-                                      ment.comment,
-                                      ment.user.id
-                                    )
-                                  }
-                                  className="text-sm text-gray-500 pr-2 flex desktop:hidden"
-                                >
-                                  <Image
-                                    src="/commentUpBtn.svg"
-                                    alt="댓글수정버튼"
-                                    width={20}
-                                    height={20}
-                                  ></Image>
-                                </button>
-
-                                <div className="mx-4 h-4.5 w-px bg-gray-300 hidden desktop:flex "></div>
-                                <button
-                                  onClick={() =>
-                                    handleDelete(ment.id, ment.user.id)
-                                  }
-                                  className="text-sm text-gray-500 pl-2 hidden desktop:flex"
-                                >
-                                  삭제
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleDelete(ment.id, ment.user.id)
-                                  }
-                                  className="text-sm text-gray-500 pl-2 flex desktop:hidden"
-                                >
-                                  <Image
-                                    src="/commentDelBtn.svg"
-                                    alt="댓글삭제버튼"
-                                    width={20}
-                                    height={20}
-                                  ></Image>
-                                </button>
+                                {/* 데스트탑 수정, 삭제 버튼 */}
+                                <div className="hidden desktop:flex">
+                                  <button
+                                    onClick={() =>
+                                      handleEdit(
+                                        ment.id,
+                                        ment.comment,
+                                        ment.user.id
+                                      )
+                                    }
+                                    className="text-sm text-gray-500 pr-2 "
+                                  >
+                                    수정
+                                  </button>
+                                  <div className="mx-[8px] h-4.5 w-px bg-gray-300"></div>
+                                  <button
+                                    onClick={() =>
+                                      handleDelete(ment.id, ment.user.id)
+                                    }
+                                    className="text-sm text-gray-500 pl-2"
+                                  >
+                                    삭제
+                                  </button>
+                                </div>
+                                {/* 모바일 수정,삭제 버튼 */}
+                                <div className="flex desktop:hidden">
+                                  <button
+                                    onClick={() =>
+                                      handleEdit(
+                                        ment.id,
+                                        ment.comment,
+                                        ment.user.id
+                                      )
+                                    }
+                                    className="text-sm text-gray-500 pr-2"
+                                  >
+                                    <Image
+                                      src="/commentUpBtn.svg"
+                                      alt="댓글수정버튼"
+                                      width={20}
+                                      height={20}
+                                    ></Image>
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDelete(ment.id, ment.user.id)
+                                    }
+                                    className="text-sm text-gray-500 pl-2"
+                                  >
+                                    <Image
+                                      src="/commentDelBtn.svg"
+                                      alt="댓글삭제버튼"
+                                      width={20}
+                                      height={20}
+                                    ></Image>
+                                  </button>
+                                </div>
                               </>
                             )}
                           </>

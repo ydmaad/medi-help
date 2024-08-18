@@ -203,13 +203,15 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
                 emailValid !== false && (!isEmailChecked || isEmailAvailable)
               }
             />
-            <AuthPrimaryButton
-              onClick={handleEmailCheck}
-              className="px-2 h-[48px] w-[86px] ml-[10px]"
-              isActive={emailValid !== true}
-            >
-              중복확인
-            </AuthPrimaryButton>
+            <div>
+              <AuthPrimaryButton
+                onClick={handleEmailCheck}
+                className="px-1 ml-[10px]"
+                isActive={emailValid !== true}
+              >
+                중복확인
+              </AuthPrimaryButton>
+            </div>
           </div>
           {emailValid === false && (
             <p className="text-[#F66555] text-[12px] mt-1">
