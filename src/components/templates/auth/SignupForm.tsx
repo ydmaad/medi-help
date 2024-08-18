@@ -145,33 +145,36 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   };
 
   return (
-    <div className="w-[335px] desktop:w-[386px] max-w-md mt-[155px]">
-      <h2 className="text-[28px] font-bold text-center mb-6">회원 가입</h2>
+    <div className="w-[336px] desktop:w-[386px] max-w-md">
+      <h2 className="text-[28px] font-bold text-center text-brand-gray-800 mb-6">
+        회원 가입
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 닉네임 입력 필드 */}
         <div>
           <label
             htmlFor="nickname"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             닉네임
           </label>
           <AuthInput
             id="nickname"
-            name="nickname" // name 속성 추가
+            name="nickname"
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             placeholder="닉네임 설정"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2"
+            isValid={nicknameValid !== false}
           />
           {nicknameValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               사용할 수 없는 닉네임입니다.
             </p>
           )}
           {nicknameValid === true && (
-            <p className="text-green-500 text-[12px] mt-1">
+            <p className="text-[#00D37B] text-[12px] mt-1">
               사용할 수 있는 닉네임입니다.
             </p>
           )}
@@ -181,7 +184,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             이메일 입력
           </label>
@@ -193,7 +196,10 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@도메인.com"
-              className="w-[240px] desktop:w-[290px] px-3 py-2 border border-gray-300 rounded-md"
+              className="w-[240px] desktop:w-[290px] px-3 py-2 text-brand-gray-600"
+              isValid={
+                emailValid !== false && (!isEmailChecked || isEmailAvailable)
+              }
             />
             <AuthPrimaryButton
               onClick={handleEmailCheck}
@@ -203,13 +209,13 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
             </AuthPrimaryButton>
           </div>
           {emailValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               올바른 이메일 형식이 아닙니다.
             </p>
           )}
           {isEmailChecked && isEmailAvailable && (
-            <p className="text-green-500 text-[12px] mt-1">
-              사용 가능한 이메일입니다.
+            <p className="text-[#00D37B] text-[12px] mt-1">
+              사용할 수 있는 이메일입니다.
             </p>
           )}
           {isEmailChecked && !isEmailAvailable && (
@@ -223,16 +229,17 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             비밀번호 입력
           </label>
           <AuthPasswordInput
             id="password"
-            name="password" // name 속성 추가
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해 주세요."
+            isValid={passwordValid !== false}
           />
           {passwordValid === false && (
             <p className="text-red-500 text-[12px] mt-1">
@@ -245,24 +252,25 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         <div>
           <label
             htmlFor="passwordConfirm"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             비밀번호 확인
           </label>
           <AuthPasswordInput
             id="passwordConfirm"
-            name="passwordConfirm" // name 속성 추가
+            name="passwordConfirm"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             placeholder="다시 한번 입력해 주세요."
+            isValid={passwordConfirmValid !== false}
           />
           {passwordConfirmValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               비밀번호가 일치하지 않습니다.
             </p>
           )}
           {passwordConfirmValid === true && (
-            <p className="text-green-500 text-[12px] mt-1">
+            <p className="text-[#00D37B] text-[12px] mt-1">
               비밀번호가 일치합니다.
             </p>
           )}
