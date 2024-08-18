@@ -105,12 +105,14 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   // 비밀번호 유효성 검사
   useEffect(() => {
     if (password !== "") {
-      const passwordRegex =
-        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
-      // 보안강도 높은 비번 유효성 검사 코드
-      // const passwordRegex =
-      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      setPasswordValid(passwordRegex.test(password));
+      const hasLetter = /[a-zA-Z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+      const isLongEnough = password.length >= 6;
+
+      setPasswordValid(
+        hasLetter && hasNumber && hasSpecialChar && isLongEnough
+      );
     } else {
       setPasswordValid(null);
     }
