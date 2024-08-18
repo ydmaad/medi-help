@@ -34,18 +34,7 @@ const Hero = () => {
           <SearchBar onSearchChange={handleSearchChange} />
         </div>
       </div>
-      <button
-        onClick={() => {
-          toast.success("토스트가 제대로 나와요");
-        }}
-      >
-        토스트 테스트
-      </button>
-      <div className="mb-[120px] z-10 ">
-        <SearchBar onSearchChange={handleSearchChange} />
-      </div>
     </>
-    
   );
 };
 

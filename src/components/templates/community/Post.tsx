@@ -51,7 +51,7 @@ const Post = () => {
   return (
     <>
       <PostHeader onAddPost={handleAddPost}></PostHeader>
-      <h1 className="text-[24px] font-black  hidden desktop:flex ">
+      <h1 className="text-[24px] mb-[20px] font-black  hidden desktop:flex ">
         커뮤니티 글쓰기
       </h1>
       <CategorySelect
@@ -62,7 +62,7 @@ const Post = () => {
       <div className="bg-white w-[335px] desktop:w-[996px] rounded-lg items-center">
         <TitleInput title={title} setTitle={setTitle}></TitleInput>
 
-        <div className="border border-gray-100 rounded-md mt-3 mb-4 desktop:mb-7 ">
+        <div className="border border-gray-100 rounded-md mt-[8px] mb-4 desktop:mb-7 ">
           <ImgInputDesk onImgChange={handleImageChange}></ImgInputDesk>
 
           <div className="mb-4 flex-wrap hidden desktop:flex">

@@ -44,9 +44,9 @@ export const Toast: React.FC<ToastProps & OverlayProps> = ({
 }) => {
   const color = {
     default: "bg-[#ffffff] text-primary-reverse",
-    success: "bg-[#ffffff]",
-    error: "bg-[#3477ff] bg-[#ffffff]",
-    warning: "text-state-warning bg-[#ffffff]",
+    success: "bg-[#ffffff] text-brand-primary-500",
+    error: "bg-[#ffffff] text-[#f66555]",
+    warning: "bg-[#ffffff] text-[#fcb819]",
     info: "bg-[#ffffff]o",
     loading: "bg-[#ffffff] text-primary-reverse",
   };
@@ -69,7 +69,7 @@ export const Toast: React.FC<ToastProps & OverlayProps> = ({
           <div
             className={clsx(
               "mx-auto flex items-center rounded-full px-4 py-3 shadow-md shadow-gray-400/30",
-              color[state],
+              color[state]
             )}
           >
             <div className="text-[2rem]">

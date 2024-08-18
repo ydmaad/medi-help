@@ -12,7 +12,7 @@ const PostItem = ({ item }: PostItemProps) => {
   const timeAgo = formatTimeAgo(item.created_at);
   return (
     <>
-      <li key={item.id} className="block mx-auto">
+      <li key={item.id} className="block">
         <Link
           href={`/community/${item.id}`}
           className="block transition duration-150 ease-in-out rout rounded "
@@ -24,8 +24,8 @@ const PostItem = ({ item }: PostItemProps) => {
                   <span className="text-[12px] desktop:text-[14px] text-brand-gray-400 mb-[4px] desktop:mb-[8px]">
                     {item.category}
                   </span>
-                  <div className="flex items-center font-semibold">
-                    <h2 className="text-[16px] desktop:text-[18px] mb-[4px] truncate max-w-[200px] desktop:max-w-[940px] ">
+                  <div className="flex mb-[4px] items-center font-semibold">
+                    <h2 className="text-[16px] desktop:text-[18px]  truncate max-w-[200px] desktop:max-w-[940px] ">
                       {item.title}
                     </h2>
                     <span className="text-[#f66555] text-[16px] desktop:text-[18px] ml-1 flex-shrink-0">

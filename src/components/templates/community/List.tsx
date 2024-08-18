@@ -10,6 +10,7 @@ import PostItem from "@/components/molecules/PostItem";
 import PostSearchFail from "@/components/molecules/PostSearchFail";
 import CategorySelect from "@/components/molecules/CategorySelect";
 import { PostListSkeleton } from "@/components/molecules/CommunitySkeleton";
+import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
 
 interface ListProps {
   searchTerm: string;
@@ -31,6 +32,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   >([]);
   const [sortOption, setSortOption] = useState<string>("최신순");
   const category = ["전체", "메디톡", "궁금해요", "건강 꿀팁"];
+  const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,21 +113,47 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex justify-between">
-          {/* 카테고리 선택 */}
-          <div className="flex items-center overflow-x-auto scrollbar-hide desktop:overflow-x-visible whitespace-nowrap  pb-2 desktop:pb-0">
-            <CategorySelect
-              categories={category}
-              selectCategory={selectCategory}
-              onSelectCategory={handleCategorySelect}
-            ></CategorySelect>
+        {/* 카테고리 선택 */}
+        {isSearchOpen ? null : (
+          <div className="flex justify-between">
+            <div className="flex items-center overflow-x-auto scrollbar-hide desktop:overflow-x-visible whitespace-nowrap  pb-2 desktop:pb-0">
+              <CategorySelect
+                categories={category}
+                selectCategory={selectCategory}
+                onSelectCategory={handleCategorySelect}
+              ></CategorySelect>
+            </div>
+            <SortOption
+              sortOption={sortOption}
+              setSortOption={setSortOption}
+              setCurrentPage={setCurrentPage}
+            ></SortOption>
           </div>
-          <SortOption
-            sortOption={sortOption}
-            setSortOption={setSortOption}
-            setCurrentPage={setCurrentPage}
-          ></SortOption>
+        )}
+
+        {/* 작업중!!!!!!! */}
+        <div>
+          {isSearchOpen && searchTerm.length === 0 ? (
+            <p className="text-[14px] ml-[8px]">
+              전체
+              <span className="text-brand-gray-600 ml-[8px]">
+                ({filteredPosts.length})
+              </span>
+            </p>
+          ) : null}
+          {/* {isSearchOpen ? (
+            <p className="text-brand-gray-1000 font-black text-[14px] desktop:text-[16px] desktop:mt-20 mx-[25px] ">
+              <span className="text-brand-primary-500 ">
+                &rsquo;{searchTerm}&rsquo;
+              </span>
+              에 대한 검색 결과
+              <span className="text-brand-gray-600 ml-[5px] ">
+                ({filteredPosts.length})
+              </span>
+            </p>
+          ) : null} */}
         </div>
+
         {/* 게시글 리스트 그리는 곳 */}
         {filteredPosts.length > 0 ? (
           filteredPosts.map((item) => {

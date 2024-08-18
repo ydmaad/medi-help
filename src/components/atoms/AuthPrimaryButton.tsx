@@ -21,7 +21,7 @@ export const AuthPrimaryButton: React.FC<AuthPrimaryButtonProps> = ({
   <button
     onClick={onClick}
     type={type}
-    className={`py-2 bg-brand-primary-500 text-white text-[14px] desktop:text-[16px] rounded-md ${className}`}
+    className={`py-2 bg-brand-primary-500 text-white font-black text-[18px] rounded-md ${className}`}
     disabled={disabled}
   >
     {children}
