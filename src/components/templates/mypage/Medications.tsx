@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { supabase } from '@/utils/supabase/client';
-import Image from 'next/image';
-import EditMediModal from './myPageModal/EditMediModal';
-import MediModal from './myPageModal/MediModal';
-import { format } from 'date-fns';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { supabase } from "@/utils/supabase/client";
+import Image from "next/image";
+import EditMediModal from "./myPageModal/EditMediModal";
+import MediModal from "./myPageModal/MediModal";
+import { format } from "date-fns";
 
 interface MediRecord {
   id: string;
@@ -28,20 +28,19 @@ interface MediRecord {
   repeat?: boolean;
 }
 
-
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return format(date, 'yy.MM.dd');
+  return format(date, "yy.MM.dd");
 };
 
 const Medications: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
-  const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
+  const [selectedMediRecord, setSelectedMediRecord] =
+    useState<MediRecord | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
-
 
   useEffect(() => {
     const fetchMediRecords = async () => {
@@ -52,7 +51,9 @@ const Medications: React.FC = () => {
       }
       const userId = session.data.session.user.id;
       try {
-        const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
+        const response = await axios.get(
+          `/api/mypage/medi/names?user_id=${userId}`
+        );
         setMediRecords(response.data);
       } catch (error) {
         console.error("Error fetching medi records:", error);
@@ -66,12 +67,18 @@ const Medications: React.FC = () => {
     setIsViewModalOpen(true);
   };
 
+  const closeAllModals = () => {
+    setIsViewModalOpen(false);
+    setIsEditModalOpen(false);
+  };
+
   const handleUpdate = (updatedMediRecord: MediRecord) => {
     setMediRecords((prevRecords) =>
       prevRecords.map((record) =>
         record.id === updatedMediRecord.id ? updatedMediRecord : record
       )
     );
+    closeAllModals();
   };
 
   const handleDelete = (id: string) => {
@@ -92,7 +99,10 @@ const Medications: React.FC = () => {
 
   const ITEMS_PER_PAGE = isMobile ? 8 : 15;
   const totalPages = Math.ceil(mediRecords.length / ITEMS_PER_PAGE);
-  const currentRecords = mediRecords.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const currentRecords = mediRecords.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
@@ -105,19 +115,20 @@ const Medications: React.FC = () => {
       setIsMobile(window.innerWidth < 768);
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-
-
-
-  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const pageNumbers = Array.from(
+    { length: totalPages },
+    (_, index) => index + 1
+  );
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-4">
       <div className="mx-auto w-[996px]">
-        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-brand-gray-1000 text-left">복약 리스트</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-brand-gray-1000 text-left">
+          복약 리스트
+        </h2>
         <div className="grid grid-cols-5 gap-x-6 gap-y-6">
           {currentRecords.map((record) => (
             <div
@@ -143,10 +154,15 @@ const Medications: React.FC = () => {
                 )}
               </div>
               <div className="flex flex-col justify-start w-full">
-                <p className="text-[14px] font-bold text-brand-gray-1000 line-clamp-1 mb-1">{record.medi_nickname}</p>
-                <p className="text-[12px] text-brand-gray-800 line-clamp-1 mb-4">{record.medi_name}</p>
+                <p className="text-[14px] font-bold text-brand-gray-1000 line-clamp-1 mb-1">
+                  {record.medi_nickname}
+                </p>
+                <p className="text-[12px] text-brand-gray-800 line-clamp-1 mb-4">
+                  {record.medi_name}
+                </p>
                 <p className="text-[12px] text-brand-primary-500 px-1">
-                  {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
+                  {formatDate(record.start_date)} ~{" "}
+                  {formatDate(record.end_date)}
                 </p>
               </div>
             </div>
@@ -193,7 +209,8 @@ const Medications: React.FC = () => {
           </button>
         </div>
       </div>
-    {selectedMediRecord && (
+
+      {selectedMediRecord && (
         <>
           <MediModal
             isOpen={isViewModalOpen}
@@ -203,16 +220,14 @@ const Medications: React.FC = () => {
           />
           <EditMediModal
             isOpen={isEditModalOpen}
-            onRequestClose={closeEditModal}
+            onRequestClose={closeAllModals}
             onDelete={handleDelete}
             onUpdate={handleUpdate}
             mediRecord={selectedMediRecord}
           />
         </>
       )}
-      </div>
+    </div>
   );
-  
 };
-
 export default Medications;
