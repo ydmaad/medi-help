@@ -1,5 +1,4 @@
 // src/components/templates/auth/ResetPasswordForm.tsx
-
 "use client";
 
 import React, { useState } from "react";
@@ -18,7 +17,8 @@ export const ResetPasswordForm: React.FC = () => {
     try {
       const siteUrl =
         process.env.NEXT_PUBLIC_SITE_URL ||
-        "https://medi-help-seven.vercel.app";
+        // "https://medi-help-seven.vercel.app";
+        "http://localhost:3000";
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${siteUrl}/auth/recover`,
