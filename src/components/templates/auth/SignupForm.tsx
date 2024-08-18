@@ -190,7 +190,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
           >
             이메일 입력
           </label>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between">
             <AuthInput
               id="email"
               name="nickname"
@@ -198,14 +198,14 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@도메인.com"
-              className="w-[240px] desktop:w-[290px] px-3 py-2 text-brand-gray-1000"
+              className="px-3 py-2 text-brand-gray-1000"
               isValid={
                 emailValid !== false && (!isEmailChecked || isEmailAvailable)
               }
             />
             <AuthPrimaryButton
               onClick={handleEmailCheck}
-              className="h-[48px] w-[80px] desktop:w-[86px] px-2"
+              className="px-2 h-[48px] w-[86px] ml-[10px]"
               isActive={emailValid !== true}
             >
               중복확인

@@ -37,7 +37,7 @@ export const AuthCheckbox: React.FC<AuthCheckboxProps> = ({
     </div>
     <label
       htmlFor={id}
-      className="text-[14px] text-brand-gray-800 cursor-pointer"
+      className="text-[16px] text-brand-gray-600 cursor-pointer"
     >
       {label}
     </label>
