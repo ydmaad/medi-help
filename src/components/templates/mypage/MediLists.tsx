@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
+import Image from "next/image";
+import EditMediModal from "./myPageModal/EditMediModal";
 import MediModal from "./myPageModal/MediModal";
+import { format } from "date-fns";
 
 interface MediRecord {
   id: string;
@@ -20,35 +21,34 @@ interface MediRecord {
   start_date: string;
   end_date: string;
   created_at: string;
-  itemImage: string | null;
+  itemImage?: string | null;
   user_id: string;
   notification_time?: string[];
   day_of_week?: string[];
   repeat?: boolean;
 }
 
-interface MediListsProps {
-  className?: string;
-}
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return format(date, "yy.MM.dd");
+};
 
-const MediLists: React.FC<MediListsProps> = ({ className }) => {
+const Medications: React.FC = () => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
   const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [displayedMediRecords, setDisplayedMediRecords] = useState<MediRecord[]>([]);
-  const router = useRouter();
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const fetchMediRecords = async () => {
       const session = await supabase.auth.getSession();
-
       if (!session.data.session) {
         console.error("Auth session missing!");
         return;
       }
-
       const userId = session.data.session.user.id;
-
       try {
         const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
         setMediRecords(response.data);
@@ -56,94 +56,194 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
         console.error("Error fetching medi records:", error);
       }
     };
-
     fetchMediRecords();
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      setDisplayedMediRecords(mediRecords.slice(0, isMobile ? 4 : 3));
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [mediRecords]);
-
-  const handleShowAllClick = () => {
-    router.push("/mypage/Medications");
+  const handleMediClick = (record: MediRecord) => {
+    setSelectedMediRecord(record);
+    setIsViewModalOpen(true);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' }).replace(/\. /g, '.');
+  const closeAllModals = () => {
+    setIsViewModalOpen(false);
+    setIsEditModalOpen(false);
+  };
+
+  const handleUpdate = (updatedMediRecord: MediRecord) => {
+    setMediRecords(prevRecords =>
+      prevRecords.map(record =>
+        record.id === updatedMediRecord.id ? updatedMediRecord : record
+      )
+    );
+    closeAllModals();
+  };
+
+  const handleDelete = (id: string) => {
+    setMediRecords(prevRecords =>
+      prevRecords.filter(record => record.id !== id)
+    );
+  };
+
+  const openEditModal = () => {
+    setIsViewModalOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setIsViewModalOpen(true);
+  };
+
+  const ITEMS_PER_PAGE_DESKTOP = 15;
+  const ITEMS_PER_PAGE_MOBILE = 8;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const ITEMS_PER_PAGE = isMobile
+    ? Math.min(mediRecords.length, ITEMS_PER_PAGE_MOBILE)
+    : ITEMS_PER_PAGE_DESKTOP;
+
+  const totalPages = Math.ceil(mediRecords.length / ITEMS_PER_PAGE);
+  const currentRecords = mediRecords.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page > 0 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
-    <div className={`${className} w-full flex justify-center desktop:block`}>
-      <div className="w-[335px] desktop:w-[670px] desktop:h-[352px] overflow-hidden desktop:rounded-2xl desktop:bg-brand-gray-50 desktop:shadow-sm">
-        <div className="desktop:px-[49px] desktop:pt-[41px] desktop:pb-[50px] h-full">
-          <h2
-            className="text-[16px] font-bold text-brand-gray-1000 text-left cursor-pointer mb-2 flex items-center"
-            onClick={handleShowAllClick}
-          >
-            <span className="mb-3 text-[16px]">나의 복용약</span>
-            <span className="text-[#279ef9] ml-1 mb-3 text-[16px]">
-              {mediRecords.length}개
-            </span>
-            <span className="text-[#279ef9] ml-1 mb-3 text-[16px]">
-              &gt;
-            </span>
-          </h2>
-
-          <div className="w-full h-full">
-            <div className="grid grid-cols-2 gap-[17px] desktop:grid-cols-3 desktop:gap-4">
-              {displayedMediRecords.map((record) => (
-                <div 
-                  key={record.id} 
-                  className="w-[159px] desktop:w-auto"
+    <div className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-hidden">
+      <div className="w-full md:w-[670px] mx-auto mt-16 md:mt-24">
+        {/* 제목 */}
+        <h2 className="text-[16px] md:text-[18px] font-bold text-brand-gray-1000 mb-4 flex items-center">
+          <span>나의 복용약</span>
+          <span className="text-[#279ef9] ml-1 text-[16px]">{mediRecords.length}개</span>
+          <span className="text-[#279ef9] ml-1 text-[16px]">&gt;</span>
+        </h2>
+        
+        {/* 약품 카드 컨테이너 */}
+        <div className="flex justify-center">
+          <div className={`overflow-hidden ${isMobile ? 'w-full' : 'w-full'}`}>
+            <div
+              className={`grid ${
+                isMobile ? "grid-cols-2" : "grid-cols-3"
+              } gap-${isMobile ? '4' : '6'}`}
+              style={{ gap: isMobile ? '17px' : '24px' }}  
+            >
+              {currentRecords.map((record) => (
+                <div
+                  key={record.id}
+                  className={`bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center cursor-pointer p-4 ${
+                    isMobile ? "w-full h-[250px]" : "w-[180px] h-[217px]"
+                  }`}
+                  onClick={() => handleMediClick(record)}
                 >
-                  <div className="bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center w-[159px] h-[200px] desktop:w-[180px] desktop:h-[217px] p-4">
-                    <div className="w-[127px] h-[72px] desktop:w-[148px] desktop:h-[84px] mb-2">
-                      {record.itemImage ? (
-                        <Image
-                          src={record.itemImage}
-                          alt={record.medi_nickname || "약 이미지"}
-                          width={127}
-                          height={72}
-                          layout="responsive"
-                          objectFit="cover"
-                          className="rounded-lg"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
-                          <p className="text-brand-gray-400 text-xs">이미지 없음</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col justify-between w-full flex-grow">
-                      <div>
-                        <p className="text-[14px] desktop:text-sm font-bold text-brand-gray-1000 line-clamp-1">
-                          {record.medi_nickname}
-                        </p>
-                        <p className="text-[12px] desktop:text-xs text-brand-gray-800 line-clamp-1 mt-1">
-                          {record.medi_name}
-                        </p>
+                  <div className={`w-[127px] h-[72px] ${isMobile ? 'w-[148px] h-[84px]' : 'w-[127px] h-[72px]'} mb-2`}>
+                    {record.itemImage ? (
+                      <Image
+                        src={record.itemImage}
+                        alt={record.medi_nickname || "약 이미지"}
+                        width={127}
+                        height={72}
+                        layout="responsive"
+                        objectFit="cover"
+                        className="rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
+                        <p className="text-brand-gray-400 text-xs">이미지 없음</p>
                       </div>
-                      <p className="text-[10px] desktop:text-xs text-brand-primary-500 truncate mt-4">
-                        {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
+                    )}
+                  </div>
+                  <div className="flex flex-col justify-between w-full flex-grow px-2">
+                    <div>
+                      <p className="text-[14px] md:text-sm font-bold text-brand-gray-1000 line-clamp-1">
+                        {record.medi_nickname}
+                      </p>
+                      <p className="text-[12px] md:text-xs text-brand-gray-800 line-clamp-1 mt-1">
+                        {record.medi_name}
                       </p>
                     </div>
+                    <p className="text-[10px] md:text-xs text-brand-primary-500 truncate mt-2">
+                      {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
+        
+        {/* 페이지네이션 */}
+        <div className="flex justify-center mt-4 space-x-1">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className={`px-4 py-2 ${
+              currentPage === 1
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 ${
+                currentPage === index + 1
+                  ? "text-brand-primary-600"
+                  : "text-brand-gray-700"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className={`px-4 py-2 ${
+              currentPage === totalPages
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
+        </div>
       </div>
+
+      {selectedMediRecord && (
+        <>
+          <MediModal
+            isOpen={isViewModalOpen}
+            onRequestClose={() => setIsViewModalOpen(false)}
+            onEditClick={openEditModal}
+            mediRecord={selectedMediRecord}
+          />
+          <EditMediModal
+            isOpen={isEditModalOpen}
+            onRequestClose={closeAllModals}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+            mediRecord={selectedMediRecord}
+          />
+        </>
+      )}
     </div>
   );
 };
 
-export default MediLists;
+export default Medications;
