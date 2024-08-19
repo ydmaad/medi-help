@@ -51,18 +51,18 @@ export default function SignupPage() {
 
       if (data.user) {
         // 저장된 사용자 정보 조회
-        const { data: userData, error: fetchError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", data.user.id)
-          .single();
+        // const { data: userData, error: fetchError } = await supabase
+        //   .from("users")
+        //   .select("*")
+        //   .eq("id", data.user.id)
+        //   .single();
 
-        if (fetchError) throw fetchError;
+        // if (fetchError) throw fetchError;
 
         // 전역 상태에 사용자 정보 저장
-        setUser(userData as AuthUser);
+        // setUser(userData as AuthUser);
         // 로그인 상태는 false로 유지 (이메일 인증 필요)
-        setIsLogedIn(false);
+        // setIsLogedIn(false);
 
         // 회원가입 성공 시 complete 페이지로 이동
         router.push("/auth/complete");

@@ -2,7 +2,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { useAuthStore } from "@/store/auth";
 import { supabase } from "@/utils/supabase/client";
 import TextButton from "../atoms/Textbutton";
@@ -12,6 +12,7 @@ import ImageButton from "../atoms/ImageButton";
 const LoginNav: React.FC = () => {
   // isLogedIn 상태를 추가로 가져옵니다.
   const { user, clearAuth, isLogedIn, setIsLogedIn } = useAuthStore();
+  // console.log(user);
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -25,6 +26,11 @@ const LoginNav: React.FC = () => {
       console.error("Logout error:", error);
     }
   };
+
+  useLayoutEffect(() => {
+    if (user) return setIsLogedIn(true);
+    return setIsLogedIn(false);
+  }, [user, setIsLogedIn]);
 
   // isLogedIn 상태를 기반으로 UI를 결정합니다.
   if (isLogedIn && user) {
