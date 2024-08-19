@@ -203,7 +203,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                     className={`text-[14px] ${
                       nicknameValidation === "사용 가능한 닉네임입니다."
                         ? "text-[#3FDE9C]"
-                        : "text-red-500"
+                        : "text-[#F66555]"
                     } mb-4`}
                   >
                     {nicknameValidation}
@@ -236,31 +236,29 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
       {/* 모바일 버전 */}
       <div className="desktop:hidden w-full">
         {!isEditMode ? (
-          <div className="bg-[#e9f5fe] rounded-xl border border-brand-primary-100 w-full p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="relative w-[80px] h-[80px] shadow-md rounded-full">
-                  <Image
-                    src={user.avatar || defaultAvatarPath}
-                    alt="프로필 이미지"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-full"
-                  />
-                  <button
-                    className="absolute right-0 bottom-0 w-[28px] h-[28px] bg-[#279ef9] rounded-full flex items-center justify-center cursor-pointer"
-                    onClick={() => setEditMode(true)}
-                  >
-                    <TbPencil className="text-white w-4 h-4" />
-                  </button>
+          <div className="flex items-center bg-[#e9f5fe] rounded-xl border border-brand-primary-100 w-[335px] h-[128px] px-[42px] py-[24px]">
+            <div className="flex items-center gap-[12px]">
+              <div className="relative w-[80px] h-[80px] shadow-md rounded-full">
+                <Image
+                  src={user.avatar || defaultAvatarPath}
+                  alt="프로필 이미지"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+                <button
+                  className="absolute right-0 bottom-0 w-[28px] h-[28px] bg-[#279ef9] rounded-full flex items-center justify-center cursor-pointer"
+                  onClick={() => setEditMode(true)}
+                >
+                  <TbPencil className="text-white w-4 h-4" />
+                </button>
+              </div>
+              <div className="ml-4">
+                <div className="text-[20px] font-black text-brand-gray-1000">
+                  {user.nickname}님
                 </div>
-                <div className="ml-4">
-                  <div className="text-[20px] font-black text-brand-gray-1000">
-                    {user.nickname}님
-                  </div>
-                  <div className="text-[14px] text-brand-gray-600 mt-1">
-                    {user.email}
-                  </div>
+                <div className="text-[14px] text-brand-gray-600 mt-1">
+                  {user.email}
                 </div>
               </div>
             </div>
@@ -296,6 +294,17 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                 className="border border-[#e0e2e4] px-3 py-2 rounded-md mb-4 w-full h-[48px]"
                 placeholder="새 닉네임 입력"
               />
+              {nicknameValidation && (
+                <div
+                  className={`text-[14px] ${
+                    nicknameValidation === "사용 가능한 닉네임입니다."
+                      ? "text-[#3FDE9C]"
+                      : "text-[#F66555]"
+                  } mb-4`}
+                >
+                  {nicknameValidation}
+                </div>
+              )}
               <div className="flex justify-between items-center gap-2 w-full h-[40px]">
                 <button
                   className="w-full h-full py-2 bg-[#e9f5fe] text-[#279ef9] rounded-md cursor-pointer text-sm"
@@ -306,6 +315,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
                 <button
                   className="w-full h-full py-2 bg-[#279ef9] text-white rounded-md cursor-pointer text-sm"
                   onClick={editProfile}
+                  disabled={nicknameValidation !== "사용 가능한 닉네임입니다."}
                 >
                   저장
                 </button>
