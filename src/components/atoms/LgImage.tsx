@@ -7,7 +7,7 @@ interface LgImageProps {
 
 const LgImage = ({ src, alt }: LgImageProps) => {
   return (
-    <div className="w-[790px] h-[430px] border border-brand-gray-300 rounded-[20px] overflow-hidden">
+    <div className="desktop:w-[790px] w-[335px] desktop:h-[430px] h-[183px] border border-brand-gray-300 rounded-[20px] overflow-hidden">
       <img src={src} alt={alt} className="w-full h-full object-cover" />
     </div>
   );
