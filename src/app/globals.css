@@ -64,7 +64,7 @@ i {
   font-style: normal !important;
 }
 
-@media screen and (min-width: 414px) {
+@media screen and (min-width: 768px) {
   :root {
     --fc-button-bg-color: "#f5f6f7";
   }
@@ -102,11 +102,16 @@ i {
   }
 }
 
-@media screen and (max-width: 414px) {
+@media screen and (max-width: 768px) {
   :root {
     --fc-daygrid-event-dot-width: 6px;
     --fc-button-bg-color: "#f5f6f7";
   }
+
+  .fc-media-screen {
+    margin: auto;
+  }
+
   .fc th {
     font-size: 12px;
   }
