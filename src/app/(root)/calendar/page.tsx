@@ -1,7 +1,6 @@
-import CalendarView from "@/components/templates/calendar/calendarView/CalendarView";
 import CalendarCheckbox from "@/components/templates/calendar/calendarView/CalendarCheckbox";
 import React from "react";
-import CalendarTitle from "@/components/molecules/CalendarTitle";
+import CalendarView from "@/components/templates/calendar/calendarView/CalendarView";
 
 const Page = () => {
   return (
