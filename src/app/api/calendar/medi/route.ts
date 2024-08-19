@@ -83,6 +83,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch user email' }, { status: 500 });
     }
 
+    const { subject, message } = generateNotificationMessage({
+      medi_nickname: newMediRecord.medi_nickname,
+      medi_name: newMediRecord.medi_name,
+      user_nickname: user.data.nickname,
+      notes: newMediRecord.notes,
+    });
+
+    try {
+      await sendEmail({
+        to: user.data.email,
+        subject,
+        text: message,
+      });
+      console.log('Email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send email:', emailError);
+    }
+
     return NextResponse.json({ medicationRecords: data }, { status: 201 });
   } catch (err: unknown) {
     console.error("Server error:", err instanceof Error ? err.message : 'Unknown error');

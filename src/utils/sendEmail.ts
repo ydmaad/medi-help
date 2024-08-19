@@ -18,7 +18,7 @@ interface MailOptions {
   html?: string;
 }
 
-export const sendEmail = (options: MailOptions) => {
+export const sendEmail = async (options: MailOptions) => {
   const { to, subject, text, html } = options;
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -28,7 +28,16 @@ export const sendEmail = (options: MailOptions) => {
     html,
   };
 
-  return transporter.sendMail(mailOptions);
+  console.log('Attempting to send email with options:', mailOptions);
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully:', info);
+    return info;
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    throw error;
+  }
 };
 
 
