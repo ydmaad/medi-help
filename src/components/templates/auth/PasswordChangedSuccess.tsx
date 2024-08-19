@@ -10,7 +10,7 @@ export const PasswordChangedSuccess: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="w-[334px] desktop:w-[384px] max-w-md text-center">
         {/* 제목 */}
-        <h1 className="text-[25px] desktop:text-[28px] font-bold text-brand-gray-800 mb-[60px]">
+        <h1 className="text-[25px] desktop:text-[28px] font-semibold text-brand-gray-800 mb-[60px]">
           비밀번호 변경이 완료되었습니다.
         </h1>
 
