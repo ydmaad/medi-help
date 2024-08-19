@@ -45,6 +45,20 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isEmailAvailable, setIsEmailAvailable] = useState(false);
 
+  // 폼 유효성 검사 함수
+  const isFormValid = () => {
+    return (
+      nicknameValid === true &&
+      emailValid === true &&
+      isEmailChecked &&
+      isEmailAvailable &&
+      passwordValid === true &&
+      passwordConfirmValid === true &&
+      agreeTerms &&
+      agreePrivacy
+    );
+  };
+
   // 이메일 중복 확인 함수
   const checkEmail = async (email: string) => {
     const { data, error } = await supabase
@@ -105,12 +119,14 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   // 비밀번호 유효성 검사
   useEffect(() => {
     if (password !== "") {
-      const passwordRegex =
-        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/;
-      // 보안강도 높은 비번 유효성 검사 코드
-      // const passwordRegex =
-      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      setPasswordValid(passwordRegex.test(password));
+      const hasLetter = /[a-zA-Z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+      const isLongEnough = password.length >= 6;
+
+      setPasswordValid(
+        hasLetter && hasNumber && hasSpecialChar && isLongEnough
+      );
     } else {
       setPasswordValid(null);
     }
@@ -126,52 +142,74 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   }, [password, passwordConfirm]);
 
   // 폼 제출 핸들러
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let errors = [];
-    if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
-    if (!emailValid || !isEmailChecked || !isEmailAvailable)
-      errors.push("이메일을 확인해주세요.");
-    if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
-    if (!passwordConfirmValid)
-      errors.push("비밀번호 확인이 일치하지 않습니다.");
-    if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
-
-    if (errors.length > 0) {
-      alert(errors.join("\n"));
-    } else {
+    if (isFormValid()) {
       onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+    } else {
+      // 에러 메시지 표시 로직
+      let errors = [];
+      if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
+      if (!emailValid || !isEmailChecked || !isEmailAvailable)
+        errors.push("이메일을 확인해주세요.");
+      if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
+      if (!passwordConfirmValid)
+        errors.push("비밀번호 확인이 일치하지 않습니다.");
+      if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
+
+      alert(errors.join("\n"));
     }
   };
 
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   let errors = [];
+  //   if (!nicknameValid) errors.push("닉네임을 확인해주세요.");
+  //   if (!emailValid || !isEmailChecked || !isEmailAvailable)
+  //     errors.push("이메일을 확인해주세요.");
+  //   if (!passwordValid) errors.push("비밀번호를 확인해주세요.");
+  //   if (!passwordConfirmValid)
+  //     errors.push("비밀번호 확인이 일치하지 않습니다.");
+  //   if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
+
+  //   if (errors.length > 0) {
+  //     alert(errors.join("\n"));
+  //   } else {
+  //     onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
+  //   }
+  // };
+
   return (
-    <div className="w-[335px] desktop:w-full max-w-md mt-[155px]">
-      <h2 className="text-[28px] font-bold text-center mb-6">회원 가입</h2>
+    <div className="w-[336px] desktop:w-[386px] max-w-md">
+      <h2 className="text-[28px] font-bold text-center text-brand-gray-800 mb-6">
+        회원 가입
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 닉네임 입력 필드 */}
         <div>
           <label
             htmlFor="nickname"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             닉네임
           </label>
           <AuthInput
             id="nickname"
-            name="nickname" // name 속성 추가
+            name="nickname"
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             placeholder="닉네임 설정"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2"
+            isValid={nicknameValid !== false}
           />
           {nicknameValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               사용할 수 없는 닉네임입니다.
             </p>
           )}
           {nicknameValid === true && (
-            <p className="text-green-500 text-[12px] mt-1">
+            <p className="text-[#00D37B] text-[12px] mt-1">
               사용할 수 있는 닉네임입니다.
             </p>
           )}
@@ -181,39 +219,50 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             이메일 입력
           </label>
-          <div className="flex items-center space-x-2 mt-[16px]">
+          <div className="flex items-center justify-between">
             <AuthInput
               id="email"
-              name="nickname" // name 속성 추가
+              name="nickname"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="example@도메인.com"
-              className="w-2/3 px-3 py-2 border border-gray-300 rounded-md"
+              className="px-3 py-2 text-brand-gray-1000"
+              isValid={
+                emailValid !== false && (!isEmailChecked || isEmailAvailable)
+              }
             />
-            <AuthPrimaryButton
-              onClick={handleEmailCheck}
-              className="h-[48px] w-[80px] desktop:w-[86px] px-2"
-            >
-              중복확인
-            </AuthPrimaryButton>
+            <div>
+              <AuthPrimaryButton
+                onClick={handleEmailCheck}
+                className="px-1 ml-[10px]"
+                isActive={emailValid !== true}
+              >
+                중복확인
+              </AuthPrimaryButton>
+            </div>
           </div>
           {emailValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               올바른 이메일 형식이 아닙니다.
             </p>
           )}
+          {emailValid === true && !isEmailChecked && (
+            <p className="text-[#F66555] text-[12px] mt-1">
+              이메일 중복 확인이 필요합니다.
+            </p>
+          )}
           {isEmailChecked && isEmailAvailable && (
-            <p className="text-green-500 text-[12px] mt-1">
-              사용 가능한 이메일입니다.
+            <p className="text-[#00D37B] text-[12px] mt-1">
+              사용할 수 있는 이메일입니다.
             </p>
           )}
           {isEmailChecked && !isEmailAvailable && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               이미 사용 중인 이메일입니다.
             </p>
           )}
@@ -223,19 +272,20 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             비밀번호 입력
           </label>
           <AuthPasswordInput
             id="password"
-            name="password" // name 속성 추가
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="비밀번호를 입력해 주세요."
+            isValid={passwordValid !== false}
           />
           {passwordValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               영문자, 숫자, 특수문자 포함하여 최소 6자 이상이어야 합니다.
             </p>
           )}
@@ -245,24 +295,25 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         <div>
           <label
             htmlFor="passwordConfirm"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-[16px] text-brand-gray-1000 mb-1"
           >
             비밀번호 확인
           </label>
           <AuthPasswordInput
             id="passwordConfirm"
-            name="passwordConfirm" // name 속성 추가
+            name="passwordConfirm"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             placeholder="다시 한번 입력해 주세요."
+            isValid={passwordConfirmValid !== false}
           />
           {passwordConfirmValid === false && (
-            <p className="text-red-500 text-[12px] mt-1">
+            <p className="text-[#F66555] text-[12px] mt-1">
               비밀번호가 일치하지 않습니다.
             </p>
           )}
           {passwordConfirmValid === true && (
-            <p className="text-green-500 text-[12px] mt-1">
+            <p className="text-[#00D37B] text-[12px] mt-1">
               비밀번호가 일치합니다.
             </p>
           )}
@@ -290,7 +341,14 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         {error && <AuthErrorMessage message={error} />}
 
         {/* 회원가입 버튼 */}
-        <AuthButton type="submit" className="w-full text-[18px]">
+        <AuthButton
+          type="submit"
+          className={`w-full text-[18px] font-semibold transition-colors duration-300 ${
+            isFormValid()
+              ? "text-white bg-brand-primary-500 hover:bg-brand-primary-600"
+              : "text-brand-gray-600 bg-brand-gray-200"
+          }`}
+        >
           회원가입
         </AuthButton>
       </form>

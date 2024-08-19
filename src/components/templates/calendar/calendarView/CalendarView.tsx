@@ -263,7 +263,7 @@ const CalendarView = () => {
       />
       <div className="w-full flex flex-col items-center gap-4 mt-20">
         <div className="relative min-w-[364px]">
-          <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-normal desktop:top-1 ">
+          <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
             <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex">
               <div className="flex items-center">
                 <div
@@ -301,27 +301,28 @@ const CalendarView = () => {
               </button>
             </div>
           </div>
-
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            events={events}
-            dateClick={handleDateClick}
-            selectable={true}
-            eventOverlap={false}
-            displayEventTime={false}
-            headerToolbar={{
-              left: "prev title next",
-              center: "",
-              right: "",
-            }}
-            locale="ko"
-            contentHeight={"auto"}
-            fixedWeekCount={false}
-            dayCellContent={(arg) => {
-              return <i>{arg.dayNumberText.replace("일", "")}</i>;
-            }}
-          />
+          <div>
+            <FullCalendar
+              plugins={[dayGridPlugin, interactionPlugin]}
+              initialView="dayGridMonth"
+              events={events}
+              dateClick={handleDateClick}
+              selectable={true}
+              eventOverlap={false}
+              displayEventTime={false}
+              headerToolbar={{
+                left: "prev title next",
+                center: "",
+                right: "",
+              }}
+              locale="ko"
+              contentHeight={"auto"}
+              fixedWeekCount={false}
+              dayCellContent={(arg) => {
+                return <i>{arg.dayNumberText.replace("일", "")}</i>;
+              }}
+            />
+          </div>
         </div>
         <MobileCalendarView />
       </div>

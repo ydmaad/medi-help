@@ -67,8 +67,8 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [mediRecords]);
 
   const handleShowAllClick = () => {
@@ -81,59 +81,64 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
   };
 
   return (
-    <div className={`${className} w-[671px] h-[352px]`}>
-      <div className="w-full h-full overflow-hidden rounded-2xl bg-white desktop:bg-brand-gray-50 desktop:shadow-md">
-        <div className="p-4 desktop:p-6">
+    <div className={`${className} w-full flex justify-center desktop:block`}>
+      <div className="w-[335px] desktop:w-[670px] overflow-hidden bg-white desktop:rounded-2xl desktop:bg-brand-gray-50 desktop:shadow-md">
+        <div className="desktop:px-[49px] desktop:pt-[41px] desktop:pb-[50px]">
           <h2
-            className="text-base desktop:text-base font-semibold text-brand-gray-1000 text-left cursor-pointer mb-4 desktop:mb-6 px-2 flex items-center"
+            className="text-[16px] font-bold text-brand-gray-1000 text-left cursor-pointer mb-2 flex items-center"
             onClick={handleShowAllClick}
           >
-            <span className="text-brand-gray-1000 text-[16px]">나의 복용약 </span>
-            <span className="text-[#279ef9] font-bold text-[20px] ml-1">
+            <span>나의 복용약</span>
+            <span className="text-[#279ef9] ml-1">
               {mediRecords.length}개
             </span>
-            <span className="text-[#279ef9] font-bold text-[20px] ml-1">
+            <span className="text-[#279ef9] ml-1">
               &gt;
             </span>
           </h2>
 
-          <div className="grid grid-cols-3 gap-4 justify-items-center">
-            {displayedMediRecords.map((record) => (
-              <div
-                key={record.id}
-                className="bg-white border border-brand-gray-50 rounded-xl flex flex-col w-[180px] h-[217px] p-4"
-              >
-                <div className="w-[148px] h-[84px] mb-2">
-                  {record.itemImage ? (
-                    <Image
-                      src={record.itemImage}
-                      alt={record.medi_nickname || "약 이미지"}
-                      width={148}
-                      height={84}
-                      objectFit="cover"
-                      className="rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
-                      <p className="text-brand-gray-400 text-xs">이미지 없음</p>
+          <div className="w-full">
+            <div className="grid grid-cols-2 gap-[17px] desktop:grid-cols-3 desktop:gap-4">
+              {displayedMediRecords.map((record) => (
+                <div 
+                  key={record.id} 
+                  className="w-[159px] desktop:w-auto"
+                >
+                  <div className="bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center w-[159px] h-[200px] desktop:w-[180px] desktop:h-[217px] p-4">
+                    <div className="w-[127px] h-[72px] desktop:w-[148px] desktop:h-[84px] mb-2">
+                      {record.itemImage ? (
+                        <Image
+                          src={record.itemImage}
+                          alt={record.medi_nickname || "약 이미지"}
+                          width={127}
+                          height={72}
+                          layout="responsive"
+                          objectFit="cover"
+                          className="rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
+                          <p className="text-brand-gray-400 text-xs">이미지 없음</p>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="flex flex-col justify-between flex-grow">
-                  <div>
-                    <p className="text-[14px] font-bold text-brand-gray-1000 line-clamp-1">
-                      {record.medi_nickname}
-                    </p>
-                    <p className="text-[12px] text-brand-gray-800 line-clamp-1 mt-1">
-                      {record.medi_name}
-                    </p>
+                    <div className="flex flex-col justify-between w-full flex-grow">
+                      <div>
+                        <p className="text-[14px] desktop:text-sm font-bold text-brand-gray-1000 line-clamp-1">
+                          {record.medi_nickname}
+                        </p>
+                        <p className="text-[12px] desktop:text-xs text-brand-gray-800 line-clamp-1 mt-1">
+                          {record.medi_name}
+                        </p>
+                      </div>
+                      <p className="text-[10px] desktop:text-xs text-brand-primary-500 truncate mt-4">
+                        {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[12px] text-brand-primary-500 truncate mt-2 px-1">
-                    {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
-                  </p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

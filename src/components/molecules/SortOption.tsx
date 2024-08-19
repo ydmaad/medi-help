@@ -30,7 +30,7 @@ const SortOption = ({
 
   return (
     <>
-      <div className="relative desktop:mr-0">
+      <div className="desktop:mb-[16px] desktop:mt-[20px] relative desktop:mr-0">
         <button
           onClick={handleOptionOpen}
           className="flex items-center justify-center text-brand-gray-600 whitespace-nowrap"
@@ -49,7 +49,7 @@ const SortOption = ({
                   handleOptionSelect(option);
                   handleOptionOpen(); // 옵션 선택 후 리스트를 닫습니다.
                 }}
-                className="text-brand-gray-800 text-sx desktop:text-sm w-full  hover:bg-gray-100"
+                className="text-brand-gray-800 text-[12px] desktop:text-sm w-full  hover:bg-gray-100"
               >
                 {option}
                 {index !== optionList.length - 1 && (

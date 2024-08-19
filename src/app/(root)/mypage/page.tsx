@@ -17,13 +17,13 @@ const MyPage = () => {
       </div>
       
       {/* 모바일 사이즈 레이아웃 */}
-      <div className="flex flex-col gap-8 mb-8 desktop:hidden">
+      <div className="flex flex-col gap-10 mb-8 desktop:hidden">
         <UserBoard className="w-full" />
         <MediLists className="w-full" />
       </div>
       
       {/* Posts는 항상 아래에 배치 */}
-      <div className="mt-8">
+      <div className="mt-10 desktop:mt-8">
         <Posts />
       </div>
     </div>

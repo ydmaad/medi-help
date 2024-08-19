@@ -45,7 +45,7 @@ export const CommentInput = ({
 
   return (
     <>
-      <div className="max-w-[996px] mx-4 p-4 bg-white  border border-gray-300  rounded-lg">
+      <div className="max-w-[996px] p-4 bg-white  border border-gray-300  rounded-lg">
         <div className="flex items-center mb-3">
           <Image
             src={user?.avatar || "/default-avatar.jpg"}
