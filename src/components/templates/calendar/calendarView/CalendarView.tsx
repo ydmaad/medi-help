@@ -7,7 +7,7 @@ import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import axios from "axios";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import DetailModal from "../calendarModal/DetailModal";
-import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
+import AddMediModal from "../calendarModal/AddMediModal";
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import { MedicinesType } from "@/types/calendar";
@@ -24,9 +24,16 @@ import uuid from "react-uuid";
 import { GoPlus } from "react-icons/go";
 import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 
+interface ExtendedEventInput extends EventInput {
+  extendProps?: {
+    medi_time: string;
+    medicineList: string[];
+  };
+}
+
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
-  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
+  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false);
   const [viewEvents, setViewEvents] = useState<boolean>(false);
   const [openMobileAddMedi, setOpenMobileAddMedi] = useState<boolean>(false);
 
@@ -84,8 +91,8 @@ const CalendarView = () => {
           const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
 
           {
-            const newEvents: EventInput[] = [];
-            data.map((event: EventInput) => {
+            const newEvents: ExtendedEventInput[] = [];
+            data.map((event: any) => {
               if (event.calendar_medicine.length !== 0) {
                 const setEventList = (time: string) => {
                   let eventList = event.calendar_medicine.filter(
@@ -169,7 +176,6 @@ const CalendarView = () => {
     getCalendarData();
   }, [user]);
 
-  // 날짜 클릭 시 , value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
     let newDate = new Date(event.date.getTime() + DATE_OFFSET)
       .toISOString()
@@ -183,8 +189,8 @@ const CalendarView = () => {
       return event.start?.toString().split(" ")[0] === newDate;
     });
 
-    let viewEvent = editList.filter((event: EventInput) => {
-      return event.extendProps.medi_time === "morning";
+    let viewEvent = editList.filter((event: ExtendedEventInput) => {
+      return event.extendProps?.medi_time === "morning";
     })[0];
 
     if (filteredCalendar.length || editList.length) {
@@ -201,13 +207,12 @@ const CalendarView = () => {
       side_effect: filteredCalendar.length
         ? filteredCalendar[0].side_effect
         : "",
-      medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
+      medicine_id: viewEvent ? viewEvent.extendProps?.medicineList || [] : [],
     });
 
     setOpenDetailModal(true);
   };
 
-  // 기록하기 버튼 클릭
   const handleButtonClick = () => {
     let today = new Date(new Date().getTime() + DATE_OFFSET)
       .toISOString()
@@ -221,8 +226,8 @@ const CalendarView = () => {
       return event.start?.toString().split(" ")[0] === today;
     });
 
-    let viewEvent = editList.filter((event: EventInput) => {
-      return event.extendProps.medi_time === "morning";
+    let viewEvent = editList.filter((event: ExtendedEventInput) => {
+      return event.extendProps?.medi_time === "morning";
     })[0];
 
     setValues({
@@ -233,7 +238,7 @@ const CalendarView = () => {
       side_effect: filteredCalendar.length
         ? filteredCalendar[0].side_effect
         : "",
-      medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
+      medicine_id: viewEvent ? viewEvent.extendProps?.medicineList || [] : [],
     });
 
     setOpenDetailModal(true);
@@ -251,7 +256,6 @@ const CalendarView = () => {
         isOpen={openAddMediModal}
         onRequestClose={() => setOpenAddMediModal(false)}
         onAdd={(newMediRecord) => {
-          // 새로운 약 기록 추가 후 처리 로직
           console.log("New Medi Record:", newMediRecord);
           setMedicines([
             ...medicines,
@@ -264,7 +268,7 @@ const CalendarView = () => {
           ]);
         }}
       />
-        <MobileAddMedi
+      <MobileAddMedi
         isOpen={openMobileAddMedi}
         onClose={() => setOpenMobileAddMedi(false)}
         onAdd={(newMediRecord) => {
@@ -306,7 +310,7 @@ const CalendarView = () => {
             </div>
             <div className="flex gap-2 ">
               <button
-                onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
+                onClick={() => setOpenAddMediModal(true)}
                 className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:border-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
               >
                 약 등록

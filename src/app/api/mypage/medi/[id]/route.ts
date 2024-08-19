@@ -39,41 +39,42 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   }
 }
 
-// PUT 메서드 추가
+// PUT 메서드
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
-    
-    try {
-      const updatedData = await req.json();
-  
-      if (!updatedData) {
-        console.log("No data provided");
-        return NextResponse.json({ error: "No data provided" }, { status: 400 });
-      }
-  
-      console.log("Updated Data before filtering:", updatedData);
-  
-      // itemImage 필드를 제거합니다.
-      const { itemImage, ...filteredData } = updatedData;
-  
-      console.log("Filtered Data:", filteredData);
-  
-      const { error: updateError } = await supabase
-        .from("medications")
-        .update(filteredData)
-        .eq("id", id);
-  
-      if (updateError) {
-        console.log("Supabase update error:", updateError);
-        return NextResponse.json({ error: updateError.message }, { status: 500 });
-      }
-  
-      return NextResponse.json({ message: "Record updated successfully" }, { status: 200 });
-    } catch (error) {
-      console.log("Server error:", error);
-      return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 }
-      );
-    }
+  const { id } = params;
+
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
   }
+
+  try {
+    let updatedData = await req.json();
+    console.log('Received update data:', updatedData);
+
+    // itemImage 필드 제거
+    const { itemImage, ...dataToUpdate } = updatedData;
+
+    console.log('Data to update after removing itemImage:', dataToUpdate);
+
+    const { data, error } = await supabase
+      .from('medications')
+      .update(dataToUpdate)
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.error('Supabase update error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    if (data && data.length > 0) {
+      console.log('Updated medication:', data[0]);
+      return NextResponse.json(data[0], { status: 200 });
+    } else {
+      return NextResponse.json({ error: 'No data updated' }, { status: 404 });
+    }
+  } catch (err: unknown) {
+    console.error('Server error:', err instanceof Error ? err.message : 'Unknown error');
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
