@@ -288,14 +288,14 @@ const CalendarView = () => {
             <div className="flex gap-2 ">
               <button
                 onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
-                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:bg-brand-primary-500 hover:text-white ease-in duration-300 hidden desktop:block outline-none"
+                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:border-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
               >
                 약 등록
               </button>
 
               <button
                 onClick={handleButtonClick}
-                className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-brand-primary-500 rounded-[4px] hover:bg-white hover:text-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
+                className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-brand-primary-500 rounded-[4px] hover:bg-brand-primary-50 hover:text-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
               >
                 기록추가
               </button>
