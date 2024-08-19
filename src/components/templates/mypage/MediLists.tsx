@@ -33,7 +33,11 @@ const formatDate = (dateString: string) => {
   return format(date, "yy.MM.dd");
 };
 
-const Medications: React.FC = () => {
+interface MediListsProps {
+  className?: string; // className을 옵션으로 추가
+}
+
+const MediLists: React.FC<MediListsProps> = ({ className }) => {
   const [mediRecords, setMediRecords] = useState<MediRecord[]>([]);
   const [selectedMediRecord, setSelectedMediRecord] = useState<MediRecord | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -107,7 +111,7 @@ const Medications: React.FC = () => {
   }, []);
 
   const ITEMS_PER_PAGE = isMobile
-    ? Math.min(mediRecords.length, ITEMS_PER_PAGE_MOBILE)
+    ? ITEMS_PER_PAGE_MOBILE
     : ITEMS_PER_PAGE_DESKTOP;
 
   const totalPages = Math.ceil(mediRecords.length / ITEMS_PER_PAGE);
@@ -123,7 +127,7 @@ const Medications: React.FC = () => {
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-hidden">
+    <div className={`max-w-screen-xl mx-auto px-4 py-4 overflow-x-hidden ${className}`}>
       <div className="w-full md:w-[670px] mx-auto mt-16 md:mt-24">
         {/* 제목 */}
         <h2 className="text-[16px] md:text-[18px] font-bold text-brand-gray-1000 mb-4 flex items-center">
@@ -138,18 +142,18 @@ const Medications: React.FC = () => {
             <div
               className={`grid ${
                 isMobile ? "grid-cols-2" : "grid-cols-3"
-              } gap-${isMobile ? '4' : '6'}`}
+              }`}
               style={{ gap: isMobile ? '17px' : '24px' }}  
             >
               {currentRecords.map((record) => (
                 <div
                   key={record.id}
                   className={`bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center cursor-pointer p-4 ${
-                    isMobile ? "w-full h-[250px]" : "w-[180px] h-[217px]"
+                    isMobile ? "w-[159px] h-[200px]" : "w-[159px] h-[200px]"
                   }`}
                   onClick={() => handleMediClick(record)}
                 >
-                  <div className={`w-[127px] h-[72px] ${isMobile ? 'w-[148px] h-[84px]' : 'w-[127px] h-[72px]'} mb-2`}>
+                  <div className={`w-[127px] h-[72px] mb-2`}>
                     {record.itemImage ? (
                       <Image
                         src={record.itemImage}
@@ -246,4 +250,4 @@ const Medications: React.FC = () => {
   );
 };
 
-export default Medications;
+export default MediLists;
