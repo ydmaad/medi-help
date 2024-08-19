@@ -17,7 +17,7 @@ export default function HtmlLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-[#FBFBFB]">
         <Providers>{children}</Providers>
         <ClientComponent />
       </body>

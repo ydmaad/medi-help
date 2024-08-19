@@ -1,14 +1,14 @@
 import React from "react";
 import { useImage } from "@/hooks/useImage";
 
-const TertiImage = () => {
+const TertiCarouselImage = () => {
   const { src, alt } = useImage();
 
   return (
-    <div className="w-[316px] h-[200px]  rounded-[20px] overflow-hidden">
+    <div className="w-[247px] h-[160px]  rounded-[16px] overflow-hidden">
       <img src={src || ""} alt={alt} className="w-full h-full object-cover" />
     </div>
   );
 };
 
-export default TertiImage;
+export default TertiCarouselImage;

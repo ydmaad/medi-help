@@ -1,7 +1,7 @@
 import React from "react";
 import { useImage } from "@/hooks/useImage";
 
-const TertiImage = () => {
+const CardImage = () => {
   const { src, alt } = useImage();
 
   return (
@@ -11,4 +11,4 @@ const TertiImage = () => {
   );
 };
 
-export default TertiImage;
+export default CardImage;

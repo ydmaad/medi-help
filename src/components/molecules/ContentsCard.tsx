@@ -23,14 +23,17 @@ const ContentsCard = ({
   newTitle,
 }: ContentsCardProps) => {
   return (
-    <div className="w-full max-h-[121px] rounded-[2px] bg-white flex ring-1 items-center p-4 ring-brand-gray-50 mb-[24px] ">
-      <div className="flex-1 flex flex-col justify-between ">
+    <div className="w-[335px] h-[121px] desktop:w-[486px] desktop:h-[154px] rounded-[8px] bg-white flex ring-1 items-center  ring-brand-gray-50 p-[16px] desktop:p-[24px]">
+      <div className="flex-1 flex flex-col justify-between mt-[25px]  ">
         {newTitle && <NewTitle />}
         {hotTitle && <HotTitle />}
         <CommunityTitle text={communityTitle} />
-        <CommunitySubTitle text={subTitle} />
+        <CommunitySubTitle
+          text={subTitle}
+          hasImage={!!(imageSrc && imageSrc.length > 0)}
+        />
       </div>
-      <div className="ml-[48px] flex-shrink-0 w-[106px] aspect-[1/1]">
+      <div className="desktop:h-[106px] ml-[14px] desktop:ml-[48px] flex-shrink-0 mt-[25px] desktop:mt-[0px]">
         <ContentsImage src={imageSrc} />
       </div>
     </div>
