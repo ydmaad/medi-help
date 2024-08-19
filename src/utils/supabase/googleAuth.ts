@@ -14,9 +14,10 @@ export const signInWithGoogle = async () => {
     if (error) throw error;
 
     // 성공적으로 리다이렉트되면 여기까지 실행되지 않습니다.
-    console.log("google sign-in initiated:", data);
+    console.log("Google sign-in initiated:", data);
+    return { data, error: null };
   } catch (error) {
-    console.error("Error during google sign-in:", error);
-    throw error;
+    console.error("Error during Google sign-in:", error);
+    return { data: null, error };
   }
 };

@@ -15,8 +15,9 @@ export const signInWithKakao = async () => {
 
     // 성공적으로 리다이렉트되면 여기까지 실행되지 않습니다.
     console.log("Kakao sign-in initiated:", data);
+    return { data, error: null };
   } catch (error) {
     console.error("Error during Kakao sign-in:", error);
-    throw error;
+    return { data: null, error };
   }
 };

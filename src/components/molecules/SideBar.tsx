@@ -23,8 +23,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   return (
     <div
-      className={`w-[267px] h-[800px] rounded-tl-[20px] rounded-bl-[20px] shadow-[-16px_0_24px_rgba(0,0,0,16%)] bg-white transform transition-transform duration-300 fixed top-0 right-0 mt-[67px] ${
-        isOpen ? "translate-x-[0]" : "translate-x-[100%]"
+      className={`w-[267px] h-[800px] rounded-tl-[20px] rounded-bl-[20px]  bg-white transform transition-transform duration-300 fixed top-0 right-0 mt-[67px] ${
+        isOpen
+          ? "translate-x-[0] shadow-[-16px_0_24px_rgba(0,0,0,16%)]"
+          : "translate-x-[100%] "
       }`}
     >
       <div className="flex justify-between h-[67px]">
@@ -34,37 +36,29 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </div>
 
       <div className="flex w-[267px] my-[16px] mx-[20px]">
-        <SidebarBtn
-          text="로그인"
-          href="/auth/login"
-          onClick={() => handleNavigation("/auth/login")}
-        />
-        <SidebarBtn
-          text="회원가입"
-          href="/auth/signup"
-          onClick={() => handleNavigation("/auth/signup")}
-        />
+        <SidebarBtn text="로그인" href="/auth/login" onClick={onClose} />
+        <SidebarBtn text="회원가입" href="/auth/signup" onClick={onClose} />
       </div>
       <SidebarNav
-        imageSrc="sidebarsearch.svg"
+        imageSrc="/sidebarsearch.svg"
         text="약 검색"
         href="/search"
-        onClick={() => handleNavigation("/search")}
+        onClick={onClose}
       />
       <SidebarNav
-        imageSrc="sidebarcolumn.svg"
+        imageSrc="/sidebarcolumn.svg"
         text="칼럼"
         href="/magazine"
-        onClick={() => handleNavigation("/magazine")}
+        onClick={onClose}
       />
       <SidebarNav
-        imageSrc="sidebarcommunity.svg"
+        imageSrc="/sidebarcommunity.svg"
         text="커뮤니티"
         href="/community"
-        onClick={() => handleNavigation("/community")}
+        onClick={onClose}
       />
       <SidebarNav
-        imageSrc="sidebarcalendar.svg"
+        imageSrc="/sidebarcalendar.svg"
         text="복약달력"
         href="/calendar"
         onClick={() => handleNavigation("/calendar")}

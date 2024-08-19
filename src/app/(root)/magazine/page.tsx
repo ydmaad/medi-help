@@ -7,6 +7,7 @@ import MagazineTitle from "@/components/atoms/MagazineTitle";
 import Carousel from "@/components/molecules/Carousel";
 import Pagination from "@/components/molecules/Pagination";
 import ColumnCarousel from "@/components/molecules/ColumnCarousel";
+import ColumnCard from "@/components/molecules/ColumnCard";
 
 type Magazine = {
   id: string;
@@ -76,22 +77,43 @@ const MagazinePage = () => {
         <ColumnCarousel images={carouselImages} />
       </div>
       <MagazineTitle text="전체" />
+
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-3 gap-4">
-          {currentMagazines.map((magazine) => (
-            <SmCard
-              key={magazine.id}
-              src={magazine.imgs_url}
-              alt={magazine.title}
-              title={magazine.title}
-              subtitle={magazine.subtitle}
-              leftText={magazine.written_by}
-              rightText={magazine.reporting_date}
-              id={magazine.id}
-            />
-          ))}
+        <div className="hidden desktop:flex">
+          <div className="grid grid-cols-3 gap-4">
+            {currentMagazines.map((magazine) => (
+              <SmCard
+                key={magazine.id}
+                src={magazine.imgs_url}
+                alt={magazine.title}
+                title={magazine.title}
+                subtitle={magazine.subtitle}
+                leftText={magazine.written_by}
+                rightText={magazine.reporting_date}
+                id={magazine.id}
+              />
+            ))}
+          </div>
         </div>
+        <div className="flex desktop:hidden  items-center mx-auto max-w-[335px]">
+          <div className="grid grid-cols-1">
+            {currentMagazines.map((magazine) => (
+              <ColumnCard
+                key={magazine.id}
+                src=""
+                alt=""
+                imageSrc={magazine.imgs_url}
+                title={magazine.title}
+                subtitle={magazine.subtitle}
+                leftText={magazine.written_by}
+                rightText={magazine.reporting_date}
+                id={magazine.id}
+              />
+            ))}
+          </div>
+        </div>
+
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
