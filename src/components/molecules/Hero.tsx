@@ -15,7 +15,7 @@ const Hero = () => {
   return (
     <>
       <div className="relative hidden desktop:flex flex-col justify-center items-center">
-        <div className=" mt-[500px] mb-[132px] z-10  ">
+        <div className=" mt-[400px] mb-[132px] z-10  ">
           <Mouse />
         </div>
         <div className="text-[24px] font-bold text-brand-gray-1000 mb-[16px]  z-10 ">

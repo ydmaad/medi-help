@@ -112,7 +112,7 @@ const CommentItem = ({
                   <div className="flex justify-between ">
                     <div className="flex items-center">
                       <Image
-                        src={ment.user?.avatar || "/default-avatar.jpg"}
+                        src={ment.user?.avatar || "/defaultAvatar.svg"}
                         alt={"유저 이미지"}
                         width={40}
                         height={40}

@@ -22,7 +22,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
     null
   );
 
-  const defaultAvatarPath = "/default-avatar.jpg";
+  const defaultAvatarPath = "/defaultAvatar.svg";
 
   // 사용자 정보 초기화
   useEffect(() => {
