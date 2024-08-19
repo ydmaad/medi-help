@@ -63,14 +63,16 @@ const Page = () => {
     fetchPosts();
   }, []);
 
-  const limitedMagazines = magazines.slice(0, 3);
+  const limitedMagazines = magazines.slice(2, 5);
   const limitedMainMagazines = magazines.slice(0, 1);
   const limitedSubMagazines = magazines.slice(1, 2);
   const limitedPosts = posts.slice(0, 6);
 
   return (
     <>
-      <div className="absolute inset-0 z-0 mt-[67px]">{/*<BgLinear />*/}</div>
+      <div className="absolute inset-0 z-0 mt-[67px]">
+        <BgLinear />
+      </div>
       <Hero />
       <div className="flex justify-between max-w-[335px] desktop:max-w-[1000px] mx-auto mb-[10px]">
         <MainTitle text="매디칼럼" />
@@ -103,7 +105,7 @@ const Page = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-3 ">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}

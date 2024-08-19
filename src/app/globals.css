@@ -39,6 +39,7 @@
   border: 1px solid #f5f6f7 !important; /*gray-50*/
   box-shadow: inset 1px !important;
   padding: 1px;
+  background-color: white;
 }
 
 .fc-daygrid-day-top {
@@ -53,6 +54,7 @@
 .fc th {
   margin-bottom: 16px;
   color: #7c7f86; /*gray-600*/
+  background-color: white;
 }
 
 .fc-day-sun a {
