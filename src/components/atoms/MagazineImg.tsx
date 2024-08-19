@@ -35,9 +35,9 @@ const MagazineImg = ({
       >
         <Image src={src} alt={alt} layout="fill" className="object-cover" />
 
-        <div className="absolute bottom-8 left-1/2 flex flex-col items-center transform -translate-x-1/2 z-10 text-brand-gray-50">
+        <div className="absolute  desktop:bottom-8 bottom-5 left-5 desktop:left-1/2 flex flex-col  desktop:items-center  desktop:transform  desktop:-translate-x-1/2 z-10 text-brand-gray-50">
           <BarText />
-          <h1 className="whitespace-nowrap mt-[4px] text-xl font-bold ">
+          <h1 className="whitespace-nowrap mt-[4px] text-[16px] desktop:text-xl font-bold ">
             {title}
           </h1>
         </div>

@@ -12,7 +12,7 @@ const BarText = () => {
   }, [leftText, rightText]);
 
   return (
-    <div className="flex items-center text-[10px] desktop:text-sm mt-[2px]">
+    <div className="flex items-center text-[10px]  desktop:text-sm mt-[2px]">
       {isLoading ? (
         <>
           <div className="h-[12px] bg-gray-200 animate-pulse w-1/3 mb-1"></div>
