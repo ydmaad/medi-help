@@ -9,8 +9,9 @@ import LoadMoreButton from "@/components/atoms/LoadMoreButton";
 import MainTitle from "@/components/atoms/MainTitle";
 import ContentsCard from "@/components/molecules/ContentsCard";
 import BgLinear from "@/components/atoms/BgLinear";
+import Slider from "@/components/atoms/Slider";
 
-type Magazine = {
+export type Magazine = {
   id: string;
   title: string;
   imgs_url: string;
@@ -21,7 +22,7 @@ type Magazine = {
 type Post = {
   id: string;
   title: string;
-  img_url: string;
+  img_url: string[] | null;
   created_at: string;
   contents: string;
 };
@@ -69,17 +70,15 @@ const Page = () => {
 
   return (
     <>
-      <div className="absolute inset-0 z-0 mt-[67px]">
-        <BgLinear />
-      </div>
+      <div className="absolute inset-0 z-0 mt-[67px]">{/*<BgLinear />*/}</div>
       <Hero />
-      <div className="flex justify-between mb-[10px]">
+      <div className="flex justify-between max-w-[335px] desktop:max-w-[1000px] mx-auto mb-[10px]">
         <MainTitle text="매디칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
-      <div className="flex flex-col items-center">
+      <div className="hidden desktop:flex flex-col justify-center items-center ">
         {error && <p className="text-red-500">{error}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 w-full">
+        <div className="flex ">
           {limitedMainMagazines.map((magazine, index) => (
             <MainColum
               key={index}
@@ -103,7 +102,8 @@ const Page = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[26px] w-full">
+
+        <div className="grid grid-cols-3">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -117,19 +117,26 @@ const Page = () => {
           ))}
         </div>
       </div>
-      <div className="flex justify-between mb-[10px]">
+      {/*데탑때만 보임*/}
+      <div className=" overflow-hidden desktop:hidden w-full  ">
+        <Slider limitedMagazines={limitedMagazines} />
+      </div>
+
+      <div className="flex justify-between mb-[10px] max-w-[335px]  mt-[60px] desktop:max-w-[1000px] mx-auto">
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
-      <div className="flex justify-center items-center flex-col md:flex-row">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+      <div className="flex justify-center items-center flex-col desktop:flex-row max-w-[1000px] mx-auto">
+        <div className="grid grid-cols-1 desktop:grid-cols-2 gap-4 ">
           {limitedPosts.map((post, index) => (
             <ContentsCard
               key={index}
               hotTitle={null}
               newTitle="✨ NEW"
               communityTitle={post.title}
-              imageSrc={post.img_url}
+              imageSrc={
+                post.img_url && post.img_url.length > 0 ? post.img_url[0] : null
+              }
               subTitle={post.contents}
             />
           ))}

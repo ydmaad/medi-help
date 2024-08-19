@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { supabase } from '@/utils/supabase/client';
-import Image from 'next/image';
-import EditMediModal from './myPageModal/EditMediModal';
-import MediModal from './myPageModal/MediModal';
-import { format } from 'date-fns';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { supabase } from "@/utils/supabase/client";
+import Image from "next/image";
+import EditMediModal from "./myPageModal/EditMediModal";
+import MediModal from "./myPageModal/MediModal";
+import { format } from "date-fns";
 
 interface MediRecord {
   id: string;
@@ -28,10 +28,9 @@ interface MediRecord {
   repeat?: boolean;
 }
 
-
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return format(date, 'yy.MM.dd');
+  return format(date, "yy.MM.dd");
 };
 
 const Medications: React.FC = () => {
@@ -41,7 +40,6 @@ const Medications: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
-
 
   useEffect(() => {
     const fetchMediRecords = async () => {
@@ -66,17 +64,23 @@ const Medications: React.FC = () => {
     setIsViewModalOpen(true);
   };
 
+  const closeAllModals = () => {
+    setIsViewModalOpen(false);
+    setIsEditModalOpen(false);
+  };
+
   const handleUpdate = (updatedMediRecord: MediRecord) => {
-    setMediRecords((prevRecords) =>
-      prevRecords.map((record) =>
+    setMediRecords(prevRecords =>
+      prevRecords.map(record =>
         record.id === updatedMediRecord.id ? updatedMediRecord : record
       )
     );
+    closeAllModals();
   };
 
   const handleDelete = (id: string) => {
-    setMediRecords((prevRecords) =>
-      prevRecords.filter((record) => record.id !== id)
+    setMediRecords(prevRecords =>
+      prevRecords.filter(record => record.id !== id)
     );
   };
 
@@ -90,9 +94,28 @@ const Medications: React.FC = () => {
     setIsViewModalOpen(true);
   };
 
-  const ITEMS_PER_PAGE = isMobile ? 8 : 15;
+  // 카드 당 아이템 수 설정
+  const ITEMS_PER_PAGE_DESKTOP = 15; // 최대 15개
+  const ITEMS_PER_PAGE_MOBILE = 8; // 최대 8개
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const ITEMS_PER_PAGE = isMobile
+    ? Math.min(mediRecords.length, ITEMS_PER_PAGE_MOBILE)
+    : Math.min(mediRecords.length, ITEMS_PER_PAGE_DESKTOP);
+
   const totalPages = Math.ceil(mediRecords.length / ITEMS_PER_PAGE);
-  const currentRecords = mediRecords.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const currentRecords = mediRecords.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
@@ -100,92 +123,114 @@ const Medications: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-
-
-
-
-  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
-
   return (
-    <div className="max-w-screen-xl mx-auto px-4 py-4">
-      <div className="mx-auto max-w-[calc(100%-2rem)]"> {/* 새로운 div 추가 */}
-        <h2 className="text-2xl md:text-3xl font-bold mb-6 ml-7 mt-20 text-brand-gray-1000 text-left">복약 리스트</h2>
-        <div className={`grid ${
-  isMobile 
-    ? 'grid-cols-2 gap-4 justify-items-center' 
-    : 'grid-cols-5 gap-6'
-} mx-auto max-w-[calc(100%-2rem)]`}>
-  {currentRecords.map((record) => (
-    <div
-      key={record.id}
-      className="bg-white border border-brand-gray-50 p-3 md:p-4 rounded-2xl flex flex-col items-start cursor-pointer w-full h-full min-h-[190px] md:min-h-[300px] max-w-[170px] md:max-w-none flex-shrink-0"
-      onClick={() => handleMediClick(record)}
-    >
-      <div className="relative w-full pb-[66.67%] mb-2">
-        {record.itemImage ? (
-          <div className="absolute inset-1 rounded-xl overflow-hidden">
-            <Image
-              src={record.itemImage}
-              alt={record.medi_nickname || "약 이미지"}
-              layout="fill"
-              objectFit="cover"
-            />
+    <div className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-hidden">
+      <div className="w-full md:w-[670px] mx-auto mt-16 md:mt-24">
+        {/* 제목과 카드 컨테이너 */}
+        <div className="relative">
+          {/* 제목과 카드 컨테이너를 감싼 div */}
+          <div className="relative">
+            {/* 제목 */}
+            <h2 className={`text-[20px] md:text-[24px] font-bold text-brand-gray-800 mb-4 ${isMobile ? 'absolute left-0 top-0 w-full px-4' : 'mb-8'}`}>
+              복약 리스트
+            </h2>
+            
+            {/* 카드 컨테이너 */}
+            <div className={`flex justify-center ${isMobile ? 'pt-16' : ''}`}>
+              <div className={`overflow-hidden ${isMobile ? 'w-[335px]' : 'w-full'}`}>
+                <div
+                  className={`grid ${
+                    isMobile ? "grid-cols-2" : "grid-cols-5"
+                  } gap-${isMobile ? '4' : '6'}`}
+                  style={{ gap: isMobile ? '17px' : '24px' }}
+                >
+                  {currentRecords.map((record) => (
+                    <div
+                      key={record.id}
+                      className={`bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center cursor-pointer p-4 ${
+                        isMobile ? "w-[159px] h-[200px]" : "w-[159px] h-[200px]"
+                      }`}
+                      onClick={() => handleMediClick(record)}
+                    >
+                      <div className="w-[127px] h-[72px] mb-2">
+                        {record.itemImage ? (
+                          <Image
+                            src={record.itemImage}
+                            alt={record.medi_nickname || "약 이미지"}
+                            width={127}
+                            height={72}
+                            layout="responsive"
+                            objectFit="cover"
+                            className="rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
+                            <p className="text-brand-gray-400 text-xs">이미지 없음</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col justify-between w-full flex-grow">
+                        <div className="mb-2">
+                          <p className="text-[14px] md:text-sm font-bold text-brand-gray-1000 line-clamp-1">
+                            {record.medi_nickname}
+                          </p>
+                          <p className="text-[12px] md:text-xs text-brand-gray-800 line-clamp-1 mt-1">
+                            {record.medi_name}
+                          </p>
+                        </div>
+                        <p className="text-[10px] md:text-xs text-brand-primary-500 truncate mt-4">
+                          {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="absolute inset-1 flex items-center justify-center bg-gray-200 rounded-xl">
-            <p className="text-brand-gray-400 text-xs md:text-sm">이미지 없음</p>
-          </div>
-        )}
+        </div>
+        
+        {/* 페이지네이션 */}
+        <div className="flex justify-center mt-4 space-x-1">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            className={`px-4 py-2 ${
+              currentPage === 1
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
+            disabled={currentPage === 1}
+          >
+            &lt;
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 ${
+                currentPage === index + 1
+                  ? "text-brand-primary-600"
+                  : "text-brand-gray-700"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            className={`px-4 py-2 ${
+              currentPage === totalPages
+                ? "text-brand-gray-400 cursor-not-allowed"
+                : "text-brand-gray-700"
+            }`}
+            disabled={currentPage === totalPages}
+          >
+            &gt;
+          </button>
+        </div>
       </div>
-      <div className="flex flex-col justify-start flex-grow w-full space-y-0.5">
-        <p className="text-base md:text-lg font-bold text-brand-gray-1000 line-clamp-2">{record.medi_nickname}</p>
-        <p className="text-sm md:text-base text-brand-gray-800 line-clamp-1">{record.medi_name}</p>
-        <p className="text-sm md:text-sm text-brand-primary-500 line-clamp-1">
-          {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
-        </p>
-      </div>
-    </div>
-  ))}
-</div>
-<div className="flex justify-center mt-4 space-x-1">
-  <button
-    className="px-4 py-2 text-brand-gray-400"
-    disabled={currentPage === 1}
-    onClick={() => handlePageChange(currentPage - 1)}
-  >
-    &lt;
-  </button>
-  {pageNumbers.map((pageNumber) => (
-    <button
-      key={pageNumber}
-      className={`px-4 py-2 ${
-        currentPage === pageNumber 
-          ? 'text-brand-gray-1000 font-bold' 
-          : 'text-brand-gray-400'
-      }`}
-      onClick={() => handlePageChange(pageNumber)}
-    >
-      {pageNumber}
-    </button>
-  ))}
-  <button
-    className="px-4 py-2 text-brand-gray-400"
-    disabled={currentPage === totalPages}
-    onClick={() => handlePageChange(currentPage + 1)}
-  >
-    &gt;
-  </button>
-</div>
-    {selectedMediRecord && (
+
+      {selectedMediRecord && (
         <>
           <MediModal
             isOpen={isViewModalOpen}
@@ -195,17 +240,15 @@ const Medications: React.FC = () => {
           />
           <EditMediModal
             isOpen={isEditModalOpen}
-            onRequestClose={closeEditModal}
+            onRequestClose={closeAllModals}
             onDelete={handleDelete}
             onUpdate={handleUpdate}
             mediRecord={selectedMediRecord}
           />
         </>
       )}
-      </div>
     </div>
   );
-  
 };
 
 export default Medications;

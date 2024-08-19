@@ -147,16 +147,16 @@ const PostDetail = ({ id }: PostDetailProps) => {
 
   return (
     <>
-      <div className="max-w-3xl mx-auto overflow-hidden mt-20">
+      <div className="max-w-[996px] mx-auto overflow-hidden">
         <div className="flex flex-col">
-          <div className="text-left px-4 py-2">
+          <div className="text-left py-2">
             <span className="text-lg desktop:text-xl text-brand-gray-400">
               {post.category}
             </span>
           </div>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold px-3 desktop:text-[32px]">
+              <h1 className="text-xl font-bold desktop:text-[32px]">
                 {post.title}
               </h1>
               <button
@@ -173,7 +173,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
             </div>
             <button
               onClick={handleBookmark}
-              className="flex desktop:hidden mr-5 items-center"
+              className="flex desktop:hidden items-center"
             >
               <Image
                 src={isBookmark ? "/bookmark.svg" : "/emptyBookmark.svg"}
@@ -185,9 +185,9 @@ const PostDetail = ({ id }: PostDetailProps) => {
           </div>
         </div>
 
-        <div className="flex justify-between items-center px-2 py-3">
+        <div className="flex justify-between items-center py-3">
           <div className="flex items-center space-x-2">
-            <p className="text-base  font-extrabold text-brand-gray-800 pl-2">
+            <p className="text-base font-extrabold text-brand-gray-800">
               {post.user?.nickname}
             </p>
             <div className="mx-2 h-4 w-px bg-gray-300"></div>
@@ -261,26 +261,27 @@ const PostDetail = ({ id }: PostDetailProps) => {
         </div>
         {/* 버튼 ===================== */}
 
-        {/* 여러 이미지 표시 */}
-        <div className="p-5 flex flex-wrap gap-4">
-          {post.img_url?.map((url, index) => (
-            <div key={index}>
-              <Image
-                src={url.trim()}
-                alt={`게시글 이미지 ${index + 1}`}
-                width={300}
-                height={200}
-                priority
-                style={{ width: "100%", height: "auto" }}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="p-5 max-w-[1000px] ">
+        <div className="max-w-[996px] mt-[34px] desktop:mt-[44px]">
+          {/* 여러 이미지 표시 */}
+          <div
+            className={`flex flex-wrap gap-4 ${post.img_url?.length === 0 ? "p-0" : "p-5"}`}
+          >
+            {post.img_url?.map((url, index) => (
+              <div key={index}>
+                <Image
+                  src={url.trim()}
+                  alt={`게시글 이미지 ${index + 1}`}
+                  width={300}
+                  height={200}
+                  priority
+                  style={{ width: "100%", height: "auto" }}
+                />
+              </div>
+            ))}
+          </div>
           <div>{formatContent(post.contents)}</div>
         </div>
-        <div className="mx-[18px] mb-[4px]">
+        <div className=" mb-[4px]">
           <p className="text-[14px] desktop:text-[16px] text-brand-gray-600">
             전체 댓글
             <span className="text-[14px] desktop:text-[16px] ml-[5px] font-black text-brand-primary-500">

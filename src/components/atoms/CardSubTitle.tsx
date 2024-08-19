@@ -1,19 +1,18 @@
-import React, { useContext } from "react";
-import ImageContext from "@/contexts/ImageContext";
+"use client";
 
-const CardSubTitle = () => {
-  const context = useContext(ImageContext);
+import React from "react";
 
-  if (!context) {
-    return null;
-  }
-  const { subtitle } = context;
+interface CardSubTitleProps {
+  text: string;
+  lineClamp: string;
+}
 
+const CardSubTitle = ({ text, lineClamp }: CardSubTitleProps) => {
   return (
-    <div className="w-[316px] overflow-hidden">
-      <h2 className="text-base text-left overflow-hidden text-brand-gray-800 text-ellipsis whitespace-nowrap">
-        {subtitle}
-      </h2>
+    <div
+      className={`text-gray-800 text-[12px] desktop:text-[16px] ${lineClamp} overflow-hidden text-ellipsis mt-[2px]`}
+    >
+      {text}
     </div>
   );
 };

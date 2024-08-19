@@ -5,12 +5,14 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const pageNo = parseInt(url.searchParams.get("pageNo") || "1");
   const numOfRows = parseInt(url.searchParams.get("numOfRows") || "20");
+  const searchTerm = url.searchParams.get("searchTerm") || "";
 
   try {
     const { data, error, count } = await supabase
       .from("search_medicine")
-      .select("*", { count: "exact" });
-    // .range((pageNo - 1) * numOfRows, pageNo * numOfRows - 1); //모든 데이터를 받아오려면 해당 매서드를 사용해서 우회해야하지만 우회 하게 되면 데이터는 받아와지지만 ui가 적용이 안되는 오류 발생.
+      .select("*", { count: "exact" })
+      .ilike("itemName", `%${searchTerm}%`)
+      .range((pageNo - 1) * numOfRows, pageNo * numOfRows - 1);
 
     if (error) {
       return NextResponse.json(

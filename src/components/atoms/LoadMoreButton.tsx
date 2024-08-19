@@ -17,9 +17,14 @@ const LoadMoreButton = ({ targetPage }: LoadMoreButtonProps) => {
   return (
     <button
       onClick={handleClick}
-      className="text-brand-gray-600 font-bold text-[20px]"
+      className="flex items-center text-brand-gray-600 desktop:font-bold desktop:text-[20px] text-[14px]"
     >
       더보기
+      <img
+        src="/extraleftbtn.svg"
+        alt="더보기버튼"
+        className="flex desktop:hidden w-[20px] h-[20px] ml-[4px]"
+      />
     </button>
   );
 };

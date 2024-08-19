@@ -21,6 +21,7 @@ import {
   useValuesStore,
 } from "@/store/calendar";
 import uuid from "react-uuid";
+import { GoPlus } from "react-icons/go";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
@@ -90,8 +91,6 @@ const CalendarView = () => {
                       return medicine.medi_time === time;
                     }
                   );
-
-                  console.log(eventList);
 
                   const newEventList = eventList.filter((e: any) => {
                     return mediNames.includes(e.medications.medi_nickname);
@@ -186,6 +185,12 @@ const CalendarView = () => {
       return event.extendProps.medi_time === "morning";
     })[0];
 
+    if (filteredCalendar.length || editList.length) {
+      setViewEvents(true);
+    } else {
+      setViewEvents(false);
+    }
+
     setValues({
       ...values,
       id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
@@ -237,6 +242,8 @@ const CalendarView = () => {
       <DetailModal
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
+        viewEvents={viewEvents}
+        setViewEvents={setViewEvents}
       />
       <AddMediModal
         isOpen={openAddMediModal}
@@ -255,10 +262,10 @@ const CalendarView = () => {
           ]);
         }}
       />
-      <div className="w-full flex flex-col mt-20">
-        <div className="relative w-[812px] aspect-square p-[10px] max-[414px]:w-[364px]">
-          <div className="absolute w-2/3 flex items-center min-[414px]:justify-between right-12 top-4">
-            <div className="max-[414px]:absolute flex items-center gap-2 max-[414px]:right-0 max-[414px]:top-[6px] text-sm max-[414px]:text-xs">
+      <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4 desktop:mt-20">
+        <div className="relative min-w-[364px]">
+          <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
+            <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
@@ -272,7 +279,6 @@ const CalendarView = () => {
                 />
                 점심
               </div>
-
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#103769] inline-block mr-1`}
@@ -280,45 +286,52 @@ const CalendarView = () => {
                 저녁
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 ">
               <button
                 onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
-                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:bg-brand-primary-500 hover:text-white ease-in duration-300 max-[414px]:hidden outline-none"
+                className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:border-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
               >
                 약 등록
               </button>
 
               <button
                 onClick={handleButtonClick}
-                className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-brand-primary-500 rounded-[4px] hover:bg-white hover:text-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
+                className="w-24 px-3 py-1 bg-brand-primary-500 text-sm text-white border border-brand-primary-500 rounded-[4px] hover:bg-brand-primary-50 hover:text-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
               >
                 기록추가
               </button>
             </div>
           </div>
-
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            events={events}
-            dateClick={handleDateClick}
-            selectable={true}
-            eventOverlap={false}
-            displayEventTime={false}
-            headerToolbar={{
-              left: "prev title next",
-              center: "",
-              right: "",
-            }}
-            locale="ko"
-            contentHeight={"auto"}
-            fixedWeekCount={false}
-            dayCellContent={(arg) => {
-              return <i>{arg.dayNumberText.replace("일", "")}</i>;
-            }}
-          />
+          <div>
+            <FullCalendar
+              plugins={[dayGridPlugin, interactionPlugin]}
+              initialView="dayGridMonth"
+              events={events}
+              dateClick={handleDateClick}
+              selectable={true}
+              eventOverlap={false}
+              displayEventTime={false}
+              headerToolbar={{
+                left: "prev title next",
+                center: "",
+                right: "",
+              }}
+              locale="ko"
+              contentHeight={"auto"}
+              fixedWeekCount={false}
+              dayCellContent={(arg) => {
+                return <i>{arg.dayNumberText.replace("일", "")}</i>;
+              }}
+            />
+          </div>
         </div>
         <MobileCalendarView />
+        <button
+          onClick={() => {}}
+          className="desktop:hidden fixed w-[60px] h-[60px] rounded-full bottom-20 right-10 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-20 hover:scale-105 ease-in duration-300"
+        >
+          <GoPlus />
+        </button>
       </div>
     </>
   );
