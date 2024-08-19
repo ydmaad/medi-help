@@ -20,6 +20,7 @@ export const toastStates = [
   "warning",
   "info",
   "loading",
+  "ok",
 ] as const;
 
 export interface ToastProps {
@@ -49,10 +50,11 @@ export const Toast: React.FC<ToastProps & OverlayProps> = ({
     warning: "bg-[#ffffff] text-[#fcb819]",
     info: "bg-[#ffffff]o",
     loading: "bg-[#ffffff] text-primary-reverse",
+    ok: "bg-brand-primary-300",
   };
 
   useTimeout(() => {
-    if (state !== "loading") close();
+    if (state !== "loading" && state !== "ok") close();
   }, duration);
 
   return (
@@ -66,6 +68,7 @@ export const Toast: React.FC<ToastProps & OverlayProps> = ({
           onClick={close}
           className="text-sta fixed bottom-0 flex w-full cursor-default justify-center"
         >
+          {/* 토스트 창 */}
           <div
             className={clsx(
               "mx-auto flex items-center rounded-full px-4 py-3 shadow-md shadow-gray-400/30",
