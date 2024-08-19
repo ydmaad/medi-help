@@ -94,8 +94,9 @@ const Medications: React.FC = () => {
     setIsViewModalOpen(true);
   };
 
-  const ITEMS_PER_PAGE_DESKTOP = 15;
-  const ITEMS_PER_PAGE_MOBILE = 8;
+  // 카드 당 아이템 수 설정
+  const ITEMS_PER_PAGE_DESKTOP = 15; // 최대 15개
+  const ITEMS_PER_PAGE_MOBILE = 8; // 최대 8개
 
   useEffect(() => {
     const handleResize = () => {
@@ -108,7 +109,7 @@ const Medications: React.FC = () => {
 
   const ITEMS_PER_PAGE = isMobile
     ? Math.min(mediRecords.length, ITEMS_PER_PAGE_MOBILE)
-    : ITEMS_PER_PAGE_DESKTOP;
+    : Math.min(mediRecords.length, ITEMS_PER_PAGE_DESKTOP);
 
   const totalPages = Math.ceil(mediRecords.length / ITEMS_PER_PAGE);
   const currentRecords = mediRecords.slice(
@@ -126,8 +127,10 @@ const Medications: React.FC = () => {
     <div className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-hidden">
       <div className="w-full md:w-[670px] mx-auto mt-16 md:mt-24">
         {/* 제목 */}
-        <h2 className="text-2xl md:text-3xl font-bold mb-6 text-brand-gray-800">
-          복약 리스트
+        <h2 className="text-[16px] md:text-[18px] font-bold text-brand-gray-1000 mb-4 flex items-center">
+          <span>나의 복용약</span>
+          <span className="text-[#279ef9] ml-1 text-[16px]">{mediRecords.length}개</span>
+          <span className="text-[#279ef9] ml-1 text-[16px]">&gt;</span>
         </h2>
         
         {/* 약품 카드 컨테이너 */}
@@ -137,43 +140,43 @@ const Medications: React.FC = () => {
               className={`grid ${
                 isMobile ? "grid-cols-2" : "grid-cols-5"
               } gap-${isMobile ? '4' : '6'}`}
-              style={{ gap: isMobile ? '17px' : '24px' }}  
+              style={{ gap: isMobile ? '17px' : '24px' }}
             >
               {currentRecords.map((record) => (
                 <div
                   key={record.id}
-                  className={`${
-                    isMobile ? "w-[159px] h-[200px]" : "w-[180px] h-[217px]"
-                  } bg-white border border-brand-gray-50 p-4 rounded-xl flex flex-col justify-between cursor-pointer`}
+                  className={`bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center cursor-pointer p-4 ${
+                    isMobile ? "w-[159px] h-[200px]" : "w-[159px] h-[200px]"
+                  }`}
                   onClick={() => handleMediClick(record)}
-                  style={{ width: isMobile ? '159px' : '180px' }} 
                 >
-                  <div className="w-full flex items-center justify-center mb-2">
+                  <div className="w-[127px] h-[72px] mb-2">
                     {record.itemImage ? (
-                      <div className="w-[127px] h-[72px] rounded-lg overflow-hidden">
-                        <Image
-                          src={record.itemImage}
-                          alt={record.medi_nickname || "약 이미지"}
-                          width={127}
-                          height={72}
-                          objectFit="cover"
-                          className="rounded-lg"
-                        />
-                      </div>
+                      <Image
+                        src={record.itemImage}
+                        alt={record.medi_nickname || "약 이미지"}
+                        width={127}
+                        height={72}
+                        layout="responsive"
+                        objectFit="cover"
+                        className="rounded-lg"
+                      />
                     ) : (
-                      <div className="w-[127px] h-[72px] flex items-center justify-center bg-brand-gray-200 rounded-lg">
+                      <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
                         <p className="text-brand-gray-400 text-xs">이미지 없음</p>
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col items-start justify-between w-full">
-                    <p className="text-[14px] font-bold text-brand-gray-1000 mb-2 line-clamp-1">
-                      {record.medi_nickname}
-                    </p>
-                    <p className="text-[12px] text-brand-gray-800 mb-2 line-clamp-1">
-                      {record.medi_name}
-                    </p>
-                    <p className="text-[12px] text-brand-primary-500">
+                  <div className="flex flex-col justify-between w-full flex-grow">
+                    <div className="mb-2">
+                      <p className="text-[14px] md:text-sm font-bold text-brand-gray-1000 line-clamp-1">
+                        {record.medi_nickname}
+                      </p>
+                      <p className="text-[12px] md:text-xs text-brand-gray-800 line-clamp-1 mt-1">
+                        {record.medi_name}
+                      </p>
+                    </div>
+                    <p className="text-[10px] md:text-xs text-brand-primary-500 truncate mt-4">
                       {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
                     </p>
                   </div>
