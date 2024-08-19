@@ -126,61 +126,66 @@ const Medications: React.FC = () => {
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-hidden">
       <div className="w-full md:w-[670px] mx-auto mt-16 md:mt-24">
-        {/* 제목 */}
-        <h2 className="text-[16px] md:text-[18px] font-bold text-brand-gray-1000 mb-4 flex items-center">
-          <span>복약 리스트</span>
-       
-        </h2>
-        
-        {/* 약품 카드 컨테이너 */}
-        <div className="flex justify-center">
-          <div className={`overflow-hidden ${isMobile ? 'w-[335px]' : 'w-full'}`}>
-            <div
-              className={`grid ${
-                isMobile ? "grid-cols-2" : "grid-cols-5"
-              } gap-${isMobile ? '4' : '6'}`}
-              style={{ gap: isMobile ? '17px' : '24px' }}
-            >
-              {currentRecords.map((record) => (
+        {/* 제목과 카드 컨테이너 */}
+        <div className="relative">
+          {/* 제목과 카드 컨테이너를 감싼 div */}
+          <div className="relative">
+            {/* 제목 */}
+            <h2 className={`text-[20px] md:text-[24px] font-bold text-brand-gray-800 mb-4 ${isMobile ? 'absolute left-0 top-0 w-full px-4' : 'mb-8'}`}>
+              복약 리스트
+            </h2>
+            
+            {/* 카드 컨테이너 */}
+            <div className={`flex justify-center ${isMobile ? 'pt-16' : ''}`}>
+              <div className={`overflow-hidden ${isMobile ? 'w-[335px]' : 'w-full'}`}>
                 <div
-                  key={record.id}
-                  className={`bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center cursor-pointer p-4 ${
-                    isMobile ? "w-[159px] h-[200px]" : "w-[159px] h-[200px]"
-                  }`}
-                  onClick={() => handleMediClick(record)}
+                  className={`grid ${
+                    isMobile ? "grid-cols-2" : "grid-cols-5"
+                  } gap-${isMobile ? '4' : '6'}`}
+                  style={{ gap: isMobile ? '17px' : '24px' }}
                 >
-                  <div className="w-[127px] h-[72px] mb-2">
-                    {record.itemImage ? (
-                      <Image
-                        src={record.itemImage}
-                        alt={record.medi_nickname || "약 이미지"}
-                        width={127}
-                        height={72}
-                        layout="responsive"
-                        objectFit="cover"
-                        className="rounded-lg"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
-                        <p className="text-brand-gray-400 text-xs">이미지 없음</p>
+                  {currentRecords.map((record) => (
+                    <div
+                      key={record.id}
+                      className={`bg-white border border-brand-gray-50 rounded-xl flex flex-col items-center cursor-pointer p-4 ${
+                        isMobile ? "w-[159px] h-[200px]" : "w-[159px] h-[200px]"
+                      }`}
+                      onClick={() => handleMediClick(record)}
+                    >
+                      <div className="w-[127px] h-[72px] mb-2">
+                        {record.itemImage ? (
+                          <Image
+                            src={record.itemImage}
+                            alt={record.medi_nickname || "약 이미지"}
+                            width={127}
+                            height={72}
+                            layout="responsive"
+                            objectFit="cover"
+                            className="rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-brand-gray-200 rounded-lg">
+                            <p className="text-brand-gray-400 text-xs">이미지 없음</p>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col justify-between w-full flex-grow">
-                    <div className="mb-2">
-                      <p className="text-[14px] md:text-sm font-bold text-brand-gray-1000 line-clamp-1">
-                        {record.medi_nickname}
-                      </p>
-                      <p className="text-[12px] md:text-xs text-brand-gray-800 line-clamp-1 mt-1">
-                        {record.medi_name}
-                      </p>
+                      <div className="flex flex-col justify-between w-full flex-grow">
+                        <div className="mb-2">
+                          <p className="text-[14px] md:text-sm font-bold text-brand-gray-1000 line-clamp-1">
+                            {record.medi_nickname}
+                          </p>
+                          <p className="text-[12px] md:text-xs text-brand-gray-800 line-clamp-1 mt-1">
+                            {record.medi_name}
+                          </p>
+                        </div>
+                        <p className="text-[10px] md:text-xs text-brand-primary-500 truncate mt-4">
+                          {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-[10px] md:text-xs text-brand-primary-500 truncate mt-4">
-                      {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
-                    </p>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
