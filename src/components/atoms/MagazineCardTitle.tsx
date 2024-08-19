@@ -6,7 +6,7 @@ interface SemiTitleType {
 
 const MagazineCardTitle = ({ text }: SemiTitleType) => {
   return (
-    <div className="mt-[16px] mb-[4px] text-[16px] font-bold text-brand-gray-1000">
+    <div className=" mb-[4px] text-[16px] font-bold text-brand-gray-1000 line-clamp-1 overflow-hidden text-ellipsis">
       {text}
     </div>
   );
