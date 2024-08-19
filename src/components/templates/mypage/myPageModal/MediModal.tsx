@@ -48,10 +48,10 @@ const MediModal: React.FC<MediModalProps> = ({
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       contentLabel="Medication Details"
-      className="fixed inset-0 flex items-center justify-center z-50"
+      className="fixed inset-0 flex items-center justify-center z-50 px-4 py-6"
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
     >
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg mx-auto relative">
+      <div className="bg-white rounded-md shadow-lg p-6 w-full max-w-[432px] mx-auto relative max-h-[90vh] overflow-y-auto">
         <button
           type="button"
           onClick={onRequestClose}
@@ -60,44 +60,41 @@ const MediModal: React.FC<MediModalProps> = ({
           <FaTimes className="text-xl" />
         </button>
 
-        <div className="mb-6 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">{mediRecord.medi_nickname}</h2>
-        </div>
+        <h2 className="text-[16px] font-bold mb-5">{mediRecord.medi_nickname}</h2>
 
-        {/* Grouping the sections */}
-        <div className="mb-12 grid gap-4">
-          <div className="grid grid-cols-[25%_3%_72%] items-center">
-            <p className="text-gray-700 font-semibold">약 이름</p>
-            <p className="text-left">|</p>
-            <p className="text-gray-700">{mediRecord.medi_name}</p>
+        <div className="flex flex-col space-y-6 mb-10">
+          <div className="flex items-center">
+            <span className="w-20 text-brand-gray-600">약 정보</span>
+            <span className="px-2 text-brand-gray-600">|</span>
+            <span className="text-brand-primary-500">{mediRecord.medi_name}</span>
           </div>
 
-          <div className="grid grid-cols-[25%_3%_72%] items-center">
-            <p className="text-gray-700 font-semibold">복용 시간대</p>
-            <p className="text-left">|</p>
-            <p className="text-gray-700">{formatTimes()}</p>
+          <div className="flex items-center">
+            <span className="w-20 text-brand-gray-600">복용시간대</span>
+            <span className="px-2 text-brand-gray-600">|</span>
+            <span className="text-brand-gray-1000">{formatTimes()}</span>
           </div>
 
-          <div className="grid grid-cols-[25%_3%_72%] items-center">
-            <p className="text-gray-700 font-semibold">복용 기간</p>
-            <p className="text-left">|</p>
-            <p className="text-gray-700">
+          <div className="flex items-center">
+            <span className="w-20 text-brand-gray-600">복용기간</span>
+            <span className="px-2 text-brand-gray-600">|</span>
+            <span className="text-brand-gray-1000">
               {mediRecord.start_date} ~ {mediRecord.end_date}
-            </p>
+            </span>
           </div>
 
-          <div className="grid grid-cols-[25%_3%_72%] items-center">
-            <p className="text-gray-700 font-semibold">메모</p>
-            <p className="text-left">|</p>
-            <p className="text-gray-700">{mediRecord.notes}</p>
+          <div className="flex items-center">
+            <span className="w-20 text-brand-gray-600">메모</span>
+            <span className="px-2 text-brand-gray-600">|</span>
+            <span className="text-brand-gray-1000">{mediRecord.notes}</span>
           </div>
         </div>
 
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex justify-center w-full">
+        <div className="flex justify-center">
           <button
             type="button"
             onClick={onEditClick}
-            className="bg-blue-500 text-white px-6 py-2 rounded flex items-center"
+            className="w-[107px] h-[40px] bg-brand-primary-500 text-white rounded-md flex items-center justify-center"
           >
             <FaEdit className="mr-2" /> 편집
           </button>
