@@ -82,22 +82,22 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
 
   return (
     <div className={`${className} w-full flex justify-center desktop:block`}>
-      <div className="w-[335px] desktop:w-[670px] overflow-hidden bg-white desktop:rounded-2xl desktop:bg-brand-gray-50 desktop:shadow-md">
-        <div className="desktop:px-[49px] desktop:pt-[41px] desktop:pb-[50px]">
+      <div className="w-[335px] desktop:w-[670px] desktop:h-[352px] overflow-hidden bg-white desktop:rounded-2xl desktop:bg-brand-gray-50 desktop:shadow-sm">
+        <div className="desktop:px-[49px] desktop:pt-[41px] desktop:pb-[50px] h-full">
           <h2
             className="text-[16px] font-bold text-brand-gray-1000 text-left cursor-pointer mb-2 flex items-center"
             onClick={handleShowAllClick}
           >
-            <span>나의 복용약</span>
-            <span className="text-[#279ef9] ml-1">
+            <span className="mb-3 text-[16px]">나의 복용약</span>
+            <span className="text-[#279ef9] ml-1 mb-3 text-[16px]">
               {mediRecords.length}개
             </span>
-            <span className="text-[#279ef9] ml-1">
+            <span className="text-[#279ef9] ml-1 mb-3 text-[16px]">
               &gt;
             </span>
           </h2>
 
-          <div className="w-full">
+          <div className="w-full h-full">
             <div className="grid grid-cols-2 gap-[17px] desktop:grid-cols-3 desktop:gap-4">
               {displayedMediRecords.map((record) => (
                 <div 
@@ -142,15 +142,6 @@ const MediLists: React.FC<MediListsProps> = ({ className }) => {
           </div>
         </div>
       </div>
-
-      {selectedMediRecord && (
-        <MediModal
-          isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}
-          mediRecord={selectedMediRecord}
-          onEditClick={() => console.log("Edit clicked")}
-        />
-      )}
     </div>
   );
 };
