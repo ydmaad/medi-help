@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, PostgrestError } from '@supabase/supabase-js';
+import { sendEmail } from '@/utils/sendEmail';
+import { generateNotificationMessage } from '@/utils/notificationMessage';
 import '@/utils/scheduleEmail'; // 스케줄링 로직을 불러옵니다.
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -69,6 +71,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Send Email
+    const user = await supabase
+      .from('users')
+      .select('email, nickname')
+      .eq('id', newMediRecord.user_id)
+      .single();
+
+    if (user.error || !user.data) {
+      console.error('Failed to fetch user email:', user.error);
+      return NextResponse.json({ error: 'Failed to fetch user email' }, { status: 500 });
+    }
+
+    const { subject, message } = generateNotificationMessage({
+      medi_nickname: newMediRecord.medi_nickname,
+      medi_name: newMediRecord.medi_name,
+      user_nickname: user.data.nickname,
+      notes: newMediRecord.notes,
+    });
+
+    try {
+      await sendEmail({
+        to: user.data.email,
+        subject,
+        text: message,
+      });
+      console.log('Email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send email:', emailError);
+    }
+
     return NextResponse.json({ medicationRecords: data }, { status: 201 });
   } catch (err: unknown) {
     console.error("Server error:", err instanceof Error ? err.message : 'Unknown error');
@@ -96,6 +128,36 @@ export async function PUT(req: NextRequest) {
       console.error("Supabase error:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    // Send Email
+    const user = await supabase
+      .from('users')
+      .select('email, nickname')
+      .eq('id', updatedMediRecord.user_id)
+      .single();
+
+    if (user.error || !user.data) {
+      console.error('Failed to fetch user email:', user.error);
+      return NextResponse.json({ error: 'Failed to fetch user email' }, { status: 500 });
+    }
+
+    const { subject, message } = generateNotificationMessage({
+      medi_nickname: updatedMediRecord.medi_nickname,
+      medi_name: updatedMediRecord.medi_name,
+      user_nickname: user.data.nickname,
+      notes: updatedMediRecord.notes,
+    });
+
+    await supabase
+    .from('medications')
+    .update({is_sent : true})
+    .eq('id',updatedMediRecord.id);
+
+    await sendEmail({
+      to: user.data.email,
+      subject,
+      text: message,
+    });
 
     return NextResponse.json({ medicationRecords: data }, { status: 200 });
   } catch (err: unknown) {
