@@ -43,8 +43,12 @@ const SmCard = ({
         <div className="rounded-lg p-2 cursor-pointer" onClick={handleClick}>
           <div className="mb-[56px]">
             <CardImage />
-            <MagazineCardTitle text={title} />
-            <MagazineSubtitle text={subtitle} />
+            <div className="mt-[16px] mb-[16px]">
+              <MagazineCardTitle text={title} />
+              <div className="mb-[16px]">
+                <MagazineSubtitle text={subtitle} />
+              </div>
+            </div>
             <div className="text-brand-gray-600">
               <BarText />
             </div>
