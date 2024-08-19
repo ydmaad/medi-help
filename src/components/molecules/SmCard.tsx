@@ -1,9 +1,9 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { ImageProvider } from "@/contexts/ImageContext";
-import SmImage from "../atoms/SmImage";
-import CardTitle from "../atoms/CardTitle";
-import CardSubTitle from "../atoms/CardSubTitle";
+import CardImage from "../atoms/CardImage";
+import MagazineCardTitle from "../atoms/MagazineCardTitle";
+import MagazineSubtitle from "../atoms/MagazineSubtitle";
 import { BarTextProvider } from "@/contexts/BarTextContext";
 import BarText from "../atoms/BarText";
 
@@ -42,9 +42,9 @@ const SmCard = ({
       <BarTextProvider value={barTextValue}>
         <div className="rounded-lg p-2 cursor-pointer" onClick={handleClick}>
           <div className="mb-[56px]">
-            <SmImage />
-            <CardTitle />
-            <CardSubTitle text={subtitle} lineClamp="line-clamp-3" />
+            <CardImage />
+            <MagazineCardTitle text={title} />
+            <MagazineSubtitle text={subtitle} />
             <div className="text-brand-gray-600">
               <BarText />
             </div>

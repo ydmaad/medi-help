@@ -58,9 +58,9 @@ const MagazinePage = () => {
   const totalPages = Math.ceil(magazines.length / itemsPerPage);
 
   return (
-    <>
+    <div className="flex flex-col desktop:max-w-[1000px] mx-auto">
       <Title>👀 메디칼럼</Title>
-      <span className="text-brand-gray-600 font-extrabold mb-[60px]">
+      <span className="text-brand-gray-600 font-extrabold ">
         약에 관련된 모든 이야기를 전해드려요
       </span>
       <MagazineTitle text="에디터's PICK!" />
@@ -86,14 +86,13 @@ const MagazinePage = () => {
             />
           ))}
         </div>
-        {/* Pagination 컴포넌트 추가 */}
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
       </div>
-    </>
+    </div>
   );
 };
 
