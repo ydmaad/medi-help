@@ -13,14 +13,14 @@ const SignupSuccess: React.FC = () => {
 
   // 홈으로 버튼 클릭 핸들러
   const handleHomeClick = async () => {
-    if (user) {
-      // 현재 세션이 유효한지 확인합니다.
-      const { data, error } = await supabase.auth.getSession();
-      if (data.session) {
-        // 유효한 세션이 있으면 로그인 상태를 true로 설정합니다.
-        setIsLogedIn(true);
-      }
-    }
+    //   if (user) {
+    //     // 현재 세션이 유효한지 확인합니다.
+    //     const { data, error } = await supabase.auth.getSession();
+    //     if (data.session) {
+    //       // 유효한 세션이 있으면 로그인 상태를 true로 설정합니다.
+    //       setIsLogedIn(true);
+    //     }
+    //   }
     // 홈 페이지로 이동합니다.
     router.push("/");
   };
@@ -40,16 +40,16 @@ const SignupSuccess: React.FC = () => {
         <div className="flex justify-between">
           <button
             onClick={handleHomeClick} // 수정된 부분
-            className="w-[156px] h-[48px] mr-[24px] text-[18px] font-semibold rounded 
-                       bg-brand-primary-50 text-brand-primary-500 
+            className="w-[156px] h-[48px] mr-[24px] text-[18px] font-semibold rounded
+                       bg-brand-primary-50 text-brand-primary-500
                        hover:bg-brand-primary-100 transition-colors duration-300"
           >
             홈으로
           </button>
           <button
             onClick={handleLoginClick} // 수정된 부분
-            className="w-[204px] h-[48px] text-[18px] font-semibold rounded 
-                       bg-brand-primary-500 text-white 
+            className="w-[204px] h-[48px] text-[18px] font-semibold rounded
+                       bg-brand-primary-500 text-white
                        hover:bg-brand-primary-600 transition-colors duration-300"
           >
             로그인

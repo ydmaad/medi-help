@@ -17,6 +17,7 @@ export async function GET(request: Request) {
 
       if (data.user) {
         // 사용자 정보를 데이터베이스에 저장 또는 업데이트
+
         const { data: userData, error: upsertError } = await supabase
           .from("users")
           .upsert(
