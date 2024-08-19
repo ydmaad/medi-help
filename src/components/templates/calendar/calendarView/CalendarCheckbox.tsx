@@ -101,6 +101,7 @@ const CalendarCheckbox = () => {
         overlayClassName="fixed inset-0 bg-black/[0.3] z-20 desktop:hidden "
         ariaHideApp={false}
       >
+        <div className="bg-brand-gray-400 w-16 h-1 rounded-md mx-auto mt-4" />
         <h2 className="text-[18px] text-brand-gray-800 font-black desktop:font-normal desktop:text-brand-gray-600 desktop:text-[14px] mt-6 mb-4 px-[10px] py-[12px] desktop:px-0 desktop:py-[8px]">
           복약 필터
         </h2>

@@ -262,7 +262,7 @@ const CalendarView = () => {
           ]);
         }}
       />
-      <div className="relative desktop:static w-full mx-auto flex flex-col items-center gap-4 desktop:mt-20">
+      <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4 desktop:mt-20">
         <div className="relative min-w-[364px]">
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
             <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex">
@@ -328,7 +328,7 @@ const CalendarView = () => {
         <MobileCalendarView />
         <button
           onClick={() => {}}
-          className="desktop:hidden absolute w-[60px] h-[60px] rounded-full bottom-28 right-0 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-20 hover:scale-105 ease-in duration-300"
+          className="desktop:hidden fixed w-[60px] h-[60px] rounded-full bottom-20 right-10 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-20 hover:scale-105 ease-in duration-300"
         >
           <GoPlus />
         </button>
