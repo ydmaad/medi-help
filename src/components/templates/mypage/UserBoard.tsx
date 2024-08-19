@@ -264,7 +264,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-brand-primary-500 w-[335px] h-[327px] p-[24px]">
+          <div className="relative bg-white rounded-xl border border-brand-primary-500 w-[335px] h-[327px] p-[24px]">
             <div className="flex flex-col items-center gap-[16px]">
               <div className="relative w-[120px] h-[120px] shadow-md rounded-full mb-4">
                 <Image
@@ -290,17 +290,17 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
               </div>
               <input
                 value={newNickname}
-                onChange={(e) => setNewNickname(e.target.value)}
+                onChange={handleNicknameChange}
                 className="border border-[#e0e2e4] px-3 py-2 rounded-md mb-4 w-full h-[48px]"
                 placeholder="새 닉네임 입력"
               />
               {nicknameValidation && (
                 <div
-                  className={`text-[14px] ${
+                  className={`absolute bottom-[79px] left-[30px] text-[14px] ${
                     nicknameValidation === "사용 가능한 닉네임입니다."
                       ? "text-[#3FDE9C]"
                       : "text-[#F66555]"
-                  } mb-4`}
+                  }`}
                 >
                   {nicknameValidation}
                 </div>
