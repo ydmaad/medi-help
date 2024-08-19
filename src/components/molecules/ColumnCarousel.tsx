@@ -11,7 +11,7 @@ interface Image {
   rightText: string;
   id: string;
 }
-
+//앗 수정안됐다
 interface ColumnCarouselProps {
   images: Image[];
 }
