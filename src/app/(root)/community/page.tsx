@@ -98,9 +98,9 @@ const CommunityPage = () => {
               <Link
                 href={`/community/post`}
                 onClick={handleUserCheck}
-                className="hidden desktop:flex ml-[24px] bg-brand-primary-500 text-white px-7 py-2 rounded-md shadow-sm hover:bg-brand-primary-600"
+                className="hidden desktop:flex items-center justify-center ml-[24px] w-[106px] h-[40px] bg-brand-primary-500 text-white px-[24px] py-2 rounded-md shadow-sm hover:bg-brand-primary-600"
               >
-                <span>글쓰기</span>
+                <span className="text-center">글쓰기</span>
               </Link>
 
               {/* 플로팅 버튼 */}
