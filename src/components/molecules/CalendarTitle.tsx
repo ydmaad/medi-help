@@ -8,14 +8,14 @@ interface Props {
 const CalendarTitle = ({ showFilterBox, setShowFilterBox }: Props) => {
   return (
     <>
-      <div className="mx-auto desktop:static flex items-center justify-between min-w-[364px] h-[68px] desktop:w-[172px] desktop:min-w-[172px] desktop:h-auto mt-[72px] gap-[6px] px-2">
+      <div className="mx-auto desktop:static flex items-center justify-between min-w-[344px] h-[68px] desktop:w-[172px] desktop:min-w-[172px] desktop:h-auto mt-[72px] gap-[6px] px-2">
         <div className="flex items-center">
           <img
             src="/pencil.png"
             alt="연필 아이콘"
             className="w-[18px] desktop:w-[28px] h-auto mr-2"
           />
-          <h1 className="w-[117px] h-[43px] flex items-center text-[20px] desktop:text-[30px] text-brand-gray-1000 font-black">
+          <h1 className="w-[117px] h-[43px] flex items-center text-[20px] desktop:text-[30px] text-brand-gray-1000 font-bold">
             복약 달력
           </h1>
         </div>
