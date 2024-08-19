@@ -150,13 +150,14 @@ const Medications: React.FC = () => {
                 >
                   <div className="w-full flex items-center justify-center mb-2">
                     {record.itemImage ? (
-                      <div className={`w-[127px] h-[72px] rounded-lg overflow-hidden`}>
+                      <div className="w-[127px] h-[72px] rounded-lg overflow-hidden">
                         <Image
                           src={record.itemImage}
                           alt={record.medi_nickname || "약 이미지"}
                           width={127}
                           height={72}
                           objectFit="cover"
+                          className="rounded-lg"
                         />
                       </div>
                     ) : (
