@@ -48,7 +48,7 @@ export const CommentInput = ({
       <div className="max-w-[996px] p-4 bg-white  border border-gray-300  rounded-lg">
         <div className="flex items-center mb-3">
           <Image
-            src={user?.avatar || "/default-avatar.jpg"}
+            src={user?.avatar || "/defaultAvatar.svg"}
             alt={"유저 이미지"}
             width={40}
             height={40}
