@@ -46,25 +46,25 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         />
       </div>
       <SidebarNav
-        imageSrc="sidebarsearch.svg"
+        imageSrc="/sidebarsearch.svg"
         text="약 검색"
         href="/search"
         onClick={() => handleNavigation("/search")}
       />
       <SidebarNav
-        imageSrc="sidebarcolumn.svg"
+        imageSrc="/sidebarcolumn.svg"
         text="칼럼"
         href="/magazine"
         onClick={() => handleNavigation("/magazine")}
       />
       <SidebarNav
-        imageSrc="sidebarcommunity.svg"
+        imageSrc="/sidebarcommunity.svg"
         text="커뮤니티"
         href="/community"
         onClick={() => handleNavigation("/community")}
       />
       <SidebarNav
-        imageSrc="sidebarcalendar.svg"
+        imageSrc="/sidebarcalendar.svg"
         text="복약달력"
         href="/calendar"
         onClick={() => handleNavigation("/calendar")}
