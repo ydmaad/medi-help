@@ -86,16 +86,11 @@ const CalendarCheckbox = () => {
 
   return (
     <>
-      {/* '복약 달력'을 div 밖으로 빼서 상단에 배치 */}
-      <div className="flex items-center mt-12">
-        <img src="/pencil.png" alt="연필 아이콘" className="w-8 h-8 mr-2" />
-        <h1 className="text-[32px] text-brand-gray-1000 font-bold">
-          복약 달력
-        </h1>
-      </div>
       <div className="h-full flex flex-col overflow-y-auto">
         <div className="ml-4">
-          <h2 className="text-brand-gray-600 text-lg mt-6 mb-2">복용 약 필터</h2>
+          <h2 className="text-brand-gray-600 text-[14px] mt-6 mb-2 py-[8px]">
+            복용 약 필터
+          </h2>
           <div
             className={`${
               showAllMedicines ? "max-h-full" : "max-h-32"
@@ -112,7 +107,7 @@ const CalendarCheckbox = () => {
                       onChange={() => handleCheckboxChange(medicine)}
                     />
                     <div
-                      className={`w-5 h-5 flex items-center justify-center border rounded ${
+                      className={`w-[18px] h-[18px] flex items-center justify-center border rounded ${
                         selectedMedicines.includes(medicine.id)
                           ? "bg-brand-gray-600 border-brand-gray-600"
                           : "bg-brand-gray-50 border-brand-gray-50"
@@ -138,7 +133,7 @@ const CalendarCheckbox = () => {
                       </svg>
                     </div>
                     <span
-                      className={`ml-3 text-lg ${
+                      className={`ml-3 text-[14px] ${
                         selectedMedicines.includes(medicine.id)
                           ? "text-brand-gray-800"
                           : "text-brand-gray-400"
