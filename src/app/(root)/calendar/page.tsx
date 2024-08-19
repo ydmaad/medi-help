@@ -5,7 +5,7 @@ import CalendarView from "@/components/templates/calendar/calendarView/CalendarV
 const Page = () => {
   return (
     <>
-      <div className="relative block desktop:flex w-full min-h-screen desktop:justify-center mt-4">
+      <div className="relative block desktop:flex w-full desktop:justify-center mt-4">
         <CalendarCheckbox />
         <CalendarView />
       </div>
