@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft } from "lucide-react";
 import { format } from 'date-fns';
+import axios from 'axios';
 
 interface MediRecord {
   id: string;
@@ -38,54 +39,111 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
   onDelete,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedRecord, setEditedRecord] = useState(mediRecord);
+  const [editedRecord, setEditedRecord] = useState<MediRecord>(mediRecord);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [mediNames, setMediNames] = useState<{ itemName: string }[]>([]);
+  const [notificationEnabled, setNotificationEnabled] = useState(!!mediRecord.repeat);
+
+  useEffect(() => {
+    setEditedRecord(mediRecord);
+    setNotificationEnabled(!!mediRecord.repeat);
+  }, [mediRecord]);
+
+  useEffect(() => {
+    if (isEditing) {
+      fetchMediNames();
+    }
+  }, [isEditing]);
+
+  const fetchMediNames = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get('/api/calendar/medi/names');
+      setMediNames(response.data);
+    } catch (error) {
+      console.error("Error fetching medication names:", error);
+      setError("약 이름을 불러오는 데 실패했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
-  const formatTimes = () => {
-    const times = [];
-    if (mediRecord.times.morning) times.push("아침");
-    if (mediRecord.times.afternoon) times.push("점심");
-    if (mediRecord.times.evening) times.push("저녁");
-    return times;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setEditedRecord((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
+  const handleTimeChange = (time: 'morning' | 'afternoon' | 'evening') => {
+    setEditedRecord((prev) => ({
+      ...prev,
+      times: { ...prev.times, [time]: !prev.times[time] },
+    }));
   };
 
-  const handleSave = () => {
-    onUpdate(editedRecord);
-    setIsEditing(false);
+  const handleDayOfWeekChange = (day: string) => {
+    setEditedRecord((prev) => ({
+      ...prev,
+      day_of_week: prev.day_of_week
+        ? prev.day_of_week.includes(day)
+          ? prev.day_of_week.filter((d) => d !== day)
+          : [...prev.day_of_week, day]
+        : [day],
+    }));
   };
 
-  const handleCancel = () => {
-    setEditedRecord(mediRecord);
-    setIsEditing(false);
+  const handleNotificationTimeChange = (value: string) => {
+    setEditedRecord((prev) => ({
+      ...prev,
+      notification_time: [value],
+    }));
   };
 
-  const handleDelete = () => {
-    onDelete(mediRecord.id);
-    onClose();
+  const handleSave = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axios.put(`/api/mypage/medi/${editedRecord.id}`, {
+        ...editedRecord,
+        repeat: notificationEnabled,
+      });
+      if (response.status === 200) {
+        onUpdate(response.data);
+        setIsEditing(false);
+      }
+    } catch (err) {
+      setError('업데이트 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      console.error('Error updating medication:', err);
+    }
+    setIsLoading(false);
+  };
+
+  const handleDelete = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axios.delete(`/api/mypage/medi/${mediRecord.id}`);
+      if (response.status === 200) {
+        onDelete(mediRecord.id);
+        onClose();
+      }
+    } catch (err) {
+      setError('삭제 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      console.error('Error deleting medication:', err);
+    }
+    setIsLoading(false);
   };
 
   const formatDate = (dateString: string) => {
     return format(new Date(dateString), 'yy.MM.dd');
   };
 
-  const formatDaysOfWeek = (days: string[] | undefined) => {
-    if (!days || days.length === 0) return '매일';
-    const koreanDays = {
-      '월': '월요일', '화': '화요일', '수': '수요일', '목': '목요일',
-      '금': '금요일', '토': '토요일', '일': '일요일'
-    };
-    return days.map(day => koreanDays[day as keyof typeof koreanDays]).join(', ');
-  };
-
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
       <div className="flex flex-col h-full">
-        <div className="flex justify-between items-center px-4 py-3">
+        <div className="flex justify-between items-center px-4 py-3 border-b">
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <ChevronLeft size={24} />
           </button>
@@ -95,133 +153,186 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
               저장
             </button>
           ) : (
-            <button onClick={handleEdit} className="text-blue-500 hover:text-blue-700">
+            <button onClick={() => setIsEditing(true)} className="text-blue-500 hover:text-blue-700">
               수정
             </button>
           )}
         </div>
-        <div className="flex-grow p-4">
-          <div className="w-full">
-            {isEditing ? (
+        <div className="flex-grow p-4 space-y-4">
+          {isEditing ? (
+            <>
               <input
                 type="text"
+                name="medi_nickname"
                 value={editedRecord.medi_nickname}
-                onChange={(e) => setEditedRecord({...editedRecord, medi_nickname: e.target.value})}
-                className="text-[18px] font-bold mb-4 text-brand-gray-800 w-full"
+                onChange={handleInputChange}
+                placeholder="약 별명(최대 6자)"
+                className="w-full border rounded p-2"
               />
-            ) : (
-              <h2 className="text-[18px] font-bold mb-4 text-brand-gray-800">{mediRecord.medi_nickname}</h2>
-            )}
-            <div className="space-y-6">
-              <div>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={editedRecord.medi_name}
-                    onChange={(e) => setEditedRecord({...editedRecord, medi_name: e.target.value})}
-                    className="text-[14px] text-brand-gray-800 w-full"
-                  />
+              <select
+                name="medi_name"
+                value={editedRecord.medi_name}
+                onChange={handleInputChange}
+                className="w-full border rounded p-2"
+                disabled={isLoading}
+              >
+                <option value="">약 이름 선택</option>
+                {isLoading ? (
+                  <option value="" disabled>로딩 중...</option>
                 ) : (
-                  <p className="text-[14px] text-brand-gray-800">{mediRecord.medi_name}</p>
+                  mediNames.map((item, index) => (
+                    <option key={index} value={item.itemName}>
+                      {item.itemName}
+                    </option>
+                  ))
                 )}
-              </div>
-              <div>
-                <span className="text-[14px] font-bold text-brand-gray-600">복용시간대</span>
-                <div className="flex space-x-2 mt-2">
-                  {formatTimes().map((time, index) => (
-                    <div key={index} className="w-14 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 text-xs">
-                      ({time})
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <span className="text-[14px] font-bold text-brand-gray-600">복용기간</span>
-                {isEditing ? (
-                  <div className="flex space-x-2 mt-2">
-                    <input
-                      type="date"
-                      value={editedRecord.start_date}
-                      onChange={(e) => setEditedRecord({...editedRecord, start_date: e.target.value})}
-                      className="text-[14px] text-brand-gray-800"
-                    />
-                    <span>~</span>
-                    <input
-                      type="date"
-                      value={editedRecord.end_date}
-                      onChange={(e) => setEditedRecord({...editedRecord, end_date: e.target.value})}
-                      className="text-[14px] text-brand-gray-800"
-                    />
-                  </div>
-                ) : (
-                  <p className="text-[14px] text-brand-gray-800 mt-2">
-                    {formatDate(mediRecord.start_date)} ~ {formatDate(mediRecord.end_date)}
-                  </p>
-                )}
-                {isEditing ? (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {['월', '화', '수', '목', '금', '토', '일'].map(day => (
-                      <button
-                        key={day}
-                        onClick={() => {
-                          const updatedDays = editedRecord.day_of_week?.includes(day)
-                            ? editedRecord.day_of_week.filter(d => d !== day)
-                            : [...(editedRecord.day_of_week || []), day];
-                          setEditedRecord({...editedRecord, day_of_week: updatedDays});
-                        }}
-                        className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                          editedRecord.day_of_week?.includes(day) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
-                        }`}
-                      >
-                        {day}
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-[14px] text-brand-gray-800 mt-2">
-                    {formatDaysOfWeek(mediRecord.day_of_week)}
-                  </p>
-                )}
-              </div>
-              <div>
-                <span className="text-[14px] font-bold text-brand-gray-600">복용 알람</span>
-                {isEditing ? (
-                  <input
-                    type="time"
-                    value={editedRecord.notification_time?.[0] || ''}
-                    onChange={(e) => setEditedRecord({...editedRecord, notification_time: [e.target.value]})}
-                    className="text-[14px] text-brand-gray-800 mt-2 w-full"
-                  />
-                ) : (
-                  <p className="text-[14px] text-brand-gray-800 mt-2">{mediRecord.notification_time?.[0] || '설정 안 함'}</p>
-                )}
-              </div>
-              <div>
-                <span className="text-[14px] font-bold text-brand-gray-600">메모</span>
-                {isEditing ? (
-                  <textarea
-                    value={editedRecord.notes}
-                    onChange={(e) => setEditedRecord({...editedRecord, notes: e.target.value})}
-                    className="text-[14px] text-brand-gray-800 mt-2 w-full h-24 p-2 border rounded"
-                  />
-                ) : (
-                  <p className="text-[14px] text-brand-gray-800 mt-2">{mediRecord.notes}</p>
-                )}
-              </div>
+              </select>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-bold">{editedRecord.medi_nickname}</h2>
+              <p className="text-gray-600">{editedRecord.medi_name}</p>
+            </>
+          )}
+
+          <div>
+            <h3 className="font-bold mb-2">복용 시간</h3>
+            <div className="flex space-x-2">
+              {['morning', 'afternoon', 'evening'].map((time) => (
+                <button
+                  key={time}
+                  onClick={() => isEditing && handleTimeChange(time as 'morning' | 'afternoon' | 'evening')}
+                  className={`px-4 py-2 rounded-full ${
+                    editedRecord.times[time as 'morning' | 'afternoon' | 'evening']
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  } ${isEditing ? 'cursor-pointer' : 'cursor-default'}`}
+                  disabled={!isEditing}
+                >
+                  {time === 'morning' ? '아침' : time === 'afternoon' ? '점심' : '저녁'}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-        {isEditing && (
-          <div className="flex justify-between p-4">
-            <button onClick={handleCancel} className="px-4 py-2 bg-gray-200 rounded">
-              취소
-            </button>
-            <button onClick={handleDelete} className="px-4 py-2 bg-red-500 text-white rounded">
-              삭제
-            </button>
+
+          <div>
+            <h3 className="font-bold mb-2">복용 기간</h3>
+            {isEditing ? (
+              <div className="flex space-x-2">
+                <input
+                  type="date"
+                  name="start_date"
+                  value={editedRecord.start_date}
+                  onChange={handleInputChange}
+                  className="border rounded p-2"
+                />
+                <span className="self-center">~</span>
+                <input
+                  type="date"
+                  name="end_date"
+                  value={editedRecord.end_date}
+                  onChange={handleInputChange}
+                  className="border rounded p-2"
+                />
+              </div>
+            ) : (
+              <p>{formatDate(editedRecord.start_date)} ~ {formatDate(editedRecord.end_date)}</p>
+            )}
           </div>
-        )}
+
+          <div>
+            <h3 className="font-bold mb-2">복용 요일</h3>
+            <div className="flex space-x-2">
+              {['월', '화', '수', '목', '금', '토', '일'].map((day) => (
+                <button
+                  key={day}
+                  onClick={() => isEditing && handleDayOfWeekChange(day)}
+                  className={`w-8 h-8 rounded-full ${
+                    editedRecord.day_of_week?.includes(day)
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  } ${isEditing ? 'cursor-pointer' : 'cursor-default'}`}
+                  disabled={!isEditing}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-bold mb-2">알림 설정</h3>
+            <div className="flex items-center">
+              <span className="mr-2">알림 {notificationEnabled ? '켜짐' : '꺼짐'}</span>
+              {isEditing && (
+                <button
+                  onClick={() => setNotificationEnabled(!notificationEnabled)}
+                  className={`w-12 h-6 rounded-full ${
+                    notificationEnabled ? 'bg-blue-500' : 'bg-gray-300'
+                  } relative transition-colors duration-300 ease-in-out`}
+                >
+                  <div
+                    className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform duration-300 ease-in-out ${
+                      notificationEnabled ? 'right-1' : 'left-1'
+                    }`}
+                  ></div>
+                </button>
+              )}
+            </div>
+            {notificationEnabled && (
+              <input
+                type="time"
+                value={editedRecord.notification_time?.[0] || ''}
+                onChange={(e) => handleNotificationTimeChange(e.target.value)}
+                className="mt-2 border rounded p-2 w-full"
+                disabled={!isEditing}
+              />
+            )}
+          </div>
+
+          <div>
+            <h3 className="font-bold mb-2">메모</h3>
+            {isEditing ? (
+              <textarea
+                name="notes"
+                value={editedRecord.notes}
+                onChange={handleInputChange}
+                className="w-full border rounded p-2"
+                rows={3}
+              />
+            ) : (
+              <p>{editedRecord.notes}</p>
+            )}
+          </div>
+
+          {isEditing && (
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 bg-gray-200 rounded"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+              >
+                삭제
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded">로딩 중...</div>
+        </div>
+      )}
+      {error && (
+        <div className="fixed bottom-0 left-0 right-0 bg-red-100 border border-red-400 text-red-700 px-4 py-3" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
     </div>
   );
 };

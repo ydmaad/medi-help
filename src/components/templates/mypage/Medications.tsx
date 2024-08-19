@@ -43,23 +43,23 @@ const Medications: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileViewOpen, setIsMobileViewOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchMediRecords = async () => {
-      const session = await supabase.auth.getSession();
-      if (!session.data.session) {
-        console.error("Auth session missing!");
-        return;
-      }
-      const userId = session.data.session.user.id;
-      try {
-        const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
-        setMediRecords(response.data);
-      } catch (error) {
-        console.error("Error fetching medi records:", error);
-      }
-    };
-    fetchMediRecords();
+  const fetchMediRecords = async () => {
+    const session = await supabase.auth.getSession();
+    if (!session.data.session) {
+      console.error("Auth session missing!");
+      return;
+    }
+    const userId = session.data.session.user.id;
+    try {
+      const response = await axios.get(`/api/mypage/medi/names?user_id=${userId}`);
+      setMediRecords(response.data);
+    } catch (error) {
+      console.error("Error fetching medi records:", error);
+    }
+  };
 
+  useEffect(() => {
+    fetchMediRecords();
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -84,20 +84,24 @@ const Medications: React.FC = () => {
     setSelectedMediRecord(null);
   };
 
-  const handleUpdate = (updatedMediRecord: MediRecord) => {
-    setMediRecords(prevRecords =>
-      prevRecords.map(record =>
-        record.id === updatedMediRecord.id ? updatedMediRecord : record
-      )
-    );
-    closeAllModals();
+  const handleUpdate = async (updatedMediRecord: MediRecord) => {
+    try {
+      await axios.put(`/api/mypage/medi/${updatedMediRecord.id}`, updatedMediRecord);
+      await fetchMediRecords();
+      closeAllModals();
+    } catch (error) {
+      console.error("Error updating medication:", error);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setMediRecords(prevRecords =>
-      prevRecords.filter(record => record.id !== id)
-    );
-    closeAllModals();
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`/api/mypage/medi/${id}`);
+      await fetchMediRecords();
+      closeAllModals();
+    } catch (error) {
+      console.error("Error deleting medication:", error);
+    }
   };
 
   const openEditModal = () => {
