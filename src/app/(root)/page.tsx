@@ -70,9 +70,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="absolute inset-0 z-0 mt-[67px]">
-        <BgLinear />
-      </div>
+      <div className="absolute inset-0 z-0 mt-[67px]">{/*<BgLinear />*/}</div>
       <Hero />
       <div className="flex justify-between max-w-[335px] desktop:max-w-[1000px] mx-auto mb-[10px]">
         <MainTitle text="매디칼럼" />
