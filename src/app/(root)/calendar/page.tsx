@@ -6,12 +6,8 @@ import CalendarTitle from "@/components/molecules/CalendarTitle";
 const Page = () => {
   return (
     <>
-      <div className="flex w-full min-h-screen justify-center px-4 mt-4">
-        <div>
-          <CalendarTitle />
-          <CalendarCheckbox />
-        </div>
-
+      <div className="relative block desktop:flex w-full min-h-screen desktop:justify-center mt-4">
+        <CalendarCheckbox />
         <CalendarView />
       </div>
     </>
