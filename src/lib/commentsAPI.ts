@@ -1,6 +1,10 @@
 import { POST_PER_PAGE } from "@/constants/constant";
 import { useAuthStore } from "@/store/auth";
-import { BookmarkData, CommentWithUser } from "@/types/communityTypes";
+import {
+  BookmarkData,
+  CommentWithUser,
+  PostWithUser,
+} from "@/types/communityTypes";
 
 // 댓글 가져오기 요청
 export const fetchComment = async (postId: string) => {
@@ -208,4 +212,33 @@ export const fetchPosts = async (page: number, sortOption: string) => {
   );
   const result = await res.json();
   return { data: result.data, totalPosts: result.totalPosts };
+};
+
+// 검색된 게시글 불러오는 요청
+export const fetchSearchPosts = async (
+  searchTerm: string,
+  page: number,
+  sortOption: string
+): Promise<PostWithUser[]> => {
+  try {
+    const response = await fetch(
+      `/api/community/search?term=${encodeURIComponent(searchTerm)}&page=${page}&perPage=${POST_PER_PAGE}&sort=${sortOption}`
+    );
+    if (!response.ok) {
+      throw new Error(
+        `Search failed: ${response.status} ${response.statusText}`
+      );
+    }
+    const result = await response.json();
+
+    if (result && Array.isArray(result.sortedPosts)) {
+      return result.sortedPosts;
+    } else {
+      console.error("예상치 못한 데이터 구조:", result);
+      return [];
+    }
+  } catch (error) {
+    console.error("검색 중 오류 발생:", error);
+    throw error;
+  }
 };

@@ -1,112 +1,101 @@
 "use client";
 
+import { fetchSearchPosts } from "@/lib/commentsAPI";
 import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
 import { PostWithUser } from "@/types/communityTypes";
 import Image from "next/image";
 import React, { useState } from "react";
 
 interface SearchProps {
-  handleSearch: (term: string) => void;
-  allPosts: PostWithUser[];
+  onSearchResults: (results: PostWithUser[]) => void;
+  searchCurrentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  totalPosts: number;
+  sortOption: string;
+  setSortOption: (option: string) => void;
 }
 
-const Search = ({ handleSearch, allPosts }: SearchProps) => {
-  const [newSearchTerm, setNewSearchTerm] = useState<string>("");
+const Search = ({
+  onSearchResults,
+  searchCurrentPage,
+  totalPages,
+  onPageChange,
+  setCurrentPage,
+  totalPosts,
+  sortOption,
+  setSortOption,
+}: SearchProps) => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
 
+  const handleSearch = async () => {
+    if (searchTerm.trim() === "") {
+      onSearchResults([]);
+      return;
+    }
+
+    try {
+      console.log("검색 시작:", searchTerm);
+      const results = await fetchSearchPosts(
+        searchTerm,
+        searchCurrentPage,
+        sortOption
+      );
+      onSearchResults(results);
+    } catch (error) {
+      console.error("검색 에러:", error);
+      onSearchResults([]);
+    }
+  };
+
+  console.log(searchTerm);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch();
+  };
+
   const toggleSearch = () => {
-    allPosts;
-    setNewSearchTerm("");
+    setSearchTerm("");
     setIsSearchOpen(!isSearchOpen);
   };
 
   const searchTermReset = () => {
-    setNewSearchTerm("");
+    setSearchTerm("");
+    onSearchResults([]);
   };
 
   const handleKeyboardDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleSearch(newSearchTerm);
+      handleSearch();
     }
   };
 
-  // console.log(newSearchTerm);
-
   return (
     <>
-      {/* 웹 버전 */}
       <div className="hidden desktop:flex relative">
-        <input
-          type="text"
-          value={newSearchTerm}
-          onChange={(e) => setNewSearchTerm(e.target.value)}
-          placeholder="제목 및 내용, 작성자 등을 검색하세요"
-          className="w-[300px] border-solid border-2 border-brand-primary-300 py-2 pl-10 pr-4 text-sm bg-white rounded-full focus:outline-none"
-          onKeyDown={handleKeyboardDown}
-        />
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="제목 및 내용, 작성자 등을 검색하세요"
+            className="w-[300px] border-solid border-2 border-brand-primary-300 py-2 pl-10 pr-4 text-sm bg-white rounded-full focus:outline-none"
+            onKeyDown={handleKeyboardDown}
+          />
+        </form>
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Image
             src="/magnifier.svg"
             alt="돋보기이미지"
             width={20}
             height={20}
-          ></Image>
+          />
         </div>
       </div>
 
-      {/* 모바일 버전 */}
-      <div className="flex desktop:hidden">
-        {isSearchOpen ? (
-          <div className="flex items-center">
-            <div className="relative">
-              <input
-                type="text"
-                value={newSearchTerm}
-                onChange={(e) => setNewSearchTerm(e.target.value)}
-                placeholder="제목 및 내용, 작성자 등을 검색하세요"
-                className="w-[291px] border-solid border-2 border-brand-primary-300 py-2 pl-4 pr-10 text-sm bg-white rounded-full focus:outline-none "
-                onKeyDown={handleKeyboardDown}
-              />
-              <div className="absolute inset-y-0 right-11 pr-3 flex items-center">
-                {newSearchTerm.length === 0 ? (
-                  <button type="submit">
-                    <Image
-                      src="/magnifier.svg"
-                      alt="돋보기이미지"
-                      width={20}
-                      height={20}
-                    ></Image>
-                  </button>
-                ) : (
-                  <button onClick={searchTermReset} type="button">
-                    <Image
-                      src="/XBtn.svg"
-                      alt="x버튼"
-                      width={20}
-                      height={20}
-                    ></Image>
-                  </button>
-                )}
-              </div>
-              <button
-                onClick={toggleSearch}
-                className="text-[16px] text-brand-gray-800 my-[8px] ml-[16px] whitespace-nowrap"
-              >
-                취소
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button onClick={toggleSearch}>
-            <Image
-              src="/magnifier.svg"
-              alt="돋보기이미지"
-              width={30}
-              height={30}
-            ></Image>
-          </button>
-        )}
-      </div>
+      {/* 모바일 버전 (주석 처리된 부분은 그대로 유지) */}
     </>
   );
 };

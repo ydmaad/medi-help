@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
         user:user_id (
           nickname,
           avatar
+          
         )
       `
       )
@@ -53,8 +54,6 @@ export async function GET(request: NextRequest) {
         query = query.order("created_at", { ascending: true });
         break;
       case "인기순":
-        // 인기순은 북마크 수로 정렬하므로, 먼저 북마크 수를 가져와야 합니다.
-        // 이 부분은 아래에서 처리합니다.
         break;
       default:
         query = query.order("created_at", { ascending: false });
@@ -111,6 +110,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // console.log("이게 전체 게시물이야!!", sortedPosts);
     return NextResponse.json(
       {
         message: "조회 성공",

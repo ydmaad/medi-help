@@ -1,8 +1,7 @@
 "use client";
 
 import Pagination from "@/components/molecules/Pagination";
-import React, { useEffect, useState } from "react";
-import { fetchPosts } from "@/lib/commentsAPI";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { POST_PER_PAGE } from "@/constants/constant";
 import { PostWithUser } from "@/types/communityTypes";
 import SortOption from "@/components/molecules/SortOption";
@@ -16,90 +15,66 @@ interface ListProps {
   searchTerm: string;
   posts: PostWithUser[];
   setPosts: React.Dispatch<React.SetStateAction<PostWithUser[]>>;
+  searchResults: PostWithUser[];
+  allPosts: PostWithUser[];
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  totalPosts: number;
+  sortOption: string;
+  setSortOption: (option: string) => void;
 }
 
-const List = ({ searchTerm, posts, setPosts }: ListProps) => {
+const List = ({
+  searchTerm,
+  posts,
+  setPosts,
+  searchResults,
+  allPosts,
+  currentPage,
+  totalPages,
+  onPageChange,
+  setCurrentPage,
+  totalPosts,
+  sortOption,
+  setSortOption,
+}: ListProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  // 총 게시글 갯수
-  const [totalPosts, setTotalPosts] = useState<number>(1);
-  // 선택된 카테고리
   const [selectCategory, setSelectCategory] = useState<string>("전체");
-  // 카테고리 별로 필터된 게시글
-  const [categoryFilterPosts, setCategoryFilterPosts] = useState<
-    PostWithUser[]
-  >([]);
-  const [sortOption, setSortOption] = useState<string>("최신순");
   const category = ["전체", "메디톡", "궁금해요", "건강 꿀팁"];
-  const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
+  const { isSearchOpen } = useCommunitySearchFlagStore();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data, totalPosts } = await fetchPosts(currentPage, sortOption);
-        setPosts(data);
-        setTotalPosts(totalPosts);
-        if (selectCategory === "전체") {
-          setCategoryFilterPosts(data);
-        } else {
-          const filtered = data.filter(
-            (post: PostWithUser) => post.category === selectCategory
-          );
-          setCategoryFilterPosts(filtered);
-        }
-        const calculatedTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
-        setTotalPages(calculatedTotalPages);
-      } catch (error) {
-        console.log("에러가 났네요 =>", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [searchTerm, currentPage, sortOption, selectCategory, setPosts]);
+    setIsLoading(true);
+    allPosts;
+    setIsLoading(false);
+  });
 
-  // console.log(posts);
+  // console.log(allPosts);
 
-  // 게시글 검색
-  const filteredPosts = categoryFilterPosts.filter(
-    (post) =>
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // console.log(searchTerm);
-
-  // 페이지 이동하는 핸들러
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  // 카테고리 별 필터 핸들러
-  const handleCategorySelect = async (category: string) => {
-    setSelectCategory(category);
-    setCurrentPage(1); // 카테고리 변경 시 첫 페이지로 돌아감
-    try {
-      const { data, totalPosts } = await fetchPosts(1, sortOption);
-      setPosts(data);
-      setTotalPosts(totalPosts);
-      if (category === "전체") {
-        setCategoryFilterPosts(data);
+  // 카테고리 선택 함수
+  useEffect(() => {
+    if (allPosts) {
+      if (selectCategory === "전체") {
+        setPosts(allPosts);
       } else {
-        const filtered = data.filter(
-          (post: PostWithUser) => post.category === category
+        const categoryData = allPosts.filter(
+          (post: PostWithUser) => post.category === selectCategory
         );
-        setCategoryFilterPosts(filtered);
+        setPosts(categoryData);
       }
-      const calculatedTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
-      setTotalPages(calculatedTotalPages);
-    } catch (error) {
-      console.log("카테고리 변경 중 에러 발생:", error);
     }
+  }, [allPosts, selectCategory]);
+
+  // 카테고리 선택 핸들러
+  const handleCategorySelect = (category: string) => {
+    setSelectCategory(category);
+    setCurrentPage(1);
   };
 
-  // 게시글 로딩중 스켈레톤 적용
+  console.log(searchTerm);
+
   if (isLoading) {
     return (
       <ul className="space-y-4">
@@ -113,83 +88,50 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   return (
     <>
       <div className="mt-[16px]">
-        {/* 카테고리 선택 */}
-        {isSearchOpen ? null : (
+        {!isSearchOpen && !searchTerm && (
           <div className="flex justify-between">
-            <div className="flex items-center overflow-x-auto scrollbar-hide desktop:overflow-x-visible whitespace-nowrap  pb-2 desktop:pb-0">
-              <CategorySelect
-                categories={category}
-                selectCategory={selectCategory}
-                onSelectCategory={handleCategorySelect}
-              ></CategorySelect>
-            </div>
+            <CategorySelect
+              categories={category}
+              selectCategory={selectCategory}
+              onSelectCategory={handleCategorySelect}
+            />
             <SortOption
               sortOption={sortOption}
               setSortOption={setSortOption}
               setCurrentPage={setCurrentPage}
-            ></SortOption>
+            />
           </div>
         )}
 
         <div className="hidden desktop:flex mb-[8px]">
-          {searchTerm.length === 0 ? (
-            <p className="text-[16px] ml-[8px] text-left">
-              전체
-              <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
-              </span>
-            </p>
-          ) : null}
-          {searchTerm.length !== 0 ? (
-            <p className="text-[16px] ml-[8px] font-black text-left text-brand-primary-500">
-              &rsquo;{searchTerm}&rsquo;
-              <span className="text-brand-gray-1000"> 에 대한 검색 결과</span>
-              <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
-              </span>
-            </p>
-          ) : null}
+          <p className="text-[16px] ml-[8px] text-left">
+            {searchTerm ? (
+              <>
+                <span className="font-black text-brand-primary-500">
+                  &rsquo;{searchTerm}&rsquo;
+                </span>
+                <span className="text-brand-gray-1000"> 에 대한 검색 결과</span>
+              </>
+            ) : selectCategory === "전체" ? (
+              "전체"
+            ) : (
+              selectCategory
+            )}
+            <span className="text-brand-gray-600 ml-[8px]">({totalPosts})</span>
+          </p>
         </div>
 
-        {/* 모바일 버전 검색 결과 */}
-        <div className="flex desktop:hidden">
-          {isSearchOpen && searchTerm.length === 0 ? (
-            <p className="text-[14px] ml-[8px] text-left">
-              전체
-              <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
-              </span>
-            </p>
-          ) : null}
-          {isSearchOpen && searchTerm.length !== 0 ? (
-            <p className="text-[14px] ml-[8px] text-left text-brand-primary-500">
-              &rsquo;{searchTerm}&rsquo;
-              <span className="text-brand-gray-1000">에 대한 검색 결과</span>
-              <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
-              </span>
-            </p>
-          ) : null}
-        </div>
-
-        {/* 게시글 리스트 그리는 곳 */}
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((item) => {
-            return <PostItem item={item} key={item.id}></PostItem>;
-          })
+        {posts && posts.length > 0 ? (
+          posts.map((item) => <PostItem item={item} key={item.id} />)
         ) : (
-          // 게시글 검색 결과 없을 시
-          <PostSearchFail
-            searchTerm={searchTerm}
-            resultCount={filteredPosts.length}
-          ></PostSearchFail>
+          <PostSearchFail searchTerm={searchTerm} resultCount={0} />
         )}
       </div>
-      {totalPages > 1 && filteredPosts.length > 0 && (
+      {!searchTerm && totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={handlePageChange}
+          onPageChange={onPageChange}
         />
       )}
     </>

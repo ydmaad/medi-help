@@ -3,6 +3,8 @@
 import PostFloatingBtn from "@/components/molecules/PostFloatingBtn";
 import List from "@/components/templates/community/List";
 import Search from "@/components/templates/community/Search";
+import { POST_PER_PAGE } from "@/constants/constant";
+import { fetchPosts } from "@/lib/commentsAPI";
 import { useAuthStore } from "@/store/auth";
 import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
 import { PostWithUser } from "@/types/communityTypes";
@@ -11,32 +13,48 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const CommunityPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [posts, setPosts] = useState<PostWithUser[]>([]);
   const [allPosts, setAllPosts] = useState<PostWithUser[]>([]);
   const { user } = useAuthStore();
   const router = useRouter();
   const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
+  const [searchResults, setSearchResults] = useState<PostWithUser[]>([]);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [totalPosts, setTotalPosts] = useState<number>(0);
+  const [sortOption, setSortOption] = useState<string>("최신순");
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
+  // 전체 게시글 데이터
   useEffect(() => {
     const fectchAllPosts = async () => {
-      const res = await fetch(`/api/community`);
-      const data = await res.json();
+      const { data, totalPosts } = await fetchPosts(currentPage, sortOption);
       setAllPosts(data);
+      setPosts(data);
+      setTotalPosts(totalPosts);
+      const calculateTotalPages = Math.ceil(totalPosts / POST_PER_PAGE);
+      setTotalPages(calculateTotalPages);
     };
 
     fectchAllPosts();
-  }, []);
+  }, [currentPage, sortOption]);
+
+  // console.log(allPosts);
 
   // 게시글 리스트 리셋
   const handleReset = () => {
-    setSearchTerm("");
-    allPosts;
+    useEffect(() => {
+      allPosts;
+    }, []);
   };
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    console.log("검색어가 업데이트 돼는 부분!?!?", term);
+  const handleSearchResults = (results: PostWithUser[]) => {
+    setSearchResults(results);
+    console.log("검색한 배열이 들어오나!?!?", results);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   // 로그인 안 되어 있으면 로그인 페이지로 리다이렉트
@@ -50,7 +68,7 @@ const CommunityPage = () => {
     }
   };
 
-  // console.log(searchTerm);
+  console.log(searchTerm);
 
   return (
     <>
@@ -91,7 +109,16 @@ const CommunityPage = () => {
             className={`flex flex-row desktop:mx-0 ${isSearchOpen ? "mx-auto" : "mx-0"} `}
           >
             <div>
-              <Search handleSearch={handleSearch} allPosts={allPosts} />
+              <Search
+                onSearchResults={handleSearchResults}
+                searchCurrentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                setCurrentPage={setCurrentPage}
+                totalPosts={totalPosts}
+                sortOption={sortOption}
+                setSortOption={setSortOption}
+              />
             </div>
             {/* 데스트탑 버전 */}
             <div>
@@ -111,8 +138,17 @@ const CommunityPage = () => {
         <List
           key={searchTerm}
           searchTerm={searchTerm}
-          posts={posts}
+          posts={searchResults.length > 0 ? searchResults : posts}
           setPosts={setPosts}
+          searchResults={searchResults}
+          allPosts={allPosts}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          setCurrentPage={setCurrentPage}
+          totalPosts={totalPosts}
+          sortOption={sortOption}
+          setSortOption={setSortOption}
         />
       </div>
     </>
