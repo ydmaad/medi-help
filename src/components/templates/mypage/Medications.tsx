@@ -6,6 +6,7 @@ import { supabase } from "@/utils/supabase/client";
 import Image from "next/image";
 import EditMediModal from "./myPageModal/EditMediModal";
 import MediModal from "./myPageModal/MediModal";
+import MyPageViewModal from '@/components/molecules/MyPageViewModal';
 import { format } from "date-fns";
 
 interface MediRecord {
@@ -40,6 +41,7 @@ const Medications: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
+  const [isMobileViewOpen, setIsMobileViewOpen] = useState(false);
 
   useEffect(() => {
     const fetchMediRecords = async () => {
@@ -57,16 +59,29 @@ const Medications: React.FC = () => {
       }
     };
     fetchMediRecords();
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleMediClick = (record: MediRecord) => {
     setSelectedMediRecord(record);
-    setIsViewModalOpen(true);
+    if (isMobile) {
+      setIsMobileViewOpen(true);
+    } else {
+      setIsViewModalOpen(true);
+    }
   };
 
   const closeAllModals = () => {
     setIsViewModalOpen(false);
     setIsEditModalOpen(false);
+    setIsMobileViewOpen(false);
+    setSelectedMediRecord(null);
   };
 
   const handleUpdate = (updatedMediRecord: MediRecord) => {
@@ -82,6 +97,7 @@ const Medications: React.FC = () => {
     setMediRecords(prevRecords =>
       prevRecords.filter(record => record.id !== id)
     );
+    closeAllModals();
   };
 
   const openEditModal = () => {
@@ -89,28 +105,7 @@ const Medications: React.FC = () => {
     setIsEditModalOpen(true);
   };
 
-  const closeEditModal = () => {
-    setIsEditModalOpen(false);
-    setIsViewModalOpen(true);
-  };
-
-  // 카드 당 아이템 수 설정
-  const ITEMS_PER_PAGE_DESKTOP = 15; // 최대 15개
-  const ITEMS_PER_PAGE_MOBILE = 8; // 최대 8개
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const ITEMS_PER_PAGE = isMobile
-    ? Math.min(mediRecords.length, ITEMS_PER_PAGE_MOBILE)
-    : Math.min(mediRecords.length, ITEMS_PER_PAGE_DESKTOP);
-
+  const ITEMS_PER_PAGE = isMobile ? 8 : 15;
   const totalPages = Math.ceil(mediRecords.length / ITEMS_PER_PAGE);
   const currentRecords = mediRecords.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -126,16 +121,12 @@ const Medications: React.FC = () => {
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-4 overflow-x-hidden">
       <div className="w-full md:w-[670px] mx-auto mt-16 md:mt-24">
-        {/* 제목과 카드 컨테이너 */}
         <div className="relative">
-          {/* 제목과 카드 컨테이너를 감싼 div */}
           <div className="relative">
-            {/* 제목 */}
             <h2 className={`text-[20px] md:text-[24px] font-bold text-brand-gray-800 mb-4 ${isMobile ? 'absolute left-0 top-0 w-full px-4' : 'mb-8'}`}>
               복약 리스트
             </h2>
             
-            {/* 카드 컨테이너 */}
             <div className={`flex justify-center ${isMobile ? 'pt-16' : ''}`}>
               <div className={`overflow-hidden ${isMobile ? 'w-[335px]' : 'w-full'}`}>
                 <div
@@ -190,7 +181,6 @@ const Medications: React.FC = () => {
           </div>
         </div>
         
-        {/* 페이지네이션 */}
         <div className="flex justify-center mt-4 space-x-1">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -232,19 +222,31 @@ const Medications: React.FC = () => {
 
       {selectedMediRecord && (
         <>
-          <MediModal
-            isOpen={isViewModalOpen}
-            onRequestClose={() => setIsViewModalOpen(false)}
-            onEditClick={openEditModal}
-            mediRecord={selectedMediRecord}
-          />
-          <EditMediModal
-            isOpen={isEditModalOpen}
-            onRequestClose={closeAllModals}
-            onDelete={handleDelete}
-            onUpdate={handleUpdate}
-            mediRecord={selectedMediRecord}
-          />
+          {isMobile ? (
+            <MyPageViewModal
+              isOpen={isMobileViewOpen}
+              onClose={closeAllModals}
+              mediRecord={selectedMediRecord}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+            />
+          ) : (
+            <>
+              <MediModal
+                isOpen={isViewModalOpen}
+                onRequestClose={() => setIsViewModalOpen(false)}
+                onEditClick={openEditModal}
+                mediRecord={selectedMediRecord}
+              />
+              <EditMediModal
+                isOpen={isEditModalOpen}
+                onRequestClose={closeAllModals}
+                onDelete={handleDelete}
+                onUpdate={handleUpdate}
+                mediRecord={selectedMediRecord}
+              />
+            </>
+          )}
         </>
       )}
     </div>
