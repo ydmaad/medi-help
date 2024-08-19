@@ -92,9 +92,14 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
     };
 
     try {
+      console.log("Sending medication data:", newMediRecord);
       const response = await axios.post("/api/calendar/medi", newMediRecord);
+      console.log("Server response:", response.data);
+
       if (response.status === 201) {
+        console.log("Medication added successfully");
         onAdd(newMediRecord);
+
         // Clear form state
         setMediName("");
         setMediNickname("");
@@ -106,7 +111,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         setNotificationTime([""]);
         setNotificationEnabled(false);
         onRequestClose();
-      } else {
+      }
+       else {
         console.error("Failed to add record:", response.statusText);
       }
     } catch (error) {
