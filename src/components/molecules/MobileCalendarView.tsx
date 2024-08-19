@@ -87,7 +87,7 @@ const MobileCalendarView = () => {
 
   return (
     <>
-      <div className="w-11/12 min-w-[344px] desktop:hidden p-[10px] box-content border border-[#F5F6F7] bg-[#FBFBFB]">
+      <div className="w-11/12 min-w-[344px] desktop:hidden py-[10px] box-content bg-[#FBFBFB]">
         <div className="flex justify-between items-center mt-2 mb-4 px-1">
           <div className="flex justify-between gap-6 text-[14px] text-brand-gray-600 font-normal">
             {selectedDate}

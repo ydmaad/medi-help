@@ -15,6 +15,8 @@ interface AuthState {
   user: AuthUser | null; // 현재 로그인한 사용자 정보
   setUser: (user: AuthUser | null) => void; // 사용자 정보를 설정하는 함수
   clearAuth: () => void; // 인증 정보를 초기화하는 함수
+  isLogedIn: boolean;
+  setIsLogedIn: (newStates: boolean) => void;
 }
 
 // Zustand를 사용하여 전역 상태 스토어를 생성합니다.
@@ -27,4 +29,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   // 인증 정보를 초기화하는 액션 (로그아웃 시 사용)
   clearAuth: () => set(() => ({ user: null })),
+
+  isLogedIn: false,
+
+  setIsLogedIn: (newStates) => set(() => ({ isLogedIn: newStates })),
 }));
