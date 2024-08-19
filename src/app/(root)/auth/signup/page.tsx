@@ -63,7 +63,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="mt-[30px] flex justify-center items-center min-h-screen">
       <SignupForm onSubmit={handleSignup} error={error} />
     </div>
   );

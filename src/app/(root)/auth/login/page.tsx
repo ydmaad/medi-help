@@ -98,7 +98,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="mt-[30px] desk:mt-auto flex justify-center items-center min-h-screen">
       <LoginForm
         onSubmit={handleLogin}
         onKakaoLogin={handleKakaoLogin}
