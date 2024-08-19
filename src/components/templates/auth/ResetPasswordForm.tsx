@@ -17,6 +17,7 @@ export const ResetPasswordForm: React.FC = () => {
     try {
       const siteUrl =
         process.env.NEXT_PUBLIC_SITE_URL ||
+        // process.env.NEXT_PUBLIC_HOST ||
         // "https://medi-help-seven.vercel.app";
         "http://localhost:3000";
 
