@@ -14,12 +14,18 @@ export async function GET(request: NextRequest) {
   // 페이지 시작 인덱스
   const offset = (page - 1) * perPage;
   const sortOption = searchParams.get("sort") || "최신순";
+  const searchTerm = searchParams.get("search") || "";
+  console.log("이게 검색어=>", searchTerm);
 
   try {
-    // 총 게시글 수 조회
+    // 총 게시글 조회
+    // if문 사용 - 검색어가 있을때 없을때
     const { count, error: countError } = await supabase
       .from("posts")
-      .select("*", { count: "exact", head: true });
+      .select("*", { count: "exact", head: true })
+      .or(
+        `title.ilike.%${searchTerm}%,contents.ilike.%${searchTerm}%,nickname.ilike.%${searchTerm}%`
+      );
 
     if (countError) {
       throw countError;
@@ -41,6 +47,9 @@ export async function GET(request: NextRequest) {
           avatar
         )
       `
+      )
+      .or(
+        `title.ilike.%${searchTerm}%,contents.ilike.%${searchTerm}%,nickname.ilike.%${searchTerm}%`
       )
       .range(offset, offset + perPage - 1);
 
