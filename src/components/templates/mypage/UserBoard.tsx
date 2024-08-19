@@ -234,7 +234,7 @@ const UserBoard: React.FC<UserBoardProps> = ({ className }) => {
       </div>
 
       {/* 모바일 버전 */}
-      <div className="desktop:hidden w-full">
+      <div className="desktop:hidden w-full flex justify-center">
         {!isEditMode ? (
           <div className="flex items-center bg-[#e9f5fe] rounded-xl border border-brand-primary-100 w-[335px] h-[128px] px-[42px] py-[24px]">
             <div className="flex items-center gap-[12px]">
