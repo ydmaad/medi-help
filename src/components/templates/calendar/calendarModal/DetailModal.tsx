@@ -26,6 +26,7 @@ interface Props {
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
   viewEvents: boolean;
   setViewEvents: React.Dispatch<React.SetStateAction<boolean>>;
+  onUpdate: () => void;
 }
 
 const DetailModal = ({
@@ -33,6 +34,7 @@ const DetailModal = ({
   setViewEvents,
   openDetailModal,
   setOpenDetailModal,
+  onUpdate,
 }: Props) => {
   const { values, setValues } = useValuesStore();
   const { calendar, setCalendar } = useCalendarStore();
@@ -41,7 +43,6 @@ const DetailModal = ({
 
   const { toast } = useToast();
 
-  // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);
     let deletedCalendar: CalendarType[] = calendar.filter(
@@ -56,9 +57,9 @@ const DetailModal = ({
       side_effect: "",
       start_date: "",
     });
+    onUpdate();
   };
 
-  // Route Handler 통해서 POST 하는 함수
   const postCalendar = async (value: ValuesType) => {
     try {
       const { data } = await axios.post(`/api/calendar`, value);
@@ -111,13 +112,13 @@ const DetailModal = ({
         { ...value, created_at: String(new Date()) },
       ]);
 
+      onUpdate();
       return data;
     } catch (error) {
       console.log("Post Error", error);
     }
   };
 
-  // Route Handler 통해서 DELETE 하는 함수
   const deleteCalendar = async (id: string) => {
     try {
       const res = await axios.delete(`/api/calendar/${id}`);
@@ -135,13 +136,13 @@ const DetailModal = ({
 
       setCalendar([...calendar.filter((cal) => cal.id !== id)]);
 
+      onUpdate();
       return res;
     } catch (error) {
       console.log("Delete Error", error);
     }
   };
 
-  // 저장하기 버튼 onClick 함수
   const handlePostButtonClick = async () => {
     if (values.side_effect?.trim() === "" && values.medicine_id.length === 0) {
       toast.warning("복용하신 약이나 노트를 입력해주세요 !");
@@ -153,7 +154,7 @@ const DetailModal = ({
       side_effect: values.side_effect ? values.side_effect.trim() : "",
     });
 
-    postCalendar(values);
+    await postCalendar(values);
 
     toast.success("복용 기록이 저장되었습니다.");
 
@@ -166,9 +167,9 @@ const DetailModal = ({
       side_effect: "",
       start_date: "",
     });
+    onUpdate();
   };
 
-  // 삭제하기 버튼 onClick 함수
   const handleDeleteButtonClick = () => {
     if (confirm(`${values.start_date}의 기록을 모두 삭제하시겠습니까 ? `)) {
       deleteCalendar(values.id);
@@ -185,10 +186,10 @@ const DetailModal = ({
           .toISOString()
           .split("T")[0],
       });
+      onUpdate();
     }
   };
 
-  // 수정하기 버튼 onClick 함수
   const handleEditButtonClick = () => {
     setEdit(true);
   };

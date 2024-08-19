@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, PostgrestError } from '@supabase/supabase-js';
-import '@/utils/scheduleEmail'; // 스케줄링 로직을 불러옵니다.
+import '@/utils/scheduleEmail';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -23,11 +23,37 @@ interface MediRecord {
   day_of_week: string[];
   notification_time: string[];
   repeat: boolean;
+  is_sent: boolean;
 }
 
-function isPostgrestError(error: any): error is PostgrestError {
-  return error && typeof error === 'object' && 'message' in error && 'details' in error;
-}
+// 디바운스 함수 구현
+const debounce = (func: Function, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timeoutId);
+    return new Promise((resolve) => {
+      timeoutId = setTimeout(() => resolve(func(...args)), delay);
+    });
+  };
+};
+
+// 실제 데이터를 가져오는 함수
+const fetchMedicationData = async (user_id: string) => {
+  const { data, error } = await supabase
+    .from('medications')
+    .select('*')
+    .eq('user_id', user_id)
+    .eq('is_sent', false);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+// 디바운스된 fetchMedicationData 함수
+const debouncedFetchMedicationData = debounce(fetchMedicationData, 300);
 
 export async function GET(req: NextRequest) {
   try {
@@ -39,16 +65,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    const { data, error } = await supabase
-      .from('medications')
-      .select('*')
-      .eq('user_id', user_id);
+    console.log(`Received GET request for user_id: ${user_id}`);
 
-    if (error) {
-      console.error("Supabase error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const data = await debouncedFetchMedicationData(user_id);
 
+    console.log(`Returning data for user_id: ${user_id}`);
     return NextResponse.json({ medicationRecords: data }, { status: 200 });
   } catch (err: unknown) {
     console.error("Server error:", err);
@@ -59,6 +80,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const newMediRecord: MediRecord = await req.json();
+    newMediRecord.is_sent = false;  // is_sent 필드 추가
 
     const { data, error } = await supabase
       .from('medications')

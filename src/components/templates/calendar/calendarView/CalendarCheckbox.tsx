@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/auth";
 import axios from "axios";
 import { Tables } from "@/types/supabase";
@@ -20,10 +20,15 @@ type CalendarMedicineType = {
   medications: MedicineType;
 };
 
-const CalendarCheckbox = () => {
+interface CalendarCheckboxProps {
+  onUpdate: () => void;
+}
+
+const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
   const { user } = useAuthStore();
   const { mediNames, setMediNames } = useMediNameFilter();
   const { events, setEvents } = useEventsStore();
+  const { medicines } = useMedicinesStore();
   const [checkedMedicines, setCheckedMedicines] = useState<MedicineType[]>([]);
   const [selectedMedicines, setSelectedMedicines] = useState<string[]>([]);
   const [showAllMedicines, setShowAllMedicines] = useState<boolean>(false);
@@ -35,7 +40,6 @@ const CalendarCheckbox = () => {
         try {
           const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
 
-          // 데이터를 가공하여 각 날짜별로 체크된 약들의 목록을 추출
           const allCheckedMedicines: MedicineType[] = [];
           data.forEach((event: EventInput) => {
             event.calendar_medicine.forEach(
@@ -59,21 +63,21 @@ const CalendarCheckbox = () => {
     };
 
     fetchCheckedMedicines();
-  }, [user]);
+  }, [user, medicines]);
 
   const handleCheckboxChange = (medicine: MedicineType) => {
-    setSelectedMedicines((prev) =>
-      prev.includes(medicine.id)
-        ? prev.filter((id) => id !== medicine.id)
-        : [...prev, medicine.id]
-    );
-    setMediNames(
-      mediNames.includes(medicine.medi_nickname)
-        ? mediNames.filter(
-            (medi_nickname) => medi_nickname !== medicine.medi_nickname
-          )
-        : [...mediNames, medicine.medi_nickname]
-    );
+    const isSelected = selectedMedicines.includes(medicine.id);
+    const updatedSelectedMedicines = isSelected
+      ? selectedMedicines.filter((id) => id !== medicine.id)
+      : [...selectedMedicines, medicine.id];
+      
+    const updatedMediNames = isSelected
+      ? mediNames.filter((name) => name !== medicine.medi_nickname)
+      : [...mediNames, medicine.medi_nickname || ""];
+
+    setSelectedMedicines(updatedSelectedMedicines);
+    setMediNames(updatedMediNames);
+    onUpdate();
   };
 
   let nonAllowedDuplicates: MedicineType[] = [];
@@ -86,7 +90,6 @@ const CalendarCheckbox = () => {
       nonAllowedDuplicates.push(medicine);
     }
   });
-
   return (
     <div>
       <CalendarTitle

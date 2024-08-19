@@ -22,7 +22,6 @@ import {
 } from "@/store/calendar";
 import uuid from "react-uuid";
 import { GoPlus } from "react-icons/go";
-import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 
 interface ExtendedEventInput extends EventInput {
   extendProps?: {
@@ -35,7 +34,6 @@ const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false);
   const [viewEvents, setViewEvents] = useState<boolean>(false);
-  const [openMobileAddMedi, setOpenMobileAddMedi] = useState<boolean>(false);
 
   const { user } = useAuthStore();
   const { values, setValues } = useValuesStore();
@@ -84,65 +82,65 @@ const CalendarView = () => {
     getMedicines();
   }, [user]);
 
-  useEffect(() => {
-    const getEventsData = async () => {
-      try {
-        if (user) {
-          const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
+  const getEventsData = async () => {
+    try {
+      if (user) {
+        const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
 
-          {
-            const newEvents: ExtendedEventInput[] = [];
-            data.map((event: any) => {
-              if (event.calendar_medicine.length !== 0) {
-                const setEventList = (time: string) => {
-                  let eventList = event.calendar_medicine.filter(
-                    (medicine: any) => {
-                      return medicine.medi_time === time;
-                    }
-                  );
-
-                  const newEventList = eventList.filter((e: any) => {
-                    return mediNames.includes(e.medications.medi_nickname);
-                  });
-
-                  let countMedicines = newEventList.length;
-
-                  if (countMedicines !== 0) {
-                    let medicineNickname =
-                      newEventList[0].medications.medi_nickname;
-                    newEvents.push({
-                      groupId: event.id,
-                      title:
-                        countMedicines !== 1
-                          ? `${medicineNickname} 외 ${countMedicines - 1}개`
-                          : `${medicineNickname}`,
-                      start: `${event.start_date} ${
-                        TIME_OF_TIME[newEventList[0].medi_time]
-                      }`,
-                      backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
-                      extendProps: {
-                        medi_time: newEventList[0].medi_time,
-                        medicineList: newEventList.map(
-                          (medicine: any) => medicine.medications.id
-                        ),
-                      },
-                    });
+        {
+          const newEvents: ExtendedEventInput[] = [];
+          data.map((event: any) => {
+            if (event.calendar_medicine.length !== 0) {
+              const setEventList = (time: string) => {
+                let eventList = event.calendar_medicine.filter(
+                  (medicine: any) => {
+                    return medicine.medi_time === time;
                   }
-                };
+                );
 
-                setEventList("morning");
-                setEventList("afternoon");
-                setEventList("evening");
-              }
-            });
-            setEvents(newEvents);
-          }
+                const newEventList = eventList.filter((e: any) => {
+                  return mediNames.includes(e.medications.medi_nickname);
+                });
+
+                let countMedicines = newEventList.length;
+
+                if (countMedicines !== 0) {
+                  let medicineNickname =
+                    newEventList[0].medications.medi_nickname;
+                  newEvents.push({
+                    groupId: event.id,
+                    title:
+                      countMedicines !== 1
+                        ? `${medicineNickname} 외 ${countMedicines - 1}개`
+                        : `${medicineNickname}`,
+                    start: `${event.start_date} ${
+                      TIME_OF_TIME[newEventList[0].medi_time]
+                    }`,
+                    backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
+                    extendProps: {
+                      medi_time: newEventList[0].medi_time,
+                      medicineList: newEventList.map(
+                        (medicine: any) => medicine.medications.id
+                      ),
+                    },
+                  });
+                }
+              };
+
+              setEventList("morning");
+              setEventList("afternoon");
+              setEventList("evening");
+            }
+          });
+          setEvents(newEvents);
         }
-      } catch (error) {
-        console.log("axios error", error);
       }
-    };
+    } catch (error) {
+      console.log("axios error", error);
+    }
+  };
 
+  useEffect(() => {
     getEventsData();
   }, [user, mediNames]);
 
@@ -244,6 +242,25 @@ const CalendarView = () => {
     setOpenDetailModal(true);
   };
 
+  const updateMedicineData = async () => {
+    if (user) {
+      try {
+        const { data } = await axios.get(`/api/calendar/medi?user_id=${user.id}`);
+        const newMedicines: MedicinesType[] = data.medicationRecords.map((record: any) => ({
+          id: record.id,
+          name: record.medi_nickname,
+          time: record.times,
+          notification_time: record.notification_time,
+        }));
+        setMedicines(newMedicines);
+        
+        await getEventsData();
+      } catch (error) {
+        console.log("Error updating medicine data:", error);
+      }
+    }
+  };
+
   return (
     <>
       <DetailModal
@@ -251,6 +268,7 @@ const CalendarView = () => {
         setOpenDetailModal={setOpenDetailModal}
         viewEvents={viewEvents}
         setViewEvents={setViewEvents}
+        onUpdate={updateMedicineData}
       />
       <AddMediModal
         isOpen={openAddMediModal}
@@ -266,24 +284,10 @@ const CalendarView = () => {
               notification_time: newMediRecord.notification_time,
             },
           ]);
+          updateMedicineData();
         }}
       />
-      <MobileAddMedi
-        isOpen={openMobileAddMedi}
-        onClose={() => setOpenMobileAddMedi(false)}
-        onAdd={(newMediRecord) => {
-          console.log("New Medi Record:", newMediRecord);
-          setMedicines([
-            ...medicines,
-            {
-              id: newMediRecord.id,
-              name: newMediRecord.medi_nickname,
-              time: newMediRecord.times,
-              notification_time: newMediRecord.notification_time,
-            },
-          ]);
-        }}
-      />
+      
       <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4 desktop:mt-20">
         <div className="relative min-w-[364px]">
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
@@ -348,12 +352,6 @@ const CalendarView = () => {
           </div>
         </div>
         <MobileCalendarView />
-        <button
-          onClick={() => setOpenMobileAddMedi(true)}
-          className="desktop:hidden fixed w-[60px] h-[60px] rounded-full bottom-20 right-10 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-20 hover:scale-105 ease-in duration-300"
-        >
-          <GoPlus />
-        </button>
       </div>
     </>
   );
