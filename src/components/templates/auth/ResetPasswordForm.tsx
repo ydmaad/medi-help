@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { AuthInput } from "@/components/atoms/AuthInput";
-import { AuthButton } from "@/components/atoms/AuthButton";
+// import { AuthButton } from "@/components/atoms/AuthButton";
 
 export const ResetPasswordForm: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -17,8 +17,9 @@ export const ResetPasswordForm: React.FC = () => {
     try {
       const siteUrl =
         process.env.NEXT_PUBLIC_SITE_URL ||
-        // "https://medi-help-seven.vercel.app";
-        "http://localhost:3000";
+        // process.env.NEXT_PUBLIC_HOST ||
+        "https://medi-help-seven.vercel.app";
+      // "http://localhost:3000";
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${siteUrl}/auth/recover`,
