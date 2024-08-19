@@ -71,8 +71,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Send Email
-    const user = await supabase
+      // Send Email
+      const user = await supabase
       .from('users')
       .select('email, nickname')
       .eq('id', newMediRecord.user_id)
