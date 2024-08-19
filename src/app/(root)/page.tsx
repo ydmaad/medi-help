@@ -63,7 +63,7 @@ const Page = () => {
     fetchPosts();
   }, []);
 
-  const limitedMagazines = magazines.slice(0, 3);
+  const limitedMagazines = magazines.slice(2, 5);
   const limitedMainMagazines = magazines.slice(0, 1);
   const limitedSubMagazines = magazines.slice(1, 2);
   const limitedPosts = posts.slice(0, 6);
@@ -105,7 +105,7 @@ const Page = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-3 ">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
