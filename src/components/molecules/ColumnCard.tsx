@@ -1,13 +1,14 @@
 import React from "react";
 import { useRouter } from "next/navigation";
+import ContentsImage from "../atoms/ContentsImage";
 import { ImageProvider } from "@/contexts/ImageContext";
-import CardImage from "../atoms/CardImage";
+import { BarTextProvider } from "@/contexts/BarTextContext";
 import MagazineCardTitle from "../atoms/MagazineCardTitle";
 import MagazineSubtitle from "../atoms/MagazineSubtitle";
-import { BarTextProvider } from "@/contexts/BarTextContext";
 import BarText from "../atoms/BarText";
 
-const SmCard = ({
+const ColumnCard = ({
+  imageSrc,
   src,
   alt,
   title,
@@ -16,6 +17,7 @@ const SmCard = ({
   rightText,
   id,
 }: {
+  imageSrc?: string | null;
   src: string;
   alt: string;
   title: string;
@@ -25,7 +27,6 @@ const SmCard = ({
   id: string;
 }) => {
   const router = useRouter();
-
   const barTextValue = {
     leftText,
     rightText,
@@ -38,25 +39,26 @@ const SmCard = ({
   };
 
   return (
-    <ImageProvider value={{ src, alt, title, subtitle }}>
-      <BarTextProvider value={barTextValue}>
-        <div className="rounded-lg p-2 cursor-pointer" onClick={handleClick}>
-          <div className="mb-[56px]">
-            <CardImage />
-            <div className="mt-[16px] mb-[16px]">
-              <MagazineCardTitle text={title} />
-              <div className="mb-[16px]">
-                <MagazineSubtitle text={subtitle} />
-              </div>
-            </div>
+    <div className="flex items-center w-[335px] h-[112px] border-b border-brand-gray-200">
+      <div className="w-[72px] h-[72px] mt-[15px]">
+        <ContentsImage src={imageSrc} />
+      </div>
+      <ImageProvider value={{ src, alt, title, subtitle }}>
+        <BarTextProvider value={barTextValue}>
+          <div
+            className="flex-1 rounded-lg cursor-pointer"
+            onClick={handleClick}
+          >
+            <MagazineCardTitle text={title} />
+            <MagazineSubtitle text={subtitle} />
             <div className="text-brand-gray-600">
               <BarText />
             </div>
           </div>
-        </div>
-      </BarTextProvider>
-    </ImageProvider>
+        </BarTextProvider>
+      </ImageProvider>
+    </div>
   );
 };
 
-export default SmCard;
+export default ColumnCard;

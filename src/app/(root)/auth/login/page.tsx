@@ -12,7 +12,7 @@ import { signInWithKakao } from "@/utils/supabase/kakaoAuth";
 import { signInWithGoogle } from "@/utils/supabase/googleAuth";
 
 export default function LoginPage() {
-  const { setUser, setIsLogedIn } = useAuthStore(); // setIsLogedIn 추가
+  const { setUser, setIsLogedIn } = useAuthStore();
   const router = useRouter();
   const [error, setError] = useState<string>("");
 
@@ -68,31 +68,87 @@ export default function LoginPage() {
   // 카카오 로그인 핸들러
   const handleKakaoLogin = async () => {
     try {
-      const data = await signInWithKakao();
-      console.log("Kakao login success:", data);
-      // 로그인 상태를 true로 설정
-      setIsLogedIn(true);
-      // 카카오 로그인 후 메인 페이지로 이동
-      router.push("/");
+      const { user, error } = await signInWithKakao();
+      if (error) throw error;
+      if (user) {
+        // 사용자 정보 조회
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (userError) throw userError;
+
+        // 전역 상태에 사용자 정보 저장
+        setUser(userData);
+        setIsLogedIn(true);
+
+        // 로그인 성공 시 메인 페이지로 이동
+        router.push("/");
+      }
     } catch (error) {
       console.error("Kakao login error:", error);
       setError("카카오 로그인 중 오류가 발생했습니다.");
     }
   };
 
+  // 구글 로그인 핸들러
   const handleGoogleLogin = async () => {
     try {
-      const data = await signInWithGoogle();
-      console.log("Google login success:", data);
-      // 로그인 상태를 true로 설정
-      setIsLogedIn(true);
-      // 구글 로그인 후 메인 페이지로 이동
-      router.push("/");
+      const { user, error } = await signInWithGoogle();
+      if (error) throw error;
+      if (user) {
+        // 사용자 정보 조회
+        const { data: userData, error: userError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (userError) throw userError;
+
+        // 전역 상태에 사용자 정보 저장
+        setUser(userData);
+        setIsLogedIn(true);
+
+        // 로그인 성공 시 메인 페이지로 이동
+        router.push("/");
+      }
     } catch (error) {
       console.error("Google login error:", error);
       setError("구글 로그인 중 오류가 발생했습니다.");
     }
   };
+
+  // // 카카오 로그인 핸들러
+  // const handleKakaoLogin = async () => {
+  //   try {
+  //     const data = await signInWithKakao();
+  //     console.log("Kakao login success:", data);
+  //     // 로그인 상태를 true로 설정
+  //     setIsLogedIn(true);
+  //     // 카카오 로그인 후 메인 페이지로 이동
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.error("Kakao login error:", error);
+  //     setError("카카오 로그인 중 오류가 발생했습니다.");
+  //   }
+  // };
+
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     const data = await signInWithGoogle();
+  //     console.log("Google login success:", data);
+  //     // 로그인 상태를 true로 설정
+  //     setIsLogedIn(true);
+  //     // 구글 로그인 후 메인 페이지로 이동
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.error("Google login error:", error);
+  //     setError("구글 로그인 중 오류가 발생했습니다.");
+  //   }
+  // };
 
   return (
     <div className="flex justify-center items-center min-h-screen">

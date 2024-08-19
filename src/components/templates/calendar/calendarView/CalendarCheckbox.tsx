@@ -106,9 +106,7 @@ const CalendarCheckbox = () => {
           복약 필터
         </h2>
         <div
-          className={`${
-            showAllMedicines ? "max-h-full" : "max-h-32"
-          } overflow-y-auto transition-max-height duration-300`}
+          className={`h-full overflow-y-auto transition-max-height duration-300`}
         >
           <ul>
             {nonAllowedDuplicates.map((medicine) => (
