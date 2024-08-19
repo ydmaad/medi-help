@@ -22,11 +22,13 @@ import {
 } from "@/store/calendar";
 import uuid from "react-uuid";
 import { GoPlus } from "react-icons/go";
+import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
   const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [openMobileAddMedi, setOpenMobileAddMedi] = useState<boolean>(false);
 
   const { user } = useAuthStore();
   const { values, setValues } = useValuesStore();
@@ -262,6 +264,22 @@ const CalendarView = () => {
           ]);
         }}
       />
+        <MobileAddMedi
+        isOpen={openMobileAddMedi}
+        onClose={() => setOpenMobileAddMedi(false)}
+        onAdd={(newMediRecord) => {
+          console.log("New Medi Record:", newMediRecord);
+          setMedicines([
+            ...medicines,
+            {
+              id: newMediRecord.id,
+              name: newMediRecord.medi_nickname,
+              time: newMediRecord.times,
+              notification_time: newMediRecord.notification_time,
+            },
+          ]);
+        }}
+      />
       <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4 desktop:mt-20">
         <div className="relative min-w-[364px]">
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
@@ -327,7 +345,7 @@ const CalendarView = () => {
         </div>
         <MobileCalendarView />
         <button
-          onClick={() => {}}
+          onClick={() => setOpenMobileAddMedi(true)}
           className="desktop:hidden fixed w-[60px] h-[60px] rounded-full bottom-20 right-10 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-20 hover:scale-105 ease-in duration-300"
         >
           <GoPlus />
