@@ -170,7 +170,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center text-sm ">
-            <span className="p-[10px] text-[16px] bg-white text-brand-gray-600">
+            <span className="p-[10px] text-[16px] bg-[#fbfbfb] text-brand-gray-600">
               간편 로그인
             </span>
           </div>
