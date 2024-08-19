@@ -8,7 +8,7 @@ interface CardSubTitleProps {
 
 const MagazineSubtitle = ({ text }: CardSubTitleProps) => {
   return (
-    <div className="text-gray-800 text-[12px] mb-[16px] desktop:text-[16px] line-clamp-1 overflow-hidden text-ellipsis mt-[2px]">
+    <div className="text-gray-800 text-[12px] desktop:text-[16px] line-clamp-1 overflow-hidden text-ellipsis mt-[2px]">
       {text}
     </div>
   );
