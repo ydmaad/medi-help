@@ -94,9 +94,8 @@ const Medications: React.FC = () => {
     setIsViewModalOpen(true);
   };
 
-  // 카드 당 아이템 수 설정
-  const ITEMS_PER_PAGE_DESKTOP = 15; // 최대 15개
-  const ITEMS_PER_PAGE_MOBILE = 8; // 최대 8개
+  const ITEMS_PER_PAGE_DESKTOP = 15;
+  const ITEMS_PER_PAGE_MOBILE = 8;
 
   useEffect(() => {
     const handleResize = () => {
@@ -109,7 +108,7 @@ const Medications: React.FC = () => {
 
   const ITEMS_PER_PAGE = isMobile
     ? Math.min(mediRecords.length, ITEMS_PER_PAGE_MOBILE)
-    : Math.min(mediRecords.length, ITEMS_PER_PAGE_DESKTOP);
+    : ITEMS_PER_PAGE_DESKTOP;
 
   const totalPages = Math.ceil(mediRecords.length / ITEMS_PER_PAGE);
   const currentRecords = mediRecords.slice(
@@ -135,12 +134,12 @@ const Medications: React.FC = () => {
         
         {/* 약품 카드 컨테이너 */}
         <div className="flex justify-center">
-          <div className={`overflow-hidden ${isMobile ? 'w-[335px]' : 'w-full'}`}>
+          <div className={`overflow-hidden ${isMobile ? 'w-full' : 'w-full'}`}>
             <div
               className={`grid ${
-                isMobile ? "grid-cols-2" : "grid-cols-5"
+                isMobile ? "grid-cols-2" : "grid-cols-3"
               } gap-${isMobile ? '4' : '6'}`}
-              style={{ gap: isMobile ? '17px' : '24px' }}
+              style={{ gap: isMobile ? '17px' : '24px' }}  
             >
               {currentRecords.map((record) => (
                 <div
@@ -150,7 +149,7 @@ const Medications: React.FC = () => {
                   }`}
                   onClick={() => handleMediClick(record)}
                 >
-                  <div className="w-[127px] h-[72px] mb-2">
+                  <div className={`w-[127px] h-[72px] mb-2`}>
                     {record.itemImage ? (
                       <Image
                         src={record.itemImage}
@@ -167,16 +166,16 @@ const Medications: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col justify-between w-full flex-grow">
+                  <div className="flex flex-col justify-between w-full flex-grow px-4">
                     <div className="mb-2">
-                      <p className="text-[14px] md:text-sm font-bold text-brand-gray-1000 line-clamp-1">
+                      <p className="text-[14px] font-bold text-brand-gray-1000">
                         {record.medi_nickname}
                       </p>
-                      <p className="text-[12px] md:text-xs text-brand-gray-800 line-clamp-1 mt-1">
+                      <p className="text-[12px] text-brand-gray-800 mt-1">
                         {record.medi_name}
                       </p>
                     </div>
-                    <p className="text-[10px] md:text-xs text-brand-primary-500 truncate mt-4">
+                    <p className="text-[10px] text-brand-primary-500 truncate mt-4">
                       {formatDate(record.start_date)} ~ {formatDate(record.end_date)}
                     </p>
                   </div>
