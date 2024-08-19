@@ -138,8 +138,9 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       contentLabel="Edit Medication"
       className="fixed inset-0 flex items-center justify-center z-50"
       overlayClassName="fixed inset-0 bg-gray-900 bg-opacity-75 z-40"
+      ariaHideApp={false}
     >
-      <div className="bg-white rounded-lg p-6 w-[432px] h-[690px] mx-auto z-50 relative overflow-y-auto">
+      <div className="bg-white rounded-lg p-6 max-w-[432px] w-full max-h-[90vh] overflow-y-auto relative">
         <button
           onClick={onRequestClose}
           className="absolute top-6 right-6 text-gray-700"
@@ -308,14 +309,14 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
           <button
             type="button"
             onClick={handleDeleteClick}
-            className="px-4 py-2 bg-brand-primary-50 text-brand-primary-500"
+            className="px-4 py-2 rounded-md bg-brand-primary-50 text-brand-primary-500"
           >
             삭제
           </button>
           <button
             type="button"
             onClick={handleUpdateClick}
-            className="px-4 py-2 bg-brand-primary-500 text-brand-primary-50"
+            className="px-4 py-2 rounded-md bg-brand-primary-500 text-brand-primary-50"
           >
             수정
           </button>
