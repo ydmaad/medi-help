@@ -30,7 +30,7 @@ const SortOption = ({
 
   return (
     <>
-      <div className="desktop:mb-[16px] desktop:mt-[20px] relative desktop:mr-0">
+      <div className="relative desktop:mr-0">
         <button
           onClick={handleOptionOpen}
           className="flex items-center justify-center text-brand-gray-600 whitespace-nowrap"
@@ -41,7 +41,7 @@ const SortOption = ({
           <IoIosArrowDown className="flex-shrink-0" />
         </button>
         {isOptionOpen && (
-          <div className="absolute -left-[28px]  mt-2 flex h-[120px] w-[100px] flex-col items-center justify-center gap-[0.3rem] border shadow rounded-2xl bg-white z-10">
+          <div className="absolute -left-[10px] desktop:-left-[20px] text-[12px] desktop:text-[14px] mt-2 flex h-[100px] desktop:h-[110px] w-[77px] desktop:w-[106px] flex-col items-center justify-center gap-[0.3rem] border shadow rounded-lg bg-white z-10">
             {optionList.map((option, index) => (
               <button
                 key={option}
@@ -49,11 +49,11 @@ const SortOption = ({
                   handleOptionSelect(option);
                   handleOptionOpen(); // 옵션 선택 후 리스트를 닫습니다.
                 }}
-                className="text-brand-gray-800 text-[12px] desktop:text-sm w-full  hover:bg-gray-100"
+                className="text-brand-gray-800 text-sx desktop:text-sm w-full  hover:bg-gray-100"
               >
                 {option}
                 {index !== optionList.length - 1 && (
-                  <hr className="mt-[0.3rem] mx-auto w-[4.5rem]  border-brand-gray-200" />
+                  <hr className="mt-[5px] mx-auto w-[48px] desktop:w-[80px]  border-brand-gray-200" />
                 )}
               </button>
             ))}
