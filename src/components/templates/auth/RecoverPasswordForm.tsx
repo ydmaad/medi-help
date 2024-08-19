@@ -96,7 +96,7 @@ export const RecoverPasswordForm: React.FC = () => {
         ) : (
           <form onSubmit={handleResetPassword}>
             {/* 새 비밀번호 입력 필드 */}
-            <div className="mb-4">
+            <div className="mb-[36px]">
               <AuthPasswordInput
                 id="password"
                 name="password"
@@ -113,7 +113,7 @@ export const RecoverPasswordForm: React.FC = () => {
               )}
             </div>
             {/* 비밀번호 확인 입력 필드 */}
-            <div className="mb-4">
+            <div className="mb-[40px]">
               <AuthPasswordInput
                 id="confirmPassword"
                 name="confirmPassword"
