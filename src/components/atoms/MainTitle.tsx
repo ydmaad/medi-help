@@ -7,7 +7,11 @@ interface MainTitleProps {
 }
 
 const MainTitle = ({ text }: MainTitleProps) => {
-  return <h1 className="text-brand-gray-600 font-bold text-[20px]">{text}</h1>;
+  return (
+    <h1 className="desktop:text-brand-gray-600 text-brand-gray-1000 font-bold desktop:text-[20px] text-[18px]">
+      {text}
+    </h1>
+  );
 };
 
 export default MainTitle;
