@@ -13,14 +13,12 @@ export const signInWithGoogle = async () => {
 
     if (error) throw error;
 
-    // 로그인 성공 후 사용자 정보 반환
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    return { user, error: null };
+    // 성공적으로 리다이렉트되면 여기까지 실행되지 않습니다.
+    console.log("Google sign-in initiated:", data);
+    return { data, error: null };
   } catch (error) {
     console.error("Error during Google sign-in:", error);
-    return { user: null, error };
+    return { data: null, error };
   }
 };
 
