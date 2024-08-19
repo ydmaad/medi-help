@@ -36,6 +36,7 @@ const ColumnCarousel = ({ images }: ColumnCarouselProps) => {
     <Slider {...settings}>
       {images.map((image) => (
         <MagazineImg
+          key={image.id}
           src={image.src}
           alt={image.alt}
           leftText={image.leftText}
