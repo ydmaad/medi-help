@@ -128,9 +128,8 @@ const Medications: React.FC = () => {
       <div className="w-full md:w-[670px] mx-auto mt-16 md:mt-24">
         {/* 제목 */}
         <h2 className="text-[16px] md:text-[18px] font-bold text-brand-gray-1000 mb-4 flex items-center">
-          <span>나의 복용약</span>
-          <span className="text-[#279ef9] ml-1 text-[16px]">{mediRecords.length}개</span>
-          <span className="text-[#279ef9] ml-1 text-[16px]">&gt;</span>
+          <span>복약 리스트</span>
+       
         </h2>
         
         {/* 약품 카드 컨테이너 */}
