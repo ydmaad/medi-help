@@ -177,15 +177,8 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                 disabled={isLoading}
               >
                 <option value="">약 이름 선택</option>
-                {isLoading ? (
-                  <option value="" disabled>로딩 중...</option>
-                ) : (
-                  mediNames.map((item, index) => (
-                    <option key={index} value={item.itemName}>
-                      {item.itemName}
-                    </option>
-                  ))
-                )}
+            
+              
               </select>
             </>
           ) : (
