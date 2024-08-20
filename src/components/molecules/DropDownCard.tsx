@@ -54,12 +54,17 @@ const DropDownCard = ({ title, hiddenText }: DropDownCardProps) => {
         <div
           ref={contentRef}
           className={`transition-max-height duration-300 ease-in-out text-left ${
-            isFlipped ? "max-h-[200px] p-3 mx-[40px]" : "max-h-0 p-0 mx-[40px]"
+            isFlipped
+              ? "max-h-[200px] p-3 desktop:mx-[40px] "
+              : "max-h-0 p-0 mx-[12px] desktop:mx-[40px]"
           }`}
         >
           {hiddenText &&
             hiddenText.map((text, index) => (
-              <div key={index} className="mb-2 ">
+              <div
+                key={index}
+                className={`mb-2 ${isFlipped ? "text-black" : "text-white"}`}
+              >
                 {text}
               </div>
             ))}
