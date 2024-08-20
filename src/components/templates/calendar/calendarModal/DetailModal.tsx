@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import { useToast } from "@/hooks/useToast";
 import { Tables } from "@/types/supabase";
+import uuid from "react-uuid";
 
 type CalendarType = Tables<"calendar">;
 
@@ -143,11 +144,6 @@ const DetailModal = ({
 
   // 저장하기 버튼 onClick 함수
   const handlePostButtonClick = async () => {
-    if (values.side_effect?.trim() === "" && values.medicine_id.length === 0) {
-      toast.warning("복용하신 약이나 노트를 입력해주세요 !");
-      return;
-    }
-
     setValues({
       ...values,
       side_effect: values.side_effect ? values.side_effect.trim() : "",
@@ -175,6 +171,7 @@ const DetailModal = ({
 
       toast.success("선택하신 날짜의 복용 기록이 삭제되었습니다.");
 
+      setEdit(false);
       setOpenDetailModal(false);
       setValues({
         ...values,
@@ -190,6 +187,15 @@ const DetailModal = ({
 
   // 수정하기 버튼 onClick 함수
   const handleEditButtonClick = () => {
+    let filteredCalendar = calendar.filter((cal) => {
+      return cal.start_date === values.start_date;
+    });
+
+    setValues({
+      ...values,
+      id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
+    });
+
     setEdit(true);
   };
 

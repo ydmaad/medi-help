@@ -88,7 +88,7 @@ const CalendarCheckbox = () => {
   });
 
   return (
-    <div>
+    <div className="mr-4">
       <CalendarTitle
         showFilterBox={showFilterBox}
         setShowFilterBox={setShowFilterBox}
