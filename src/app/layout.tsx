@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "MEDI HELP",
   description: "MEDI HELP",
   icons: {
-    icon: "/mediHelpIcon.png",
+    icon: "/medihelpFavicon.ico",
   },
 };
 
