@@ -8,6 +8,8 @@ import EditMediModal from "./myPageModal/EditMediModal";
 import MediModal from "./myPageModal/MediModal";
 import MyPageViewModal from '@/components/molecules/MyPageViewModal';
 import { format } from "date-fns";
+import { useToast } from "@/hooks/useToast";
+
 
 interface MediRecord {
   id: string;
@@ -42,6 +44,7 @@ const Medications: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileViewOpen, setIsMobileViewOpen] = useState(false);
+  const { toast } = useToast()
 
   const fetchMediRecords = async () => {
     const session = await supabase.auth.getSession();
@@ -89,21 +92,29 @@ const Medications: React.FC = () => {
       await axios.put(`/api/mypage/medi/${updatedMediRecord.id}`, updatedMediRecord);
       await fetchMediRecords();
       closeAllModals();
+      setTimeout(() => {
+        toast.success("약 정보가 성공적으로 수정되었습니다.");
+      }, 300); // 모달이 완전히 닫힌 후 토스트 표시
     } catch (error) {
       console.error("Error updating medication:", error);
+      toast.error("약 정보 수정 중 오류가 발생했습니다.");
     }
   };
+
 
   const handleDelete = async (id: string) => {
     try {
       await axios.delete(`/api/mypage/medi/${id}`);
       await fetchMediRecords();
       closeAllModals();
+      setTimeout(() => {
+        toast.success("약 정보가 삭제되었습니다.");
+      }, 300); // 모달이 완전히 닫힌 후 토스트 표시
     } catch (error) {
       console.error("Error deleting medication:", error);
+      toast.error("약 정보 삭제 중 오류가 발생했습니다.");
     }
   };
-
   const openEditModal = () => {
     setIsViewModalOpen(false);
     setIsEditModalOpen(true);
