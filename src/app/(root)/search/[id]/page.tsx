@@ -46,7 +46,9 @@ export default function SearchPage() {
 
   return (
     <>
-      <Header showBackHeader={true} />
+      <div className="desktop:hidden">
+        <Header showBackHeader={true} />
+      </div>
       <div className="text-center mt-[67px]">
         <h1 className="text-brand-gray-1000 text-[20px] desktop:text-[32px] font-bold mt-[116px] desktop:mt-[159px]">
           {data.itemName}
