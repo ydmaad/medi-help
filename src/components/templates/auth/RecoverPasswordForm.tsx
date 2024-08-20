@@ -7,6 +7,7 @@ import { supabase } from "@/utils/supabase/client";
 import { AuthPasswordInput } from "@/components/molecules/AuthPasswordInput";
 import { useRouter } from "next/navigation";
 import { PasswordChangedSuccess } from "./PasswordChangedSuccess";
+import Loading from "@/components/atoms/Loading";
 
 export const RecoverPasswordForm: React.FC = () => {
   // 상태 관리
@@ -76,7 +77,7 @@ export const RecoverPasswordForm: React.FC = () => {
 
   // 로딩 중 표시
   if (isLoading) {
-    return <div>로딩 중...</div>;
+    return <Loading></Loading>;
   }
 
   // 비밀번호 변경 성공 시 새로운 컴포넌트 렌더링
