@@ -258,24 +258,24 @@ const CalendarView = () => {
         viewEvents={viewEvents}
         setViewEvents={setViewEvents}
       />
-      <AddMediModal
-        isOpen={openAddMediModal}
-        onRequestClose={() => setOpenAddMediModal(false)}
-        onAdd={(newMediRecord) => {
-          console.log("New Medi Record:", newMediRecord);
-          setMedicines([
-            ...medicines,
-            {
-              id: newMediRecord.id,
-              name: newMediRecord.medi_nickname,
-              time: newMediRecord.times,
-              notification_time: newMediRecord.notification_time,
-            },
-          ]);
-          toast.success("약이 성공적으로 등록되었습니다.");
-        }}
-        toast={toast}
-      />
+     <AddMediModal
+  isOpen={openAddMediModal}
+  onRequestClose={() => setOpenAddMediModal(false)}
+  onAdd={(newMediRecord) => {
+    console.log("New Medi Record:", newMediRecord);
+    setMedicines([
+      ...medicines,
+      {
+        id: newMediRecord.id,
+        name: newMediRecord.medi_nickname,
+        time: newMediRecord.times,
+        notification_time: newMediRecord.notification_time,
+      },
+    ]);
+    toast.success("약이 성공적으로 등록되었습니다.");
+  }}
+  toast={toast}  
+/>
       <MobileAddMedi
         isOpen={openMobileAddMedi}
         onRequestClose={() => setOpenMobileAddMedi(false)}
