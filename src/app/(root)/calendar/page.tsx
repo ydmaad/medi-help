@@ -6,7 +6,7 @@ const Page = () => {
   return (
     <>
       <div className="flex desktop:hidden items-center justify-center h-screen">
-        <div className="relative flex flex-col w-full mt-[36px]  mx-auto">
+        <div className="relative flex flex-col w-full mt-[36px] max-w-[335px] mx-auto">
           <CalendarCheckbox />
           <CalendarView />
         </div>
