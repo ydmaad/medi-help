@@ -25,7 +25,7 @@ export const ImgInputMobile = ({ onImgChange }: ImgInput) => {
 
 export const ImgInputDesk = ({ onImgChange }: ImgInput) => {
   return (
-    <div className="mt-4 hidden desktop:flex">
+    <div className="mt-4 hidden desktop:flex bg-white">
       <label className="inline-flex items-center cursor-pointer text-gray-600 ml-3 mb-2">
         <Image
           src="/addImage.svg"

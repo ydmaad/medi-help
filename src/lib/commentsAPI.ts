@@ -77,7 +77,6 @@ export const postComment = async (postId: string, comment: string) => {
     return data;
   } catch (error) {
     console.error("댓글 등록 오류 =>", error);
-    alert("댓글 등록 실패");
   }
 };
 
@@ -149,12 +148,11 @@ export const fetchPost = async ({
       throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
     }
     const data = await response.json();
-    alert("게시글이 등록되었습니다!");
+
     window.location.href = "/community";
     return data;
   } catch (error) {
     console.error("게시글 등록 오류 =>", error);
-    alert("게시글 등록 실패");
   }
 };
 
@@ -202,9 +200,13 @@ export const fetchBookmark = async (postId: string, userId: string) => {
 };
 
 // 게시글 불러오는 요청
-export const fetchPosts = async (page: number, sortOption: string) => {
+export const fetchPosts = async (
+  page: number,
+  sortOption: string,
+  searchTerm: string
+) => {
   const res = await fetch(
-    `/api/community?page=${page}&perPage=${POST_PER_PAGE}&sort=${sortOption}`
+    `/api/community?page=${page}&perPage=${POST_PER_PAGE}&sort=${sortOption}&search=${searchTerm}`
   );
   const result = await res.json();
   return { data: result.data, totalPosts: result.totalPosts };

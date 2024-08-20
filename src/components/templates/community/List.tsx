@@ -11,6 +11,7 @@ import PostSearchFail from "@/components/molecules/PostSearchFail";
 import CategorySelect from "@/components/molecules/CategorySelect";
 import { PostListSkeleton } from "@/components/molecules/CommunitySkeleton";
 import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
+import Loading from "@/components/atoms/Loading";
 
 interface ListProps {
   searchTerm: string;
@@ -37,7 +38,13 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data, totalPosts } = await fetchPosts(currentPage, sortOption);
+        const { data, totalPosts } = await fetchPosts(
+          currentPage,
+          sortOption,
+          searchTerm
+        );
+        console.log("현재페이지", currentPage);
+        console.log(data);
         setPosts(data);
         setTotalPosts(totalPosts);
         if (selectCategory === "전체") {
@@ -59,15 +66,15 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     fetchData();
   }, [searchTerm, currentPage, sortOption, selectCategory, setPosts]);
 
-  // console.log(posts);
+  console.log(posts);
 
   // 게시글 검색
-  const filteredPosts = categoryFilterPosts.filter(
-    (post) =>
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredPosts = categoryFilterPosts.filter(
+  //   (post) =>
+  //     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     post.contents.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     post.user.nickname?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   // console.log(searchTerm);
 
@@ -81,7 +88,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     setSelectCategory(category);
     setCurrentPage(1); // 카테고리 변경 시 첫 페이지로 돌아감
     try {
-      const { data, totalPosts } = await fetchPosts(1, sortOption);
+      const { data, totalPosts } = await fetchPosts(1, sortOption, searchTerm);
       setPosts(data);
       setTotalPosts(totalPosts);
       if (category === "전체") {
@@ -98,6 +105,8 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
       console.log("카테고리 변경 중 에러 발생:", error);
     }
   };
+
+  console.log(categoryFilterPosts);
 
   // 게시글 로딩중 스켈레톤 적용
   if (isLoading) {
@@ -136,7 +145,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
             <p className="text-[16px] ml-[8px] text-left">
               전체
               <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
+                ({totalPosts})
               </span>
             </p>
           ) : null}
@@ -145,7 +154,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
               &rsquo;{searchTerm}&rsquo;
               <span className="text-brand-gray-1000"> 에 대한 검색 결과</span>
               <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
+                ({categoryFilterPosts.length})
               </span>
             </p>
           ) : null}
@@ -157,7 +166,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
             <p className="text-[14px] ml-[8px] text-left">
               전체
               <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
+                ({categoryFilterPosts.length})
               </span>
             </p>
           ) : null}
@@ -166,26 +175,26 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
               &rsquo;{searchTerm}&rsquo;
               <span className="text-brand-gray-1000">에 대한 검색 결과</span>
               <span className="text-brand-gray-600 ml-[8px]">
-                ({filteredPosts.length})
+                ({categoryFilterPosts.length})
               </span>
             </p>
           ) : null}
         </div>
 
         {/* 게시글 리스트 그리는 곳 */}
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((item) => {
+        {categoryFilterPosts.length > 0 ? (
+          categoryFilterPosts.map((item) => {
             return <PostItem item={item} key={item.id}></PostItem>;
           })
         ) : (
           // 게시글 검색 결과 없을 시
           <PostSearchFail
             searchTerm={searchTerm}
-            resultCount={filteredPosts.length}
+            resultCount={categoryFilterPosts.length}
           ></PostSearchFail>
         )}
       </div>
-      {totalPages > 1 && filteredPosts.length > 0 && (
+      {totalPages > 1 && categoryFilterPosts.length > 0 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
