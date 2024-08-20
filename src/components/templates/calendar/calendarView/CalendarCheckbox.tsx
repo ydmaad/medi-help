@@ -5,11 +5,7 @@ import { useAuthStore } from "@/store/auth";
 import axios from "axios";
 import { Tables } from "@/types/supabase";
 import { EventInput } from "@fullcalendar/core";
-import {
-  useEventsStore,
-  useMedicinesStore,
-  useMediNameFilter,
-} from "@/store/calendar";
+import { useEventsStore, useMedicinesStore, useMediNameFilter } from "@/store/calendar";
 import CalendarTitle from "@/components/molecules/CalendarTitle";
 import Modal from "react-modal";
 
@@ -33,6 +29,7 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
   const [selectedMedicines, setSelectedMedicines] = useState<string[]>([]);
   const [showAllMedicines, setShowAllMedicines] = useState<boolean>(false);
   const [showFilterBox, setShowFilterBox] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(false);
 
   // 기존에 체크된 약물 데이터를 가져오는 useEffect
   useEffect(() => {
@@ -69,26 +66,26 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
   // 체크박스 상태가 변경될 때 호출되는 함수
   const handleCheckboxChange = async (medicine: MedicineType) => {
     if (!user) return; // user가 null일 경우 아무 작업도 하지 않음
-  
+
     const isSelected = selectedMedicines.includes(medicine.id);
     const updatedSelectedMedicines = isSelected
       ? selectedMedicines.filter((id) => id !== medicine.id)
       : [...selectedMedicines, medicine.id];
-  
+
     const updatedMediNames = isSelected
       ? mediNames.filter((name) => name !== medicine.medi_nickname)
       : [...mediNames, medicine.medi_nickname || ""];
-  
+
     setSelectedMedicines(updatedSelectedMedicines);
     setMediNames(updatedMediNames);
-  
+
     try {
       await axios.post('/api/updateCalendarMedicine', {
         user_id: user.id,
         medicine_id: medicine.id,
         isSelected: !isSelected
       });
-      
+
       // 업데이트 후 필터를 다시 가져와서 상태를 갱신
       const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
       const allCheckedMedicines: MedicineType[] = [];
@@ -99,7 +96,7 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
           }
         );
       });
-  
+
       setCheckedMedicines(allCheckedMedicines);
       setSelectedMedicines(
         allCheckedMedicines.map((medicine) => medicine.id)
@@ -107,6 +104,11 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
       setMediNames(
         allCheckedMedicines.map((medicine) => medicine.medi_nickname || "")
       );
+
+      // onUpdate 호출
+      if (onUpdate) {
+        onUpdate();
+      }
     } catch (error) {
       console.error("Error updating calendar medicine", error);
     }
@@ -119,6 +121,13 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
     ))
   );
 
+  const handleChange = () => {
+    setChecked(!checked);
+    if (onUpdate) {
+      onUpdate(); // onUpdate 호출
+    }
+  };
+
   return (
     <div>
       <CalendarTitle
@@ -129,8 +138,8 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
       <Modal
         isOpen={showFilterBox}
         onRequestClose={() => setShowFilterBox(false)}
-        className="fixed w-full min-h-[508px] mx-auto bg-white rounded-t-[12px] bottom-0 right-0 left-0 drop-shadow-lg desktop:hidden outline-none px-8 "
-        overlayClassName="fixed inset-0 bg-black/[0.3] z-20 desktop:hidden "
+        className="fixed w-full min-h-[508px] mx-auto bg-white rounded-t-[12px] bottom-0 right-0 left-0 drop-shadow-lg desktop:hidden outline-none px-8"
+        overlayClassName="fixed inset-0 bg-black/[0.3] z-20 desktop:hidden"
         ariaHideApp={false}
       >
         <div className="bg-brand-gray-400 w-16 h-1 rounded-md mx-auto mt-4" />
