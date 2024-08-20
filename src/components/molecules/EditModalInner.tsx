@@ -73,7 +73,7 @@ const EditModalInner = ({ viewEvents, setViewEvents }: Props) => {
         type="date"
         value={values.start_date}
         onChange={handleDateChange}
-        className="w-full desktop:w-auto bg-[#fff] mx-auto px-32 py-3 desktop:px-24 desktop:py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
+        className="w-full desktop:w-auto bg-[#fff] mx-auto px-[90px] py-3 desktop:px-24 desktop:py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
       />
       <FilterComponent />
       <div className="w-full h-32 min-h-32 grid grid-cols-2 gap-2 overflow-y-auto">

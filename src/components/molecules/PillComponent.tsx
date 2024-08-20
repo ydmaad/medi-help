@@ -12,7 +12,7 @@ interface Props {
 const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
-  const [notification, setNotification] = useState<string[]>([""]);
+  const [notification, setNotification] = useState<string[]>([]);
   const { id, time, name } = medicine;
 
   const { values, setValues } = useValuesStore();
@@ -89,7 +89,7 @@ const PillComponent: React.FC<Props> = ({ medicine }: Props) => {
             className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
           >
             {/* {notification[Object.keys(NAME_OF_TIME).indexOf(values.medi_time)]} */}
-            {notification}
+            {notification[0]}
           </span>
         </div>
         <div
