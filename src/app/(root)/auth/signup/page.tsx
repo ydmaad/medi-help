@@ -8,6 +8,8 @@ import { useAuthStore, AuthUser } from "@/store/auth";
 import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { SignupForm } from "@/components/templates/auth/SignupForm";
+import { useToast } from "@/hooks/useToast";
+import Loading from "@/components/atoms/Loading";
 
 export default function SignupPage() {
   // useAuthStore에서 필요한 함수들을 가져옵니다.
@@ -15,6 +17,8 @@ export default function SignupPage() {
   const router = useRouter();
   // 에러 상태를 관리합니다.
   const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   // 회원가입 처리 함수
   const handleSignup = async ({
@@ -30,13 +34,12 @@ export default function SignupPage() {
     agreeTerms: boolean;
     agreePrivacy: boolean;
   }) => {
+    setIsLoading(true);
     try {
-      // 약관 동의 확인
       if (!agreeTerms || !agreePrivacy) {
         throw new Error("이용약관과 개인정보 처리방침에 동의해주세요.");
       }
 
-      // Supabase를 통한 회원가입
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -50,6 +53,16 @@ export default function SignupPage() {
       if (error) throw error;
 
       if (data.user) {
+        const { data: userData, error: fetchError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", data.user.id)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        setUser(userData as AuthUser);
+        toast.success("회원가입이 완료되었습니다.");
         router.push("/auth/complete");
       }
     } catch (error) {
@@ -59,8 +72,15 @@ export default function SignupPage() {
           ? error.message
           : "회원가입 중 오류가 발생했습니다."
       );
+      toast.error("회원가입 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="mt-[30px] flex justify-center items-center min-h-screen">
