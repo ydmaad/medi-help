@@ -54,11 +54,12 @@ const Header = ({ showBackHeader }: { showBackHeader: boolean }) => {
 
   return (
     <>
-      {showBackHeader ? ( // showBackHeader에 따라 헤더 전환
+      {showBackHeader ? (
         <BackHeader />
       ) : (
         <>
-          <header className="fixed top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-white h-[67px] shadow-md">
+          {/* 기본 모바일 헤더 */}
+          <header className="fixed top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-white h-[67px]">
             <Logo />
             <ImageButton
               src="/hambergerbtn.svg"
@@ -66,7 +67,7 @@ const Header = ({ showBackHeader }: { showBackHeader: boolean }) => {
               onClick={toggleSidebar}
             />
           </header>
-          {/* 기본 모바일 헤더 */}
+          {/* 데스크탑 헤더 */}
           <header className="fixed top-0 left-0 right-0 z-20 hidden desktop:flex flex-row items-center justify-between p-4 bg-white h-[67px] shadow-md">
             <Logo />
             <div className="absolute left-1/2 transform -translate-x-1/2">
