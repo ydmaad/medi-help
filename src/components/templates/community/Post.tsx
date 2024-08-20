@@ -59,10 +59,10 @@ const Post = () => {
         selectCategory={selectCategory}
         onSelectCategory={handleCategorySelect}
       ></CategorySelect>
-      <div className="bg-white max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
+      <div className="max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
         <TitleInput title={title} setTitle={setTitle}></TitleInput>
 
-        <div className="border border-gray-100 rounded-md mt-[8px] mb-4 desktop:mb-7 ">
+        <div className="border border-gray-100 rounded-md mt-[8px] mb-4 desktop:mb-7 bg-white">
           <ImgInputDesk onImgChange={handleImageChange}></ImgInputDesk>
 
           <div className="mb-4 flex-wrap hidden desktop:flex">

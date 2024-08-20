@@ -142,7 +142,7 @@ const Edit = ({ id }: PostEditProps) => {
         onSelectCategory={handleCategorySelect}
       ></CategorySelect>
 
-      <div className="bg-white max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
+      <div className="max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
         <input
           type="text"
           placeholder="제목을 입력하세요"
@@ -154,7 +154,7 @@ const Edit = ({ id }: PostEditProps) => {
         {/* 이미지 첨부, 내용 인풋 */}
         <div className="border border-gray-100 rounded-md mt-3 mb-4 desktop:mb-7">
           {/* 데스크탑 버전 이미지 첨부 부분 */}
-          <div className="mt-4 hidden desktop:flex">
+          <div className="mt-4 hidden desktop:flex bg-white">
             <label className="inline-flex items-center cursor-pointer text-gray-600 ml-3 mb-2">
               <Image
                 src="/addImage.svg"
