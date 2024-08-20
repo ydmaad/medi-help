@@ -309,11 +309,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
           )}
         </div>
       </div>
-      {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded">로딩 중...</div>
-        </div>
-      )}
+  
       {error && (
         <div className="fixed bottom-0 left-0 right-0 bg-red-100 border border-red-400 text-red-700 px-4 py-3" role="alert">
           <span className="block sm:inline">{error}</span>
