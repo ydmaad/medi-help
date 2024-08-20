@@ -100,8 +100,8 @@ const MobileEdit = () => {
 
   return (
     <>
-      <div className="w-11/12 min-w-96 h-5/8 min-h-[480px] py-6 bg-[#FBFBFB] desktop:px-6 mt-20 flex flex-col gap-[20px]">
-        <div className="fixed top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-[#FBFBFB] h-[67px]">
+      <div className="w-11/12 min-w-[365px] h-5/8 min-h-[480px] py-6 bg-[#FBFBFB] px-6 mt-16 flex flex-col gap-[20px]">
+        <div className="fixed w-full top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-[#FBFBFB] h-[67px]">
           <button onClick={handleBackButtonClick}>
             <IoIosArrowBack className="text-[20px] hover:text-primary-500" />
           </button>

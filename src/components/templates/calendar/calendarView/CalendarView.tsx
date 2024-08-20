@@ -24,6 +24,7 @@ import { GoPlus } from "react-icons/go";
 import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 import { useToast } from "@/hooks/useToast";
 
+
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
@@ -80,6 +81,66 @@ const CalendarView = () => {
   }, [user]);
 
   useEffect(() => {
+    const getEventsData = async () => {
+      try {
+        if (user) {
+          const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
+
+          const newEvents: EventInput[] = [];
+          data.map((event: EventInput) => {
+            if (event.calendar_medicine.length !== 0) {
+              const setEventList = (time: string) => {
+                let eventList = event.calendar_medicine.filter(
+                  (medicine: any) => {
+                    return medicine.medi_time === time;
+                  }
+                );
+
+                const newEventList = eventList.filter((e: any) => {
+                  return mediNames.includes(e.medications.medi_nickname);
+                });
+
+                let countMedicines = newEventList.length;
+
+                if (countMedicines !== 0) {
+                  let medicineNickname =
+                    newEventList[0].medications.medi_nickname;
+                  newEvents.push({
+                    groupId: event.id,
+                    title:
+                      countMedicines !== 1
+                        ? `${medicineNickname} 외 ${countMedicines - 1}개`
+                        : `${medicineNickname}`,
+                    start: `${event.start_date} ${
+                      TIME_OF_TIME[newEventList[0].medi_time]
+                    }`,
+                    backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
+                    extendProps: {
+                      medi_time: newEventList[0].medi_time,
+                      medicineList: newEventList.map(
+                        (medicine: any) => medicine.medications.id
+                      ),
+                    },
+                  });
+                }
+              };
+
+              setEventList("morning");
+              setEventList("afternoon");
+              setEventList("evening");
+            }
+          });
+          setEvents(newEvents);
+        }
+      } catch (error) {
+        console.log("axios error", error);
+      }
+    };
+
+    getEventsData();
+  }, [user, mediNames]);
+
+  useEffect(() => {
     const getCalendarData = async () => {
       try {
         if (user) {
@@ -87,19 +148,17 @@ const CalendarView = () => {
             `/api/calendar/sideEffect?user_id=${user.id}`
           );
 
-          {
-            const newCalendar: CalendarType[] = [];
-            data.map((info: CalendarType) => {
-              newCalendar.push({
-                id: info.id,
-                user_id: info.user_id,
-                created_at: info.created_at,
-                side_effect: info.side_effect,
-                start_date: info.start_date,
-              });
+          const newCalendar: CalendarType[] = [];
+          data.map((info: CalendarType) => {
+            newCalendar.push({
+              id: info.id,
+              user_id: info.user_id,
+              created_at: info.created_at,
+              side_effect: info.side_effect,
+              start_date: info.start_date,
             });
-            setCalendar(newCalendar);
-          }
+          });
+          setCalendar(newCalendar);
           return data;
         }
       } catch (error) {
@@ -218,7 +277,7 @@ const CalendarView = () => {
       />
       <MobileAddMedi
         isOpen={openMobileAddMedi}
-        onClose={() => setOpenMobileAddMedi(false)}
+        onRequestClose={() => setOpenMobileAddMedi(false)}
         onAdd={(newMediRecord) => {
           console.log("New Medi Record:", newMediRecord);
           setMedicines([
@@ -235,7 +294,7 @@ const CalendarView = () => {
       <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4">
         <div className="relative min-w-[335px]">
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
-            <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex">
+            <div className="absolute desktop:static flex flex-row items-center right-1 top-[12px] gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex px-2 desktop:px-0">
               <div className="flex items-center">
                 <div
                   className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
+import { IoIosArrowBack } from "react-icons/io";
 
 interface MediRecord {
   id: string;
@@ -23,13 +24,13 @@ interface MediRecord {
 
 interface MobileAddMediProps {
   isOpen: boolean;
-  onClose: () => void;
+  onRequestClose: () => void;
   onAdd: (newMediRecord: MediRecord) => void;
 }
 
 const MobileAddMedi: React.FC<MobileAddMediProps> = ({
   isOpen,
-  onClose,
+  onRequestClose,
   onAdd,
 }) => {
   const { user } = useAuthStore();
@@ -64,7 +65,7 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
     fetchMediNames();
   }, []);
 
-  const handleAdd = async () => {
+  const handleSubmit = async () => {
     if (!user) return;
 
     const newMediRecord: MediRecord = {
@@ -94,7 +95,18 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
       if (response.status === 201) {
         console.log("Medication added successfully");
         onAdd(newMediRecord);
-        onClose();
+
+        // Clear form state
+        setMediName("");
+        setMediNickname("");
+        setTimes({ morning: false, afternoon: false, evening: false });
+        setNotes("");
+        setStartDate("");
+        setEndDate("");
+        setDayOfWeek([]);
+        setNotificationTime([""]);
+        setNotificationEnabled(false);
+        onRequestClose();
       } else {
         console.error("Failed to add record:", response.statusText);
       }
@@ -103,89 +115,135 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
     }
   };
 
+  const handleDayOfWeekChange = (day: string) => {
+    setDayOfWeek((prevDays) =>
+      prevDays.includes(day)
+        ? prevDays.filter((d) => d !== day)
+        : [...prevDays, day]
+    );
+  };
+
+  const handleNotificationTimeChange = (index: number, value: string) => {
+    const updatedNotificationTime = [...notificationTime];
+    updatedNotificationTime[index] = value;
+    setNotificationTime(updatedNotificationTime);
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <h2 className="text-2xl mb-4 text-brand-gray-800">나의 약</h2>
-        
-        {/* 약 별명 입력 */}
-        <input
-          type="text"
-          placeholder="약 별명(최대 6자)"
-          value={mediNickname}
-          onChange={(e) => setMediNickname(e.target.value)}
-          className="border rounded w-full py-2 px-3 mb-4 text-brand-gray-1000 leading-tight focus:outline-none"
-        />
+    <div className="fixed inset-0 bg-white overflow-y-auto w-full z-50 flex flex-col">
+      <div className="w-full bg-white fixed top-0 left-0 flex justify-between items-center px-4 py-3 shadow-md">
+        <button onClick={onRequestClose} className="text-2xl">
+          <IoIosArrowBack />
+        </button>
+        <h2 className="text-xl font-bold flex-1 text-center">나의 약 등록</h2>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="text-brand-primary-500 font-semibold"
+        >
+          저장
+        </button>
+      </div>
+      <div className="w-full mt-16 px-4 py-4 flex flex-col items-center">
+        <div className="mb-4 w-full max-w-xs">
+          <input
+            type="text"
+            placeholder="약 별명(최대 6자)"
+            value={mediNickname}
+            onChange={(e) => setMediNickname(e.target.value)}
+            className="border rounded w-full h-[48px] px-4 py-3 text-brand-gray-1000 leading-tight focus:outline-none"
+          />
+        </div>
 
-        {/* 약 이름 입력 */}
-        <input
-          list="mediNames"
-          placeholder="약 이름을 검색하세요"
-          value={mediName}
-          onChange={(e) => {
-            setMediName(e.target.value);
-            setSearchTerm(e.target.value);
-          }}
-          className="border rounded w-full py-2 px-3 mb-4 text-brand-gray-1000 leading-tight focus:outline-none"
-        />
-        <datalist id="mediNames">
-          {mediNames
-            .filter((name) =>
-              name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((name, index) => (
-              <option key={index} value={name} />
-            ))}
-        </datalist>
+        <div className="mb-4 w-full max-w-xs">
+          <input
+            list="mediNames"
+            placeholder="약 이름을 검색하세요"
+            value={mediName}
+            onChange={(e) => {
+              setMediName(e.target.value);
+              setSearchTerm(e.target.value);
+            }}
+            className="border rounded w-full h-[48px] px-4 py-3 text-brand-gray-1000 leading-tight focus:outline-none"
+          />
+          <datalist id="mediNames">
+            {mediNames
+              .filter((name) =>
+                name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((name, index) => (
+                <option key={index} value={name} />
+              ))}
+          </datalist>
+        </div>
 
-        {/* 복용 시간 설정 */}
-        <div className="mb-4">
-          <label className="block text-brand-gray-600 text-sm font-bold mb-2">
-            나의 약 등록
-          </label>
-          <div className="flex space-x-4 text-brand-gray-800 justify-between w-full">
-            {["morning", "afternoon", "evening"].map((time) => (
-              <button
-                key={time}
-                type="button"
-                onClick={() => setTimes({ ...times, [time]: !times[time as keyof typeof times] })}
-                className={`px-4 py-2 rounded-full ${
-                  times[time as keyof typeof times]
-                    ? "bg-brand-primary-500 text-white"
-                    : "bg-brand-gray-50 text-brand-gray-800"
-                } w-1/3`}
-              >
-                {time === "morning" ? "아침" : time === "afternoon" ? "점심" : "저녁"}
-              </button>
-            ))}
+        <div className="mb-6 w-full max-w-xs">
+          <label className="block text-brand-gray-600 text-sm font-bold mb-2">복용 시간</label>
+          <div className="flex space-x-2 text-brand-gray-800 justify-between">
+            <button
+              type="button"
+              onClick={() => setTimes({ ...times, morning: !times.morning })}
+              className={`px-4 py-2 rounded-full ${
+                times.morning
+                  ? "bg-brand-primary-500 text-white"
+                  : "bg-brand-gray-50 text-brand-gray-800"
+              } text-[14px]`}
+              style={{ width: "106px", height: "40px" }}
+            >
+              아침
+            </button>
+            <button
+              type="button"
+              onClick={() => setTimes({ ...times, afternoon: !times.afternoon })}
+              className={`px-4 py-2 rounded-full ${
+                times.afternoon
+                  ? "bg-brand-primary-500 text-white"
+                  : "bg-brand-gray-50 text-brand-gray-800"
+              } text-[14px]`}
+              style={{ width: "106px", height: "40px" }}
+            >
+              점심
+            </button>
+            <button
+              type="button"
+              onClick={() => setTimes({ ...times, evening: !times.evening })}
+              className={`px-4 py-2 rounded-full ${
+                times.evening
+                  ? "bg-brand-primary-500 text-white"
+                  : "bg-brand-gray-50 text-brand-gray-800"
+              } text-[14px]`}
+              style={{ width: "106px", height: "40px" }}
+            >
+              저녁
+            </button>
           </div>
         </div>
 
-        {/* 복용 기간 설정 */}
-        <div className="flex space-x-4 mb-4">
+        <div className="mb-6 flex w-full max-w-xs items-center justify-between">
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="border rounded py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none w-1/2"
+            className="border rounded w-[96px] h-[28px] py-2 px-2 text-brand-gray-800 leading-tight"
           />
+          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>부터</span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="border rounded py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none w-1/2"
+            className="border rounded w-[96px] h-[28px] py-2 px-2 text-brand-gray-800 leading-tight"
           />
+          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>까지</span>
         </div>
 
-        {/* 알림 설정 */}
-        <div className="flex items-center mb-4">
+        <div className="flex items-center mb-6 w-full max-w-xs">
           <label className="flex items-center">
-            <span className="mr-2 text-brand-gray-600">알림 설정</span>
+            <span className="ml-2 text-brand-gray-600">알림 설정 </span>
             <div
               onClick={() => setNotificationEnabled(!notificationEnabled)}
-              className={`relative w-12 h-6 flex items-center rounded-full cursor-pointer ${
+              className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
                 notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
               }`}
             >
@@ -197,24 +255,20 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
             </div>
           </label>
         </div>
-
         {notificationEnabled && (
-          <div className="mb-4">
-            <div className="flex flex-wrap space-x-2 mb-5">
+          <div className="mb-6 w-full max-w-xs">
+            <div className="flex justify-between w-full mb-4">
               {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
                 <button
                   key={day}
                   type="button"
-                  onClick={() => setDayOfWeek(prevDays =>
-                    prevDays.includes(day)
-                      ? prevDays.filter(d => d !== day)
-                      : [...prevDays, day]
-                  )}
-                  className={`px-4 py-2 rounded-full ${
+                  onClick={() => handleDayOfWeekChange(day)}
+                  className={`px-2 py-1 items-center justify-center rounded-full ${
                     dayOfWeek.includes(day)
                       ? "bg-brand-primary-500 text-white"
                       : "bg-brand-gray-50 text-brand-gray-800"
-                  }`}
+                  } text-[14px]`}
+                  style={{ flex: "1", margin: "0 2px" }}
                 >
                   {day}
                 </button>
@@ -226,11 +280,9 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
                 <input
                   type="time"
                   value={time}
-                  onChange={(e) => {
-                    const updatedTimes = [...notificationTime];
-                    updatedTimes[index] = e.target.value;
-                    setNotificationTime(updatedTimes);
-                  }}
+                  onChange={(e) =>
+                    handleNotificationTimeChange(index, e.target.value)
+                  }
                   className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                 />
               </div>
@@ -238,24 +290,21 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
           </div>
         )}
 
-        {/* 메모 입력 */}
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="약에 대한 간단한 기록"
-          className="border rounded w-full py-2 px-3 mb-4 text-brand-gray-800 leading-tight focus:outline-none resize-none h-16"
-        />
+        <div className="mb-6 w-full max-w-xs">
+          <label className="block text-brand-gray-600 text-sm font-bold mb-2">메모:</label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="약에 대한 간단한 메모를 남겨주세요."
+            className="border rounded w-full h-[160px] py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none resize-none"
+          />
+        </div>
 
-        <div className="flex justify-between mt-4">
+        <div className="w-full max-w-xs flex justify-center mt-4">
           <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded"
-          >
-            취소
-          </button>
-          <button
-            onClick={handleAdd}
-            className="px-4 py-2 bg-brand-primary-500 text-white rounded"
+            type="button"
+            onClick={handleSubmit}
+            className="px-6 py-2 bg-brand-primary-500 text-white rounded w-full"
           >
             저장
           </button>
