@@ -9,17 +9,21 @@ type PostInsert = TablesInsert<"posts">; // 추가
 // 게시글 불러오는 요청
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get("page") || "1");
-  const perPage = parseInt(searchParams.get("perPage") || "6");
+  // const page = parseInt(searchParams.get("page") || "1");
+  // const perPage = parseInt(searchParams.get("perPage") || "6");
   // 페이지 시작 인덱스
-  const offset = (page - 1) * perPage;
+  // const offset = (page - 1) * perPage;
   const sortOption = searchParams.get("sort") || "최신순";
+  const searchTerm = searchParams.get("search") || "";
+  const pageNo = parseInt(searchParams.get("page") || "1");
+  const numOfRows = parseInt(searchParams.get("numOfRows") || "6");
 
   try {
     // 총 게시글 수 조회
     const { count, error: countError } = await supabase
       .from("posts")
-      .select("*", { count: "exact", head: true });
+      .select("*", { count: "exact", head: true })
+      .or(`title.ilike.%${searchTerm}%,contents.ilike.%${searchTerm}%`);
 
     if (countError) {
       throw countError;
@@ -42,7 +46,8 @@ export async function GET(request: NextRequest) {
         )
       `
       )
-      .range(offset, offset + perPage - 1);
+      .or(`title.ilike.%${searchTerm}%,contents.ilike.%${searchTerm}%`)
+      .range((pageNo - 1) * numOfRows, pageNo * numOfRows - 1);
 
     // 정렬 옵션 적용
     switch (sortOption) {
@@ -53,8 +58,6 @@ export async function GET(request: NextRequest) {
         query = query.order("created_at", { ascending: true });
         break;
       case "인기순":
-        // 인기순은 북마크 수로 정렬하므로, 먼저 북마크 수를 가져와야 합니다.
-        // 이 부분은 아래에서 처리합니다.
         break;
       default:
         query = query.order("created_at", { ascending: false });
@@ -110,6 +113,8 @@ export async function GET(request: NextRequest) {
         return bookmarkB - bookmarkA;
       });
     }
+    console.log("여기야", sortedPosts);
+    console.log("카운트다", count);
 
     return NextResponse.json(
       {

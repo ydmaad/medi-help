@@ -1,4 +1,5 @@
 import { useThrottle } from "@/hooks/useThrottle";
+import { useToast } from "@/hooks/useToast";
 import { fetchComment, postComment } from "@/lib/commentsAPI";
 import { useAuthStore } from "@/store/auth";
 import { CommentWithUser } from "@/types/communityTypes";
@@ -22,11 +23,12 @@ export const CommentInput = ({
   postId,
 }: CommentInputProps) => {
   const { user } = useAuthStore();
+  const { toast } = useToast();
 
   // 댓글 달기 핸들러
   const handleAddComment = useThrottle(async () => {
     if (!newComment.trim()) {
-      alert("댓글을 입력해주세요.");
+      toast.warning("댓글을 입력해주세요.");
       return;
     }
     try {
@@ -34,10 +36,10 @@ export const CommentInput = ({
       setNewComment("");
       const updateComments = await fetchComment(postId);
       setComment(updateComments.data);
-      alert("댓글이 추가되었습니다.");
+      toast.success("댓글이 추가되었습니다.");
     } catch (error) {
       console.error("댓글 추가 실패 :", (error as Error).message);
-      alert("댓글 추가에 실패했습니다. 다시 시도해 주세요.");
+      toast.error("댓글 추가에 실패했습니다. 다시 시도해 주세요.");
     }
   }, 2000);
 

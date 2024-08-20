@@ -8,6 +8,7 @@ import ImgPreviewDesk from "@/components/molecules/ImgPreviewDesk";
 import ImgPreviewMobile from "@/components/molecules/ImgPreviewMobile";
 import { PostBtnDesk } from "@/components/molecules/PostBtn";
 import PostHeader from "@/components/molecules/PostHeader";
+import { useToast } from "@/hooks/useToast";
 import { fetchPost } from "@/lib/commentsAPI";
 import { useState } from "react";
 
@@ -17,12 +18,13 @@ const Post = () => {
   const [image, setImage] = useState<File[]>([]);
   const [selectCategory, setSelectCategory] = useState<string>("");
   const categories = ["메디톡", "궁금해요", "건강 꿀팀"];
+  const { toast } = useToast();
 
   // 게시글을 전송을 요청하는 핸들러
   const handleAddPost = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!selectCategory) {
-      alert("카테고리를 선택해주세요.");
+      toast.warning("카테고리를 선택해주세요.");
       return;
     }
     // console.log("전송할 데이터!! : ", { title, contents, image });
@@ -59,10 +61,10 @@ const Post = () => {
         selectCategory={selectCategory}
         onSelectCategory={handleCategorySelect}
       ></CategorySelect>
-      <div className="bg-white max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
+      <div className="max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
         <TitleInput title={title} setTitle={setTitle}></TitleInput>
 
-        <div className="border border-gray-100 rounded-md mt-[8px] mb-4 desktop:mb-7 ">
+        <div className="border border-gray-100 rounded-md mt-[8px] mb-4 desktop:mb-7 bg-white">
           <ImgInputDesk onImgChange={handleImageChange}></ImgInputDesk>
 
           <div className="mb-4 flex-wrap hidden desktop:flex">
