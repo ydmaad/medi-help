@@ -40,7 +40,7 @@ const Search = ({ handleSearch, allPosts }: SearchProps) => {
           type="text"
           value={newSearchTerm}
           onChange={(e) => setNewSearchTerm(e.target.value)}
-          placeholder="제목 및 내용, 작성자 등을 검색하세요"
+          placeholder="제목 및 내용을 검색하세요"
           className="w-[300px] border-solid border-2 border-brand-primary-300 py-2 pl-10 pr-4 text-sm bg-white rounded-full focus:outline-none"
           onKeyDown={handleKeyboardDown}
         />
@@ -63,7 +63,7 @@ const Search = ({ handleSearch, allPosts }: SearchProps) => {
                 type="text"
                 value={newSearchTerm}
                 onChange={(e) => setNewSearchTerm(e.target.value)}
-                placeholder="제목 및 내용, 작성자 등을 검색하세요"
+                placeholder="제목 및 내용을 검색하세요"
                 className="w-[291px] border-solid border-2 border-brand-primary-300 py-2 pl-4 pr-10 text-sm bg-white rounded-full focus:outline-none "
                 onKeyDown={handleKeyboardDown}
               />
