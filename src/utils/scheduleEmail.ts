@@ -26,17 +26,16 @@ async function sendScheduledEmails() {
       )
     `)
     .contains('day_of_week', [dayOfWeek])
-    .contains('notification_time', [currentTime])
-    .eq('is_sent', false);
+    .contains('notification_time', [currentTime]);
 
   if (error) {
     console.error('Failed to fetch medication records:', error);
     return;
   }
 
-  console.log(`Found ${mediData?.length || 0} medications to process`);
+  console.log(`Found ${mediData.length} medications to process`);
 
-  for (const record of mediData || []) {
+  for (const record of mediData) {
     if (!record.users) {
       console.log(`Skipping record ${record.id} due to missing user data`);
       continue;
@@ -56,31 +55,15 @@ async function sendScheduledEmails() {
         text: message,
       });
 
-      // 이메일 발송 후 is_sent 필드를 true로 업데이트
-      const { error: updateError } = await supabase
-        .from('medications')
-        .update({ is_sent: true })
-        .eq('id', record.id);
-
-      if (updateError) {
-        console.error(`Failed to update is_sent for record ${record.id}:`, updateError);
-      } else {
-        console.log(`Email sent and is_sent updated for ${record.users.email}, medication ${record.medi_nickname}`);
-      }
+      console.log(`Email sent to ${record.users.email} for medication ${record.medi_nickname}`);
     } catch (emailError) {
       console.error('Failed to send email:', emailError);
     }
   }
 }
+// 매 분마다 스케줄링된 작업 실행
+cron.schedule('* * * * *', sendScheduledEmails, {
+  timezone: 'Asia/Seoul',
+});
 
-// 전역 변수를 사용하여 cron job이 한 번만 설정되도록 함
-let cronJob: cron.ScheduledTask | null = null;
-
-if (!cronJob) {
-  cronJob = cron.schedule('* * * * *', sendScheduledEmails, {
-    timezone: 'Asia/Seoul',
-  });
-  console.log('Email scheduling initialized');
-}
-
-export { sendScheduledEmails };
+console.log('Email scheduling initialized');

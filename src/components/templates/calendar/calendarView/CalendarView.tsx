@@ -7,7 +7,7 @@ import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import axios from "axios";
 import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import DetailModal from "../calendarModal/DetailModal";
-import AddMediModal from "../calendarModal/AddMediModal";
+import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
 import { useAuthStore } from "@/store/auth";
 import { Tables } from "@/types/supabase";
 import { MedicinesType } from "@/types/calendar";
@@ -22,18 +22,13 @@ import {
 } from "@/store/calendar";
 import uuid from "react-uuid";
 import { GoPlus } from "react-icons/go";
-
-interface ExtendedEventInput extends EventInput {
-  extendProps?: {
-    medi_time: string;
-    medicineList: string[];
-  };
-}
+import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
-  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false);
+  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
   const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [openMobileAddMedi, setOpenMobileAddMedi] = useState<boolean>(false);
 
   const { user } = useAuthStore();
   const { values, setValues } = useValuesStore();
@@ -82,65 +77,65 @@ const CalendarView = () => {
     getMedicines();
   }, [user]);
 
-  const getEventsData = async () => {
-    try {
-      if (user) {
-        const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
-
-        {
-          const newEvents: ExtendedEventInput[] = [];
-          data.map((event: any) => {
-            if (event.calendar_medicine.length !== 0) {
-              const setEventList = (time: string) => {
-                let eventList = event.calendar_medicine.filter(
-                  (medicine: any) => {
-                    return medicine.medi_time === time;
-                  }
-                );
-
-                const newEventList = eventList.filter((e: any) => {
-                  return mediNames.includes(e.medications.medi_nickname);
-                });
-
-                let countMedicines = newEventList.length;
-
-                if (countMedicines !== 0) {
-                  let medicineNickname =
-                    newEventList[0].medications.medi_nickname;
-                  newEvents.push({
-                    groupId: event.id,
-                    title:
-                      countMedicines !== 1
-                        ? `${medicineNickname} 외 ${countMedicines - 1}개`
-                        : `${medicineNickname}`,
-                    start: `${event.start_date} ${
-                      TIME_OF_TIME[newEventList[0].medi_time]
-                    }`,
-                    backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
-                    extendProps: {
-                      medi_time: newEventList[0].medi_time,
-                      medicineList: newEventList.map(
-                        (medicine: any) => medicine.medications.id
-                      ),
-                    },
-                  });
-                }
-              };
-
-              setEventList("morning");
-              setEventList("afternoon");
-              setEventList("evening");
-            }
-          });
-          setEvents(newEvents);
-        }
-      }
-    } catch (error) {
-      console.log("axios error", error);
-    }
-  };
-
   useEffect(() => {
+    const getEventsData = async () => {
+      try {
+        if (user) {
+          const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
+
+          {
+            const newEvents: EventInput[] = [];
+            data.map((event: EventInput) => {
+              if (event.calendar_medicine.length !== 0) {
+                const setEventList = (time: string) => {
+                  let eventList = event.calendar_medicine.filter(
+                    (medicine: any) => {
+                      return medicine.medi_time === time;
+                    }
+                  );
+
+                  const newEventList = eventList.filter((e: any) => {
+                    return mediNames.includes(e.medications.medi_nickname);
+                  });
+
+                  let countMedicines = newEventList.length;
+
+                  if (countMedicines !== 0) {
+                    let medicineNickname =
+                      newEventList[0].medications.medi_nickname;
+                    newEvents.push({
+                      groupId: event.id,
+                      title:
+                        countMedicines !== 1
+                          ? `${medicineNickname} 외 ${countMedicines - 1}개`
+                          : `${medicineNickname}`,
+                      start: `${event.start_date} ${
+                        TIME_OF_TIME[newEventList[0].medi_time]
+                      }`,
+                      backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
+                      extendProps: {
+                        medi_time: newEventList[0].medi_time,
+                        medicineList: newEventList.map(
+                          (medicine: any) => medicine.medications.id
+                        ),
+                      },
+                    });
+                  }
+                };
+
+                setEventList("morning");
+                setEventList("afternoon");
+                setEventList("evening");
+              }
+            });
+            setEvents(newEvents);
+          }
+        }
+      } catch (error) {
+        console.log("axios error", error);
+      }
+    };
+
     getEventsData();
   }, [user, mediNames]);
 
@@ -174,6 +169,7 @@ const CalendarView = () => {
     getCalendarData();
   }, [user]);
 
+  // 날짜 클릭 시 , value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
     let newDate = new Date(event.date.getTime() + DATE_OFFSET)
       .toISOString()
@@ -187,8 +183,8 @@ const CalendarView = () => {
       return event.start?.toString().split(" ")[0] === newDate;
     });
 
-    let viewEvent = editList.filter((event: ExtendedEventInput) => {
-      return event.extendProps?.medi_time === "morning";
+    let viewEvent = editList.filter((event: EventInput) => {
+      return event.extendProps.medi_time === "morning";
     })[0];
 
     if (filteredCalendar.length || editList.length) {
@@ -205,12 +201,13 @@ const CalendarView = () => {
       side_effect: filteredCalendar.length
         ? filteredCalendar[0].side_effect
         : "",
-      medicine_id: viewEvent ? viewEvent.extendProps?.medicineList || [] : [],
+      medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
     });
 
     setOpenDetailModal(true);
   };
 
+  // 기록하기 버튼 클릭
   const handleButtonClick = () => {
     let today = new Date(new Date().getTime() + DATE_OFFSET)
       .toISOString()
@@ -224,8 +221,8 @@ const CalendarView = () => {
       return event.start?.toString().split(" ")[0] === today;
     });
 
-    let viewEvent = editList.filter((event: ExtendedEventInput) => {
-      return event.extendProps?.medi_time === "morning";
+    let viewEvent = editList.filter((event: EventInput) => {
+      return event.extendProps.medi_time === "morning";
     })[0];
 
     setValues({
@@ -236,29 +233,10 @@ const CalendarView = () => {
       side_effect: filteredCalendar.length
         ? filteredCalendar[0].side_effect
         : "",
-      medicine_id: viewEvent ? viewEvent.extendProps?.medicineList || [] : [],
+      medicine_id: viewEvent ? viewEvent.extendProps.medicineList : [],
     });
 
     setOpenDetailModal(true);
-  };
-
-  const updateMedicineData = async () => {
-    if (user) {
-      try {
-        const { data } = await axios.get(`/api/calendar/medi?user_id=${user.id}`);
-        const newMedicines: MedicinesType[] = data.medicationRecords.map((record: any) => ({
-          id: record.id,
-          name: record.medi_nickname,
-          time: record.times,
-          notification_time: record.notification_time,
-        }));
-        setMedicines(newMedicines);
-        
-        await getEventsData();
-      } catch (error) {
-        console.log("Error updating medicine data:", error);
-      }
-    }
   };
 
   return (
@@ -268,11 +246,27 @@ const CalendarView = () => {
         setOpenDetailModal={setOpenDetailModal}
         viewEvents={viewEvents}
         setViewEvents={setViewEvents}
-        onUpdate={updateMedicineData}
       />
       <AddMediModal
         isOpen={openAddMediModal}
         onRequestClose={() => setOpenAddMediModal(false)}
+        onAdd={(newMediRecord) => {
+          // 새로운 약 기록 추가 후 처리 로직
+          console.log("New Medi Record:", newMediRecord);
+          setMedicines([
+            ...medicines,
+            {
+              id: newMediRecord.id,
+              name: newMediRecord.medi_nickname,
+              time: newMediRecord.times,
+              notification_time: newMediRecord.notification_time,
+            },
+          ]);
+        }}
+      />
+        <MobileAddMedi
+        isOpen={openMobileAddMedi}
+        onClose={() => setOpenMobileAddMedi(false)}
         onAdd={(newMediRecord) => {
           console.log("New Medi Record:", newMediRecord);
           setMedicines([
@@ -284,10 +278,8 @@ const CalendarView = () => {
               notification_time: newMediRecord.notification_time,
             },
           ]);
-          updateMedicineData();
         }}
       />
-      
       <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4 desktop:mt-20">
         <div className="relative min-w-[364px]">
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
@@ -314,7 +306,7 @@ const CalendarView = () => {
             </div>
             <div className="flex gap-2 ">
               <button
-                onClick={() => setOpenAddMediModal(true)}
+                onClick={() => setOpenAddMediModal(true)} // Update onClick to toggle AddMediModal
                 className="w-24 px-3 py-1 bg-brand-primary-50 text-sm text-brand-primary-500 border border-brand-primary-50 rounded-[4px] hover:border-brand-primary-500 ease-in duration-300 hidden desktop:block outline-none"
               >
                 약 등록
@@ -352,6 +344,12 @@ const CalendarView = () => {
           </div>
         </div>
         <MobileCalendarView />
+        <button
+          onClick={() => setOpenMobileAddMedi(true)}
+          className="desktop:hidden fixed w-[60px] h-[60px] rounded-full bottom-20 right-10 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-20 hover:scale-105 ease-in duration-300"
+        >
+          <GoPlus />
+        </button>
       </div>
     </>
   );
