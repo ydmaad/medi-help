@@ -8,6 +8,9 @@ import Providers from "@/app/provider";
 export const metadata: Metadata = {
   title: "MEDI HELP",
   description: "MEDI HELP",
+  icons: {
+    icon: "/mediHelpIcon.png",
+  },
 };
 
 export default function HtmlLayout({
