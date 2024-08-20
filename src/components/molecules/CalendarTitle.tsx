@@ -8,7 +8,7 @@ interface Props {
 const CalendarTitle = ({ showFilterBox, setShowFilterBox }: Props) => {
   return (
     <>
-      <div className="mx-auto desktop:static flex items-center justify-between min-w-[344px] h-[68px] desktop:w-[172px] desktop:min-w-[172px] desktop:h-auto mt-[72px] gap-[6px] px-2">
+      <div className="mx-auto desktop:static flex items-center justify-between min-w-[335px] h-[68px] desktop:w-[172px] desktop:min-w-[172px] desktop:h-auto gap-[6px] px-2">
         <div className="flex items-center">
           <img
             src="/pencil.png"

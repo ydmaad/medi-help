@@ -1,20 +1,17 @@
-import CalendarCheckbox from "@/components/templates/calendar/calendarView/CalendarCheckbox";
 import React from "react";
-import CalendarView from "@/components/templates/calendar/calendarView/CalendarView";
+import CalendarTemplate from "@/components/templates/calendar/CalendarTemplate";
 
 const Page = () => {
   return (
     <>
-      <div className="flex desktop:hidden items-center justify-center h-screen">
-        <div className="relative flex flex-col w-full mt-[36px] max-w-[335px] mx-auto">
-          <CalendarCheckbox />
-          <CalendarView />
+      <div className="flex desktop:hidden items-center justify-start h-full pt-[77px]">
+        <div className="relative flex flex-col w-full max-w-[335px] mx-auto">
+          <CalendarTemplate />
         </div>
       </div>
       <div className="hidden desktop:flex items-center justify-center h-screen">
-        <div className="relative flex w-full max-w-[1000px] mx-auto mt-4">
-          <CalendarCheckbox />
-          <CalendarView />
+        <div className="relative flex w-full max-w-[1000px] mx-auto">
+          <CalendarTemplate />
         </div>
       </div>
     </>
