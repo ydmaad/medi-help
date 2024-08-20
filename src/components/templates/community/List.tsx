@@ -43,8 +43,8 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
           sortOption,
           searchTerm
         );
-        console.log("현재페이지", currentPage);
-        console.log(data);
+        // console.log("현재페이지", currentPage);
+        // console.log(data);
         setPosts(data);
         setTotalPosts(totalPosts);
         if (selectCategory === "전체") {
@@ -66,7 +66,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     fetchData();
   }, [searchTerm, currentPage, sortOption, selectCategory, setPosts]);
 
-  console.log(posts);
+  // console.log(posts);
 
   // 게시글 검색
   // const filteredPosts = categoryFilterPosts.filter(
@@ -106,7 +106,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
     }
   };
 
-  console.log(categoryFilterPosts);
+  // console.log(categoryFilterPosts);
 
   // 게시글 로딩중 스켈레톤 적용
   if (isLoading) {
