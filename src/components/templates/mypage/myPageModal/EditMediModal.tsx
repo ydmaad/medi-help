@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
+import { useToast } from "@/hooks/useToast";
 
 interface MediRecord {
   id: string;
@@ -46,15 +47,33 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
   const [mediNames, setMediNames] = useState<{ itemName: string }[]>([]);
   const [notificationEnabled, setNotificationEnabled] = useState(!!mediRecord.repeat);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+useEffect(() => {
+  const toastContainer = document.querySelector('.Toastify');
+  if (toastContainer) {
+    (toastContainer as HTMLElement).style.zIndex = '10000'; // 매우 높은 z-index 값 설정
+  }
+}, []);
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    toast[type](message);
+  };
+  
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name === 'medi_nickname' && value.length > 6) {
+      showToast("약 별명은 최대 6글자입니다.", "error");
+      return;
+    }
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
+
+  
   const handleTimeChange = (time: 'morning' | 'afternoon' | 'evening') => {
     setFormData((prevData) => ({
       ...prevData,
@@ -90,10 +109,30 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       onRequestClose();
     } catch (error) {
       console.error("Error deleting medication record:", error);
+      showToast("약 정보 삭제 중 오류가 발생했습니다.", "error");
     }
   };
 
+  const validateForm = () => {
+    if (!formData.medi_nickname.trim()) {
+      showToast("약 별명을 입력해주세요.", "error");
+      return false;
+    }
+    if (!formData.medi_name) {
+      showToast("약 이름을 선택해주세요.", "error");
+      return false;
+    }
+    if (!formData.start_date || !formData.end_date) {
+      showToast("복용 기간을 선택해주세요.", "error");
+      return false;
+    }
+    return true;
+  };
+
+
   const handleUpdateClick = async () => {
+    if (!validateForm()) return;
+  
     try {
       await axios.put(`/api/mypage/medi/${formData.id}`, {
         ...formData,
@@ -103,9 +142,9 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       onRequestClose();
     } catch (error) {
       console.error("Error updating medication record:", error);
+      showToast("약 정보 수정 중 오류가 발생했습니다.", "error");
     }
   };
-
   const fetchMediNames = async () => {
     setIsLoading(true);
     try {
@@ -113,6 +152,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
       setMediNames(response.data);
     } catch (error) {
       console.error("Error fetching medication names:", error);
+      toast.error("약 이름 목록을 불러오는 데 실패했습니다.");
     } finally {
       setIsLoading(false);
     }

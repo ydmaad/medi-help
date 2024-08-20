@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft } from "lucide-react";
 import { format } from 'date-fns';
 import axios from 'axios';
+import { useToast } from "@/hooks/useToast";
 
 interface MediRecord {
   id: string;
@@ -44,6 +45,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [mediNames, setMediNames] = useState<{ itemName: string }[]>([]);
   const [notificationEnabled, setNotificationEnabled] = useState(!!mediRecord.repeat);
+ const { toast } = useToast();
 
   useEffect(() => {
     setEditedRecord(mediRecord);
@@ -71,6 +73,10 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    if (name === 'medi_nickname' && value.length > 6) {
+      toast.error("약 별명은 최대 6글자입니다.");
+      return;
+    }
     setEditedRecord((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -98,8 +104,24 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
       notification_time: [value],
     }));
   };
-
+  const validateForm = () => {
+    if (!editedRecord.medi_nickname.trim()) {
+      toast.error("약 별명을 입력해주세요.");
+      return false;
+    }
+    if (!editedRecord.medi_name) {
+      toast.error("약을 선택해주세요.");
+      return false;
+    }
+    if (!editedRecord.start_date || !editedRecord.end_date) {
+      toast.error("기간을 설정해주세요.");
+      return false;
+    }
+    return true;
+  };
   const handleSave = async () => {
+    if (!validateForm()) return;
+
     setIsLoading(true);
     setError(null);
     try {
@@ -110,13 +132,16 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
       if (response.status === 200) {
         onUpdate(response.data);
         setIsEditing(false);
+        toast.success("약 정보가 성공적으로 수정되었습니다.");
       }
     } catch (err) {
       setError('업데이트 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      toast.error("약 정보 수정 중 오류가 발생했습니다.");
       console.error('Error updating medication:', err);
     }
     setIsLoading(false);
   };
+
 
   const handleDelete = async () => {
     setIsLoading(true);
@@ -126,9 +151,11 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
       if (response.status === 200) {
         onDelete(mediRecord.id);
         onClose();
+        toast.success("약 정보가 삭제되었습니다.");
       }
     } catch (err) {
       setError('삭제 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      toast.error("약 정보 삭제 중 오류가 발생했습니다.");
       console.error('Error deleting medication:', err);
     }
     setIsLoading(false);
