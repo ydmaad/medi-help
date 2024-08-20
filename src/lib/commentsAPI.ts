@@ -202,26 +202,10 @@ export const fetchBookmark = async (postId: string, userId: string) => {
 };
 
 // 게시글 불러오는 요청
-export const fetchPosts = async (
-  page: number,
-  sortOption: string,
-  searchTerm: string = ""
-) => {
-  try {
-    const url = `/api/community?page=${page}&perPage=${POST_PER_PAGE}&sort=${sortOption}&search=${searchTerm}`;
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`서버 에러 status: ${res.status}`);
-    }
-    const result = await res.json();
-    console.log("API Response:", result);
-    if (!result.data || !Array.isArray(result.data)) {
-      console.error("Invalid data format:", result);
-      throw new Error("Invalid data format");
-    }
-    return { data: result.data, totalPosts: result.totalPosts };
-  } catch (error) {
-    console.error("에러:", error);
-    throw error;
-  }
+export const fetchPosts = async (page: number, sortOption: string) => {
+  const res = await fetch(
+    `/api/community?page=${page}&perPage=${POST_PER_PAGE}&sort=${sortOption}`
+  );
+  const result = await res.json();
+  return { data: result.data, totalPosts: result.totalPosts };
 };
