@@ -20,9 +20,9 @@ import {
   useMediNameFilter,
   useValuesStore,
 } from "@/store/calendar";
-import uuid from "react-uuid";
 import { GoPlus } from "react-icons/go";
 import MobileAddMedi from "@/components/molecules/MobileAddMedi";
+import { useToast } from "@/hooks/useToast";
 
 
 const CalendarView = () => {
@@ -37,6 +37,8 @@ const CalendarView = () => {
   const { events, setEvents } = useEventsStore();
   const { medicines, setMedicines } = useMedicinesStore();
   const { mediNames, setMediNames } = useMediNameFilter();
+
+  const { toast } = useToast();
 
   type CalendarType = Tables<"calendar">;
   type BridgeType = Tables<"calendar_medicine">;
@@ -190,9 +192,12 @@ const CalendarView = () => {
       setViewEvents(false);
     }
 
+    if (medicines.length === 0) {
+      return toast.warning("약 등록 후 이용해주세요!");
+    }
+
     setValues({
       ...values,
-      id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
       start_date: newDate,
       medi_time: "morning",
       side_effect: filteredCalendar.length
@@ -222,9 +227,18 @@ const CalendarView = () => {
       return event.extendProps.medi_time === "morning";
     })[0];
 
+    if (filteredCalendar.length || editList.length) {
+      setViewEvents(true);
+    } else {
+      setViewEvents(false);
+    }
+
+    if (medicines.length === 0) {
+      return toast.warning("약 등록 후 이용해주세요!");
+    }
+
     setValues({
       ...values,
-      id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
       start_date: today,
       medi_time: "morning",
       side_effect: filteredCalendar.length
@@ -277,8 +291,8 @@ const CalendarView = () => {
           ]);
         }}
       />
-      <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4 desktop:mt-20">
-        <div className="relative min-w-[364px]">
+      <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4">
+        <div className="relative min-w-[335px]">
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
             <div className="absolute desktop:static flex flex-row items-center right-1 top-2.5 gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex">
               <div className="flex items-center">
@@ -343,7 +357,7 @@ const CalendarView = () => {
         <MobileCalendarView />
         <button
           onClick={() => setOpenMobileAddMedi(true)}
-          className="desktop:hidden fixed w-[60px] h-[60px] rounded-full bottom-20 right-10 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-20 hover:scale-105 ease-in duration-300"
+          className="desktop:hidden fixed w-[60px] h-[60px] rounded-full bottom-10 right-10 flex items-center justify-center bg-brand-primary-50 text-[32px] text-brand-primary-500 drop-shadow-lg z-5 hover:scale-105 ease-in duration-300"
         >
           <GoPlus />
         </button>

@@ -21,7 +21,7 @@ const BackHeader = () => {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-white h-[67px] shadow-md">
+      <header className="fixed top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-white h-[67px]">
         <div className="flex">
           <div className="mr-4">
             <ImageButton

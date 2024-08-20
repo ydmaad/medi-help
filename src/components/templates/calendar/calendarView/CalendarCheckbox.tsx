@@ -129,7 +129,7 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
   };
 
   return (
-    <div>
+    <div className="mr-4">
       <CalendarTitle
         showFilterBox={showFilterBox}
         setShowFilterBox={setShowFilterBox}
