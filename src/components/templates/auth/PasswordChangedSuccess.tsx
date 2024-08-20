@@ -4,30 +4,27 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth"; // useAuthStore import 추가
 import { supabase } from "@/utils/supabase/client"; // supabase client import 추가
+import { useToast } from "@/hooks/useToast";
 
 export const PasswordChangedSuccess: React.FC = () => {
   const router = useRouter();
   // useAuthStore에서 필요한 함수와 상태를 가져옵니다.
   const { setIsLogedIn, user } = useAuthStore();
 
+  // 토스티파이 훅 사용
+  const { toast } = useToast();
+
   // 홈으로 버튼 클릭 핸들러
   const handleHomeClick = () => {
-    // if (user) {
-    //   // 현재 세션이 유효한지 확인합니다.
-    //   const { data, error } = await supabase.auth.getSession();
-    //   if (data.session) {
-    //     // 유효한 세션이 있으면 로그인 상태를 true로 설정합니다.
-    //     setIsLogedIn(true);
-    //   }
-    // }
-    // 홈 페이지로 이동합니다.
+    setIsLogedIn(false);
     router.push("/");
+    toast.info("홈 페이지로 이동합니다.");
   };
 
   // 로그인 버튼 클릭 핸들러
   const handleLoginClick = () => {
-    // 로그인 페이지로 이동합니다.
     router.push("/auth/login");
+    toast.info("로그인 페이지로 이동합니다.");
   };
 
   return (

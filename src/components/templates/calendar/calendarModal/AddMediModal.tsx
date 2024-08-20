@@ -19,20 +19,25 @@ interface MediRecord {
   user_id: string;
   day_of_week: string[];
   notification_time: string[];
-  repeat: boolean; // 추가된 속성
+  repeat: boolean; 
 }
 
 interface AddMediModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
   onAdd: (newMediRecord: MediRecord) => void;
+  toast: {
+    success: (message: string) => void;
+    error: (message: string) => void;
+  };
 }
-
 const AddMediModal: React.FC<AddMediModalProps> = ({
   isOpen,
   onRequestClose,
   onAdd,
+  toast,
 }) => {
+
   const { user } = useAuthStore();
   const [mediName, setMediName] = useState("");
   const [mediNickname, setMediNickname] = useState("");
@@ -69,8 +74,33 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
     setTimes({ ...times, [e.target.name]: e.target.checked });
   };
 
+  const validateForm = () => {
+    if (!mediNickname.trim()) {
+      toast.error("약 별명을 입력해주세요.");
+      return false;
+    }
+    if (mediNickname.length > 6) {
+      toast.error("약 별명은 최대 6자입니다.");
+      return false;
+    }
+    if (!mediName) {
+      toast.error("약 이름을 등록해주세요.");
+      return false;
+    }
+    if (!startDate || !endDate) {
+      toast.error("복용 기간을 선택해주세요.");
+      return false;
+    }
+    if (notificationEnabled && notificationTime[0] === "") {
+      toast.error("알림 시간을 설정해주세요.");
+      return false;
+    }
+    return true;
+  };
+
   const handleAdd = async () => {
     if (!user) return;
+    if (!validateForm()) return;
 
     const newMediRecord: MediRecord = {
       id: crypto.randomUUID(),
@@ -112,11 +142,13 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         setNotificationEnabled(false);
         onRequestClose();
       }
-       else {
+      else {
         console.error("Failed to add record:", response.statusText);
+        toast.error("약 등록에 실패했습니다.");
       }
     } catch (error) {
       console.error("Failed to add record:", error);
+      toast.error("약 등록 중 오류가 발생했습니다.");
     }
   };
 

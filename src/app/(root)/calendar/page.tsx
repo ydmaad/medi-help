@@ -9,7 +9,7 @@ const Page = () => {
           <CalendarTemplate />
         </div>
       </div>
-      <div className="hidden desktop:flex items-center justify-center h-screen">
+      <div className="hidden desktop:flex items-center justify-center h-screen pt-24">
         <div className="relative flex w-full max-w-[1000px] mx-auto">
           <CalendarTemplate />
         </div>

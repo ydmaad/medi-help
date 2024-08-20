@@ -128,7 +128,7 @@ const MobileCalendarView = () => {
             <FilterComponent />
             <div className="flex flex-col items-center w-full h-44 min-h-32 gap-2 overflow-y-auto">
               {medicines.length === 0 ? (
-                <div className="my-4 text-[16px] text-brand-gray-600">
+                <div className="my-4 text-[15px] text-brand-gray-600">
                   복용 중인 약이 없습니다.
                 </div>
               ) : (
@@ -137,9 +137,6 @@ const MobileCalendarView = () => {
                     return medi.time[values.medi_time] === true;
                   })
                   .map((medicine: MedicinesType, idx: number) => {
-                    if (!medicine) {
-                      return <div key={idx}>복용 중인 약이 없습니다.</div>;
-                    }
                     return <PillComponent key={idx} medicine={medicine} />;
                   })
               )}

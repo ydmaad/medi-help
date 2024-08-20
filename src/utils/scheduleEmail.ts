@@ -49,11 +49,22 @@ async function sendScheduledEmails() {
     });
 
     try {
-      await sendEmail({
-        to: record.users.email,
-        subject,
-        text: message,
-      });
+
+      if(!record.is_sent){
+        await sendEmail({
+          to: record.users.email,
+          subject,
+          text: message,
+        });
+
+        const { data, error } = await supabase
+        .from('medications')
+        .update({...record, is_sent: true})
+        .eq('id', record.id)
+        .select();
+  
+      }
+     
 
       console.log(`Email sent to ${record.users.email} for medication ${record.medi_nickname}`);
     } catch (emailError) {
@@ -61,7 +72,6 @@ async function sendScheduledEmails() {
     }
   }
 }
-
 // 매 분마다 스케줄링된 작업 실행
 cron.schedule('* * * * *', sendScheduledEmails, {
   timezone: 'Asia/Seoul',

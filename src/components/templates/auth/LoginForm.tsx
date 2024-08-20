@@ -9,6 +9,7 @@ import { AuthPasswordInput } from "../../molecules/AuthPasswordInput";
 import { AuthCheckbox } from "../../molecules/AuthCheckbox";
 import Link from "next/link";
 import Image from "next/image";
+import { useToast } from "@/hooks/useToast";
 
 // LoginForm 컴포넌트의 props 타입 정의
 type LoginFormProps = {
@@ -36,6 +37,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
 
+  // 토스티파이 훅 사용
+  const { toast } = useToast();
+
   // 이메일 기억하기 기능
   useEffect(() => {
     const rememberedEmail = localStorage.getItem("rememberedEmail");
@@ -56,6 +60,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     const newEmail = e.target.value;
     setEmail(newEmail);
     setIsEmailValid(validateEmail(newEmail) || newEmail === "");
+    if (!validateEmail(newEmail) && newEmail !== "") {
+      toast.error("올바른 이메일 형식이 아닙니다.");
+    }
   };
 
   // 비밀번호 입력 핸들러
@@ -63,6 +70,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     const newPassword = e.target.value;
     setPassword(newPassword);
     setIsPasswordValid(newPassword.length >= 6 || newPassword === "");
+    if (newPassword.length < 6 && newPassword !== "") {
+      toast.error("비밀번호는 최소 6자 이상이어야 합니다.");
+    }
   };
 
   // 폼 제출 핸들러
@@ -70,16 +80,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     e.preventDefault();
     setFormError("");
     if (!email || !password) {
-      setFormError("이메일과 비밀번호를 입력해주세요.");
+      toast.error("이메일과 비밀번호를 입력해주세요.");
       return;
     }
     if (!validateEmail(email)) {
-      setFormError("올바른 이메일 형식이 아닙니다.");
+      toast.error("올바른 이메일 형식이 아닙니다.");
       setIsEmailValid(false);
       return;
     }
     if (password.length < 6) {
-      setFormError("비밀번호는 최소 6자 이상이어야 합니다.");
+      toast.error("비밀번호는 최소 6자 이상이어야 합니다.");
       setIsPasswordValid(false);
       return;
     }
