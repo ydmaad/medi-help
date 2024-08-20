@@ -1,27 +1,39 @@
 // src/app/auth/complete/page.tsx
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/auth"; // useAuthStore import 추가
-import { supabase } from "@/utils/supabase/client"; // supabase client import 추가
+import { useAuthStore } from "@/store/auth";
+import { supabase } from "@/utils/supabase/client";
+import { useToast } from "@/hooks/useToast";
+import Loading from "@/components/atoms/Loading";
 
 const SignupSuccess: React.FC = () => {
   const router = useRouter();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   // useAuthStore에서 필요한 함수와 상태를 가져옵니다.
   const { setIsLogedIn, user } = useAuthStore();
 
   // 홈으로 버튼 클릭 핸들러
   const handleHomeClick = () => {
     // 홈 페이지로 이동합니다.
+    setIsLoading(true);
+    toast.info("홈 페이지로 이동합니다.");
     router.push("/");
   };
 
   // 로그인 버튼 클릭 핸들러
   const handleLoginClick = () => {
     // 로그인 페이지로 이동합니다.
+    setIsLoading(true);
+    toast.info("로그인 페이지로 이동합니다.");
     router.push("/auth/login");
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
