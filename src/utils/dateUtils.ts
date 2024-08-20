@@ -8,7 +8,7 @@ export const formatTimeAgo = (date: Date | number | string): string => {
   const diffDays = differenceInDays(now, d);
   // 7일이상 지난 게시글
   if (diffDays > 7) {
-    return formatDate(d, "yyyy년 MM월 dd일 HH:mm", { locale: ko });
+    return formatDate(d, "yyyy년 MM월 dd일", { locale: ko });
   } else {
     return formatDistanceToNow(d, {
       addSuffix: true,

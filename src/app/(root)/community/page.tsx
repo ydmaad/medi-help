@@ -38,7 +38,7 @@ const CommunityPage = () => {
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
-    console.log("검색어가 업데이트 돼는 부분!?!?", term);
+    // console.log("검색어가 업데이트 돼는 부분!?!?", term);
   };
 
   // 로그인 안 되어 있으면 로그인 페이지로 리다이렉트
