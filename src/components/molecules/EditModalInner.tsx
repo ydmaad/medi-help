@@ -8,6 +8,7 @@ import FilterComponent from "./FilterComponent";
 import EditNote from "../atoms/EditNote";
 import {
   useCalendarStore,
+  useEditStore,
   useEventsStore,
   useMedicinesStore,
   useMediNameFilter,
@@ -25,6 +26,7 @@ const EditModalInner = ({ viewEvents, setViewEvents }: Props) => {
   const { medicines } = useMedicinesStore();
   const { calendar } = useCalendarStore();
   const { events, setEvents } = useEventsStore();
+  const { edit, setEdit } = useEditStore();
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let filteredCalendar = calendar.filter(
@@ -44,6 +46,8 @@ const EditModalInner = ({ viewEvents, setViewEvents }: Props) => {
     } else {
       setViewEvents(false);
     }
+
+    setEdit(false);
 
     setValues({
       ...values,

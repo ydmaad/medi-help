@@ -73,11 +73,6 @@ const MobileEdit = () => {
 
   // 저장 버튼 onClick 함수
   const handleSubmitButtonClick = () => {
-    if (values.side_effect === "" && values.medicine_id.length === 0) {
-      toast.warning("복용하신 약이나 노트를 입력해주세요 !");
-      return;
-    }
-
     setValues({
       ...values,
       side_effect: values.side_effect ? values.side_effect.trim() : "",
