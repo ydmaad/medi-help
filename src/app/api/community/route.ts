@@ -113,8 +113,8 @@ export async function GET(request: NextRequest) {
         return bookmarkB - bookmarkA;
       });
     }
-    console.log("여기야", sortedPosts);
-    console.log("카운트다", count);
+    // console.log("여기야", sortedPosts);
+    // console.log("카운트다", count);
 
     return NextResponse.json(
       {
