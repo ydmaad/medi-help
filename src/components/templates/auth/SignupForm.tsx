@@ -13,6 +13,7 @@ import { AuthTermsCheckbox } from "../../molecules/AuthTermsCheckbox";
 import { termsOfService } from "@/constants/termsOfService";
 import { privacyPolicy } from "@/constants/privacyPolicy";
 import { supabase } from "@/utils/supabase/client";
+import { useToast } from "@/hooks/useToast";
 
 // SignupForm 컴포넌트의 props 타입 정의
 type SignupFormProps = {
@@ -42,6 +43,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   const [passwordConfirmValid, setPasswordConfirmValid] = useState<
     boolean | null
   >(null);
+
+  // 토스티파이 훅 사용
+  const { toast } = useToast();
 
   // 이메일 중복 확인 상태
   const [isEmailChecked, setIsEmailChecked] = useState(false);
@@ -97,7 +101,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
   // 이메일 중복 확인 핸들러
   const handleEmailCheck = async () => {
     if (!email || !emailValid) {
-      alert("유효한 이메일을 입력해주세요.");
+      toast.error("유효한 이메일을 입력해주세요.");
       return;
     }
 
@@ -106,9 +110,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
     setIsEmailAvailable(isAvailable);
 
     if (isAvailable) {
-      alert("사용 가능한 이메일입니다.");
+      toast.success("사용 가능한 이메일입니다.");
     } else {
-      alert("이미 사용 중인 이메일입니다.");
+      toast.error("이미 사용 중인 이메일입니다.");
     }
   };
 
@@ -126,8 +130,14 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
       setIsNicknameChecked(true);
       setIsNicknameAvailable(isAvailable);
       setNicknameValid(true); // 길이 조건을 만족하면 우선 유효하다고 설정
+      if (!isAvailable) {
+        toast.error("이미 사용 중인 닉네임입니다.");
+      }
     } else {
       setNicknameValid(false);
+      if (newNickname) {
+        toast.error("닉네임은 2-6자 사이여야 합니다.");
+      }
     }
   };
 
@@ -189,7 +199,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
         errors.push("비밀번호 확인이 일치하지 않습니다.");
       if (!agreeTerms || !agreePrivacy) errors.push("약관에 동의해주세요.");
 
-      alert(errors.join("\n"));
+      toast.error(errors.join("\n"));
     }
   };
 
