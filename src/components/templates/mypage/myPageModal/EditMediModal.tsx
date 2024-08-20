@@ -282,7 +282,7 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
             </div>
 
             <div className="mb-5">
-              <label className="block text-[14px] font-bold mb-2">알림 시간:</label>
+              
               <input
                 type="time"
                 name="notification_time"

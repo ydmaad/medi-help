@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import { generateNotificationMessage } from './notificationMessage';
-
 const transporter = nodemailer.createTransport({
   host: 'smtp.naver.com',
   port: 465,
@@ -10,14 +9,12 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-
 interface MailOptions {
   to: string;
   subject: string;
   text: string;
   html?: string;
 }
-
 export const sendEmail = async (options: MailOptions) => {
   const { to, subject, text, html } = options;
   const mailOptions = {
@@ -43,20 +40,6 @@ export const sendEmail = async (options: MailOptions) => {
   }
 };
 
-// 이 함수는 예시용이므로 주석 처리하거나 필요 없다면 제거할 수 있습니다.
-// const exampleUsage = async (newMediRecord: any, user: any) => {
-//   const { subject, message } = generateNotificationMessage({
-//     medi_nickname: newMediRecord.medi_nickname,
-//     medi_name: newMediRecord.medi_name,
-//     user_nickname: user.data.nickname,
-//     notes: newMediRecord.notes,
-//   });
 
-//   await sendEmail({
-//     to: user.data.email,
-//     subject,
-//     text: message,
-//   });
-// };
 
 export default sendEmail;

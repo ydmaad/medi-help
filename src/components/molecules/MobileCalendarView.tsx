@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { MedicinesType, ValuesType } from "@/types/calendar";
-import axios from "axios";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
+import { MedicinesType } from "@/types/calendar";
+import { DATE_OFFSET } from "@/constants/constant";
 import FilterComponent from "./FilterComponent";
 import ViewNote from "../atoms/ViewNote";
 import PillComponent from "./PillComponent";
@@ -17,18 +16,20 @@ import {
 } from "@/store/calendar";
 import { EventInput } from "@fullcalendar/core";
 import uuid from "react-uuid";
+import { useToast } from "@/hooks/useToast";
 
 const MobileCalendarView = () => {
   const [tabNumber, setTabNumber] = useState<number>(0);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
   const { values, setValues } = useValuesStore();
-  const { events, setEvents } = useEventsStore();
-  const { calendar, setCalendar } = useCalendarStore();
+  const { events } = useEventsStore();
+  const { calendar } = useCalendarStore();
   const { medicines } = useMedicinesStore();
   const { setEdit } = useEditStore();
 
   const router = useRouter();
+  const { toast } = useToast();
 
   useEffect(() => {
     let today = new Date(new Date().getTime() + DATE_OFFSET)
@@ -74,8 +75,13 @@ const MobileCalendarView = () => {
       return cal.start_date === values.start_date;
     });
 
+    if (medicines.length === 0) {
+      return toast.warning("약 등록 후 이용해주세요!");
+    }
+
     setValues({
       ...values,
+      id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
       medi_time: "morning",
       side_effect: filteredCalendar.length
         ? filteredCalendar[0].side_effect
@@ -87,7 +93,7 @@ const MobileCalendarView = () => {
 
   return (
     <>
-      <div className="w-11/12 min-w-[344px] desktop:hidden py-[10px] box-content bg-[#FBFBFB]">
+      <div className="w-11/12 min-w-[335px] desktop:hidden p-[10px] box-content bg-[#FBFBFB]">
         <div className="flex justify-between items-center mt-2 mb-4 px-1">
           <div className="flex justify-between gap-6 text-[14px] text-brand-gray-600 font-normal">
             {selectedDate}
@@ -121,16 +127,19 @@ const MobileCalendarView = () => {
           <div className="flex flex-col gap-4">
             <FilterComponent />
             <div className="flex flex-col items-center w-full h-44 min-h-32 gap-2 overflow-y-auto">
-              {medicines
-                ?.filter((medi: MedicinesType) => {
-                  return medi.time[values.medi_time] === true;
-                })
-                .map((medicine: MedicinesType, idx: number) => {
-                  if (!medicine) {
-                    return <div key={idx}>복용 중인 약이 없습니다.</div>;
-                  }
-                  return <PillComponent key={idx} medicine={medicine} />;
-                })}
+              {medicines.length === 0 ? (
+                <div className="my-4 text-[15px] text-brand-gray-600">
+                  복용 중인 약이 없습니다.
+                </div>
+              ) : (
+                medicines
+                  .filter((medi: MedicinesType) => {
+                    return medi.time[values.medi_time] === true;
+                  })
+                  .map((medicine: MedicinesType, idx: number) => {
+                    return <PillComponent key={idx} medicine={medicine} />;
+                  })
+              )}
             </div>
           </div>
         ) : null}

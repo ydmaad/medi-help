@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import BackgroundTitle from "@/components/molecules/ImageOverlay";
 import LgImage from "@/components/atoms/LgImage";
-
+import Header from "@/components/molecules/TopHeader";
 interface Magazine {
   id: string;
   title: string;
@@ -51,15 +51,18 @@ const MagazinePage = () => {
 
   return (
     <>
-      <BackgroundTitle
-        title={magazine.title}
-        backgroundImage={magazine.imgs_url}
-        leftText={magazine.written_by}
-        rightText={magazine.reporting_date}
-      />
-      <div className="flex flex-col p-4 mx-36 mt-[60px] items-center justify-center">
+      <Header showBackHeader={true} />
+      <div className="absolute inset-0 mt-[67px]">
+        <BackgroundTitle
+          title={magazine.title}
+          backgroundImage={magazine.imgs_url}
+          leftText={magazine.written_by}
+          rightText={magazine.reporting_date}
+        />
+      </div>
+      <div className="flex flex-col desktop:max-w-[1000px] mx-auto desktop:mt-[480px] mt-[310px] items-center justify-center">
         <LgImage src={magazine.imgs_url} alt={magazine.title} />
-        <h4 className="text-base text-brand-gray-1000 mt-[96px]">
+        <h4 className="text-base text-brand-gray-1000 desktop:mt-[50px] mt-[40px]">
           {magazine.descriptions}
         </h4>
       </div>

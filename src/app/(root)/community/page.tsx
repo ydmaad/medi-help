@@ -3,6 +3,7 @@
 import PostFloatingBtn from "@/components/molecules/PostFloatingBtn";
 import List from "@/components/templates/community/List";
 import Search from "@/components/templates/community/Search";
+import { useToast } from "@/hooks/useToast";
 import { useAuthStore } from "@/store/auth";
 import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
 import { PostWithUser } from "@/types/communityTypes";
@@ -17,6 +18,7 @@ const CommunityPage = () => {
   const { user } = useAuthStore();
   const router = useRouter();
   const { isSearchOpen, setIsSearchOpen } = useCommunitySearchFlagStore();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fectchAllPosts = async () => {
@@ -43,7 +45,7 @@ const CommunityPage = () => {
   const handleUserCheck = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     if (!user) {
-      alert("로그인이 필요합니다.");
+      toast.warning("로그인이 필요합니다.");
       router.push("/auth/login");
     } else {
       router.push("/community/post");
@@ -54,18 +56,18 @@ const CommunityPage = () => {
 
   return (
     <>
-      <div className="max-w-[996px] mx-auto mt-[118px] desktop:mt-40">
+      <div className="max-w-[996px] mx-auto mt-[90px] desktop:mt-[160px]">
         <div className="flex items-center justify-between mb-[20px] desktop:mb-[40px]">
           {/* 데스크탑 버전 */}
           <div className="hidden desktop:flex flex-col">
             <button
               onClick={handleReset}
-              className="flex items-center text-3xl font-bold"
+              className="flex items-center text-[32px] font-bold"
             >
               <span className="mr-3">&#128172;</span>
               커뮤니티
             </button>
-            <span className="text-brand-gray-600 font-extrabold mt-2">
+            <span className="text-brand-gray-600 text-[20px] font-extrabold mt-2">
               약에 대한 이야기를 나누어 보아요
             </span>
           </div>
@@ -74,12 +76,12 @@ const CommunityPage = () => {
             <div className="flex desktop:hidden flex-col">
               <button
                 onClick={handleReset}
-                className="flex items-center text-3xl font-bold"
+                className="flex items-center text-[20px] font-bold"
               >
                 <span className="mr-3">&#128172;</span>
                 커뮤니티
               </button>
-              <span className="text-brand-gray-600 font-extrabold mt-2">
+              <span className="text-brand-gray-600 text-[18px] font-extrabold mt-2">
                 약에 대한 이야기를 나누어 보아요
               </span>
             </div>

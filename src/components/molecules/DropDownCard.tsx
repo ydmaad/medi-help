@@ -16,7 +16,7 @@ const DropDownCard = ({ title, hiddenText }: DropDownCardProps) => {
   return (
     <div className="flex justify-center items-center">
       <div className="mt-[8px] w-[335px] desktop:mt-[16px] desktop:w-[996px] border rounded-[16px] bg-white border-brand-gray-50 overflow-hidden">
-        <div className="mx-[40px] flex items-center justify-between p-4 ">
+        <div className="desktop:mx-[40px] mx-[0px] flex items-center justify-between p-4 ">
           <div
             className={`text-[16px] desktop:text-[20px] font-semibold ${
               isFlipped ? "text-brand-primary-500" : "text-brand-gray-800"

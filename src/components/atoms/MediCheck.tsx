@@ -11,6 +11,7 @@ interface Props {
 const MediCheck = ({ medicine, idx }: Props) => {
   const [checked, setChecked] = useState<boolean>();
   const [mediTimes, setMediTimes] = useState<string[]>([]);
+  const [notification, setNotification] = useState<string[]>([]);
   const { id, time, name } = medicine;
 
   const { values, setValues } = useValuesStore();
@@ -30,6 +31,33 @@ const MediCheck = ({ medicine, idx }: Props) => {
   useEffect(() => {
     setChecked(values.medicine_id.includes(id));
   }, [values.medicine_id.length]);
+
+  useEffect(() => {
+    getNotificationTime();
+  }, [values.start_date]);
+
+  const getNotificationTime = () => {
+    if (medicine.notification_time.length !== 0) {
+      medicine.notification_time.map((time) => {
+        let hour = time.split(":")[0];
+        let minute = time.split(":")[1];
+        if (Number(hour) === 0) {
+          setNotification((prev) => [...prev, `오전 12:${minute}`]);
+        }
+
+        if (Number(hour) > 12) {
+          setNotification((prev) => [
+            ...prev,
+            `오후 0${Number(hour) - 12}:${minute}`,
+          ]);
+        }
+
+        if (Number(hour) > 0 && Number(hour) <= 12) {
+          setNotification((prev) => [...prev, `오전 ${hour}:${minute}`]);
+        }
+      });
+    }
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -63,7 +91,7 @@ const MediCheck = ({ medicine, idx }: Props) => {
           <span
             className={checked ? "text-[#279EF9] ml-1" : "text-[#7C7F86] ml-1"}
           >
-            {`오후 12:00`}
+            {notification[0]}
           </span>
         </div>
         <div

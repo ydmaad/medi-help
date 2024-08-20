@@ -23,8 +23,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   return (
     <div
-      className={`w-[267px] h-[800px] rounded-tl-[20px] rounded-bl-[20px] shadow-[-16px_0_24px_rgba(0,0,0,16%)] bg-white transform transition-transform duration-300 fixed top-0 right-0 mt-[67px] ${
-        isOpen ? "translate-x-[0]" : "translate-x-[100%]"
+      className={`w-[267px] h-[800px] rounded-tl-[20px] rounded-bl-[20px]  bg-white transform transition-transform duration-300 fixed top-0 right-0 mt-[67px] ${
+        isOpen
+          ? "translate-x-[0] shadow-[-16px_0_24px_rgba(0,0,0,16%)]"
+          : "translate-x-[100%] "
       }`}
     >
       <div className="flex justify-between h-[67px]">
