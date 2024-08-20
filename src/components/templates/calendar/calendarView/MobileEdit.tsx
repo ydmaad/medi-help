@@ -73,11 +73,6 @@ const MobileEdit = () => {
 
   // 저장 버튼 onClick 함수
   const handleSubmitButtonClick = () => {
-    if (values.side_effect === "" && values.medicine_id.length === 0) {
-      toast.warning("복용하신 약이나 노트를 입력해주세요 !");
-      return;
-    }
-
     setValues({
       ...values,
       side_effect: values.side_effect ? values.side_effect.trim() : "",
@@ -106,7 +101,7 @@ const MobileEdit = () => {
   return (
     <>
       <div className="w-11/12 min-w-96 h-5/8 min-h-[480px] py-6 bg-[#FBFBFB] desktop:px-6 mt-20 flex flex-col gap-[20px]">
-        <div className="flex align-items py-1 mb-2 justify-between gap-2">
+        <div className="fixed top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-[#FBFBFB] h-[67px]">
           <button onClick={handleBackButtonClick}>
             <IoIosArrowBack className="text-[20px] hover:text-primary-500" />
           </button>

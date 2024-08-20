@@ -14,6 +14,7 @@ import {
   statusBookmark,
 } from "@/lib/commentsAPI";
 import { PostDetailSkeleton } from "@/components/molecules/CommunitySkeleton";
+import { useToast } from "@/hooks/useToast";
 
 interface PostDetailProps {
   id: string;
@@ -28,6 +29,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
   const { user } = useAuthStore();
   const [isBookmark, setIsBookmark] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { toast } = useToast();
 
   // 게시글 불러오기
   useEffect(() => {
@@ -79,13 +81,13 @@ const PostDetail = ({ id }: PostDetailProps) => {
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
     if (!user || user.id !== post?.user.id) {
-      alert("게시글을 삭제할 권한이 없습니다.");
+      toast.error("게시글을 삭제할 권한이 없습니다.");
       return;
     }
     if (id) {
       try {
         await deletePost(id);
-        alert("게시글을 삭제하였습니다.");
+        toast.success("게시글을 삭제하였습니다.");
         route.push(`/community/`);
       } catch (error) {
         console.error("삭제 중 오류 발생:", error);
@@ -114,14 +116,14 @@ const PostDetail = ({ id }: PostDetailProps) => {
   const handleEditClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!modifyUser()) {
       e.preventDefault();
-      alert("게시글을 수정할 권한이 없습니다.");
+      toast.error("게시글을 수정할 권한이 없습니다.");
     }
   };
 
   // 북마크 토글 핸들러
   const handleBookmark = async () => {
     if (!user) {
-      alert("북마크하려면 로그인이 필요합니다.");
+      toast.warning("북마크하려면 로그인이 필요합니다.");
       return;
     }
     try {
