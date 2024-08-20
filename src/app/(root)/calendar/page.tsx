@@ -4,12 +4,20 @@ import CalendarView from "@/components/templates/calendar/calendarView/CalendarV
 
 const Page = () => {
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="relative flex  w-full max-w-[1000px] mt-4">
-        <CalendarCheckbox />
-        <CalendarView />
+    <>
+      <div className="flex desktop:hidden items-center justify-center h-screen">
+        <div className="relative flex flex-col w-full mt-[36px] max-w-[335px] mx-auto">
+          <CalendarCheckbox />
+          <CalendarView />
+        </div>
       </div>
-    </div>
+      <div className="hidden desktop:flex items-center justify-center h-screen">
+        <div className="relative flex w-full max-w-[1000px] mx-auto mt-4">
+          <CalendarCheckbox />
+          <CalendarView />
+        </div>
+      </div>
+    </>
   );
 };
 

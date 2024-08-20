@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import BackgroundTitle from "@/components/molecules/ImageOverlay";
 import LgImage from "@/components/atoms/LgImage";
-
+import Header from "@/components/molecules/TopHeader";
 interface Magazine {
   id: string;
   title: string;
@@ -51,6 +51,7 @@ const MagazinePage = () => {
 
   return (
     <>
+      <Header showBackHeader={true} />
       <div className="absolute inset-0 mt-[67px]">
         <BackgroundTitle
           title={magazine.title}
