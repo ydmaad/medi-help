@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import TertiColum from "@/components/molecules/TertiColum";
 import MainColum from "@/components/molecules/MainColum";
 import SubColum from "@/components/molecules/SubColum";

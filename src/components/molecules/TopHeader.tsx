@@ -46,6 +46,7 @@ const Header = ({ showBackHeader }: { showBackHeader: boolean }) => {
 
     checkAndSetUser();
   }, [user, setUser]);
+  // console.log(user);
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
