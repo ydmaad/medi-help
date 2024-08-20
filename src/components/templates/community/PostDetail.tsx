@@ -51,7 +51,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
     loadPost();
   }, [id]);
 
-  console.log(post);
+  // console.log(post);
 
   // 북마크한 게시글과 유저가 일치하는지 확인
   useEffect(() => {

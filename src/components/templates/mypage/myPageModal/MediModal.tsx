@@ -47,7 +47,14 @@ const MediModal: React.FC<MediModalProps> = ({
   };
 
   const renderContent = () => (
-    <div className={`bg-white rounded-md shadow-lg p-6 ${isMobile ? 'mx-4 my-4' : 'w-full max-w-[432px] mx-auto'} ${isMobile ? 'max-w-full' : ''}`}>
+    <div className={`bg-white rounded-md shadow-lg p-6 ${isMobile ? 'mx-4 my-4' : 'w-full max-w-[432px] mx-auto'} ${isMobile ? 'max-w-full' : ''} relative`}>
+      {/* X 버튼 추가 */}
+      <button
+        onClick={onRequestClose}
+        className="absolute top-4 right-4 text-gray-700 hover:text-gray-900 transition-colors duration-200"
+      >
+        <FaTimes className="text-xl" />
+      </button>
       {isMobile ? (
         <>
           <div className="flex justify-between items-center px-4 py-3 bg-gray-100 border-b border-gray-300">
