@@ -11,7 +11,6 @@ import PostSearchFail from "@/components/molecules/PostSearchFail";
 import CategorySelect from "@/components/molecules/CategorySelect";
 import { PostListSkeleton } from "@/components/molecules/CommunitySkeleton";
 import { useCommunitySearchFlagStore } from "@/store/communitySearchFlag";
-import Loading from "@/components/atoms/Loading";
 
 interface ListProps {
   searchTerm: string;
