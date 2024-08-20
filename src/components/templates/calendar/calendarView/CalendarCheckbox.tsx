@@ -34,6 +34,7 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
   const [showAllMedicines, setShowAllMedicines] = useState<boolean>(false);
   const [showFilterBox, setShowFilterBox] = useState<boolean>(false);
 
+  // 기존에 체크된 약물 데이터를 가져오는 useEffect
   useEffect(() => {
     const fetchCheckedMedicines = async () => {
       if (user) {
@@ -63,33 +64,61 @@ const CalendarCheckbox: React.FC<CalendarCheckboxProps> = ({ onUpdate }) => {
     };
 
     fetchCheckedMedicines();
-  }, [user, medicines]);
+  }, [user, medicines, setMediNames]);
 
-  const handleCheckboxChange = (medicine: MedicineType) => {
+  // 체크박스 상태가 변경될 때 호출되는 함수
+  const handleCheckboxChange = async (medicine: MedicineType) => {
+    if (!user) return; // user가 null일 경우 아무 작업도 하지 않음
+  
     const isSelected = selectedMedicines.includes(medicine.id);
     const updatedSelectedMedicines = isSelected
       ? selectedMedicines.filter((id) => id !== medicine.id)
       : [...selectedMedicines, medicine.id];
-      
+  
     const updatedMediNames = isSelected
       ? mediNames.filter((name) => name !== medicine.medi_nickname)
       : [...mediNames, medicine.medi_nickname || ""];
-
+  
     setSelectedMedicines(updatedSelectedMedicines);
     setMediNames(updatedMediNames);
-    onUpdate();
+  
+    try {
+      await axios.post('/api/updateCalendarMedicine', {
+        user_id: user.id,
+        medicine_id: medicine.id,
+        isSelected: !isSelected
+      });
+      
+      // 업데이트 후 필터를 다시 가져와서 상태를 갱신
+      const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
+      const allCheckedMedicines: MedicineType[] = [];
+      data.forEach((event: EventInput) => {
+        event.calendar_medicine.forEach(
+          (medicine: CalendarMedicineType) => {
+            allCheckedMedicines.push(medicine.medications);
+          }
+        );
+      });
+  
+      setCheckedMedicines(allCheckedMedicines);
+      setSelectedMedicines(
+        allCheckedMedicines.map((medicine) => medicine.id)
+      );
+      setMediNames(
+        allCheckedMedicines.map((medicine) => medicine.medi_nickname || "")
+      );
+    } catch (error) {
+      console.error("Error updating calendar medicine", error);
+    }
   };
 
-  let nonAllowedDuplicates: MedicineType[] = [];
-  checkedMedicines.forEach((medicine) => {
-    if (
-      !nonAllowedDuplicates.find(
-        (e) => e.medi_nickname === medicine.medi_nickname
-      )
-    ) {
-      nonAllowedDuplicates.push(medicine);
-    }
-  });
+  // 중복되지 않은 약물 목록 생성
+  const nonAllowedDuplicates = checkedMedicines.filter((medicine, index, self) =>
+    index === self.findIndex((t) => (
+      t.medi_nickname === medicine.medi_nickname
+    ))
+  );
+
   return (
     <div>
       <CalendarTitle

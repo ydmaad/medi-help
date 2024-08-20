@@ -19,7 +19,7 @@ interface MediRecord {
   user_id: string;
   day_of_week: string[];
   notification_time: string[];
-  repeat: boolean; // 추가된 속성
+  repeat: boolean; 
 }
 
 interface AddMediModalProps {
@@ -64,20 +64,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
 
     fetchMediNames();
   }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
-        onRequestClose();
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [onRequestClose]);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTimes({ ...times, [e.target.name]: e.target.checked });
@@ -125,7 +111,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         setNotificationTime([""]);
         setNotificationEnabled(false);
         onRequestClose();
-      } else {
+      }
+       else {
         console.error("Failed to add record:", response.statusText);
       }
     } catch (error) {
@@ -304,6 +291,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
 
         {notificationEnabled && (
           <div className="mb-4">
+           
             <div className="flex flex-wrap space-x-2 mb-5">
               {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
                 <button
@@ -320,6 +308,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                 </button>
               ))}
             </div>
+
+        
             {notificationTime.map((time, index) => (
               <div key={index} className="flex mb-2">
                 <input
@@ -330,6 +320,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                   }
                   className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                 />
+                
               </div>
             ))}
           </div>
