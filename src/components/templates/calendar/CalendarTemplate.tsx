@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import CalendarCheckbox from "./calendarView/CalendarCheckbox";
+
 import CalendarView from "./calendarView/CalendarView";
 import Loading from "@/components/atoms/Loading";
 import { useEventsStore, useMediNameFilter } from "@/store/calendar";
@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/auth";
 import { COLOR_OF_TIME, TIME_OF_TIME } from "@/constants/constant";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
+import CalendarCheckbox from "./calendarView/CalendarCheckbox";
 
 const CalendarTemplate = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);

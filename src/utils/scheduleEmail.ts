@@ -61,7 +61,6 @@ async function sendScheduledEmails() {
     }
   }
 }
-
 // 매 분마다 스케줄링된 작업 실행
 cron.schedule('* * * * *', sendScheduledEmails, {
   timezone: 'Asia/Seoul',

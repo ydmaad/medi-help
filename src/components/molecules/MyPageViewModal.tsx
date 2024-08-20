@@ -51,10 +51,8 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
   }, [mediRecord]);
 
   useEffect(() => {
-    if (isEditing) {
-      fetchMediNames();
-    }
-  }, [isEditing]);
+    fetchMediNames();
+  }, []);
 
   const fetchMediNames = async () => {
     setIsLoading(true);
@@ -159,47 +157,52 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
           )}
         </div>
         <div className="flex-grow p-4 space-y-4">
-          {isEditing ? (
-            <>
-              <input
-                type="text"
-                name="medi_nickname"
-                value={editedRecord.medi_nickname}
-                onChange={handleInputChange}
-                placeholder="약 별명(최대 6자)"
-                className="w-full border rounded p-2"
-              />
-              <select
-                name="medi_name"
-                value={editedRecord.medi_name}
-                onChange={handleInputChange}
-                className="w-full border rounded p-2"
-                disabled={isLoading}
-              >
-                <option value="">약 이름 선택</option>
-            
-              
-              </select>
-            </>
-          ) : (
-            <>
-              <h2 className="text-xl font-bold">{editedRecord.medi_nickname}</h2>
-              <p className="text-gray-600">{editedRecord.medi_name}</p>
-            </>
-          )}
+          <div className="mb-2">
+            <input
+              type="text"
+              name="medi_nickname"
+              placeholder="약 별명(최대 6자)"
+              value={editedRecord.medi_nickname}
+              onChange={handleInputChange}
+              className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
+              disabled={!isEditing}
+            />
+          </div>
 
-          <div>
-            <h3 className="font-bold mb-2">복용 시간</h3>
-            <div className="flex space-x-2">
+          <div className="mb-5">
+            <select
+              name="medi_name"
+              value={editedRecord.medi_name}
+              onChange={handleInputChange}
+              className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
+              disabled={!isEditing || isLoading}
+            >
+              <option value="">약 이름 선택</option>
+              {isLoading ? (
+                <option value="" disabled>로딩 중...</option>
+              ) : (
+                mediNames.map((item, index) => (
+                  <option key={index} value={item.itemName}>
+                    {item.itemName}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+
+          <div className="mb-5">
+            <label className="block text-[14px] font-bold mb-2 text-brand-gray-600">복용 시간</label>
+            <div className="flex space-x-4 text-brand-gray-800 justify-between w-full">
               {['morning', 'afternoon', 'evening'].map((time) => (
                 <button
                   key={time}
+                  type="button"
                   onClick={() => isEditing && handleTimeChange(time as 'morning' | 'afternoon' | 'evening')}
                   className={`px-4 py-2 rounded-full ${
                     editedRecord.times[time as 'morning' | 'afternoon' | 'evening']
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  } ${isEditing ? 'cursor-pointer' : 'cursor-default'}`}
+                      ? "bg-brand-primary-500 text-white"
+                      : "bg-brand-gray-50 text-brand-gray-800"
+                  } w-1/3`}
                   disabled={!isEditing}
                 >
                   {time === 'morning' ? '아침' : time === 'afternoon' ? '점심' : '저녁'}
@@ -208,119 +211,119 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
             </div>
           </div>
 
-          <div>
-            <h3 className="font-bold mb-2">복용 기간</h3>
-            {isEditing ? (
-              <div className="flex space-x-2">
+          <div className="flex space-x-4 mb-4">
+            <div className="w-1/2 flex items-center">
+              <div className="flex items-center">
                 <input
                   type="date"
                   name="start_date"
                   value={editedRecord.start_date}
                   onChange={handleInputChange}
-                  className="border rounded p-2"
+                  className="border rounded py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none w-3/4"
+                  disabled={!isEditing}
                 />
-                <span className="self-center">~</span>
+                <span className="ml-3 text-brand-gray-800">부터</span>
+              </div>
+            </div>
+            <div className="w-1/2 flex items-center">
+              <div className="flex items-center">
                 <input
                   type="date"
                   name="end_date"
                   value={editedRecord.end_date}
                   onChange={handleInputChange}
-                  className="border rounded p-2"
+                  className="border rounded py-2 px-3 text-brand-gray-800 leading-tight focus:outline-none w-3/4"
+                  disabled={!isEditing}
+                />
+                <span className="ml-3 text-brand-gray-800">까지</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center mb-4">
+            <label className="flex items-center">
+              <span className="ml-2 text-brand-gray-600">알림 설정 </span>
+              <div
+                onClick={() => isEditing && setNotificationEnabled(!notificationEnabled)}
+                className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
+                  notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
+                }`}
+              >
+                <div
+                  className={`absolute w-6 h-6 bg-white rounded-full transition-transform transform ${
+                    notificationEnabled ? "translate-x-6" : "translate-x-0"
+                  }`}
+                ></div>
+              </div>
+            </label>
+          </div>
+
+          {notificationEnabled && (
+            <>
+              <div className="mb-4">
+                <div className="flex justify-between w-full mb-4">
+                  {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => isEditing && handleDayOfWeekChange(day)}
+                      className={`w-[36px] h-[36px] rounded-full flex items-center justify-center text-[16px] font-bold ${
+                        editedRecord.day_of_week?.includes(day)
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-brand-gray-800"
+                      }`}
+                      disabled={!isEditing}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-5">
+                <input
+                  type="time"
+                  name="notification_time"
+                  value={editedRecord.notification_time?.[0] || ""}
+                  onChange={(e) => handleNotificationTimeChange(e.target.value)}
+                  className="border rounded w-full h-[40px] py-2 px-3 text-gray-700 leading-tight focus:outline-none"
+                  disabled={!isEditing}
                 />
               </div>
-            ) : (
-              <p>{formatDate(editedRecord.start_date)} ~ {formatDate(editedRecord.end_date)}</p>
-            )}
-          </div>
+            </>
+          )}
 
-          <div>
-            <h3 className="font-bold mb-2">복용 요일</h3>
-            <div className="flex space-x-2">
-              {['월', '화', '수', '목', '금', '토', '일'].map((day) => (
-                <button
-                  key={day}
-                  onClick={() => isEditing && handleDayOfWeekChange(day)}
-                  className={`w-8 h-8 rounded-full ${
-                    editedRecord.day_of_week?.includes(day)
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
-                  } ${isEditing ? 'cursor-pointer' : 'cursor-default'}`}
-                  disabled={!isEditing}
-                >
-                  {day}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="font-bold mb-2">알림 설정</h3>
-            <div className="flex items-center">
-              <span className="mr-2">알림 {notificationEnabled ? '켜짐' : '꺼짐'}</span>
-              {isEditing && (
-                <button
-                  onClick={() => setNotificationEnabled(!notificationEnabled)}
-                  className={`w-12 h-6 rounded-full ${
-                    notificationEnabled ? 'bg-blue-500' : 'bg-gray-300'
-                  } relative transition-colors duration-300 ease-in-out`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-transform duration-300 ease-in-out ${
-                      notificationEnabled ? 'right-1' : 'left-1'
-                    }`}
-                  ></div>
-                </button>
-              )}
-            </div>
-            {notificationEnabled && (
-              <input
-                type="time"
-                value={editedRecord.notification_time?.[0] || ''}
-                onChange={(e) => handleNotificationTimeChange(e.target.value)}
-                className="mt-2 border rounded p-2 w-full"
-                disabled={!isEditing}
-              />
-            )}
-          </div>
-
-          <div>
-            <h3 className="font-bold mb-2">메모</h3>
-            {isEditing ? (
-              <textarea
-                name="notes"
-                value={editedRecord.notes}
-                onChange={handleInputChange}
-                className="w-full border rounded p-2"
-                rows={3}
-              />
-            ) : (
-              <p>{editedRecord.notes}</p>
-            )}
+          <div className="mb-10">
+            <label className="block text-[16px] font-bold mb-2 text-brand-gray-600">메모</label>
+            <textarea
+              name="notes"
+              value={editedRecord.notes}
+              onChange={handleInputChange}
+              placeholder="약에 대한 간단한 기록"
+              className="border rounded w-full h-[80px] py-2 px-3 text-gray-700 leading-tight focus:outline-none resize-none"
+              disabled={!isEditing}
+            />
           </div>
 
           {isEditing && (
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 bg-gray-200 rounded"
-              >
-                취소
-              </button>
+            <div className="flex justify-center space-x-4 mt-4">
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded"
+                className="px-4 py-2 bg-brand-primary-50 text-brand-primary-500 rounded w-32"
               >
                 삭제
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 rounded-md bg-brand-primary-500 text-brand-primary-50 w-32"
+              >
+                수정
               </button>
             </div>
           )}
         </div>
       </div>
-      {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded">로딩 중...</div>
-        </div>
-      )}
+    
       {error && (
         <div className="fixed bottom-0 left-0 right-0 bg-red-100 border border-red-400 text-red-700 px-4 py-3" role="alert">
           <span className="block sm:inline">{error}</span>
