@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddMediModal from "../calendarModal/AddMediModal";
 import { useAuthStore } from "@/store/auth";
+import { useToast } from "@/hooks/useToast";
+
 
 export const MOCK_DATA = [
   {
@@ -61,6 +63,7 @@ const MediRecords: React.FC = () => {
   const { user } = useAuthStore();
   const [tabNumber, setTabNumber] = useState<number>(0);
   const [timeOfDay, setTimeOfDay] = useState<string>("morning");
+  const { toast } = useToast(); 
 
   useEffect(() => {
     const fetchMediRecords = async () => {
@@ -81,6 +84,7 @@ const MediRecords: React.FC = () => {
 
   const handleAddMediRecord = (newMediRecord: MediRecord) => {
     setMediRecords((prevRecords) => [...prevRecords, newMediRecord]);
+    toast.success("약이 성공적으로 등록되었습니다."); // 약 추가 후 토스트 메시지 표시
   };
 
   const handleUpdateMediRecord = (updatedMediRecord: MediRecord) => {
@@ -210,6 +214,7 @@ const MediRecords: React.FC = () => {
         isOpen={isAddModalOpen}
         onRequestClose={() => setIsAddModalOpen(false)}
         onAdd={handleAddMediRecord}
+        toast={toast} // AddMediModal에 toast 전달
       />
     </div>
   );

@@ -340,12 +340,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
               >
                 삭제
               </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 rounded-md bg-brand-primary-500 text-brand-primary-50 w-32"
-              >
-                수정
-              </button>
+              
             </div>
           )}
         </div>
