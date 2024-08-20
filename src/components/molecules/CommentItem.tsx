@@ -1,3 +1,4 @@
+import { useToast } from "@/hooks/useToast";
 import { deleteComment, editComment, fetchComment } from "@/lib/commentsAPI";
 import { useAuthStore } from "@/store/auth";
 import { CommentWithUser } from "@/types/communityTypes";
@@ -24,6 +25,7 @@ const CommentItem = ({
   postId,
 }: CommentItemProps) => {
   const { user } = useAuthStore();
+  const { toast } = useToast();
 
   // 사용자 권한 확인 함수
   const modifyUser = (commentUserId: string) => {
@@ -46,22 +48,22 @@ const CommentItem = ({
       setComment(updatedComments.data);
       setIsEdit((prev) => ({ ...prev, [commentId]: false }));
       setEditedComment((prev) => ({ ...prev, [commentId]: "" }));
-      alert("댓글이 수정되었습니다.");
+      toast.success("댓글이 수정되었습니다.");
     } catch (error) {
       console.error("댓글 수정 실패:", (error as Error).message);
-      alert("댓글 수정에 실패했습니다. 다시 시도해 주세요.");
+      toast.error("댓글 수정에 실패했습니다. 다시 시도해 주세요.");
     }
   };
 
   // 댓글 삭제 핸들러
   const handleDelete = async (commentId: string, commentUserId: string) => {
     if (!modifyUser(commentUserId)) {
-      alert("작성자만 댓글을 삭제할 수 있습니다.");
+      toast.error("작성자만 댓글을 삭제할 수 있습니다.");
       return;
     }
     try {
       await deleteComment(postId, commentId);
-      alert("댓글을 삭제하였습니다.");
+      toast.success("댓글을 삭제하였습니다.");
       // 댓글 목록 새로고침
       const updateComments = await fetchComment(postId);
       setComment(updateComments.data);
@@ -77,7 +79,7 @@ const CommentItem = ({
     commentUserId: string
   ) => {
     if (!modifyUser(commentUserId)) {
-      alert("작성자만 댓글을 수정할 수 있습니다.");
+      toast.warning("작성자만 댓글을 수정할 수 있습니다.");
       return;
     }
     setIsEdit((prev) => ({ ...prev, [commentId]: true }));

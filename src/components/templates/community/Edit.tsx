@@ -1,6 +1,8 @@
 "use client";
 
+import Loading from "@/components/atoms/Loading";
 import CategorySelect from "@/components/molecules/CategorySelect";
+import { useToast } from "@/hooks/useToast";
 import { editPost, fetchDetailPost } from "@/lib/commentsAPI";
 import { Post } from "@/types/communityTypes";
 import Image from "next/image";
@@ -29,6 +31,7 @@ const Edit = ({ id }: PostEditProps) => {
   const [saveImage, setSaveImage] = useState<(File | string)[]>([]);
   const router = useRouter();
   const categories = ["메디톡", "궁금해요", "건강 꿀팁"];
+  const { toast } = useToast();
 
   useEffect(() => {
     const getPost = async () => {
@@ -75,7 +78,7 @@ const Edit = ({ id }: PostEditProps) => {
       });
 
       await editPost(id, formData);
-      alert("게시글이 성공적으로 수정되었습니다.");
+      toast.success("게시글이 성공적으로 수정되었습니다.");
       router.push(`/community/${id}`);
     } catch (error) {
       setError((error as Error).message);
@@ -105,7 +108,7 @@ const Edit = ({ id }: PostEditProps) => {
 
   // console.log("현재 게시글:", post);
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <Loading />;
   if (error) return <div>에러: {error}</div>;
   if (!post) return <div>게시글을 찾을 수 없습니다.</div>;
   // console.log("Loading:", loading);
