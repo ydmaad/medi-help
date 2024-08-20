@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
-import { IoIosArrowBack } from 'react-icons/io';
+import { IoIosArrowBack } from "react-icons/io";
 
 interface MediRecord {
   id: string;
   medi_name: string;
   medi_nickname: string;
-  times: Times;
+  times: {
+    morning: boolean;
+    afternoon: boolean;
+    evening: boolean;
+  };
   notes: string;
   start_date: string;
   end_date: string;
@@ -18,32 +22,23 @@ interface MediRecord {
   repeat: boolean;
 }
 
-interface Times {
-  morning: boolean;
-  afternoon: boolean;
-  evening: boolean;
-}
-
 interface MobileAddMediProps {
   isOpen: boolean;
-  onClose: () => void;
+  onRequestClose: () => void;
   onAdd: (newMediRecord: MediRecord) => void;
-  editMode?: boolean;
-  editData?: MediRecord;
 }
 
 const MobileAddMedi: React.FC<MobileAddMediProps> = ({
   isOpen,
-  onClose,
+  onRequestClose,
   onAdd,
-  editMode = false,
-  editData,
 }) => {
   const { user } = useAuthStore();
   const [mediName, setMediName] = useState("");
   const [mediNickname, setMediNickname] = useState("");
   const [mediNames, setMediNames] = useState<string[]>([]);
-  const [times, setTimes] = useState<Times>({
+  const [searchTerm, setSearchTerm] = useState("");
+  const [times, setTimes] = useState({
     morning: false,
     afternoon: false,
     evening: false,
@@ -54,7 +49,6 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
   const [dayOfWeek, setDayOfWeek] = useState<string[]>([]);
   const [notificationTime, setNotificationTime] = useState<string[]>([""]);
   const [notificationEnabled, setNotificationEnabled] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchMediNames = async () => {
@@ -69,46 +63,24 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
     };
 
     fetchMediNames();
-
-    if (editMode && editData) {
-      setMediName(editData.medi_name);
-      setMediNickname(editData.medi_nickname);
-      setTimes(editData.times);
-      setNotes(editData.notes);
-      setStartDate(editData.start_date);
-      setEndDate(editData.end_date);
-      setDayOfWeek(editData.day_of_week);
-      setNotificationTime(editData.notification_time);
-      setNotificationEnabled(editData.day_of_week.length > 0);
-    }
-  }, [editMode, editData]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
-        onClose();
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [onClose]);
+  }, []);
 
   const handleSubmit = async () => {
     if (!user) return;
 
-    const mediRecord: MediRecord = {
-      id: editMode && editData ? editData.id : crypto.randomUUID(),
+    const newMediRecord: MediRecord = {
+      id: crypto.randomUUID(),
       medi_name: mediName,
       medi_nickname: mediNickname,
-      times,
+      times: {
+        morning: times.morning || false,
+        afternoon: times.afternoon || false,
+        evening: times.evening || false,
+      },
       notes,
       start_date: startDate,
       end_date: endDate,
-      created_at: editMode && editData ? editData.created_at : new Date().toISOString(),
+      created_at: new Date().toISOString(),
       user_id: user.id,
       day_of_week: notificationEnabled ? dayOfWeek : [],
       notification_time: notificationEnabled ? notificationTime : [],
@@ -116,36 +88,45 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
     };
 
     try {
-      let response;
-      if (editMode && editData) {
-        response = await axios.put(`/api/mypage/medi/${editData.id}`, mediRecord);
-      } else {
-        response = await axios.post("/api/calendar/medi", mediRecord);
-      }
+      console.log("Sending medication data:", newMediRecord);
+      const response = await axios.post("/api/calendar/medi", newMediRecord);
+      console.log("Server response:", response.data);
 
-      if (response.status === 200 || response.status === 201) {
-        onAdd(response.data);
-        onClose();
+      if (response.status === 201) {
+        console.log("Medication added successfully");
+        onAdd(newMediRecord);
+
+        // Clear form state
+        setMediName("");
+        setMediNickname("");
+        setTimes({ morning: false, afternoon: false, evening: false });
+        setNotes("");
+        setStartDate("");
+        setEndDate("");
+        setDayOfWeek([]);
+        setNotificationTime([""]);
+        setNotificationEnabled(false);
+        onRequestClose();
       } else {
-        throw new Error("Failed to " + (editMode ? "update" : "add") + " record: " + response.statusText);
+        console.error("Failed to add record:", response.statusText);
       }
     } catch (error) {
-      console.error("Failed to " + (editMode ? "update" : "add") + " record:", error);
+      console.error("Failed to add record:", error);
     }
   };
 
   const handleDayOfWeekChange = (day: string) => {
-    setDayOfWeek((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    setDayOfWeek((prevDays) =>
+      prevDays.includes(day)
+        ? prevDays.filter((d) => d !== day)
+        : [...prevDays, day]
     );
   };
 
   const handleNotificationTimeChange = (index: number, value: string) => {
-    setNotificationTime((prev) => {
-      const newTimes = [...prev];
-      newTimes[index] = value;
-      return newTimes;
-    });
+    const updatedNotificationTime = [...notificationTime];
+    updatedNotificationTime[index] = value;
+    setNotificationTime(updatedNotificationTime);
   };
 
   if (!isOpen) return null;
@@ -153,7 +134,7 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
   return (
     <div className="fixed inset-0 bg-white overflow-y-auto w-full z-50 flex flex-col">
       <div className="w-full bg-white fixed top-0 left-0 flex justify-between items-center px-4 py-3 shadow-md">
-        <button onClick={onClose} className="text-2xl">
+        <button onClick={onRequestClose} className="text-2xl">
           <IoIosArrowBack />
         </button>
         <h2 className="text-xl font-bold flex-1 text-center">나의 약 등록</h2>
@@ -257,7 +238,6 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
           <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>까지</span>
         </div>
 
-        {/* 알림 설정 */}
         <div className="flex items-center mb-6 w-full max-w-xs">
           <label className="flex items-center">
             <span className="ml-2 text-brand-gray-600">알림 설정 </span>
@@ -310,7 +290,6 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
           </div>
         )}
 
-        {/* 메모 입력 */}
         <div className="mb-6 w-full max-w-xs">
           <label className="block text-brand-gray-600 text-sm font-bold mb-2">메모:</label>
           <textarea

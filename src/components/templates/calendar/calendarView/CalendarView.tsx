@@ -277,7 +277,7 @@ const CalendarView = () => {
       />
       <MobileAddMedi
         isOpen={openMobileAddMedi}
-        onClose={() => setOpenMobileAddMedi(false)}
+        onRequestClose={() => setOpenMobileAddMedi(false)}
         onAdd={(newMediRecord) => {
           console.log("New Medi Record:", newMediRecord);
           setMedicines([

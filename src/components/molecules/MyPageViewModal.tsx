@@ -296,23 +296,16 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
             ) : (
               <p>{editedRecord.notes}</p>
             )}
-          </div>
-
-          {isEditing && (
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 bg-gray-200 rounded"
-              >
-                취소
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-              >
-                삭제
-              </button>
-            </div>
+         </div>
+{isEditing && (
+  <div className="flex justify-center mt-4">
+    <button
+      onClick={handleDelete}
+      className="px-4 py-2 bg-brand-primary-50 text-brand-primary-500 rounded w-32"
+    >
+      삭제
+    </button>
+    </div>
           )}
         </div>
       </div>
