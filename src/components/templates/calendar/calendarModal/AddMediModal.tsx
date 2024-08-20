@@ -19,7 +19,7 @@ interface MediRecord {
   user_id: string;
   day_of_week: string[];
   notification_time: string[];
-  repeat: boolean; // 추가된 속성
+  repeat: boolean; 
 }
 
 interface AddMediModalProps {
