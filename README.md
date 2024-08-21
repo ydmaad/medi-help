@@ -29,7 +29,7 @@
 
 **시연 영상** : 최종발표때 업데이트 예정
 
-**개발 기간** : 2024.07.16~ 2024.08.02 (약 2주간)
+**개발 기간** : 2024.07.16~ 2024.08.21 (약 5주간)
 
 **프로젝트 소개** : 복용 중인 약을 효과적으로 관리하고 사용자 간 경험을 공유할 수 있는 종합 디지털 헬스케어 플랫폼
 
@@ -155,40 +155,54 @@ reviewer : 2명으로 설정</br>
  ┣ 📂app
  ┃ ┣ 📂(root)
  ┃ ┃ ┣ 📂auth
+ ┃ ┃ ┃ ┣ 📂complete
  ┃ ┃ ┃ ┣ 📂login
+ ┃ ┃ ┃ ┣ 📂recover
+ ┃ ┃ ┃ ┣ 📂reset
  ┃ ┃ ┃ ┣ 📂signup
  ┃ ┃ ┣ 📂calendar
+ ┃ ┃ ┃ ┣ 📂edit
  ┃ ┃ ┣ 📂community
  ┃ ┃ ┃ ┣ 📂[id]
  ┃ ┃ ┃ ┃ ┣ 📂edit
  ┃ ┃ ┃ ┣ 📂post
+ ┃ ┃ ┣ 📂error404
  ┃ ┃ ┣ 📂magazine
  ┃ ┃ ┃ ┣ 📂[id]
  ┃ ┃ ┣ 📂mypage
+ ┃ ┃ ┃ ┣ 📂Medications
  ┃ ┃ ┣ 📂search
+ ┃ ┃ ┃ ┣ 📂[id]
  ┃ ┃ ┣ 📜layout.tsx
  ┃ ┃ ┗ 📜page.tsx
  ┃ ┣ 📂api
+ ┃ ┃ ┣ 📂auth
+ ┃ ┃ ┃ ┗ 📂callback
  ┃ ┃ ┣ 📂calendar
  ┃ ┃ ┃ ┣ 📂[id]
  ┃ ┃ ┃ ┣ 📂medi
  ┃ ┃ ┃ ┃ ┣ 📂all
  ┃ ┃ ┃ ┃ ┣ 📂names
+ ┃ ┃ ┃ ┣ 📂sideEffect
  ┃ ┃ ┣ 📂community
  ┃ ┃ ┃ ┣ 📂[id]
+ ┃ ┃ ┃ ┃ ┣ 📂comments
  ┃ ┃ ┃ ┃ ┣ 📂comments
  ┃ ┃ ┃ ┣ 📂search
  ┃ ┃ ┣ 📂magazine
  ┃ ┃ ┃ ┣ 📂[id]
  ┃ ┃ ┣ 📂mypage
  ┃ ┃ ┃ ┣ 📂[id]
- ┃ ┃ ┃ ┣ 📂alerts
- ┃ ┃ ┃ ┃ ┣ 📂getMedicineNames
- ┃ ┃ ┃ ┃ ┣ 📂scheduleNotification
- ┃ ┃ ┃ ┃ ┣ 📂subscribe
  ┃ ┃ ┃ ┗ 📂medi
+ ┃ ┃ ┃ ┃ ┣ 📂[id]
  ┃ ┃ ┃ ┃ ┗ 📂names
  ┃ ┃ ┗ 📂search
+ ┃ ┃ ┃ ┣ 📂[id]
+ ┃ ┃ ┃ ┣ 📂searchmedi
+ ┃ ┣ 📜globals.css
+ ┃ ┣ 📜layout.tsx
+ ┃ ┣ 📜not-found.tsx
+ ┃ ┗ 📜provider.tsx
  ┣ 📂components
  ┃ ┣ 📂atoms
  ┃ ┣ 📂molecules
@@ -200,26 +214,40 @@ reviewer : 2명으로 설정</br>
  ┃ ┃ ┣ 📂community
  ┃ ┃ ┣ 📂magazine
  ┃ ┃ ┗ 📂mypage
- ┣ 📂constant
- ┃ ┗ 📜constant.ts
+ ┃ ┃ ┃ ┣ 📂myPageModal
+ ┣ 📂constants
  ┣ 📂contexts
  ┃ ┣ 📜BarTextContext.tsx
  ┃ ┗ 📜ImageContext.tsx
  ┣ 📂hooks
  ┃ ┣ 📜useBarText.ts
- ┃ ┗ 📜useImage.ts
+ ┃ ┣ 📜useImage.ts
+ ┃ ┣ 📜useThrottle.ts
+ ┃ ┣ 📜useTimeout.ts
+ ┃ ┗ 📜useToast.tsx
  ┣ 📂lib
+ ┃ ┣ 📜commentsAPI.ts
  ┃ ┗ 📜supabaseClient.ts
  ┣ 📂store
- ┃ ┗ 📜auth.ts
+ ┃ ┣ 📜auth.ts
+ ┃ ┣ 📜calendar.ts
+ ┃ ┗ 📜communitySearchFlag.ts
  ┣ 📂types
  ┃ ┣ 📜calendar.ts
- ┃ ┣ 📜supabase.ts
- ┃ ┗ 📜test_calendar.ts
+ ┃ ┣ 📜communityTypes.ts
+ ┃ ┣ 📜medicationTypes.ts
+ ┃ ┗ 📜supabase.ts
  ┣ 📂utils
  ┃ ┗ 📂supabase
  ┃ ┃ ┣ 📜client.ts
+ ┃ ┃ ┣ 📜googleAuth.ts
+ ┃ ┃ ┣ 📜kakaoAuth.ts
  ┃ ┃ ┣ 📜middleware.ts
  ┃ ┃ ┗ 📜server.ts
+ ┃ ┣ 📜dateUtils.ts
+ ┃ ┣ 📜notificationMessage.ts
+ ┃ ┣ 📜scheduleEmail.ts
+ ┃ ┗ 📜sendEmail.ts
+ ┣ 📜.DS_Store
  ┗ 📜middleware.ts
 ```
