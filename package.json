@@ -24,6 +24,7 @@
     "cron": "^3.1.7",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.3.24",
+    "js-base64": "^3.7.7",
     "lucide-react": "^0.428.0",
     "next": "^14.2.5",
     "node-cron": "^3.0.3",

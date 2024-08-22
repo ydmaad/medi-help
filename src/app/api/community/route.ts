@@ -3,6 +3,7 @@ import { supabase } from "@/utils/supabase/client";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { encode } from "js-base64";
 
 type PostInsert = TablesInsert<"posts">; // 추가
 
@@ -47,6 +48,12 @@ export async function GET(request: NextRequest) {
       `
       )
       .or(`title.ilike.%${searchTerm}%,contents.ilike.%${searchTerm}%`)
+      // .or(
+      //   `user_id.in.(${supabase
+      //     .from("users")
+      //     .select("id")
+      //     .ilike("nickname", `%${searchTerm}%`)})`
+      // )
       .range((pageNo - 1) * numOfRows, pageNo * numOfRows - 1);
 
     // 정렬 옵션 적용
@@ -165,7 +172,7 @@ export async function POST(request: NextRequest) {
 
     for (const file of files) {
       if (file instanceof File) {
-        const fileName = `${Date.now()}_${file.name}`;
+        const fileName = encode(file.name);
 
         const { data: imgUploadData, error: imgUploadError } =
           await supabase.storage.from("posts_image_url").upload(fileName, file);
