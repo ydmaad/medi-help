@@ -136,7 +136,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
     } else {
       setNicknameValid(false);
       if (newNickname) {
-        toast.error("닉네임은 2-6자 사이여야 합니다.");
+        // toast.error("닉네임은 2-6자 사이여야 합니다.");
       }
     }
   };
