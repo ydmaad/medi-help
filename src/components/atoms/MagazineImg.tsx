@@ -41,9 +41,9 @@ const MagazineImg = ({
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
 
-        <div className="absolute desktop:bottom-8 bottom-5 left-5 desktop:left-1/2 flex flex-col desktop:items-center desktop:transform desktop:-translate-x-1/2 z-10 text-brand-gray-50">
+        <div className="absolute desktop:bottom-5 bottom-5 left-5 desktop:left-1/2 flex flex-col desktop:items-center desktop:transform desktop:-translate-x-1/2 z-10 text-brand-gray-50">
           <BarText />
-          <h1 className="whitespace-nowrap w-[277px] mt-[4px] text-[16px] desktop:text-xl font-bold line-clamp-1 overflow-hidden text-ellipsis">
+          <h1 className="whitespace-nowrap w-[341px] mt-[4px] text-[16px] desktop:text-xl font-bold overflow-hidden text-ellipsis">
             {title}
           </h1>
         </div>

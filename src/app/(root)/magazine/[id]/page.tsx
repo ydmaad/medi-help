@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import BackgroundTitle from "@/components/molecules/ImageOverlay";
 import LgImage from "@/components/atoms/LgImage";
 import Header from "@/components/molecules/TopHeader";
+
 interface Magazine {
   id: string;
   title: string;
@@ -41,6 +42,14 @@ const MagazinePage = () => {
     fetchMagazine();
   }, [id]);
 
+  const formatContent = (content: string) => {
+    return content.split("\n").map((paragraph, index) => (
+      <p key={index} className="mb-[35px]">
+        {paragraph}
+      </p>
+    ));
+  };
+
   if (error) {
     return <p className="text-red-500">{error}</p>;
   }
@@ -62,9 +71,9 @@ const MagazinePage = () => {
       </div>
       <div className="flex flex-col desktop:max-w-[1000px] mx-auto desktop:mt-[480px] mt-[310px] items-center justify-center">
         <LgImage src={magazine.imgs_url} alt={magazine.title} />
-        <h4 className="text-base text-brand-gray-1000 desktop:mt-[50px] mt-[40px]">
-          {magazine.descriptions}
-        </h4>
+        <div className="text-base text-brand-gray-1000 desktop:mt-[50px] mt-[40px]">
+          {formatContent(magazine.descriptions)}{" "}
+        </div>
       </div>
     </>
   );

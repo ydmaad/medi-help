@@ -5,6 +5,7 @@ import SearchBar from "@/components/molecules/SearchBar";
 import Pagination from "@/components/molecules/Pagination";
 import MediCard from "@/components/molecules/MediCard";
 import SearchErr from "@/components/atoms/SearchErr";
+import MediShapeDropDown from "@/components/molecules/MediShapeDroupDown";
 
 type Item = {
   itemName: string;
@@ -144,10 +145,9 @@ const SearchPage = () => {
           🔎 약 검색
         </h1>
       </div>
-      <div className="flex flex-col items-center">
-        <div className="desktop:mb-[40px] mb-[24px]">
-          <SearchBar onSearchChange={handleSearchChange} />
-        </div>
+      <div className="flex flex-col items-center desktop:mb-[80px] mb-[24px] ">
+        <SearchBar onSearchChange={handleSearchChange} />
+        <MediShapeDropDown title="모양으로 검색" />
       </div>
       <div className="text-[16px] mb-[8px] desktop:mb-4 flex max-w-[335px] desktop:max-w-[1000px] mx-auto">
         <p className="text-brand-gray-1000 font-black text-xl">

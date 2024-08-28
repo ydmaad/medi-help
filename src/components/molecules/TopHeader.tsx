@@ -7,10 +7,9 @@ import Navigation from "./navigation";
 import Logo from "../atoms/Logo";
 import ImageButton from "../atoms/ImageButton";
 import Sidebar from "./SideBar";
-import BackHeader from "./BackHeader"; // 뒤로 가기 헤더 임포트
+import BackHeader from "./BackHeader";
 
 const Header = ({ showBackHeader }: { showBackHeader: boolean }) => {
-  // showBackHeader 프롭 추가
   const { user, setUser } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -46,7 +45,6 @@ const Header = ({ showBackHeader }: { showBackHeader: boolean }) => {
 
     checkAndSetUser();
   }, [user, setUser]);
-  // console.log(user);
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
@@ -69,11 +67,15 @@ const Header = ({ showBackHeader }: { showBackHeader: boolean }) => {
           </header>
           {/* 데스크탑 헤더 */}
           <header className="fixed top-0 left-0 right-0 z-20 hidden desktop:flex flex-row items-center justify-between p-4 bg-white h-[67px] shadow-md">
-            <Logo />
+            <div className="ml-[41px]">
+              <Logo />
+            </div>
             <div className="absolute left-1/2 transform -translate-x-1/2">
               <Navigation />
             </div>
-            <LoginNav />
+            <div className="mr-[41px]">
+              <LoginNav />
+            </div>
           </header>
           <div className="absolute z-20 desktop:hidden">
             <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />

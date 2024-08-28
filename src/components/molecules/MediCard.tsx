@@ -40,7 +40,7 @@ const MediCard = ({
     <ImageProvider value={{ src, alt, title, subtitle }}>
       <BarTextProvider value={barTextValue}>
         <div
-          className="w-[160px] h-[205px] desktop:w-[231px] desktop:h-[280px]  desktop:mr-[24px] mr-[16px] border border-brand-gray-50 rounded-lg p-4 desktop:p-6 mb-[16px] desktop:mb-[32px] cursor-pointer"
+          className="w-[160px] h-[205px] desktop:w-[231px] desktop:h-[280px]  desktop:mr-[24px] mr-[16px]  bg-white border border-brand-gray-50 rounded-lg p-4 desktop:p-6 mb-[16px] desktop:mb-[32px] cursor-pointer"
           onClick={handleClick}
         >
           <SmImage className="w-[128px] h-[80px] desktop:w-[183px] desktop:h-[100px]" />

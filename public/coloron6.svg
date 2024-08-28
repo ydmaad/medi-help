@@ -1,0 +1,19 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_i_1348_23355)">
+<rect width="48" height="48" rx="4" fill="#E9F5FE"/>
+<rect x="14.5" y="5.5" width="19" height="19" rx="1.5" fill="#00C4A1" stroke="#2390E3"/>
+<path d="M20.1173 35.5273V36.6992H17.9611C17.9787 37.7949 18.7755 38.9082 20.4923 39.3477L19.8009 40.4961C18.5822 40.1914 17.7326 39.5176 17.2463 38.6504C16.7834 39.6348 15.9279 40.4141 14.6681 40.7773L13.965 39.6172C15.6701 39.125 16.4611 37.9062 16.4728 36.6992H14.3283V35.5273H16.4728V34.3672H17.9845V35.5273H20.1173ZM15.7111 43.0391C15.7111 41.7617 17.1173 41.041 19.3791 41.0352C21.6525 41.041 23.0529 41.7617 23.0588 43.0391C23.0529 44.334 21.6525 45.084 19.3791 45.0781C17.1173 45.084 15.7111 44.334 15.7111 43.0391ZM17.1994 43.0391C17.1994 43.625 17.967 43.9414 19.3791 43.9414C20.8205 43.9414 21.5646 43.625 21.5705 43.0391C21.5646 42.4707 20.8205 42.1836 19.3791 42.1836C17.967 42.1836 17.1994 42.4707 17.1994 43.0391ZM19.8009 38.4688V37.2734H21.5353V34.4141H23.0236V40.8594H21.5353V38.4688H19.8009ZM33.9764 40.1328V41.3281H24.2147V40.1328H28.3514V39.3594H25.4334V36.4297H31.2928V35.7734H25.41V34.6133H32.7928V37.5078H26.9217V38.2109H32.992V39.3594H29.8397V40.1328H33.9764ZM25.3045 43.1094V41.9375H32.8514V45.0312H31.3397V43.1094H25.3045Z" fill="#279EF9"/>
+</g>
+<defs>
+<filter id="filter0_i_1348_23355" x="0" y="0" width="48" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="6"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_1348_23355"/>
+</filter>
+</defs>
+</svg>

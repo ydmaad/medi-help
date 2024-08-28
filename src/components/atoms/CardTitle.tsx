@@ -33,7 +33,7 @@ const CardTitle = () => {
         </div>
       ) : (
         <>
-          <h2 className="text-[12px] desktop:text-[16px] font-bold text-left mt-[8px] desktop:mt-4">
+          <h2 className="text-[12px] desktop:max-w-[316px] desktop:text-[16px] font-bold text-left mt-[8px] desktop:mt-4 ">
             {title}
           </h2>
           <CardSubTitle text={subtitle || ""} lineClamp={lineClamp} />
