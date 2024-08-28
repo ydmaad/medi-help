@@ -100,11 +100,9 @@ const PostDetail = ({ id }: PostDetailProps) => {
 
   // 내용 표시 - 단락 구분
   const formatContent = (content: string) => {
-    return content.split("\n").map((paragraph, index) => (
-      <p key={index} className="mb-4">
-        {paragraph}
-      </p>
-    ));
+    return content
+      .split("\n")
+      .map((paragraph, index) => <p key={index}>{paragraph}</p>);
   };
 
   // 사용자 권한 확인 함수
@@ -283,7 +281,7 @@ const PostDetail = ({ id }: PostDetailProps) => {
           </div>
           <div>{formatContent(post.contents)}</div>
         </div>
-        <div className=" mb-[4px]">
+        <div className="mt-[60px] mb-[16px]">
           <p className="text-[14px] desktop:text-[16px] text-brand-gray-600">
             전체 댓글
             <span className="text-[14px] desktop:text-[16px] ml-[5px] font-black text-brand-primary-500">
