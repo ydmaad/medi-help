@@ -43,7 +43,7 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
         className="absolute inset-y-0 right-0 pl-3 pr-3 flex items-center"
       >
         <Image
-          src={showPassword ? "/close_eye_icon.svg" : "/open_eye_icon.svg"}
+          src={showPassword ? "/open_eye_icon.svg" : "/close_eye_icon.svg"}
           alt="Toggle password visibility"
           width={18}
           height={12}
