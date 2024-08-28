@@ -88,11 +88,9 @@ const CommentItem = ({
 
   // 내용 표시 - 단락 구분
   const formatContent = (content: string) => {
-    return content.split("\n").map((paragraph, index) => (
-      <p key={index} className="mb-4">
-        {paragraph}
-      </p>
-    ));
+    return content
+      .split("\n")
+      .map((paragraph, index) => <p key={index}>{paragraph}</p>);
   };
 
   return (
@@ -102,27 +100,25 @@ const CommentItem = ({
           return (
             <div
               key={ment.id}
-              className={`my-4 p-4  border border-gray-300 rounded-lg  max-w-[996px] relative  ${
+              className={`my-4 p-4  h-full flex flex-col justify-between border border-gray-300 rounded-lg w-full desktop:max-w-[996px] relative  ${
                 isEdit && user?.id === ment.user.id
                   ? "bg-brand-gray-50"
                   : "bg-white"
               }`}
             >
-              <div className="flex justify-between">
-                <div className="flex justify-between mb-2 flex-col w-full">
+              <div className="flex justify-between mb-2 flex-col w-full">
+                <div>
                   {/* 아바타 + 닉네임 + 수정,삭제 버튼 */}
                   <div className="flex justify-between ">
                     <div className="flex items-center">
                       <Image
                         src={ment.user?.avatar || "/defaultAvatar.svg"}
                         alt={"유저 이미지"}
-                        width={40}
-                        height={40}
+                        width={24}
+                        height={24}
                         className="rounded-full mr-3 aspect-square object-cover"
                       />
-                      <div className="text-[16px] mt-[15px] mb-4">
-                        {ment.user.nickname}
-                      </div>
+                      <div className="text-[16px]">{ment.user.nickname}</div>
                     </div>
                     <div>
                       <div className="flex">
@@ -210,12 +206,12 @@ const CommentItem = ({
                               [ment.id]: e.target.value,
                             }))
                           }
-                          className="w-full h-[50px] text-[14px] px-2 focus:outline-none resize-none bg-brand-gray-50"
+                          className="w-full h-[50px] mt-[10px] text-[14px] px-2 focus:outline-none resize-none bg-brand-gray-50"
                         />
-                        <div className="absolute bottom-2 right-4">
+                        <div className="flex justify-end">
                           <button
                             onClick={() => handleSaveEdit(ment.id)}
-                            className="w-[90px] mb-2 bg-brand-primary-500 text-white px-4 py-2 rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-brand-primary-600"
+                            className="w-[72px] h-[32px] desktop:w-[90px] desktop:h-[40px] bg-brand-primary-500 text-white px-4 text-[14px] desktop:text-[16px] rounded-lg hover:bg-brand-primary-600 focus:outline-none focus:ring-2 focus:ring-brand-primary-600"
                           >
                             수정
                           </button>
@@ -224,30 +220,41 @@ const CommentItem = ({
                     ) : (
                       // 일반 모드일 떼(false) - 원래 댓글 내용 표시
                       <>
-                        <div className="mt-1 w-full text-[14px]">
-                          {formatContent(ment.comment)}
-                        </div>
-                        <div className="text-gray-500 mt-3 text-sm">
-                          {new Date(ment.created_at).toLocaleString()}
+                        <div className="flex-grow break-all mt-[10px]">
+                          <div className="mt-1 w-full text-[14px]">
+                            {formatContent(ment.comment)}
+                          </div>
                         </div>
                       </>
                     )}
                   </div>
                   {/* 댓글 내용 */}
-
-                  <div className="flex flex-shrink-0 items-center space-x-2">
-                    {isEdit[ment.id] ? (
-                      <button
-                        onClick={() => handleCancelEdit(ment.id)}
-                        className="text-sm text-gray-500  absolute top-6 right-6"
-                      >
-                        취소
-                      </button>
-                    ) : (
-                      <button className="hidden">취소</button>
-                    )}
+                </div>
+              </div>
+              {isEdit[ment.id] ? null : (
+                <div className="mt-auto">
+                  <div className="text-gray-500  text-sm">
+                    {new Date(ment.created_at).toLocaleString()}
                   </div>
                 </div>
+              )}
+
+              <div className="flex flex-shrink-0 items-center space-x-2">
+                {isEdit[ment.id] ? (
+                  <button
+                    onClick={() => handleCancelEdit(ment.id)}
+                    className="text-sm absolute top-3 right-6"
+                  >
+                    <Image
+                      src="/commentDelBtn.svg"
+                      alt="댓글삭제버튼"
+                      width={20}
+                      height={20}
+                    ></Image>
+                  </button>
+                ) : (
+                  <button className="hidden">취소</button>
+                )}
               </div>
             </div>
           );
