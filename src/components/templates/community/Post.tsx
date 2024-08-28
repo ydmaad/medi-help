@@ -17,7 +17,7 @@ const Post = () => {
   const [contents, setContents] = useState<string>("");
   const [image, setImage] = useState<File[]>([]);
   const [selectCategory, setSelectCategory] = useState<string>("");
-  const categories = ["메디톡", "궁금해요", "건강 꿀팀"];
+  const categories = ["메디톡", "궁금해요", "건강 꿀팁"];
   const { toast } = useToast();
 
   // 게시글을 전송을 요청하는 핸들러

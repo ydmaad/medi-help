@@ -88,7 +88,7 @@ export const fetchDetailPost = async (id: string) => {
       throw new Error("게시글 불러오는데 실패했습니다");
     }
     const { data } = await response.json();
-    console.log("수정하려고 불러온 데이터 :", data);
+    // console.log("수정하려고 불러온 데이터 :", data);
     return data[0];
   } catch (error) {
     console.error(error);
