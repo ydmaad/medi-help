@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import React, { useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
 
 interface SortOptionProps {
   sortOption: string;
@@ -30,15 +30,19 @@ const SortOption = ({
 
   return (
     <>
-      <div className="relative desktop:mr-0">
+      <div className="relative my-auto">
         <button
           onClick={handleOptionOpen}
           className="flex items-center justify-center text-brand-gray-600 whitespace-nowrap"
         >
-          <span className="mx-2 mt-2 text-[10px] desktop:text-sm">
-            {sortOption}
-          </span>
-          <IoIosArrowDown className="flex-shrink-0" />
+          <span className=" text-[10px] desktop:text-sm">{sortOption}</span>
+          <Image
+            src="/grayDropdown.svg"
+            alt="정렬이미지"
+            width={20}
+            height={20}
+            className={`${isOptionOpen ? null : "rotate-180"}`}
+          ></Image>
         </button>
         {isOptionOpen && (
           <div className="absolute -left-[10px] desktop:-left-[20px] text-[12px] desktop:text-[14px] mt-2 flex h-[100px] desktop:h-[110px] w-[77px] desktop:w-[106px] flex-col items-center justify-center gap-[0.3rem] border shadow rounded-lg bg-white z-10">
@@ -49,7 +53,7 @@ const SortOption = ({
                   handleOptionSelect(option);
                   handleOptionOpen(); // 옵션 선택 후 리스트를 닫
                 }}
-                className={`text-brand-gray-800 text-sx desktop:text-sm w-full  hover:bg-gray-100 rotate-180`}
+                className={`text-brand-gray-800 text-sx desktop:text-sm w-full  hover:bg-gray-100`}
               >
                 {option}
                 {index !== optionList.length - 1 && (
