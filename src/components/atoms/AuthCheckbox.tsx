@@ -1,7 +1,7 @@
 // src/components/atoms/AuthCheckbox.tsx
 
 import React from "react";
-import { TbCheck } from "react-icons/tb";
+import Image from "next/image";
 
 type AuthCheckboxProps = {
   id: string;
@@ -25,13 +25,12 @@ export const AuthCheckbox: React.FC<AuthCheckboxProps> = ({
         onChange={onChange}
         className="absolute opacity-0 w-full h-full cursor-pointer z-10"
       />
-      <div
-        className={`absolute top-0 left-0 w-full h-full rounded-sm flex items-center justify-center
-          ${checked ? "bg-brand-gray-600" : "bg-brand-gray-50"}`}
-      >
-        <TbCheck
-          className={checked ? "text-brand-gray-50" : "text-brand-gray-200"}
-          size={14}
+      <div className="absolute top-0 left-0 w-full h-full">
+        <Image
+          src={checked ? "/on_check.svg" : "/off_check.svg"}
+          alt={checked ? "Checked" : "Unchecked"}
+          width={18}
+          height={18}
         />
       </div>
     </div>
