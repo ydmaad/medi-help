@@ -47,9 +47,9 @@ const SortOption = ({
                 key={option}
                 onClick={() => {
                   handleOptionSelect(option);
-                  handleOptionOpen(); // 옵션 선택 후 리스트를 닫습니다.
+                  handleOptionOpen(); // 옵션 선택 후 리스트를 닫
                 }}
-                className="text-brand-gray-800 text-sx desktop:text-sm w-full  hover:bg-gray-100"
+                className={`text-brand-gray-800 text-sx desktop:text-sm w-full  hover:bg-gray-100 rotate-180`}
               >
                 {option}
                 {index !== optionList.length - 1 && (

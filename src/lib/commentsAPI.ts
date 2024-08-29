@@ -136,7 +136,6 @@ export const fetchPost = async ({
     image.forEach((img) => {
       formData.append("image", img);
     });
-    3;
 
     const response = await fetch(`/api/community/`, {
       method: "POST",
