@@ -32,11 +32,3 @@ export default function RecoverPasswordPage() {
 
   return <RecoverPasswordForm onSubmit={handlePasswordRecovery} />;
 }
-
-// 기존 코드
-// import { RecoverPasswordForm } from "@/components/templates/auth/RecoverPasswordForm";
-
-// // 새 비밀번호 설정 페이지
-// export default function RecoverPasswordPage() {
-//   return <RecoverPasswordForm />;
-// }

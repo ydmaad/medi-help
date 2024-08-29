@@ -41,11 +41,3 @@ export default function ResetPasswordPage() {
   // ResetPasswordForm 컴포넌트 렌더링
   return <ResetPasswordForm onSubmit={onSubmit} />;
 }
-
-// 기존 코드
-// import { ResetPasswordForm } from "@/components/templates/auth/ResetPasswordForm";
-
-// // 비밀번호 재설정 요청 페이지
-// export default function ResetPasswordPage() {
-//   return <ResetPasswordForm />;
-// }
