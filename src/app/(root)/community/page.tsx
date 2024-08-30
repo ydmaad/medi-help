@@ -57,7 +57,7 @@ const CommunityPage = () => {
   return (
     <>
       <div className="max-w-[996px] mx-auto mt-[90px] desktop:mt-[160px]">
-        <div className="flex items-center justify-between mb-[20px] desktop:mb-[40px]">
+        <div className="flex items-center justify-between mb-[28px] desktop:mb-[60px]">
           {/* 데스크탑 버전 */}
           <div className="hidden desktop:flex flex-col">
             <button

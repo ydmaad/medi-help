@@ -18,7 +18,7 @@ const CategorySelect = ({
           <button
             key={category}
             onClick={() => onSelectCategory(category)}
-            className={`desktop:mt-[20px] mb-[16px] px-4 py-2 w-full desktop:w-[100px] text-[12px] desktop:text-[14px] rounded-full ${
+            className={` px-4 py-2 w-full desktop:w-[100px] text-[12px] desktop:text-[14px] rounded-full ${
               selectCategory === category
                 ? "bg-brand-gray-600 text-white"
                 : "bg-brand-gray-50 text-gray-700"

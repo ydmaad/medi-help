@@ -120,11 +120,11 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
 
   return (
     <>
-      <div className="mt-[16px]">
+      <div>
         {/* 카테고리 선택 */}
         {isSearchOpen ? null : (
-          <div className="flex justify-between">
-            <div className="flex items-center overflow-x-auto scrollbar-hide desktop:overflow-x-visible whitespace-nowrap  pb-2 desktop:pb-0">
+          <div className="flex justify-between desktop:mt-[12px] mb-[15px]">
+            <div className="flex items-center overflow-x-auto scrollbar-hide desktop:overflow-x-visible whitespace-nowrap">
               <CategorySelect
                 categories={category}
                 selectCategory={selectCategory}
