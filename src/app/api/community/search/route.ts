@@ -19,3 +19,5 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ data });
 }
+
+// 이 파일은 지금 안 쓰는 중

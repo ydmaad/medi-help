@@ -10,10 +10,6 @@ type PostInsert = TablesInsert<"posts">; // 추가
 // 게시글 불러오는 요청
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  // const page = parseInt(searchParams.get("page") || "1");
-  // const perPage = parseInt(searchParams.get("perPage") || "6");
-  // 페이지 시작 인덱스
-  // const offset = (page - 1) * perPage;
   const sortOption = searchParams.get("sort") || "최신순";
   const searchTerm = searchParams.get("search") || "";
   const pageNo = parseInt(searchParams.get("page") || "1");

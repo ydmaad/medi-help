@@ -60,6 +60,7 @@ const Post = () => {
         categories={categories}
         selectCategory={selectCategory}
         onSelectCategory={handleCategorySelect}
+        className="mt-[20px] mb-[16px]"
       ></CategorySelect>
       <div className="max-w-[335px] desktop:max-w-[996px] rounded-lg items-center">
         <TitleInput title={title} setTitle={setTitle}></TitleInput>

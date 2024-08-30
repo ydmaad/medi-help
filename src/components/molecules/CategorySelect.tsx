@@ -4,21 +4,23 @@ interface CategorySelectProps {
   categories: string[];
   selectCategory: string;
   onSelectCategory: (category: string) => void;
+  className?: string;
 }
 
 const CategorySelect = ({
   categories,
   selectCategory,
   onSelectCategory,
+  className = "",
 }: CategorySelectProps) => {
   return (
     <>
-      <div className="flex space-x-2 ">
+      <div className={`flex space-x-2 ${className}`}>
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => onSelectCategory(category)}
-            className={` px-4 py-2 w-full desktop:w-[100px] text-[12px] desktop:text-[14px] rounded-full ${
+            className={`px-4 py-2 w-full desktop:w-[100px] text-[12px] desktop:text-[14px] rounded-full ${
               selectCategory === category
                 ? "bg-brand-gray-600 text-white"
                 : "bg-brand-gray-50 text-gray-700"

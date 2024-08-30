@@ -129,6 +129,7 @@ const List = ({ searchTerm, posts, setPosts }: ListProps) => {
                 categories={category}
                 selectCategory={selectCategory}
                 onSelectCategory={handleCategorySelect}
+                className=""
               ></CategorySelect>
             </div>
             <SortOption
