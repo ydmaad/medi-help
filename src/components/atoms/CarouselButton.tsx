@@ -6,7 +6,7 @@ interface PageButtonProps {
   disabled?: boolean;
 }
 
-const PageButton = ({ onClick, icon, disabled }: PageButtonProps) => {
+const CarouselButton = ({ onClick, icon, disabled }: PageButtonProps) => {
   return (
     <button
       onClick={onClick}
@@ -14,7 +14,7 @@ const PageButton = ({ onClick, icon, disabled }: PageButtonProps) => {
       disabled={disabled}
     >
       {icon && (
-        <div className="relative flex items-center justify-center  mr-2">
+        <div className="relative flex items-center justify-center w-10 h-10 bg-brand-gray-1000/40 rounded-full mr-2">
           <img src={icon} alt="icon" className="w-6 h-6" />
         </div>
       )}
@@ -22,4 +22,4 @@ const PageButton = ({ onClick, icon, disabled }: PageButtonProps) => {
   );
 };
 
-export default PageButton;
+export default CarouselButton;
