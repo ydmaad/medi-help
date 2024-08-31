@@ -100,6 +100,7 @@ const SearchPage = () => {
           <div className="flex flex-col items-center">
             <div className="desktop:mb-[40px] mb-[24px]">
               <SearchBar onSearchChange={handleSearchChange} />
+              <MediShapeDropDown title="모양으로 검색" />
             </div>
           </div>
           <div className="grid grid-cols-4 gap-4 mt-4 w-[1000px] h-auto">
@@ -115,7 +116,7 @@ const SearchPage = () => {
         </div>
         <div className="flex desktop:hidden flex-col items-center">
           <div className="flex flex-col items-center">
-            <div className="desktop:mb-[40px] mb-[24px]">
+            <div className="mb-[24px]">
               <SearchBar onSearchChange={handleSearchChange} />
             </div>
           </div>
