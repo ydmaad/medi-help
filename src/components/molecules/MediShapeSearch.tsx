@@ -24,8 +24,8 @@ const SelectionComponent = () => {
 
   return (
     <>
-      <div className="desktop:hidden w-[335px] h-[428px] rounded-[4px] bg-white">
-        <div className="w-[335px] h-[428px] ml-[12px] mx-auto flex flex-col justify-between">
+      <div className="desktop:hidden w-[335px] h-auto rounded-[4px] bg-white">
+        <div className="w-[335px] h-auto ml-[12px] mx-auto flex flex-col justify-between">
           <div className="flex flex-col  mb-[24px] mt-[24px]">
             <h3 className="text-[12px] mb-[12px] text-brand-gray-400">
               모양 선택
@@ -210,7 +210,6 @@ const SelectionComponent = () => {
             </div>
           </div>
 
-          {/* Color selection */}
           <div className="flex flex-col mb-[24px]">
             <h3 className="text-[12px] mb-[12px] text-brand-gray-400">
               색상 선택

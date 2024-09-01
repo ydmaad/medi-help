@@ -146,7 +146,7 @@ const SearchPage = () => {
           🔎 약 검색
         </h1>
       </div>
-      <div className="flex flex-col items-center desktop:mb-[80px] mb-[24px] ">
+      <div className="flex flex-col items-center desktop:mb-[80px] mb-[40px] ">
         <SearchBar onSearchChange={handleSearchChange} />
         <MediShapeDropDown title="모양으로 검색" />
       </div>
@@ -162,10 +162,12 @@ const SearchPage = () => {
             </>
           ) : (
             <>
-              <span className="text-brand-gray-1000 font-black text-xl">
+              <span className="text-brand-gray-1000 mr-[8px] font-bold text-[14px]">
                 전체
               </span>
-              <span className="text-brand-gray-600">({totalItems})</span>
+              <span className="text-brand-gray-600 text-[14px] font-normal">
+                ({totalItems})
+              </span>
             </>
           )}
         </p>
