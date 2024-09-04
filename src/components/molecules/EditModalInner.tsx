@@ -68,30 +68,35 @@ const EditModalInner = ({ viewEvents, setViewEvents }: Props) => {
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-[20px]">
       <input
         type="date"
         value={values.start_date}
         onChange={handleDateChange}
-        className="w-full desktop:w-auto bg-[#fff] mx-auto px-[90px] py-3 desktop:px-24 desktop:py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
+        className="w-full desktop:w-[368px] bg-[#fff] mx-auto px-[90px] py-3 desktop:px-[120px] desktop:py-1 text-md text-brand-gray-800 border border-brand-gray-200 outline-none rounded-sm"
       />
-      <FilterComponent />
-      <div className="w-full h-32 min-h-32 grid grid-cols-2 gap-2 overflow-y-auto">
-        {medicines
-          .filter((medi: MedicinesType) => {
-            return medi.time[values.medi_time] === true;
-          })
-          .map((medicine: MedicinesType, idx: number) => {
-            return <MediCheck medicine={medicine} idx={idx} key={idx} />;
-          })}
+      <div>
+        <FilterComponent />
+        <div className="w-full h-32 min-h-32 grid grid-cols-2 gap-[8px] mt-[8px] overflow-y-auto">
+          {medicines
+            .filter((medi: MedicinesType) => {
+              return medi.time[values.medi_time] === true;
+            })
+            .map((medicine: MedicinesType, idx: number) => {
+              return <MediCheck medicine={medicine} idx={idx} key={idx} />;
+            })}
+        </div>
       </div>
-      <SemiTitle>노트</SemiTitle>
-      <EditNote
-        values={values}
-        setValues={setValues}
-        handleContentChange={handleContentChange}
-      />
-    </>
+
+      <div>
+        <SemiTitle>노트</SemiTitle>
+        <EditNote
+          values={values}
+          setValues={setValues}
+          handleContentChange={handleContentChange}
+        />
+      </div>
+    </div>
   );
 };
 

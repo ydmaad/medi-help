@@ -2,12 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* calendar */
+/* calendar #e9f5fe */
 
 :root {
   --fc-border-color: transparent !important;
-  --fc-today-bg-color: #e9f5fe !important;
+  --fc-today-bg-color: transparent !important;
   --fc-button-border-color: transparent !important;
+  --fc-event-border-color: transparent !important;
+  --fc-highlight-color: #e5f9fe !important;
 }
 
 .fc .fc-toolbar-title {
@@ -42,13 +44,36 @@
   background-color: white;
 }
 
+.fc-day-today i {
+  display: inline-block;
+  width: 24px;
+  background-color: #279ef9 !important;
+  padding: 3px;
+  border-radius: 50%;
+  color: #fff !important;
+  text-align: center;
+}
+
+.fc-highlight i {
+  display: inline-block;
+  width: 24px;
+  background-color: #757575 !important;
+  padding: 3px;
+  border-radius: 50%;
+  color: #fff !important;
+  text-align: center;
+}
+
 .fc-daygrid-day-top {
   display: flex;
   justify-content: center;
 }
 
-.fc .fc-daygrid-day-number {
+.fc .fc-daygrid-day-number i {
+  display: inline-block;
   color: #7c7f86; /*gray-600*/
+  font-size: 12px;
+  font-style: normal !important;
 }
 
 .fc th {
@@ -60,10 +85,6 @@
 .fc-day-sun a {
   color: #f66555;
   text-decoration: none;
-}
-
-i {
-  font-style: normal !important;
 }
 
 @media screen and (min-width: 768px) {
@@ -93,14 +114,24 @@ i {
     padding: 0 0.5px;
   }
 
-  .fc-event-title {
+  .event-title {
+    margin-left: 2px;
     font-size: 0.8rem;
     text-overflow: ellipsis;
-    color: #40444c !important;
   }
+
+  /* .fc-event-title {
+    color: #40444c !important;
+  } */
 
   .fc-daygrid-events {
     min-height: 90px;
+  }
+
+  .fc-daygrid-event span {
+    margin-left: 2px;
+    color: #cdcdcd;
+    font-size: 12px;
   }
 }
 
@@ -136,7 +167,9 @@ i {
   }
   .fc-daygrid-day-events {
     display: flex;
-    justify-content: center;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 2px;
     margin: 0px !important;
   }
 
@@ -163,7 +196,10 @@ i {
   .fc-daygrid-event-dot {
     margin: 0px !important;
   }
-  .fc-event-title {
+  .fc-event {
+    margin: 0 !important;
+  }
+  .event-title {
     display: none !important;
   }
   .fc .fc-daygrid-day-number {

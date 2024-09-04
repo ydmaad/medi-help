@@ -15,7 +15,7 @@ const EditNote = ({ values, setValues, handleContentChange }: Props) => {
       value={values.side_effect ? values.side_effect : ""}
       onChange={handleContentChange}
       placeholder="복약 후 몸 상태나 오늘 하루 복약에 대한 한 마디"
-      className="h-2/5 min-h-28 p-4 border border-brand-gray-200 outline-none rounded-sm text-sm resize-none"
+      className="w-full h-2/5 min-h-28 p-4 mt-[8px] border border-brand-gray-200 outline-none rounded-sm text-sm resize-none"
     ></textarea>
   );
 };

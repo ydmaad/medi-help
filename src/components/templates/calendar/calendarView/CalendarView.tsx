@@ -24,7 +24,6 @@ import { GoPlus } from "react-icons/go";
 import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 import { useToast } from "@/hooks/useToast";
 
-
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
@@ -174,11 +173,11 @@ const CalendarView = () => {
       .toISOString()
       .split("T")[0];
 
-    let filteredCalendar = calendar.filter((cal) => {
+    let filteredCalendar = calendar.filter((cal: any) => {
       return cal.start_date === newDate;
     });
 
-    let editList = events.filter((event) => {
+    let editList = events.filter((event: any) => {
       return event.start?.toString().split(" ")[0] === newDate;
     });
 
@@ -215,11 +214,11 @@ const CalendarView = () => {
       .toISOString()
       .split("T")[0];
 
-    let filteredCalendar = calendar.filter((cal) => {
+    let filteredCalendar = calendar.filter((cal: any) => {
       return cal.start_date === today;
     });
 
-    let editList = events.filter((event) => {
+    let editList = events.filter((event: any) => {
       return event.start?.toString().split(" ")[0] === today;
     });
 
@@ -350,6 +349,21 @@ const CalendarView = () => {
               fixedWeekCount={false}
               dayCellContent={(arg) => {
                 return <i>{arg.dayNumberText.replace("일", "")}</i>;
+              }}
+              eventContent={(arg) => {
+                return (
+                  <>
+                    <div
+                      className={`w-2 h-2 rounded-full bg-[${arg.event.backgroundColor}]`}
+                    ></div>
+                    <div className="event-title">
+                      {arg.event.title.split(" ")[0]}
+                      <span>
+                        {arg.event.title.split(" ").slice(1, 3).join(" ")}
+                      </span>
+                    </div>
+                  </>
+                );
               }}
             />
           </div>
