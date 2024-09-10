@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft } from "lucide-react";
-import { format } from 'date-fns';
+import { ChevronLeft, Plus } from "lucide-react";
+import { format, parse } from 'date-fns';
 import axios from 'axios';
 import { useToast } from "@/hooks/useToast";
+
+const Switch: React.FC<{ checked: boolean; onCheckedChange: (checked: boolean) => void }> = ({ checked, onCheckedChange }) => {
+  return (
+    <div 
+      className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer ${
+        checked ? 'bg-blue-500' : 'bg-gray-300'
+      }`}
+      onClick={() => onCheckedChange(!checked)}
+    >
+      <div
+        className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
+          checked ? 'translate-x-4' : 'translate-x-0'
+        }`}
+      />
+    </div>
+  );
+};
 
 interface MediRecord {
   id: string;
@@ -19,9 +36,9 @@ interface MediRecord {
   created_at: string;
   itemImage?: string | null;
   user_id: string;
-  notification_time?: string[];
-  day_of_week?: string[];
-  repeat?: boolean;
+  notification_time: string[];
+  day_of_week: string[];
+  repeat: boolean;
 }
 
 interface MyPageViewModalProps {
@@ -44,12 +61,10 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mediNames, setMediNames] = useState<{ itemName: string }[]>([]);
-  const [notificationEnabled, setNotificationEnabled] = useState(!!mediRecord.repeat);
   const { toast } = useToast();
 
   useEffect(() => {
     setEditedRecord(mediRecord);
-    setNotificationEnabled(!!mediRecord.repeat);
   }, [mediRecord]);
 
   useEffect(() => {
@@ -90,18 +105,30 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
   const handleDayOfWeekChange = (day: string) => {
     setEditedRecord((prev) => ({
       ...prev,
-      day_of_week: prev.day_of_week
-        ? prev.day_of_week.includes(day)
-          ? prev.day_of_week.filter((d) => d !== day)
-          : [...prev.day_of_week, day]
-        : [day],
+      day_of_week: prev.day_of_week.includes(day)
+        ? prev.day_of_week.filter((d) => d !== day)
+        : [...prev.day_of_week, day],
     }));
   };
 
-  const handleNotificationTimeChange = (value: string) => {
+  const handleNotificationTimeChange = (index: number, value: string) => {
     setEditedRecord((prev) => ({
       ...prev,
-      notification_time: [value],
+      notification_time: prev.notification_time.map((time, i) => i === index ? value : time),
+    }));
+  };
+
+  const addNotificationTime = () => {
+    setEditedRecord((prev) => ({
+      ...prev,
+      notification_time: [...prev.notification_time, ''],
+    }));
+  };
+
+  const removeNotificationTime = (index: number) => {
+    setEditedRecord((prev) => ({
+      ...prev,
+      notification_time: prev.notification_time.filter((_, i) => i !== index),
     }));
   };
 
@@ -127,10 +154,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`/api/mypage/medi/${editedRecord.id}`, {
-        ...editedRecord,
-        repeat: notificationEnabled,
-      });
+      const response = await axios.put(`/api/mypage/medi/${editedRecord.id}`, editedRecord);
       if (response.status === 200) {
         onUpdate(response.data);
         setIsEditing(false);
@@ -166,21 +190,42 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
     return format(new Date(dateString), 'yyyy.MM.dd');
   };
 
+  const formatTime = (timeString: string) => {
+    const [hours, minutes] = timeString.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours));
+    date.setMinutes(parseInt(minutes));
+    const formattedTime = format(date, 'a hh:mm');
+    const isAM = format(date, 'a') === 'AM';
+    return { time: formattedTime, isAM };
+  };
+
+  const TimeDisplay: React.FC<{ time: string }> = ({ time }) => {
+    const { time: formattedTime, isAM } = formatTime(time);
+    return (
+      <div className="flex items-center space-x-2">
+        <div className={`w-2 h-2 rounded-full ${isAM ? 'bg-brand-primary-100' : 'bg-brand-primary-500'}`}></div>
+        <span>{formattedTime}</span>
+      </div>
+    );
+  };
+
+
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
       <div className="flex flex-col h-full">
-        <div className="flex justify-between items-center px-4 py-3 border-b">
+        <div className="flex justify-between items-center px-4 py-3">
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <ChevronLeft size={24} />
           </button>
-          <span className="text-gray-800 text-lg font-bold">나의 약</span>
+          <span className="text-brand-gray-800 text-[18px] font-bold">나의 약 {isEditing ? '수정' : ''}</span>
           {isEditing ? (
             <button onClick={handleSave} className="text-blue-500 hover:text-blue-700">
               저장
             </button>
           ) : (
-            <button onClick={() => setIsEditing(true)} className="text-blue-500 hover:text-blue-700">
-              수정
+            <button onClick={() => setIsEditing(true)} className="text-brand-primary-500">
+              편집
             </button>
           )}
         </div>
@@ -188,24 +233,57 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
           {/* 약 정보 표시 */}
           {!isEditing && (
             <>
-              <div className="text-lg font-bold text-brand-gray-800">{mediRecord.medi_nickname}</div>
-              <div className="text-sm text-brand-gray-600">{mediRecord.medi_name}</div>
-              <div className="flex justify-between items-center mt-2">
-                <div className="text-sm text-brand-gray-800">복용 날짜</div>
-                <div className="text-sm text-brand-gray-800">
+              <div className="text-brand-gray-800 text-[18px] font-bold">{mediRecord.medi_nickname}</div>
+              <div className="text-brand-gray-800 text-[14px]">{mediRecord.medi_name}</div>
+              <div className="flex items-center mt-2">
+                <div className="text-[14px] text-brand-gray-800 mr-6">복용 날짜</div>
+                <div className="text-[14px] text-brand-gray-600">
                   {formatDate(mediRecord.start_date)} ~ {formatDate(mediRecord.end_date)}
                 </div>
               </div>
-              <div className="flex justify-between items-center mt-2">
-                <div className="text-sm text-brand-gray-800">복용 알람</div>
-                <div className="text-sm text-blue-500">
-                  {notificationEnabled ? 'ON' : 'OFF'}
+              <div className="flex items-center mt-2">
+                <div className="text-[14px] text-brand-gray-800 mr-4">복용 시간대</div>
+                <div className="flex space-x-2">
+                  {mediRecord.times.morning && (
+                    <div className="rounded-full bg-brand-primary-50 px-2 py-1">
+                      <span className="text-[12px] text-brand-primary-500">아침</span>
+                    </div>
+                  )}
+                  {mediRecord.times.afternoon && (
+                    <div className="rounded-full bg-brand-primary-50 px-2 py-1">
+                      <span className="text-[12px] text-brand-primary-500">점심</span>
+                    </div>
+                  )}
+                  {mediRecord.times.evening && (
+                    <div className="rounded-full bg-brand-primary-50 px-2 py-1">
+                      <span className="text-[12px] text-brand-primary-500">저녁</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="mt-2 grid grid-cols-[auto,1fr] gap-x-4">
+                <div className="text-[14px] text-brand-gray-800">복용 알람</div>
+                <div>
+                  <div className="text-[14px] text-brand-gray-1000 pl-4">
+                    {mediRecord.day_of_week.join(' ')}요일
+                  </div>
+                  <div className="text-[14px] text-brand-gray-800 flex flex-wrap gap-2 pl-4 mt-1">
+                    {mediRecord.notification_time.map((time, index) => (
+                      <TimeDisplay key={index} time={time} />
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="mt-4">
-                <div className="text-sm font-bold text-brand-gray-800">메모</div>
-                <div className="border rounded p-2 text-sm text-brand-gray-800">
-                  {mediRecord.notes || '메모가 없습니다.'}
+                <div className="text-[14px] text-brand-gray-600 mb-3">메모</div>
+                <div className="p-4 text-sm bg-brand-gray-50">
+                  {mediRecord.notes ? (
+                    <span className="text-brand-gray-800">{mediRecord.notes}</span>
+                  ) : (
+                    <span className="text-brand-gray-800 italic">
+                      복약 후 몸 상태나 오늘 하루의 복약에 대한 한 마디를 적어보세요.
+                    </span>
+                  )}
                 </div>
               </div>
             </>
@@ -222,7 +300,6 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                   value={editedRecord.medi_nickname}
                   onChange={handleInputChange}
                   className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
-                  disabled={!isEditing}
                 />
               </div>
 
@@ -232,7 +309,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                   value={editedRecord.medi_name}
                   onChange={handleInputChange}
                   className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
-                  disabled={!isEditing || isLoading}
+                  disabled={isLoading}
                 >
                   <option value="">약 이름 선택</option>
                   {isLoading ? (
@@ -271,7 +348,6 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                     value={editedRecord.start_date}
                     onChange={handleInputChange}
                     className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
-                    disabled={!isEditing}
                   />
                   <span>~</span>
                   <input
@@ -280,27 +356,28 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                     value={editedRecord.end_date}
                     onChange={handleInputChange}
                     className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
-                    disabled={!isEditing}
                   />
                 </div>
               </div>
 
               <div className="mb-5">
                 <div className="flex justify-between items-center">
-                  <label className="block text-sm font-medium text-brand-gray-800">복용 알람</label>
-                  <div className="text-sm text-blue-500">
-                    {notificationEnabled ? 'ON' : 'OFF'}
+                  <label className="block text-sm font-medium text-brand-gray-800">알람 설정</label>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={editedRecord.repeat}
+                      onCheckedChange={(checked) => setEditedRecord(prev => ({ ...prev, repeat: checked }))}
+                    />
+                    <button
+                      onClick={addNotificationTime}
+                      className="text-blue-500 hover:text-blue-700"
+                      disabled={!editedRecord.repeat}
+                    >
+                      <Plus size={20} />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setNotificationEnabled(!notificationEnabled)}
-                    className={`border rounded px-2 py-1 ${notificationEnabled ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
-                  >
-                    알람 {notificationEnabled ? 'ON' : 'OFF'}
-                  </button>
-                </div>
-                {notificationEnabled && (
+                {editedRecord.repeat && (
                   <>
                     <div className="mt-2">
                       <label className="block text-sm font-medium text-brand-gray-800">요일 선택</label>
@@ -308,7 +385,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                         {['월', '화', '수', '목', '금', '토', '일'].map((day) => (
                           <button
                             key={day}
-                            className={`border rounded px-2 py-1 ${editedRecord.day_of_week?.includes(day) ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
+                            className={`border rounded px-2 py-1 ${editedRecord.day_of_week.includes(day) ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}
                             onClick={() => handleDayOfWeekChange(day)}
                           >
                             {day}
@@ -318,12 +395,22 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                     </div>
                     <div className="mt-2">
                       <label className="block text-sm font-medium text-brand-gray-800">알람 시간 설정</label>
-                      <input
-                        type="time"
-                        value={editedRecord.notification_time?.[0] || ''}
-                        onChange={(e) => handleNotificationTimeChange(e.target.value)}
-                        className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
-                      />
+                      {editedRecord.notification_time.map((time, index) => (
+                        <div key={index} className="flex items-center space-x-2 mt-1">
+                          <input
+                            type="time"
+                            value={time}
+                            onChange={(e) => handleNotificationTimeChange(index, e.target.value)}
+                            className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
+                          />
+                          <button
+                            onClick={() => removeNotificationTime(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </>
                 )}
@@ -336,7 +423,6 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                   value={editedRecord.notes}
                   onChange={handleInputChange}
                   className="border rounded w-full h-[80px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
-                  disabled={!isEditing}
                 />
               </div>
             </>
