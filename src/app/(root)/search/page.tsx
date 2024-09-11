@@ -110,7 +110,7 @@ const SearchPage = () => {
           </div>
         </div>
         <div className="flex max-w-[335px]  mx-auto">
-          <h1 className="text-[32px]  font-bold mb-[20px] mt-[96px]">
+          <h1 className="desktop:hidden text-[32px]  font-bold mb-[20px] mt-[96px]">
             🔎 약 검색
           </h1>
         </div>
