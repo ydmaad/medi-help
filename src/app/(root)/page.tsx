@@ -129,11 +129,11 @@ const Page = () => {
         <LoadMoreButton targetPage="/community" />
       </div>
       <div className="flex justify-center items-center flex-col desktop:flex-row ">
-        <div className="grid grid-cols-1 desktop:grid-cols-1 gap-[28px] mr-[28px] ">
+        <div className="grid grid-cols-1 desktop:grid-cols-1 desktop:gap-[28px] gap-[8px] desktop:mr-[28px] ">
           {hotlimitedPosts.map((post, index) => (
             <ContentsCard
               key={index}
-              hotTitle="✨ NEW"
+              hotTitle="hot"
               newTitle={null}
               communityTitle={post.title}
               imageSrc={
@@ -144,7 +144,7 @@ const Page = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-1 desktop:grid-cols-1 gap-[28px] ">
+        <div className="grid grid-cols-1 desktop:grid-cols-1 desktop:gap-[28px] mt-[8px] gap-[8px] ">
           {newlimitedPosts.map((post, index) => (
             <ContentsCard
               key={index}
