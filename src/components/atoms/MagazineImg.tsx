@@ -42,8 +42,14 @@ const MagazineImg = ({
         />
 
         <div className="absolute desktop:bottom-5 bottom-5 left-5 desktop:left-1/2 flex flex-col desktop:items-center desktop:transform desktop:-translate-x-1/2 z-10 text-brand-gray-50">
-          <BarText />
-          <h1 className="whitespace-nowrap w-[341px] mt-[4px] text-[16px] desktop:text-xl font-bold overflow-hidden text-ellipsis">
+          <div className="flex font-light text-[14px]  desktop:text-sm mt-[2px]">
+            <span className="line-clamp-1">{leftText}</span>
+            <span className="mx-2">|</span>
+            <span className="overflow-hidden text-ellipsis line-clamp-1">
+              {rightText}
+            </span>
+          </div>
+          <h1 className="whitespace-nowrap w-[250px] desktop:w-[341px] mt-[4px] text-[16px] desktop:text-xl font-bold overflow-hidden text-ellipsis">
             {title}
           </h1>
         </div>
