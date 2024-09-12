@@ -44,16 +44,6 @@
   background-color: white;
 }
 
-.fc-highlight i {
-  display: inline-block;
-  width: 24px;
-  background-color: #757575 !important;
-  padding: 3px;
-  border-radius: 50%;
-  color: #fff !important;
-  text-align: center;
-}
-
 .fc-daygrid-day-top {
   display: flex;
   justify-content: center;
@@ -77,6 +67,10 @@
 }
 
 @media screen and (min-width: 768px) {
+  .fc .fc-daygrid-day-number i {
+    font-size: 12px;
+  }
+
   .fc-day-today i {
     display: inline-block;
     width: 24px;
@@ -126,6 +120,10 @@
 }
 
 @media screen and (max-width: 768px) {
+  .fc .fc-daygrid-day-number i {
+    font-size: 10px;
+  }
+
   .fc-day-today i {
     display: inline-block;
     width: 18px;
