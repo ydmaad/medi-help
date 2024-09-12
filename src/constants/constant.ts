@@ -1,9 +1,3 @@
-export const COLOR_OF_TIME: { [key: string]: string } = {
-  morning: "bg-[#bce1fd]",
-  afternoon: "bg-[#52b1fa]",
-  evening: "bg-[#103769]",
-};
-
 export const NAME_OF_TIME: { [key: string]: string } = {
   morning: "아침",
   afternoon: "점심",

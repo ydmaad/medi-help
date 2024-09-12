@@ -5,7 +5,7 @@ import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import EditModalInner from "@/components/molecules/EditModalInner";
 import ViewModalInner from "@/components/molecules/ViewModalInner";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
+import { DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import {
   useCalendarStore,
   useEditStore,
@@ -97,8 +97,6 @@ const DetailModal = ({
                 .toISOString()
                 .split("T")[0]
             } ${TIME_OF_TIME[value.medi_time]}`,
-            backgroundColor: COLOR_OF_TIME[value.medi_time],
-            borderColor: COLOR_OF_TIME[value.medi_time],
             extendProps: {
               medi_time: value.medi_time,
               medicineList: value.medicine_id,

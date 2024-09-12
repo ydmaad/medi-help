@@ -1,4 +1,3 @@
-import { COLOR_OF_TIME } from "@/constants/constant";
 import React from "react";
 
 interface Props {

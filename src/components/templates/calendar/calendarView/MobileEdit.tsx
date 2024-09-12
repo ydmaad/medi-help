@@ -1,8 +1,8 @@
 "use client";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import EditModalInner from "@/components/molecules/EditModalInner";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
-import { MedicinesType, ValuesType } from "@/types/calendar";
+import { DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
+import { ValuesType } from "@/types/calendar";
 import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import axios from "axios";
@@ -55,8 +55,6 @@ const MobileEdit = () => {
                 .toISOString()
                 .split("T")[0]
             } ${TIME_OF_TIME[value.medi_time]}`,
-            backgroundColor: COLOR_OF_TIME[value.medi_time],
-            borderColor: COLOR_OF_TIME[value.medi_time],
             extendProps: {
               medi_time: value.medi_time,
               medicineList: value.medicine_id,

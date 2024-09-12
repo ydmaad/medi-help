@@ -5,7 +5,7 @@ import { EventInput } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import axios from "axios";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
+import { DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import DetailModal from "../calendarModal/DetailModal";
 import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
 import { useAuthStore } from "@/store/auth";
@@ -79,66 +79,6 @@ const CalendarView = () => {
 
     getMedicines();
   }, [user]);
-
-  useEffect(() => {
-    const getEventsData = async () => {
-      try {
-        if (user) {
-          const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
-
-          const newEvents: EventInput[] = [];
-          data.map((event: EventInput) => {
-            if (event.calendar_medicine.length !== 0) {
-              const setEventList = (time: string) => {
-                let eventList = event.calendar_medicine.filter(
-                  (medicine: any) => {
-                    return medicine.medi_time === time;
-                  }
-                );
-
-                const newEventList = eventList.filter((e: any) => {
-                  return mediNames.includes(e.medications.medi_nickname);
-                });
-
-                let countMedicines = newEventList.length;
-
-                if (countMedicines !== 0) {
-                  let medicineNickname =
-                    newEventList[0].medications.medi_nickname;
-                  newEvents.push({
-                    groupId: event.id,
-                    title:
-                      countMedicines !== 1
-                        ? `${medicineNickname} 외 ${countMedicines - 1}개`
-                        : `${medicineNickname}`,
-                    start: `${event.start_date} ${
-                      TIME_OF_TIME[newEventList[0].medi_time]
-                    }`,
-                    backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
-                    extendProps: {
-                      medi_time: newEventList[0].medi_time,
-                      medicineList: newEventList.map(
-                        (medicine: any) => medicine.medications.id
-                      ),
-                    },
-                  });
-                }
-              };
-
-              setEventList("morning");
-              setEventList("afternoon");
-              setEventList("evening");
-            }
-          });
-          setEvents(newEvents);
-        }
-      } catch (error) {
-        console.log("axios error", error);
-      }
-    };
-
-    getEventsData();
-  }, [user, mediNames]);
 
   useEffect(() => {
     const getCalendarData = async () => {

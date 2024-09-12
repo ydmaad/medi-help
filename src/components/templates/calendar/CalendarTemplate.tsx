@@ -5,7 +5,7 @@ import CalendarView from "./calendarView/CalendarView";
 import Loading from "@/components/atoms/Loading";
 import { useEventsStore, useMediNameFilter } from "@/store/calendar";
 import { useAuthStore } from "@/store/auth";
-import { COLOR_OF_TIME, TIME_OF_TIME } from "@/constants/constant";
+import { TIME_OF_TIME } from "@/constants/constant";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
 import CalendarCheckbox from "./calendarView/CalendarCheckbox";
@@ -52,7 +52,6 @@ const CalendarTemplate = () => {
                       start: `${event.start_date} ${
                         TIME_OF_TIME[newEventList[0].medi_time]
                       }`,
-                      backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
                       extendProps: {
                         medi_time: newEventList[0].medi_time,
                         medicineList: newEventList.map(
