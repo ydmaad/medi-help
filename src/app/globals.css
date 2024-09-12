@@ -44,16 +44,6 @@
   background-color: white;
 }
 
-.fc-day-today i {
-  display: inline-block;
-  width: 24px;
-  background-color: #279ef9 !important;
-  padding: 3px;
-  border-radius: 50%;
-  color: #fff !important;
-  text-align: center;
-}
-
 .fc-highlight i {
   display: inline-block;
   width: 24px;
@@ -72,7 +62,6 @@
 .fc .fc-daygrid-day-number i {
   display: inline-block;
   color: #7c7f86; /*gray-600*/
-  font-size: 12px;
   font-style: normal !important;
 }
 
@@ -88,6 +77,17 @@
 }
 
 @media screen and (min-width: 768px) {
+  .fc-day-today i {
+    display: inline-block;
+    width: 24px;
+    background-color: #279ef9 !important;
+    padding: 3px;
+    border-radius: 50%;
+    color: #fff !important;
+    font-size: 12px;
+    text-align: center;
+  }
+
   :root {
     --fc-button-bg-color: "#f5f6f7";
   }
@@ -114,16 +114,6 @@
     padding: 0 0.5px;
   }
 
-  .event-title {
-    margin-left: 2px;
-    font-size: 0.8rem;
-    text-overflow: ellipsis;
-  }
-
-  /* .fc-event-title {
-    color: #40444c !important;
-  } */
-
   .fc-daygrid-events {
     min-height: 90px;
   }
@@ -136,6 +126,17 @@
 }
 
 @media screen and (max-width: 768px) {
+  .fc-day-today i {
+    display: inline-block;
+    width: 18px;
+    background-color: #279ef9 !important;
+    padding: 1.5px 3px;
+    border-radius: 50%;
+    color: #fff !important;
+    font-size: 10px;
+    text-align: center;
+  }
+
   :root {
     --fc-daygrid-event-dot-width: 6px;
     --fc-button-bg-color: "#f5f6f7";
@@ -165,19 +166,20 @@
     min-height: 44px;
     max-height: 64px;
   }
+
   .fc-daygrid-day-events {
     display: flex;
-    justify-content: center !important;
-    align-items: center !important;
+    justify-content: space-between !important;
     gap: 2px;
-    margin: 0px !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+    padding: 0 2px !important;
   }
 
   .fc .fc-daygrid-event {
     height: 10px;
     display: flex !important;
     margin-top: 10px;
-    align-items: center !important;
     overflow: hidden;
   }
 
@@ -199,15 +201,16 @@
   .fc-event {
     margin: 0 !important;
   }
-  .event-title {
-    display: none !important;
-  }
+
   .fc .fc-daygrid-day-number {
     font-size: 12px;
   }
   .fc-daygrid-dot-event {
     align-items: normal !important;
     padding: 8px 0 !important;
+  }
+  .fc-daygrid-day-bottom {
+    display: none;
   }
 }
 

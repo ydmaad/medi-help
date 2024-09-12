@@ -23,6 +23,7 @@ import {
 import { GoPlus } from "react-icons/go";
 import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 import { useToast } from "@/hooks/useToast";
+import TimeColor from "@/components/atoms/TimeColor";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
@@ -295,22 +296,15 @@ const CalendarView = () => {
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
             <div className="absolute desktop:static flex flex-row items-center right-1 top-[12px] gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex px-2 desktop:px-0">
               <div className="flex items-center">
-                <div
-                  className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
-                />
+                <TimeColor time={"morning"} />
                 아침
               </div>
-
               <div className="flex items-center">
-                <div
-                  className={`w-2 h-2 rounded-full bg-[#6ebefb] inline-block mr-1`}
-                />
+                <TimeColor time={"afternoon"} />
                 점심
               </div>
               <div className="flex items-center">
-                <div
-                  className={`w-2 h-2 rounded-full bg-[#103769] inline-block mr-1`}
-                />
+                <TimeColor time={"evening"} />
                 저녁
               </div>
             </div>
@@ -353,10 +347,10 @@ const CalendarView = () => {
               eventContent={(arg) => {
                 return (
                   <>
-                    <div
-                      className={`w-2 h-2 rounded-full bg-[${arg.event.backgroundColor}]`}
-                    ></div>
-                    <div className="event-title">
+                    <TimeColor
+                      time={arg.event.extendedProps.extendProps.medi_time}
+                    />
+                    <div className="hidden desktop:block text-[0.8rem]">
                       {arg.event.title.split(" ")[0]}
                       <span>
                         {arg.event.title.split(" ").slice(1, 3).join(" ")}
