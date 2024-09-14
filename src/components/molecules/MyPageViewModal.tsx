@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Plus } from "lucide-react";
-import { format, parse } from "date-fns";
+import { ChevronLeft, Plus, X } from "lucide-react";
+import { format } from "date-fns";
 import axios from "axios";
 import { useToast } from "@/hooks/useToast";
 
@@ -119,6 +119,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
         : [day],
     }));
   };
+
   const handleNotificationTimeChange = (index: number, value: string) => {
     setEditedRecord((prev) => ({
       ...prev,
@@ -242,20 +243,15 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
           <span className="text-brand-gray-800 text-[18px] font-bold">
             나의 약 {isEditing ? "수정" : ""}
           </span>
-          {isEditing ? (
-            <button
-              onClick={handleSave}
-              className="text-blue-500 hover:text-blue-700"
-            >
-              저장
-            </button>
-          ) : (
+          {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
               className="text-brand-primary-500"
             >
               편집
             </button>
+          ) : (
+            <div className="w-6"></div> // Placeholder for alignment when editing
           )}
         </div>
         <div className="flex-grow p-4 space-y-4">
@@ -327,7 +323,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                       {mediRecord.notes}
                     </span>
                   ) : (
-                    <span className="text-brand-gray-800 italic">
+                    <span className="text-brand-gray-800">
                       복약 후 몸 상태나 오늘 하루의 복약에 대한 한 마디를
                       적어보세요.
                     </span>
@@ -347,16 +343,16 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                   placeholder="약 별명(최대 6자)"
                   value={editedRecord.medi_nickname}
                   onChange={handleInputChange}
-                  className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
+                  className="border rounded w-full h-[48px] py-2 px-3 text-[16px] text-brand-gray-1000 leading-tight focus:outline-none"
                 />
               </div>
 
-              <div className="mb-5">
+              <div className="mb-2">
                 <select
                   name="medi_name"
                   value={editedRecord.medi_name}
                   onChange={handleInputChange}
-                  className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
+                  className="border rounded w-full h-[48px] py-2 px-3 text-[16px] text-brand-gray-1000 leading-tight focus:outline-none"
                   disabled={isLoading}
                 >
                   <option value="">약 이름 선택</option>
@@ -374,15 +370,21 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                 </select>
               </div>
 
-              <div className="mb-5">
-                <label className="block text-sm font-medium text-brand-gray-800">
+              <div className="mb-5 mt-8">
+                <label className="block text-[14px] font-medium text-brand-gray-600 mb-2">
                   복용 시간
                 </label>
-                <div className="flex items-center space-x-2">
+                <div className="flex justify-between items-center space-x-2">
                   {["morning", "afternoon", "evening"].map((time) => (
                     <button
                       key={time}
-                      className={`border rounded px-2 py-1 ${editedRecord.times[time as keyof typeof editedRecord.times] ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+                      className={`flex-1 h-[40px] rounded-full ${
+                        editedRecord.times[
+                          time as keyof typeof editedRecord.times
+                        ]
+                          ? "bg-brand-primary-500 text-white"
+                          : "bg-brand-gray-50 text-brand-gray-800"
+                      }`}
                       onClick={() =>
                         handleTimeChange(
                           time as "morning" | "afternoon" | "evening"
@@ -400,9 +402,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
               </div>
 
               <div className="mb-5">
-                <label className="block text-sm font-medium text-brand-gray-800">
-                  복용 기간
-                </label>
+               
                 <div className="flex items-center space-x-2">
                   <input
                     type="date"
@@ -411,7 +411,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                     onChange={handleInputChange}
                     className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                   />
-                  <span>~</span>
+                  <span className="whitespace-nowrap">부터</span>
                   <input
                     type="date"
                     name="end_date"
@@ -419,15 +419,16 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                     onChange={handleInputChange}
                     className="border rounded w-full h-[40px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                   />
+                  <span className="whitespace-nowrap">까지</span>
                 </div>
               </div>
 
               <div className="mb-5">
                 <div className="flex justify-between items-center">
-                  <label className="block text-sm font-medium text-brand-gray-800">
-                    알람 설정
-                  </label>
                   <div className="flex items-center space-x-2">
+                    <label className="block text-[14px] font-medium text-brand-gray-600">
+                      알람 설정
+                    </label>
                     <Switch
                       checked={editedRecord.repeat ?? false}
                       onCheckedChange={(checked) =>
@@ -437,27 +438,30 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                         }))
                       }
                     />
+                  </div>
+                  {editedRecord.repeat && (
                     <button
                       onClick={addNotificationTime}
-                      className="text-blue-500 hover:text-blue-700"
-                      disabled={!editedRecord.repeat}
+                      className="text-brand-primary-500 hover:text-brand-primary-700"
                     >
-                      <Plus size={20} />
+                      추가
                     </button>
-                  </div>
+                  )}
                 </div>
                 {editedRecord.repeat && (
                   <>
                     <div className="mt-2">
-                      <label className="block text-sm font-medium text-brand-gray-800">
-                        요일 선택
-                      </label>
-                      <div className="flex items-center space-x-2">
+                
+                      <div className="flex justify-between items-center">
                         {["월", "화", "수", "목", "금", "토", "일"].map(
                           (day) => (
                             <button
                               key={day}
-                              className={`border rounded px-2 py-1 ${editedRecord.day_of_week?.includes(day) ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+                              className={`w-10 h-10 rounded-full text-base ${
+                                editedRecord.day_of_week?.includes(day)
+                                  ? "bg-brand-primary-500 text-white"
+                                  : "bg-brand-gray-50 text-brand-gray-800"
+                              }`}
                               onClick={() => handleDayOfWeekChange(day)}
                             >
                               {day}
@@ -467,9 +471,7 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                       </div>
                     </div>
                     <div className="mt-2">
-                      <label className="block text-sm font-medium text-brand-gray-800">
-                        알람 시간 설정
-                      </label>
+                  
                       {editedRecord.notification_time?.map((time, index) => (
                         <div
                           key={index}
@@ -488,9 +490,9 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                           />
                           <button
                             onClick={() => removeNotificationTime(index)}
-                            className="text-red-500 hover:text-red-700"
+                            className="text-brand-gray-600 hover:text-brand-gray-800"
                           >
-                            삭제
+                            <X size={20} />
                           </button>
                         </div>
                       ))}
@@ -499,39 +501,38 @@ const MyPageViewModal: React.FC<MyPageViewModalProps> = ({
                 )}
               </div>
 
-              <div className="mb-5">
-                <label className="block text-sm font-medium text-brand-gray-800">
-                  메모
-                </label>
-                <textarea
-                  name="notes"
-                  value={editedRecord.notes}
-                  onChange={handleInputChange}
-                  className="border rounded w-full h-[80px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
-                />
-              </div>
-            </>
-          )}
-        </div>
-        {isEditing && (
-          <div className="flex justify-between items-center px-4 py-3 border-t">
-            <button
-              onClick={handleDelete}
-              className="text-red-500 hover:text-red-700"
-            >
-              삭제
-            </button>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              취소
-            </button>
-          </div>
+              <div className="mb-10"> {/* 메모란에 40px(10단위) 하단 마진 추가 */}
+              <label className="block text-[16px] font-medium text-brand-gray-600 mb-2">
+                메모
+              </label>
+              <textarea
+                name="notes"
+                value={editedRecord.notes}
+                onChange={handleInputChange}
+                placeholder="약에 대한 간단한 메모를 남겨주세요."
+                className="border border-brand-gray-200 rounded-md w-full h-[160px] py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none placeholder-brand-gray-400 resize-none"
+              />
+            </div>
+            <div className="flex justify-center items-center space-x-4">
+              <button
+                onClick={handleDelete}
+                className="w-[160px] h-[40px] bg-brand-primary-50 text-brand-primary-500 rounded"
+              >
+                삭제
+              </button>
+              <button
+                onClick={handleSave}
+                className="w-[160px] h-[40px] bg-brand-primary-500 text-white rounded"
+              >
+                수정
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default MyPageViewModal;
