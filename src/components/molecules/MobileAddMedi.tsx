@@ -123,6 +123,15 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
     );
   };
 
+  const handleAddNotificationTime = () => {
+    setNotificationTime([...notificationTime, ""]);
+  };
+
+  const handleRemoveNotificationTime = (index: number) => {
+    const updatedNotificationTime = notificationTime.filter((_, i) => i !== index);
+    setNotificationTime(updatedNotificationTime);
+  };
+
   const handleNotificationTimeChange = (index: number, value: string) => {
     const updatedNotificationTime = [...notificationTime];
     updatedNotificationTime[index] = value;
@@ -130,6 +139,8 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
   };
 
   if (!isOpen) return null;
+
+  
 
   return (
     <div className="fixed inset-0 bg-white overflow-y-auto w-full z-50 flex flex-col">
@@ -221,26 +232,9 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
           </div>
         </div>
 
-        <div className="mb-6 flex w-full max-w-xs items-center justify-between">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="border rounded w-[96px] h-[28px] py-2 px-2 text-brand-gray-800 leading-tight"
-          />
-          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>부터</span>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="border rounded w-[96px] h-[28px] py-2 px-2 text-brand-gray-800 leading-tight"
-          />
-          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>까지</span>
-        </div>
-
-        <div className="flex items-center mb-6 w-full max-w-xs">
+        <div className="flex items-center justify-between mb-6 w-full max-w-xs">
           <label className="flex items-center">
-            <span className="ml-2 text-brand-gray-600">알림 설정 </span>
+            <span className="text-brand-gray-600">알림 설정 </span>
             <div
               onClick={() => setNotificationEnabled(!notificationEnabled)}
               className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
@@ -254,7 +248,16 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
               ></div>
             </div>
           </label>
+          {notificationEnabled && (
+            <button
+              onClick={handleAddNotificationTime}
+              className="text-brand-primary-500 hover:text-brand-primary-700"
+            >
+              추가
+            </button>
+          )}
         </div>
+
         {notificationEnabled && (
           <div className="mb-6 w-full max-w-xs">
             <div className="flex justify-between w-full mb-4">
@@ -276,7 +279,7 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
             </div>
 
             {notificationTime.map((time, index) => (
-              <div key={index} className="flex mb-2">
+              <div key={index} className="flex mb-2 items-center">
                 <input
                   type="time"
                   value={time}
@@ -285,10 +288,19 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
                   }
                   className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                 />
+                <button
+                  onClick={() => handleRemoveNotificationTime(index)}
+                  className="ml-2 text-brand-gray-600 hover:text-brand-gray-800"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             ))}
           </div>
         )}
+
 
         <div className="mb-6 w-full max-w-xs">
           <label className="block text-brand-gray-600 text-sm font-bold mb-2">메모:</label>
