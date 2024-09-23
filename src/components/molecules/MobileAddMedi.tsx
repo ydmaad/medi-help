@@ -138,13 +138,33 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
     setNotificationTime(updatedNotificationTime);
   };
 
+  const Switch: React.FC<{
+    checked: boolean;
+    onCheckedChange: (checked: boolean) => void;
+  }> = ({ checked, onCheckedChange }) => {
+    return (
+      <div
+        className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer ${
+          checked ? "bg-blue-400" : "bg-gray-300"
+        }`}
+        onClick={() => onCheckedChange(!checked)}
+      >
+        <div
+          className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
+            checked ? "translate-x-4" : "translate-x-0"
+          }`}
+        />
+      </div>
+    );
+  };
+
   if (!isOpen) return null;
 
   
 
   return (
     <div className="fixed inset-0 bg-white overflow-y-auto w-full z-50 flex flex-col">
-      <div className="w-full bg-white fixed top-0 left-0 flex justify-between items-center px-4 py-3 shadow-md">
+      <div className="w-full bg-white fixed top-0 left-0 flex justify-between items-center px-4 py-3">
         <button onClick={onRequestClose} className="text-2xl">
           <IoIosArrowBack />
         </button>
@@ -191,7 +211,7 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
         </div>
 
         <div className="mb-6 w-full max-w-xs">
-          <label className="block text-brand-gray-600 text-sm font-bold mb-2">복용 시간</label>
+          <label className="block text-brand-gray-600 text-sm mb-2">복용 시간</label>
           <div className="flex space-x-2 text-brand-gray-800 justify-between">
             <button
               type="button"
@@ -234,19 +254,11 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
 
         <div className="flex items-center justify-between mb-6 w-full max-w-xs">
           <label className="flex items-center">
-            <span className="text-brand-gray-600">알림 설정 </span>
-            <div
-              onClick={() => setNotificationEnabled(!notificationEnabled)}
-              className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
-                notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
-              }`}
-            >
-              <div
-                className={`absolute w-6 h-6 bg-white rounded-full transition-transform transform ${
-                  notificationEnabled ? "translate-x-6" : "translate-x-0"
-                }`}
-              ></div>
-            </div>
+            <span className="text-brand-gray-600 text-sm pr-2">알림 설정 </span>
+            <Switch
+              checked={notificationEnabled}
+              onCheckedChange={setNotificationEnabled}
+            />
           </label>
           {notificationEnabled && (
             <button
@@ -258,25 +270,25 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
           )}
         </div>
 
+
         {notificationEnabled && (
-          <div className="mb-6 w-full max-w-xs">
-            <div className="flex justify-between w-full mb-4">
-              {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
-                <button
-                  key={day}
-                  type="button"
-                  onClick={() => handleDayOfWeekChange(day)}
-                  className={`px-2 py-1 items-center justify-center rounded-full ${
-                    dayOfWeek.includes(day)
-                      ? "bg-brand-primary-500 text-white"
-                      : "bg-brand-gray-50 text-brand-gray-800"
-                  } text-[14px]`}
-                  style={{ flex: "1", margin: "0 2px" }}
-                >
-                  {day}
-                </button>
-              ))}
-            </div>
+        <div className="mb-6 w-full max-w-xs">
+          <div className="flex justify-between w-full mb-4">
+            {["월", "화", "수", "목", "금", "토", "일"].map((day) => (
+              <button
+                key={day}
+                type="button"
+                onClick={() => handleDayOfWeekChange(day)}
+                className={`w-8 h-8 flex items-center justify-center rounded-full ${
+                  dayOfWeek.includes(day)
+                    ? "bg-brand-primary-500 text-white"
+                    : "bg-brand-gray-50 text-brand-gray-800"
+                } text-[14px]`}
+              >
+                {day}
+              </button>
+            ))}
+          </div>
 
             {notificationTime.map((time, index) => (
               <div key={index} className="flex mb-2 items-center">

@@ -11,7 +11,7 @@ const Switch: React.FC<{
   return (
     <div
       className={`w-10 h-6 flex items-center rounded-full p-1 cursor-pointer ${
-        checked ? "bg-blue-500" : "bg-gray-300"
+        checked ? "bg-blue-400" : "bg-gray-300"
       }`}
       onClick={() => onCheckedChange(!checked)}
     >
