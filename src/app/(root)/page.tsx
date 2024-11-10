@@ -66,8 +66,8 @@ const Page = () => {
   const limitedMagazines = magazines.slice(2, 5);
   const limitedMainMagazines = magazines.slice(0, 1);
   const limitedSubMagazines = magazines.slice(1, 2);
-  const limitedPosts = posts.slice(0, 6);
-
+  const hotlimitedPosts = posts.slice(0, 3);
+  const newlimitedPosts = posts.slice(3, 6);
   return (
     <>
       <div className="absolute inset-0 z-0 mt-[67px]">
@@ -78,7 +78,7 @@ const Page = () => {
         <MainTitle text="매디칼럼" />
         <LoadMoreButton targetPage="/magazine" />
       </div>
-      <div className="hidden desktop:flex flex-col justify-center items-center ">
+      <div className="hidden desktop:flex flex-col justify-center items-center  ">
         {error && <p className="text-red-500">{error}</p>}
         <div className="flex ">
           {limitedMainMagazines.map((magazine, index) => (
@@ -105,7 +105,7 @@ const Page = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-3 ">
+        <div className="grid grid-cols-3 gap-[24px] ">
           {limitedMagazines.map((magazine, index) => (
             <TertiColum
               key={index}
@@ -128,9 +128,24 @@ const Page = () => {
         <MainTitle text="커뮤니티" />
         <LoadMoreButton targetPage="/community" />
       </div>
-      <div className="flex justify-center items-center flex-col desktop:flex-row max-w-[1000px] mx-auto">
-        <div className="grid grid-cols-1 desktop:grid-cols-2 gap-4 ">
-          {limitedPosts.map((post, index) => (
+      <div className="flex justify-center items-center flex-col desktop:flex-row ">
+        <div className="grid grid-cols-1 desktop:grid-cols-1 desktop:gap-[28px] gap-[8px] desktop:mr-[28px] ">
+          {hotlimitedPosts.map((post, index) => (
+            <ContentsCard
+              key={index}
+              hotTitle="hot"
+              newTitle={null}
+              communityTitle={post.title}
+              imageSrc={
+                post.img_url && post.img_url.length > 0 ? post.img_url[0] : null
+              }
+              subTitle={post.contents}
+              id={post.id}
+            />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 desktop:grid-cols-1 desktop:gap-[28px] mt-[8px] gap-[8px] ">
+          {newlimitedPosts.map((post, index) => (
             <ContentsCard
               key={index}
               hotTitle={null}
@@ -140,6 +155,7 @@ const Page = () => {
                 post.img_url && post.img_url.length > 0 ? post.img_url[0] : null
               }
               subTitle={post.contents}
+              id={post.id}
             />
           ))}
         </div>

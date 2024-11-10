@@ -1,0 +1,19 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_i_1348_23361)">
+<rect width="48" height="48" rx="4" fill="#E9F5FE"/>
+<rect x="14.5" y="5.5" width="19" height="19" rx="1.5" fill="black" stroke="#2390E3"/>
+<path d="M19.5666 35.0352C19.5666 37.8242 17.8029 39.7578 14.6798 40.625L14.0939 39.4648C16.3966 38.8379 17.7209 37.666 17.967 36.2305H14.6681V35.0352H19.5666ZM15.9572 44.9492V40.8125H23.0236V44.9492H15.9572ZM17.422 43.7773H21.547V41.9844H17.422V43.7773ZM19.6369 38.1758V36.957H21.5353V34.4258H23.0236V40.3906H21.5353V38.1758H19.6369ZM33.2147 34.4141V40.7422H31.7264V38.2227H30.0623V37.0156H31.7264V34.4141H33.2147ZM24.1561 39.5703C25.9022 38.9844 26.6991 37.5898 26.7342 36.2539H24.5897V35.0586H30.3787V36.2539H28.2577C28.287 37.4961 29.0487 38.75 30.7069 39.3008L29.9686 40.4727C28.7967 40.0918 27.9823 39.3184 27.5194 38.3633C27.0506 39.4473 26.1952 40.3203 24.9295 40.7539L24.1561 39.5703ZM25.9022 43.0391C25.9022 41.7441 27.2967 40.9824 29.5702 40.9766C31.8495 40.9824 33.244 41.7441 33.2498 43.0391C33.244 44.334 31.8495 45.0898 29.5702 45.0898C27.2967 45.0898 25.9022 44.334 25.9022 43.0391ZM27.3905 43.0391C27.3905 43.6484 28.158 43.9531 29.5702 43.9531C30.9881 43.9531 31.7557 43.6484 31.7616 43.0391C31.7557 42.4238 30.9881 42.1191 29.5702 42.125C28.158 42.1191 27.3905 42.4238 27.3905 43.0391Z" fill="#279EF9"/>
+</g>
+<defs>
+<filter id="filter0_i_1348_23361" x="0" y="0" width="48" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="6"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_1348_23361"/>
+</filter>
+</defs>
+</svg>

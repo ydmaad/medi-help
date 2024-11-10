@@ -11,7 +11,7 @@ interface TextButtonProps {
 const TextButton = ({ text, href, className }: TextButtonProps) => {
   return (
     <div
-      className={`text-center text-brand-gray-800 text-[16px] my-2 hover:font-bold ${className}`}
+      className={`text-center text-brand-gray-800 text-[16px] my-[10px] mx-[10px] hover:font-bold ${className}`}
     >
       <Link href={href}>{text}</Link>
     </div>

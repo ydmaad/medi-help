@@ -41,7 +41,9 @@ const MainColum = ({
           onClick={handleClick}
         >
           <MainImage />
-          <CardTitle />
+          <h2 className="text-[12px] desktop:text-[16px] font-bold text-left mt-[8px] desktop:mt-4 ">
+            {title}
+          </h2>
           <div className=" text-brand-gray-600 ">
             <BarText />
           </div>
