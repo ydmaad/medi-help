@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { BarTextProvider } from "@/contexts/BarTextContext";
-import BarText from "../atoms/BarText";
 
 interface ImageButtonProps {
   src: string;
