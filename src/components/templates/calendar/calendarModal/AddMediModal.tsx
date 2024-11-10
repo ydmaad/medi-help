@@ -166,6 +166,15 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
     setNotificationTime(updatedNotificationTime);
   };
 
+  const handleAddNotificationTime = () => {
+    setNotificationTime([...notificationTime, ""]);
+  };
+
+  const handleRemoveNotificationTime = (index: number) => {
+    const updatedNotificationTime = notificationTime.filter((_, i) => i !== index);
+    setNotificationTime(updatedNotificationTime);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -303,9 +312,9 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         </div>
 
         {/* 알림 설정 */}
-        <div className="flex items-center mb-4">
-          <label className="flex items-center">
-          <span className="ml-2 text-brand-gray-600">알림 설정 </span>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <span className="text-brand-gray-600">알림 설정</span>
             <div
               onClick={() => setNotificationEnabled(!notificationEnabled)}
               className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
@@ -318,12 +327,19 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                 }`}
               ></div>
             </div>
-          </label>
+          </div>
+          {notificationEnabled && (
+            <button
+              onClick={handleAddNotificationTime}
+              className="text-brand-primary-500 hover:text-brand-primary-700"
+            >
+              추가
+            </button>
+          )}
         </div>
 
         {notificationEnabled && (
           <div className="mb-4">
-           
             <div className="flex flex-wrap space-x-2 mb-5">
               {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
                 <button
@@ -341,9 +357,8 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               ))}
             </div>
 
-        
             {notificationTime.map((time, index) => (
-              <div key={index} className="flex mb-2">
+              <div key={index} className="flex mb-2 items-center">
                 <input
                   type="time"
                   value={time}
@@ -352,7 +367,14 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                   }
                   className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                 />
-                
+                <button
+                  onClick={() => handleRemoveNotificationTime(index)}
+                  className="ml-2 text-brand-gray-600 hover:text-brand-gray-800"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             ))}
           </div>
