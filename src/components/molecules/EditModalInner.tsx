@@ -82,6 +82,18 @@ const EditModalInner = ({ viewEvents, setViewEvents }: Props) => {
             .filter((medi: MedicinesType) => {
               return medi.time[values.medi_time] === true;
             })
+            .sort((a, b) => {
+              if (
+                a.notification_time.length !== 0 &&
+                b.notification_time.length !== 0
+              ) {
+                return (
+                  Number(a.notification_time[0].split(":")[0]) -
+                  Number(b.notification_time[0].split(":")[0])
+                );
+              }
+              return b.notification_time.length - a.notification_time.length;
+            })
             .map((medicine: MedicinesType, idx: number) => {
               return <MediCheck medicine={medicine} idx={idx} key={idx} />;
             })}
