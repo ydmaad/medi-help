@@ -5,7 +5,7 @@ import ModalCloseButton from "@/components/atoms/ModalCloseButton";
 import ModalTitle from "@/components/atoms/ModalTitle";
 import EditModalInner from "@/components/molecules/EditModalInner";
 import ViewModalInner from "@/components/molecules/ViewModalInner";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
+import { DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import {
   useCalendarStore,
   useEditStore,
@@ -46,7 +46,7 @@ const DetailModal = ({
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);
     let deletedCalendar: CalendarType[] = calendar.filter(
-      (data) => data.start_date !== values.start_date
+      (data: any) => data.start_date !== values.start_date
     );
     setCalendar(deletedCalendar);
     setEdit(false);
@@ -68,7 +68,7 @@ const DetailModal = ({
 
       if (countMedicines === 0) {
         setEvents([
-          ...events.filter((event) => {
+          ...events.filter((event: any) => {
             return !(
               event.groupId === value.id &&
               event.extendProps.medi_time === value.medi_time
@@ -80,7 +80,7 @@ const DetailModal = ({
       if (countMedicines !== 0) {
         let medicineNickname = data[0][0].medications.medi_nickname;
         setEvents([
-          ...events.filter((event) => {
+          ...events.filter((event: any) => {
             return !(
               event.groupId === value.id &&
               event.extendProps.medi_time === value.medi_time
@@ -97,8 +97,6 @@ const DetailModal = ({
                 .toISOString()
                 .split("T")[0]
             } ${TIME_OF_TIME[value.medi_time]}`,
-            backgroundColor: COLOR_OF_TIME[value.medi_time],
-            borderColor: COLOR_OF_TIME[value.medi_time],
             extendProps: {
               medi_time: value.medi_time,
               medicineList: value.medicine_id,
@@ -108,7 +106,7 @@ const DetailModal = ({
       }
 
       setCalendar([
-        ...calendar.filter((cal) => cal.id !== value.id),
+        ...calendar.filter((cal: any) => cal.id !== value.id),
         { ...value, created_at: String(new Date()) },
       ]);
 
@@ -124,7 +122,7 @@ const DetailModal = ({
       const res = await axios.delete(`/api/calendar/${id}`);
 
       setEvents([
-        ...events.filter((event) => {
+        ...events.filter((event: any) => {
           return (
             String(event.start).split(" ")[0] !==
             new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
@@ -134,7 +132,7 @@ const DetailModal = ({
         }),
       ]);
 
-      setCalendar([...calendar.filter((cal) => cal.id !== id)]);
+      setCalendar([...calendar.filter((cal: any) => cal.id !== id)]);
 
       return res;
     } catch (error) {
@@ -187,7 +185,7 @@ const DetailModal = ({
 
   // 수정하기 버튼 onClick 함수
   const handleEditButtonClick = () => {
-    let filteredCalendar = calendar.filter((cal) => {
+    let filteredCalendar = calendar.filter((cal: any) => {
       return cal.start_date === values.start_date;
     });
 
@@ -207,8 +205,8 @@ const DetailModal = ({
       overlayClassName="fixed inset-0 bg-black/[0.6] z-20 hidden desktop:block "
       ariaHideApp={false}
     >
-      <div className="w-1/4 min-w-96 h-5/8 min-h-[480px] p-6 my-0 m-auto flex flex-col gap-[20px] bg-white rounded-sm z-20 drop-shadow-xl ">
-        <div className="flex align-items py-1 justify-between gap-2">
+      <div className="w-[416px] h-[579px] p-[24px] my-0 m-auto flex flex-col bg-white rounded-[8px] z-20 drop-shadow-xl ">
+        <div className="flex align-items justify-between gap-2 mb-[20px]">
           <ModalTitle>하루 약 기록</ModalTitle>
           <ModalCloseButton handleCloseButtonClick={handleCloseButtonClick} />
         </div>
@@ -219,7 +217,7 @@ const DetailModal = ({
               viewEvents={viewEvents}
               setViewEvents={setViewEvents}
             />
-            <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
+            <div className="w-full h-1/5 mt-[40px] flex items-center justify-center gap-4">
               <ModalButton
                 handleClick={handleDeleteButtonClick}
                 viewEvents={viewEvents}
@@ -234,7 +232,7 @@ const DetailModal = ({
         ) : (
           <>
             <ViewModalInner />
-            <div className="w-full h-1/5 py-4 flex items-center justify-center gap-4">
+            <div className="w-full mt-[40px] flex justify-center gap-4">
               <ModalButton handleClick={handleEditButtonClick}>
                 수정
               </ModalButton>

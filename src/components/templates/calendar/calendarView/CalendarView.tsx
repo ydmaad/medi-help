@@ -5,7 +5,7 @@ import { EventInput } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import axios from "axios";
-import { COLOR_OF_TIME, DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
+import { DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import DetailModal from "../calendarModal/DetailModal";
 import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
 import { useAuthStore } from "@/store/auth";
@@ -23,7 +23,7 @@ import {
 import { GoPlus } from "react-icons/go";
 import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 import { useToast } from "@/hooks/useToast";
-
+import TimeColor from "@/components/atoms/TimeColor";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
@@ -81,66 +81,6 @@ const CalendarView = () => {
   }, [user]);
 
   useEffect(() => {
-    const getEventsData = async () => {
-      try {
-        if (user) {
-          const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
-
-          const newEvents: EventInput[] = [];
-          data.map((event: EventInput) => {
-            if (event.calendar_medicine.length !== 0) {
-              const setEventList = (time: string) => {
-                let eventList = event.calendar_medicine.filter(
-                  (medicine: any) => {
-                    return medicine.medi_time === time;
-                  }
-                );
-
-                const newEventList = eventList.filter((e: any) => {
-                  return mediNames.includes(e.medications.medi_nickname);
-                });
-
-                let countMedicines = newEventList.length;
-
-                if (countMedicines !== 0) {
-                  let medicineNickname =
-                    newEventList[0].medications.medi_nickname;
-                  newEvents.push({
-                    groupId: event.id,
-                    title:
-                      countMedicines !== 1
-                        ? `${medicineNickname} 외 ${countMedicines - 1}개`
-                        : `${medicineNickname}`,
-                    start: `${event.start_date} ${
-                      TIME_OF_TIME[newEventList[0].medi_time]
-                    }`,
-                    backgroundColor: COLOR_OF_TIME[newEventList[0].medi_time],
-                    extendProps: {
-                      medi_time: newEventList[0].medi_time,
-                      medicineList: newEventList.map(
-                        (medicine: any) => medicine.medications.id
-                      ),
-                    },
-                  });
-                }
-              };
-
-              setEventList("morning");
-              setEventList("afternoon");
-              setEventList("evening");
-            }
-          });
-          setEvents(newEvents);
-        }
-      } catch (error) {
-        console.log("axios error", error);
-      }
-    };
-
-    getEventsData();
-  }, [user, mediNames]);
-
-  useEffect(() => {
     const getCalendarData = async () => {
       try {
         if (user) {
@@ -174,11 +114,11 @@ const CalendarView = () => {
       .toISOString()
       .split("T")[0];
 
-    let filteredCalendar = calendar.filter((cal) => {
+    let filteredCalendar = calendar.filter((cal: any) => {
       return cal.start_date === newDate;
     });
 
-    let editList = events.filter((event) => {
+    let editList = events.filter((event: any) => {
       return event.start?.toString().split(" ")[0] === newDate;
     });
 
@@ -215,11 +155,11 @@ const CalendarView = () => {
       .toISOString()
       .split("T")[0];
 
-    let filteredCalendar = calendar.filter((cal) => {
+    let filteredCalendar = calendar.filter((cal: any) => {
       return cal.start_date === today;
     });
 
-    let editList = events.filter((event) => {
+    let editList = events.filter((event: any) => {
       return event.start?.toString().split(" ")[0] === today;
     });
 
@@ -297,22 +237,15 @@ const CalendarView = () => {
           <div className="absolute w-3/4 flex items-center justify-normal min-[1301px]:justify-between right-0 max-[1300px]:justify-end desktop:top-1.5 ">
             <div className="absolute desktop:static flex flex-row items-center right-1 top-[12px] gap-2 text-xs desktop:text-sm max-[1300px]:hidden max-[769px]:flex px-2 desktop:px-0">
               <div className="flex items-center">
-                <div
-                  className={`w-2 h-2 rounded-full bg-[#bce1fd] inline-block mr-1`}
-                />
+                <TimeColor time={"morning"} />
                 아침
               </div>
-
               <div className="flex items-center">
-                <div
-                  className={`w-2 h-2 rounded-full bg-[#6ebefb] inline-block mr-1`}
-                />
+                <TimeColor time={"afternoon"} />
                 점심
               </div>
               <div className="flex items-center">
-                <div
-                  className={`w-2 h-2 rounded-full bg-[#103769] inline-block mr-1`}
-                />
+                <TimeColor time={"evening"} />
                 저녁
               </div>
             </div>
@@ -351,6 +284,21 @@ const CalendarView = () => {
               fixedWeekCount={false}
               dayCellContent={(arg) => {
                 return <i>{arg.dayNumberText.replace("일", "")}</i>;
+              }}
+              eventContent={(arg) => {
+                return (
+                  <>
+                    <TimeColor
+                      time={arg.event.extendedProps.extendProps.medi_time}
+                    />
+                    <div className="hidden desktop:block text-[0.8rem]">
+                      {arg.event.title.split(" ")[0]}
+                      <span>
+                        {arg.event.title.split(" ").slice(1, 3).join(" ")}
+                      </span>
+                    </div>
+                  </>
+                );
               }}
             />
           </div>

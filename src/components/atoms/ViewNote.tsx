@@ -9,10 +9,10 @@ interface Props {
 const ViewNote = ({ values }: Props) => {
   return (
     <div
-      className={`h-2/5 min-h-28 p-4 w-full border border-brand-gray-50 bg-brand-gray-50 font-normal ${
+      className={`h-[125px] p-4 mt-[8px] w-full border border-brand-gray-50 bg-brand-gray-50 font-normal ${
         values.side_effect && values.side_effect.length !== 0
           ? "text-[16px] text-brand-gray-800"
-          : "text-[14px] text-brand-gray-400"
+          : "text-[14px] text-brand-gray-600"
       }  `}
     >
       {values.side_effect && values.side_effect.length !== 0

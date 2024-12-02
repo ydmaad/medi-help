@@ -48,7 +48,7 @@ const MediCheck = ({ medicine, idx }: Props) => {
         if (Number(hour) > 12) {
           setNotification((prev) => [
             ...prev,
-            `오후 0${Number(hour) - 12}:${minute}`,
+            `오후 ${Number(hour) - 12}:${minute}`,
           ]);
         }
 
