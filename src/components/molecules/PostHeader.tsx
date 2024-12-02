@@ -8,7 +8,7 @@ interface PostHeaderProps {
 
 const PostHeader = ({ onAddPost }: PostHeaderProps) => {
   return (
-    <div className="flex desktop:hidden justify-between space-x-4 mb-[35px] mt-[50px]">
+    <div className="fixed top-0 left-0 right-0 z-20 flex desktop:hidden flex-row items-center justify-between p-4 bg-white h-[67px]">
       <Link href={`/community/`}>
         <Image
           src="/postCancel.svg"
