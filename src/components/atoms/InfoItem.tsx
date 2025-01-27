@@ -6,9 +6,9 @@ interface InfoItemProps {
 }
 
 const InfoItem = ({ label, value }: InfoItemProps) => (
-  <div className="mb-[4px] desktop:mb-[10px] text-[12px] desktop:text-[14px]">
-    <span className="text-brand-gray-600 mr-[24px]">{label}</span>
-    <span className="text-brand-gray-1000">{value}</span>
+  <div className="flex mb-[4px] desktop:mb-[10px] text-[12px] desktop:text-[14px]">
+    <div className="w-[55px] text-brand-gray-600 mr-[24px]">{label}</div>
+    <div className="text-brand-gray-1000">{value}</div>
   </div>
 );
 

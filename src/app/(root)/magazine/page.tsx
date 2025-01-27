@@ -81,7 +81,7 @@ const MagazinePage = () => {
       <div className="flex flex-col items-center">
         {error && <p className="text-red-500">{error}</p>}
         <div className="hidden desktop:flex">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-[24px]">
             {currentMagazines.map((magazine) => (
               <SmCard
                 key={magazine.id}

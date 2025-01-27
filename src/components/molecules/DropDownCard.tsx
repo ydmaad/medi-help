@@ -15,8 +15,10 @@ const DropDownCard = ({ title, hiddenText }: DropDownCardProps) => {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="mt-[8px] w-[335px] desktop:mt-[16px] desktop:w-[996px] border rounded-[16px] bg-white border-brand-gray-50 overflow-hidden">
-        <div className="desktop:mx-[40px] mx-[0px] flex items-center justify-between p-4 ">
+      <div
+        className={`mt-[8px] w-[335px] desktop:mt-[16px] desktop:w-[996px] border rounded-[16px] bg-white ${isFlipped ? "border-brand-gray-200" : "border-brand-gray-50"} overflow-hidden`}
+      >
+        <div className="desktop:mx-[40px] mx-[0px] flex items-center justify-between p-4">
           <div
             className={`text-[16px] desktop:text-[20px] font-semibold ${
               isFlipped ? "text-brand-primary-500" : "text-brand-gray-800"
@@ -55,7 +57,7 @@ const DropDownCard = ({ title, hiddenText }: DropDownCardProps) => {
           ref={contentRef}
           className={`transition-max-height duration-300 ease-in-out text-left ${
             isFlipped
-              ? "max-h-[200px] p-3 desktop:mx-[40px] "
+              ? "max-h-[200px] p-3 desktop:mx-[40px]"
               : "max-h-0 p-0 mx-[12px] desktop:mx-[40px]"
           }`}
         >
@@ -63,7 +65,7 @@ const DropDownCard = ({ title, hiddenText }: DropDownCardProps) => {
             hiddenText.map((text, index) => (
               <div
                 key={index}
-                className={`mb-2 ${isFlipped ? "text-black" : "text-white"}`}
+                className={`mb-2 ${isFlipped ? "text-brand-gray-1000" : "text-white"}`}
               >
                 {text}
               </div>

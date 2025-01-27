@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
-import SearchBar from "./SearchBar";
+import SearchBarMain from "./SearchBarMain";
 import Mouse from "@/components/atoms/mouse";
 
 const Hero = () => {
@@ -22,13 +22,13 @@ const Hero = () => {
           약에 대한 정보가 궁금하다면?
         </div>
         <div className="mb-[120px] z-10 ">
-          <SearchBar onSearchChange={handleSearchChange} />
+          <SearchBarMain onSearchChange={handleSearchChange} />
         </div>
       </div>
 
       <div className="relative flex mt-56 desktop:hidden flex-col justify-center items-center">
         <div className="mb-[60px] z-10 ">
-          <SearchBar onSearchChange={handleSearchChange} />
+          <SearchBarMain onSearchChange={handleSearchChange} />
         </div>
       </div>
     </>

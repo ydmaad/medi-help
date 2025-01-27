@@ -40,7 +40,7 @@ const SmCard = ({
   return (
     <ImageProvider value={{ src, alt, title, subtitle }}>
       <BarTextProvider value={barTextValue}>
-        <div className="rounded-lg p-2 cursor-pointer" onClick={handleClick}>
+        <div className="rounded-lg cursor-pointer" onClick={handleClick}>
           <div className="mb-[56px]">
             <CardImage />
             <div className="mt-[16px] mb-[16px]">

@@ -5,6 +5,7 @@ import SearchBar from "@/components/molecules/SearchBar";
 import Pagination from "@/components/molecules/Pagination";
 import MediCard from "@/components/molecules/MediCard";
 import SearchErr from "@/components/atoms/SearchErr";
+import MediShapeDropDown from "@/components/molecules/MediShapeDroupDown";
 
 type Item = {
   itemName: string;
@@ -99,6 +100,7 @@ const SearchPage = () => {
           <div className="flex flex-col items-center">
             <div className="desktop:mb-[40px] mb-[24px]">
               <SearchBar onSearchChange={handleSearchChange} />
+              <MediShapeDropDown title="모양으로 검색" />
             </div>
           </div>
           <div className="grid grid-cols-4 gap-4 mt-4 w-[1000px] h-auto">
@@ -108,13 +110,13 @@ const SearchPage = () => {
           </div>
         </div>
         <div className="flex max-w-[335px]  mx-auto">
-          <h1 className="text-[32px]  font-bold mb-[20px] mt-[96px]">
+          <h1 className="desktop:hidden text-[32px]  font-bold mb-[20px] mt-[96px]">
             🔎 약 검색
           </h1>
         </div>
         <div className="flex desktop:hidden flex-col items-center">
           <div className="flex flex-col items-center">
-            <div className="desktop:mb-[40px] mb-[24px]">
+            <div className="mb-[24px]">
               <SearchBar onSearchChange={handleSearchChange} />
             </div>
           </div>
@@ -144,10 +146,9 @@ const SearchPage = () => {
           🔎 약 검색
         </h1>
       </div>
-      <div className="flex flex-col items-center">
-        <div className="desktop:mb-[40px] mb-[24px]">
-          <SearchBar onSearchChange={handleSearchChange} />
-        </div>
+      <div className="flex flex-col items-center desktop:mb-[80px] mb-[40px] ">
+        <SearchBar onSearchChange={handleSearchChange} />
+        <MediShapeDropDown title="모양으로 검색" />
       </div>
       <div className="text-[16px] mb-[8px] desktop:mb-4 flex max-w-[335px] desktop:max-w-[1000px] mx-auto">
         <p className="text-brand-gray-1000 font-black text-xl">
@@ -161,10 +162,12 @@ const SearchPage = () => {
             </>
           ) : (
             <>
-              <span className="text-brand-gray-1000 font-black text-xl">
+              <span className="text-brand-gray-1000 mr-[8px] font-bold text-[14px]">
                 전체
               </span>
-              <span className="text-brand-gray-600">({totalItems})</span>
+              <span className="text-brand-gray-600 text-[14px] font-normal">
+                ({totalItems})
+              </span>
             </>
           )}
         </p>

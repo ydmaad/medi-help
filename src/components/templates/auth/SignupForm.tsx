@@ -112,7 +112,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
     if (isAvailable) {
       toast.success("사용 가능한 이메일입니다.");
     } else {
-      toast.error("이미 사용 중인 이메일입니다.");
+      // toast.error("이미 사용 중인 이메일입니다.");
     }
   };
 
@@ -131,12 +131,12 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
       setIsNicknameAvailable(isAvailable);
       setNicknameValid(true); // 길이 조건을 만족하면 우선 유효하다고 설정
       if (!isAvailable) {
-        toast.error("이미 사용 중인 닉네임입니다.");
+        // toast.error("이미 사용 중인 닉네임입니다.");
       }
     } else {
       setNicknameValid(false);
       if (newNickname) {
-        toast.error("닉네임은 2-6자 사이여야 합니다.");
+        // toast.error("닉네임은 2-6자 사이여야 합니다.");
       }
     }
   };
@@ -189,6 +189,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSubmit, error }) => {
       onSubmit({ nickname, email, password, agreeTerms, agreePrivacy });
     } else {
       // 에러 메시지 표시 로직
+      // 전체적으로 에러를 한 메시지로 할 방법으로 다시 로직 짜기
       let errors = [];
       if (!nicknameValid || !isNicknameAvailable)
         errors.push("닉네임을 확인해주세요.");

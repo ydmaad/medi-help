@@ -40,13 +40,15 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
       <button
         type="button"
         onClick={() => setShowPassword(!showPassword)}
-        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+        className="absolute inset-y-0 right-0 pl-3 pr-3 flex items-center transition-opacity duration-200 hover:opacity-80"
+        aria-label={showPassword ? "비밀번호 표시" : "비밀번호 숨기기"}
       >
         <Image
-          src={showPassword ? "/close_eye_icon.svg" : "/open_eye_icon.svg"}
-          alt="Toggle password visibility"
+          src={showPassword ? "/open_eye_icon.svg" : "/close_eye_icon.svg"}
+          alt={showPassword ? "비밀번호 표시 중" : "비밀번호 숨김 중"}
           width={18}
           height={12}
+          priority
         />
       </button>
     </div>

@@ -37,10 +37,7 @@ const TertiColum = ({
   return (
     <ImageProvider value={{ src, alt, title, subtitle: null }}>
       <BarTextProvider value={barTextValue}>
-        <div
-          className="mb-[56px] mx-[9px] cursor-pointer"
-          onClick={handleClick}
-        >
+        <div className="mb-[56px] cursor-pointer" onClick={handleClick}>
           <TertiImage />
           <CardTitle />
           <div className=" text-brand-gray-600 ">

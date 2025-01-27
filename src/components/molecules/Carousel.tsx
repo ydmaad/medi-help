@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import MagazineImg from "../atoms/MagazineImg";
-import PageButton from "../atoms/PageButton";
+import CarouselButton from "../atoms/CarouselButton";
 
 interface Image {
   src: string;
@@ -58,14 +58,14 @@ const Carousel = ({ images }: CarouselProps) => {
         />
       </div>
       <div className="absolute left-0 top-1/2 transform -translate-y-1/2 text-white p-3 rounded-full">
-        <PageButton
+        <CarouselButton
           onClick={prevSlide}
           icon="/Rcarousel.svg"
           disabled={images.length <= 1}
         />
       </div>
       <div className="absolute right-0 top-1/2 transform -translate-y-1/2 text-white p-3 rounded-full">
-        <PageButton
+        <CarouselButton
           onClick={nextSlide}
           icon="/Lcarousel.svg"
           disabled={images.length <= 1}
