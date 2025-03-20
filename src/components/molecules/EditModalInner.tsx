@@ -17,11 +17,11 @@ import {
 import { EventInput } from "@fullcalendar/core";
 
 interface Props {
-  viewEvents: boolean;
-  setViewEvents: React.Dispatch<React.SetStateAction<boolean>>;
+  hasEvents: boolean;
+  setHasEvents: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditModalInner = ({ viewEvents, setViewEvents }: Props) => {
+const EditModalInner = ({ setHasEvents }: Props) => {
   const { values, setValues } = useValuesStore();
   const { medicines } = useMedicinesStore();
   const { calendar } = useCalendarStore();
@@ -42,9 +42,9 @@ const EditModalInner = ({ viewEvents, setViewEvents }: Props) => {
     })[0];
 
     if (filteredCalendar.length || editList.length) {
-      setViewEvents(true);
+      setHasEvents(true);
     } else {
-      setViewEvents(false);
+      setHasEvents(false);
     }
 
     setEdit(false);
