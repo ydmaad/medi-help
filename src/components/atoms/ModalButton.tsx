@@ -4,15 +4,15 @@ import React from "react";
 interface Props {
   children: string;
   handleClick: () => void;
-  viewEvents?: boolean;
+  hasEvents?: boolean;
 }
 
-const ModalButton = ({ children, handleClick, viewEvents }: Props) => {
+const ModalButton = ({ children, handleClick, hasEvents }: Props) => {
   return (
     <button
       onClick={handleClick}
       className={`w-[107px] h-[40px]  rounded-md text-sm font-semibold ${
-        children === "삭제" ? `${viewEvents ? "block" : "hidden"}` : ""
+        children === "삭제" ? `${hasEvents ? "block" : "hidden"}` : ""
       } ${
         children === "삭제" ? "bg-brand-primary-50" : "bg-brand-primary-500"
       } ${

@@ -25,20 +25,21 @@ type CalendarType = Tables<"calendar">;
 interface Props {
   openDetailModal: boolean;
   setOpenDetailModal: React.Dispatch<React.SetStateAction<boolean>>;
-  viewEvents: boolean;
-  setViewEvents: React.Dispatch<React.SetStateAction<boolean>>;
+  hasEvents: boolean;
+  setHasEvents: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DetailModal = ({
-  viewEvents,
-  setViewEvents,
+  hasEvents,
+  setHasEvents,
   openDetailModal,
   setOpenDetailModal,
 }: Props) => {
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+
   const { values, setValues } = useValuesStore();
   const { calendar, setCalendar } = useCalendarStore();
   const { events, setEvents } = useEventsStore();
-  const { edit, setEdit } = useEditStore();
 
   const { toast } = useToast();
 
@@ -49,7 +50,7 @@ const DetailModal = ({
       (data: any) => data.start_date !== values.start_date
     );
     setCalendar(deletedCalendar);
-    setEdit(false);
+    setIsEdit(false);
     setValues({
       ...values,
       medi_time: "morning",
@@ -152,7 +153,7 @@ const DetailModal = ({
     toast.success("복용 기록이 저장되었습니다.");
 
     setOpenDetailModal(false);
-    setEdit(false);
+    setIsEdit(false);
     setValues({
       ...values,
       medi_time: "morning",
@@ -169,7 +170,7 @@ const DetailModal = ({
 
       toast.success("선택하신 날짜의 복용 기록이 삭제되었습니다.");
 
-      setEdit(false);
+      setIsEdit(false);
       setOpenDetailModal(false);
       setValues({
         ...values,
@@ -194,7 +195,7 @@ const DetailModal = ({
       id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
     });
 
-    setEdit(true);
+    setIsEdit(true);
   };
 
   return (
@@ -211,16 +212,13 @@ const DetailModal = ({
           <ModalCloseButton handleCloseButtonClick={handleCloseButtonClick} />
         </div>
 
-        {edit ? (
+        {isEdit ? (
           <>
-            <EditModalInner
-              viewEvents={viewEvents}
-              setViewEvents={setViewEvents}
-            />
+            <EditModalInner hasEvents={hasEvents} setHasEvents={setHasEvents} />
             <div className="w-full h-1/5 mt-[40px] flex items-center justify-center gap-4">
               <ModalButton
                 handleClick={handleDeleteButtonClick}
-                viewEvents={viewEvents}
+                hasEvents={hasEvents}
               >
                 삭제
               </ModalButton>
@@ -234,7 +232,7 @@ const DetailModal = ({
             <ViewModalInner />
             <div className="w-full mt-[40px] flex justify-center gap-4">
               <ModalButton handleClick={handleEditButtonClick}>
-                수정
+                {hasEvents ? "수정" : "등록"}
               </ModalButton>
             </div>
           </>

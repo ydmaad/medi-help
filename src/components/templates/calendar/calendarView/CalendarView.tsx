@@ -28,7 +28,7 @@ import TimeColor from "@/components/atoms/TimeColor";
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
   const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
-  const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [hasEvents, setHasEvents] = useState<boolean>(false);
   const [openMobileAddMedi, setOpenMobileAddMedi] = useState<boolean>(false);
 
   const { user } = useAuthStore();
@@ -49,6 +49,7 @@ const CalendarView = () => {
       setValues({ ...values, user_id: user.id });
     }
 
+    // 필터링 박스 복용중인 약 불러오는 로직
     const getMedicines = async () => {
       try {
         if (user) {
@@ -75,6 +76,7 @@ const CalendarView = () => {
       }
     };
 
+    // 캘린더 내 복약기록 불러오는 로직
     const getCalendarData = async () => {
       try {
         if (user) {
@@ -123,9 +125,9 @@ const CalendarView = () => {
     })[0];
 
     if (filteredCalendar.length || editList.length) {
-      setViewEvents(true);
+      setHasEvents(true);
     } else {
-      setViewEvents(false);
+      setHasEvents(false);
     }
 
     if (medicines.length === 0) {
@@ -164,9 +166,9 @@ const CalendarView = () => {
     })[0];
 
     if (filteredCalendar.length || editList.length) {
-      setViewEvents(true);
+      setHasEvents(true);
     } else {
-      setViewEvents(false);
+      setHasEvents(false);
     }
 
     if (medicines.length === 0) {
@@ -191,8 +193,8 @@ const CalendarView = () => {
       <DetailModal
         openDetailModal={openDetailModal}
         setOpenDetailModal={setOpenDetailModal}
-        viewEvents={viewEvents}
-        setViewEvents={setViewEvents}
+        hasEvents={hasEvents}
+        setHasEvents={setHasEvents}
       />
       <AddMediModal
         isOpen={openAddMediModal}
