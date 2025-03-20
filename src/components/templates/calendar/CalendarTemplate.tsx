@@ -7,6 +7,8 @@ import {
   useCalendarStore,
   useEventsStore,
   useMediNameFilter,
+  useMedicinesStore,
+  useValuesStore,
 } from "@/store/calendar";
 import { useAuthStore } from "@/store/auth";
 import { TIME_OF_TIME } from "@/constants/constant";
@@ -14,19 +16,28 @@ import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
 import CalendarCheckbox from "./calendarView/CalendarCheckbox";
 import { Tables } from "@/types/supabase";
+import { MedicinesType } from "@/types/calendar";
 
 const CalendarTemplate = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { setEvents } = useEventsStore();
-  const { calendar, setCalendar } = useCalendarStore();
+  const { setMedicines } = useMedicinesStore();
+  const { setCalendar } = useCalendarStore();
+  const { values, setValues } = useValuesStore();
+
   const { user } = useAuthStore();
   const { mediNames } = useMediNameFilter();
 
   type CalendarType = Tables<"calendar">;
 
   useEffect(() => {
-    getEventsData();
+    if (user) {
+      setValues({ ...values, user_id: user.id });
+
+      getEventsData();
+      getMedicines();
+    }
   }, [user, mediNames]);
 
   const getEventsData = async () => {
@@ -96,6 +107,33 @@ const CalendarTemplate = () => {
       }
     } catch (error) {
       console.log("axios error", error);
+    }
+  };
+
+  // 복용중인 약 불러오는 로직
+  const getMedicines = async () => {
+    try {
+      if (user) {
+        const { data } = await axios.get(
+          `/api/calendar/medi?user_id=${user.id}`
+        );
+
+        const newMedicines: MedicinesType[] = [];
+
+        data.medicationRecords.map((record: any) => {
+          newMedicines.push({
+            id: record.id,
+            name: record.medi_nickname,
+            time: record.times,
+            notification_time: record.notification_time,
+          });
+        });
+
+        setMedicines(newMedicines);
+        return data;
+      }
+    } catch (error) {
+      console.log("medi axios =>", error);
     }
   };
 
