@@ -3,19 +3,27 @@ import React, { useEffect, useState } from "react";
 
 import CalendarView from "./calendarView/CalendarView";
 import Loading from "@/components/atoms/Loading";
-import { useEventsStore, useMediNameFilter } from "@/store/calendar";
+import {
+  useCalendarStore,
+  useEventsStore,
+  useMediNameFilter,
+} from "@/store/calendar";
 import { useAuthStore } from "@/store/auth";
 import { TIME_OF_TIME } from "@/constants/constant";
 import { EventInput } from "@fullcalendar/core";
 import axios from "axios";
 import CalendarCheckbox from "./calendarView/CalendarCheckbox";
+import { Tables } from "@/types/supabase";
 
 const CalendarTemplate = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { setEvents } = useEventsStore();
+  const { calendar, setCalendar } = useCalendarStore();
   const { user } = useAuthStore();
   const { mediNames } = useMediNameFilter();
+
+  type CalendarType = Tables<"calendar">;
 
   useEffect(() => {
     getEventsData();
@@ -73,6 +81,18 @@ const CalendarTemplate = () => {
           setEvents(newEvents);
         }
         setIsLoading(false);
+
+        const newCalendar: CalendarType[] = [];
+        data.map((info: CalendarType) => {
+          newCalendar.push({
+            id: info.id,
+            user_id: info.user_id,
+            created_at: info.created_at,
+            side_effect: info.side_effect,
+            start_date: info.start_date,
+          });
+        });
+        setCalendar(newCalendar);
       }
     } catch (error) {
       console.log("axios error", error);

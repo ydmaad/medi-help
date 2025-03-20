@@ -36,7 +36,6 @@ const CalendarView = () => {
   const { calendar, setCalendar } = useCalendarStore();
   const { events, setEvents } = useEventsStore();
   const { medicines, setMedicines } = useMedicinesStore();
-  const { mediNames, setMediNames } = useMediNameFilter();
 
   const { toast } = useToast();
 
@@ -49,7 +48,7 @@ const CalendarView = () => {
       setValues({ ...values, user_id: user.id });
     }
 
-    // 필터링 박스 복용중인 약 불러오는 로직
+    // 복용중인 약 불러오는 로직
     const getMedicines = async () => {
       try {
         if (user) {
@@ -76,34 +75,7 @@ const CalendarView = () => {
       }
     };
 
-    // 캘린더 내 복약기록 불러오는 로직
-    const getCalendarData = async () => {
-      try {
-        if (user) {
-          const { data } = await axios.get(
-            `/api/calendar/sideEffect?user_id=${user.id}`
-          );
-
-          const newCalendar: CalendarType[] = [];
-          data.map((info: CalendarType) => {
-            newCalendar.push({
-              id: info.id,
-              user_id: info.user_id,
-              created_at: info.created_at,
-              side_effect: info.side_effect,
-              start_date: info.start_date,
-            });
-          });
-          setCalendar(newCalendar);
-          return data;
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
-
     getMedicines();
-    getCalendarData();
   }, [user]);
 
   // 날짜 클릭 시 , value 에 날짜 set
