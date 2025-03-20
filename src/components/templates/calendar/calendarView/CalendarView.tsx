@@ -1,23 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { EventInput } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
-import axios from "axios";
-import { DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
+import { DATE_OFFSET } from "@/constants/constant";
 import DetailModal from "../calendarModal/DetailModal";
 import AddMediModal from "../calendarModal/AddMediModal"; // Import AddMediModal
-import { useAuthStore } from "@/store/auth";
-import { Tables } from "@/types/supabase";
-import { MedicinesType } from "@/types/calendar";
 import MobileCalendarView from "@/components/molecules/MobileCalendarView";
 import FullCalendar from "@fullcalendar/react";
 import {
   useCalendarStore,
   useEventsStore,
   useMedicinesStore,
-  useMediNameFilter,
   useValuesStore,
 } from "@/store/calendar";
 import { GoPlus } from "react-icons/go";
@@ -31,52 +26,12 @@ const CalendarView = () => {
   const [hasEvents, setHasEvents] = useState<boolean>(false);
   const [openMobileAddMedi, setOpenMobileAddMedi] = useState<boolean>(false);
 
-  const { user } = useAuthStore();
   const { values, setValues } = useValuesStore();
-  const { calendar, setCalendar } = useCalendarStore();
-  const { events, setEvents } = useEventsStore();
+  const { calendar } = useCalendarStore();
+  const { events } = useEventsStore();
   const { medicines, setMedicines } = useMedicinesStore();
 
   const { toast } = useToast();
-
-  type CalendarType = Tables<"calendar">;
-  type BridgeType = Tables<"calendar_medicine">;
-  type MedicineType = Tables<"medications">;
-
-  useEffect(() => {
-    if (user) {
-      setValues({ ...values, user_id: user.id });
-    }
-
-    // 복용중인 약 불러오는 로직
-    const getMedicines = async () => {
-      try {
-        if (user) {
-          const { data } = await axios.get(
-            `/api/calendar/medi?user_id=${user.id}`
-          );
-
-          const newMedicines: MedicinesType[] = [];
-
-          data.medicationRecords.map((record: any) => {
-            newMedicines.push({
-              id: record.id,
-              name: record.medi_nickname,
-              time: record.times,
-              notification_time: record.notification_time,
-            });
-          });
-
-          setMedicines(newMedicines);
-          return data;
-        }
-      } catch (error) {
-        console.log("medi axios =>", error);
-      }
-    };
-
-    getMedicines();
-  }, [user]);
 
   // 날짜 클릭 시 , value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
