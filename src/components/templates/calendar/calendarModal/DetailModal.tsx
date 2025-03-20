@@ -8,7 +8,6 @@ import ViewModalInner from "@/components/molecules/ViewModalInner";
 import { DATE_OFFSET, TIME_OF_TIME } from "@/constants/constant";
 import {
   useCalendarStore,
-  useEditStore,
   useEventsStore,
   useValuesStore,
 } from "@/store/calendar";
@@ -61,7 +60,50 @@ const DetailModal = ({
   };
 
   // Route Handler 통해서 POST 하는 함수
-  const postCalendar = async (value: ValuesType) => {
+  const postCalendar = async (value: any) => {
+    try {
+      const { data } = await axios.post(`api/calendar`, value);
+
+      const calendarData = data[0];
+
+      setCalendar([...calendar, calendarData[0]]);
+
+      if (data.length > 1) {
+        const bridgeData = data[1];
+        const countMedicines = value.medicine_id.length;
+        const medicineNickname = bridgeData[0].medications.medi_nickname;
+
+        if (!countMedicines) return;
+
+        setEvents([
+          ...events,
+          {
+            groupId: value.id,
+            title:
+              countMedicines !== 1
+                ? `${medicineNickname} 외 ${countMedicines - 1}개`
+                : `${medicineNickname}`,
+            start: `${
+              new Date(new Date(values.start_date).getTime() + DATE_OFFSET)
+                .toISOString()
+                .split("T")[0]
+            } ${TIME_OF_TIME[value.medi_time]}`,
+            extendProps: {
+              medi_time: value.medi_time,
+              medicineList: value.medicine_id,
+            },
+          },
+        ]);
+      }
+
+      return;
+    } catch (error) {
+      console.error("Post Error", error);
+    }
+  };
+
+  // Route Handler 통해서 UPDATE 하는 함수
+  const updateCalendar = async (value: ValuesType) => {
     try {
       const { data } = await axios.post(`/api/calendar`, value);
 
@@ -113,7 +155,7 @@ const DetailModal = ({
 
       return data;
     } catch (error) {
-      console.log("Post Error", error);
+      console.log("Update Error", error);
     }
   };
 
@@ -143,9 +185,14 @@ const DetailModal = ({
 
   // 저장하기 버튼 onClick 함수
   const handlePostButtonClick = async () => {
+    if (values.medicine_id.length === 0 && !values.side_effect) {
+      toast.error("복용 기록을 입력해주세요 !");
+      return;
+    }
+
     setValues({
       ...values,
-      side_effect: values.side_effect ? values.side_effect.trim() : "",
+      side_effect: values.side_effect?.length ? values.side_effect.trim() : "",
     });
 
     postCalendar(values);
