@@ -13,7 +13,7 @@ import {
 } from "@/store/calendar";
 import { ValuesType } from "@/types/calendar";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 import { useToast } from "@/hooks/useToast";
 import { Tables } from "@/types/supabase";
@@ -45,10 +45,7 @@ const DetailModal = ({
   // modal 닫기 버튼 onClick 함수
   const handleCloseButtonClick = () => {
     setOpenDetailModal(false);
-    let deletedCalendar: CalendarType[] = calendar.filter(
-      (data: any) => data.start_date !== values.start_date
-    );
-    setCalendar(deletedCalendar);
+
     setIsEdit(false);
     setValues({
       ...values,
@@ -64,9 +61,9 @@ const DetailModal = ({
     try {
       const { data } = await axios.post(`api/calendar`, value);
 
-      const calendarData = data[0];
+      const [calendarData, _] = data[0];
 
-      setCalendar([...calendar, calendarData[0]]);
+      setCalendar([...calendar, calendarData]);
 
       if (data.length > 1) {
         const bridgeData = data[1];
@@ -96,39 +93,46 @@ const DetailModal = ({
         ]);
       }
 
-      return;
+      return data;
     } catch (error) {
       console.error("Post Error", error);
     }
   };
 
   // Route Handler 통해서 UPDATE 하는 함수
-  const updateCalendar = async (value: ValuesType) => {
+  const updateCalendar = async (id: string, value: ValuesType) => {
     try {
-      const { data } = await axios.post(`/api/calendar`, value);
+      const { data } = await axios.put(`/api/calendar/${id}`, value);
 
-      let countMedicines = value.medicine_id.length;
+      const [calendarData, _] = data[0];
+      setCalendar([
+        ...calendar.filter((cal: any) => cal.id !== value.id),
+        {
+          ...value,
+          created_at: calendarData.created_at,
+          side_effect: calendarData.side_effect,
+        },
+      ]);
 
-      if (countMedicines === 0) {
+      const countMedicines = value.medicine_id.length;
+
+      const filteredEvents = [
+        ...events.filter((event: any) => {
+          return !(
+            event.groupId === value.id &&
+            event.extendProps.medi_time === value.medi_time
+          );
+        }),
+      ];
+
+      if (!countMedicines) setEvents(filteredEvents);
+
+      if (data.length > 1) {
+        const bridgeData = data[1];
+
+        const medicineNickname = bridgeData[0].medications.medi_nickname;
         setEvents([
-          ...events.filter((event: any) => {
-            return !(
-              event.groupId === value.id &&
-              event.extendProps.medi_time === value.medi_time
-            );
-          }),
-        ]);
-      }
-
-      if (countMedicines !== 0) {
-        let medicineNickname = data[0][0].medications.medi_nickname;
-        setEvents([
-          ...events.filter((event: any) => {
-            return !(
-              event.groupId === value.id &&
-              event.extendProps.medi_time === value.medi_time
-            );
-          }),
+          ...filteredEvents,
           {
             groupId: value.id,
             title:
@@ -147,11 +151,6 @@ const DetailModal = ({
           },
         ]);
       }
-
-      setCalendar([
-        ...calendar.filter((cal: any) => cal.id !== value.id),
-        { ...value, created_at: String(new Date()) },
-      ]);
 
       return data;
     } catch (error) {
@@ -195,7 +194,8 @@ const DetailModal = ({
       side_effect: values.side_effect?.length ? values.side_effect.trim() : "",
     });
 
-    postCalendar(values);
+    if (hasEvents) updateCalendar(values.id, values);
+    if (!hasEvents) postCalendar(values);
 
     toast.success("복용 기록이 저장되었습니다.");
 
@@ -233,13 +233,13 @@ const DetailModal = ({
 
   // 수정하기 버튼 onClick 함수
   const handleEditButtonClick = () => {
-    let filteredCalendar = calendar.filter((cal: any) => {
+    const filteredCalendar = calendar.filter((cal: any) => {
       return cal.start_date === values.start_date;
     });
 
     setValues({
       ...values,
-      id: filteredCalendar.length ? filteredCalendar[0].id : uuid(),
+      id: filteredCalendar.length > 0 ? filteredCalendar[0].id : uuid(),
     });
 
     setIsEdit(true);
@@ -249,8 +249,8 @@ const DetailModal = ({
     <Modal
       isOpen={openDetailModal}
       onRequestClose={handleCloseButtonClick}
-      className="fixed h-screen inset-0 m-20 hidden desktop:block outline-none "
-      overlayClassName="fixed inset-0 bg-black/[0.6] z-20 hidden desktop:block "
+      className="fixed h-screen inset-0 m-20 outline-none "
+      overlayClassName="fixed inset-0 bg-black/[0.6] z-20 "
       ariaHideApp={false}
     >
       <div className="w-[416px] h-[579px] p-[24px] my-0 m-auto flex flex-col bg-white rounded-[8px] z-20 drop-shadow-xl ">
@@ -261,7 +261,7 @@ const DetailModal = ({
 
         {isEdit ? (
           <>
-            <EditModalInner hasEvents={hasEvents} setHasEvents={setHasEvents} />
+            <EditModalInner setHasEvents={setHasEvents} />
             <div className="w-full h-1/5 mt-[40px] flex items-center justify-center gap-4">
               <ModalButton
                 handleClick={handleDeleteButtonClick}
