@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
 
 const MobileEdit = () => {
-  const [viewEvents, setViewEvents] = useState<boolean>(false);
+  const [hasEvents, setHasEvents] = useState<boolean>(false);
 
   const { values, setValues } = useValuesStore();
   const { events, setEvents } = useEventsStore();
@@ -111,7 +111,7 @@ const MobileEdit = () => {
             저장
           </button>
         </div>
-        <EditModalInner viewEvents={viewEvents} setViewEvents={setViewEvents} />
+        <EditModalInner setHasEvents={setHasEvents} />
       </div>
     </>
   );

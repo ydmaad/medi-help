@@ -17,7 +17,6 @@ import {
 import { EventInput } from "@fullcalendar/core";
 
 interface Props {
-  hasEvents: boolean;
   setHasEvents: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
