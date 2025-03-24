@@ -1,65 +1,28 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useAuthStore } from "@/store/auth";
-import axios from "axios";
+import React, { useState } from "react";
 import { Tables } from "@/types/supabase";
-import { EventInput } from "@fullcalendar/core";
-import {
-  useEventsStore,
-  useMedicinesStore,
-  useMediNameFilter,
-} from "@/store/calendar";
+import { useMediNameFilter } from "@/store/calendar";
 import CalendarTitle from "@/components/molecules/CalendarTitle";
 import Modal from "react-modal";
+import { Dispatch, SetStateAction } from "react";
 
 type MedicineType = Tables<"medications">;
-type CalendarMedicineType = {
-  id: string;
-  medi_time: string;
-  medications: MedicineType;
-};
+interface CalendarCheckboxProps {
+  checkedMedicines: MedicineType[];
+  selectedMedicines: string[];
+  setSelectedMedicines: Dispatch<SetStateAction<string[]>>;
+}
 
-const CalendarCheckbox = () => {
-  const { user } = useAuthStore();
-  const { mediNames, setMediNames } = useMediNameFilter();
-  const { events, setEvents } = useEventsStore();
-  const [checkedMedicines, setCheckedMedicines] = useState<MedicineType[]>([]);
-  const [selectedMedicines, setSelectedMedicines] = useState<string[]>([]);
+const CalendarCheckbox = ({
+  checkedMedicines,
+  selectedMedicines,
+  setSelectedMedicines,
+}: CalendarCheckboxProps) => {
   const [showAllMedicines, setShowAllMedicines] = useState<boolean>(false);
   const [showFilterBox, setShowFilterBox] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchCheckedMedicines = async () => {
-      if (user) {
-        try {
-          const { data } = await axios.get(`/api/calendar?user_id=${user.id}`);
-
-          // 데이터를 가공하여 각 날짜별로 체크된 약들의 목록을 추출
-          const allCheckedMedicines: MedicineType[] = [];
-          data.forEach((event: EventInput) => {
-            event.calendar_medicine.forEach(
-              (medicine: CalendarMedicineType) => {
-                allCheckedMedicines.push(medicine.medications);
-              }
-            );
-          });
-
-          setCheckedMedicines(allCheckedMedicines);
-          setSelectedMedicines(
-            allCheckedMedicines.map((medicine) => medicine.id)
-          );
-          setMediNames(
-            allCheckedMedicines.map((medicine) => medicine.medi_nickname || "")
-          );
-        } catch (error) {
-          console.log("Error fetching checked medicines", error);
-        }
-      }
-    };
-
-    fetchCheckedMedicines();
-  }, [user]);
+  const { filterNames, setFilterNames } = useMediNameFilter();
 
   const handleCheckboxChange = (medicine: MedicineType) => {
     setSelectedMedicines((prev) =>
@@ -67,12 +30,12 @@ const CalendarCheckbox = () => {
         ? prev.filter((id) => id !== medicine.id)
         : [...prev, medicine.id]
     );
-    setMediNames(
-      mediNames.includes(medicine.medi_nickname)
-        ? mediNames.filter(
+    setFilterNames(
+      filterNames.includes(medicine.medi_nickname)
+        ? filterNames.filter(
             (medi_nickname) => medi_nickname !== medicine.medi_nickname
           )
-        : [...mediNames, medicine.medi_nickname]
+        : [...filterNames, medicine.medi_nickname]
     );
   };
 

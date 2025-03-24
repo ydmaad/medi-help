@@ -20,6 +20,8 @@ import { MedicinesType } from "@/types/calendar";
 
 const CalendarTemplate = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [checkedMedicines, setCheckedMedicines] = useState<MedicineType[]>([]);
+  const [selectedMedicines, setSelectedMedicines] = useState<string[]>([]);
 
   const { setEvents } = useEventsStore();
   const { setMedicines } = useMedicinesStore();
@@ -27,9 +29,15 @@ const CalendarTemplate = () => {
   const { values, setValues } = useValuesStore();
 
   const { user } = useAuthStore();
-  const { mediNames } = useMediNameFilter();
+  const { filterNames, setFilterNames } = useMediNameFilter();
 
   type CalendarType = Tables<"calendar">;
+  type MedicineType = Tables<"medications">;
+  type CalendarMedicineType = {
+    id: string;
+    medi_time: string;
+    medications: MedicineType;
+  };
 
   useEffect(() => {
     if (user) {
@@ -55,6 +63,26 @@ const CalendarTemplate = () => {
             });
 
             setCalendar(newCalendar);
+
+            // 데이터를 가공하여 각 날짜별로 체크된 약들의 목록을 추출
+            const allCheckedMedicines: MedicineType[] = [];
+            data.forEach((event: EventInput) => {
+              event.calendar_medicine.forEach(
+                (medicine: CalendarMedicineType) => {
+                  allCheckedMedicines.push(medicine.medications);
+                }
+              );
+            });
+
+            setCheckedMedicines(allCheckedMedicines);
+            setSelectedMedicines(
+              allCheckedMedicines.map((medicine) => medicine.id)
+            );
+            setFilterNames(
+              allCheckedMedicines.map(
+                (medicine) => medicine.medi_nickname || ""
+              )
+            );
           } catch (error) {
             console.log("axios error", error);
           }
@@ -81,7 +109,6 @@ const CalendarTemplate = () => {
             });
 
             setMedicines(newMedicines);
-            return data;
           } catch (error) {
             console.log("medi axios =>", error);
           }
@@ -111,7 +138,7 @@ const CalendarTemplate = () => {
                   );
 
                   const newEventList = eventList.filter((e: any) => {
-                    return mediNames.includes(e.medications.medi_nickname);
+                    return filterNames.includes(e.medications.medi_nickname);
                   });
 
                   let countMedicines = newEventList.length;
@@ -154,7 +181,7 @@ const CalendarTemplate = () => {
     };
 
     getEventsData();
-  }, [user, mediNames]);
+  }, [filterNames]);
 
   if (isLoading) {
     return (
@@ -166,7 +193,11 @@ const CalendarTemplate = () => {
 
   return (
     <>
-      <CalendarCheckbox />
+      <CalendarCheckbox
+        checkedMedicines={checkedMedicines}
+        selectedMedicines={selectedMedicines}
+        setSelectedMedicines={setSelectedMedicines}
+      />
       <CalendarView />
     </>
   );
