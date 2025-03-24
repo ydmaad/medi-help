@@ -83,14 +83,14 @@ export const useEditStore = create<EditState>((set) => ({
   },
 }));
 
-interface MediNameState {
-  mediNames: (string | null)[];
-  setMediNames: (newMediNames: (string | null)[]) => void;
+interface FilterNameState {
+  filterNames: (string | null)[];
+  setFilterNames: (newMediNames: (string | null)[]) => void;
 }
 
-export const useMediNameFilter = create<MediNameState>((set) => ({
-  mediNames: [],
-  setMediNames: (newMediNames: (string | null)[]) => {
-    set(() => ({ mediNames: newMediNames }));
+export const useMediNameFilter = create<FilterNameState>((set) => ({
+  filterNames: [],
+  setFilterNames: (newFilterNames: (string | null)[]) => {
+    set(() => ({ filterNames: newFilterNames }));
   },
 }));
