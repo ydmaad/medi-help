@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
 import { IoIosArrowBack } from "react-icons/io";
@@ -26,17 +26,19 @@ interface MobileAddMediProps {
   isOpen: boolean;
   onRequestClose: () => void;
   onAdd: (newMediRecord: MediRecord) => void;
+  mediNames: string[];
+  setMediNames: Dispatch<SetStateAction<string[]>>;
 }
 
 const MobileAddMedi: React.FC<MobileAddMediProps> = ({
   isOpen,
   onRequestClose,
   onAdd,
+  mediNames,
 }) => {
   const { user } = useAuthStore();
   const [mediName, setMediName] = useState("");
   const [mediNickname, setMediNickname] = useState("");
-  const [mediNames, setMediNames] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [times, setTimes] = useState({
     morning: false,
@@ -49,21 +51,6 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
   const [dayOfWeek, setDayOfWeek] = useState<string[]>([]);
   const [notificationTime, setNotificationTime] = useState<string[]>([""]);
   const [notificationEnabled, setNotificationEnabled] = useState(false);
-
-  useEffect(() => {
-    const fetchMediNames = async () => {
-      try {
-        const response = await axios.get("/api/calendar/medi/names");
-        setMediNames(
-          response.data.map((item: { itemName: string }) => item.itemName)
-        );
-      } catch (error) {
-        console.error("Failed to fetch medi names:", error);
-      }
-    };
-
-    fetchMediNames();
-  }, []);
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -180,7 +167,9 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
         </div>
 
         <div className="mb-6 w-full max-w-xs">
-          <label className="block text-brand-gray-600 text-sm font-bold mb-2">복용 시간</label>
+          <label className="block text-brand-gray-600 text-sm font-bold mb-2">
+            복용 시간
+          </label>
           <div className="flex space-x-2 text-brand-gray-800 justify-between">
             <button
               type="button"
@@ -196,7 +185,9 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setTimes({ ...times, afternoon: !times.afternoon })}
+              onClick={() =>
+                setTimes({ ...times, afternoon: !times.afternoon })
+              }
               className={`px-4 py-2 rounded-full ${
                 times.afternoon
                   ? "bg-brand-primary-500 text-white"
@@ -228,14 +219,18 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
             onChange={(e) => setStartDate(e.target.value)}
             className="border rounded w-[96px] h-[28px] py-2 px-2 text-brand-gray-800 leading-tight"
           />
-          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>부터</span>
+          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>
+            부터
+          </span>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
             className="border rounded w-[96px] h-[28px] py-2 px-2 text-brand-gray-800 leading-tight"
           />
-          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>까지</span>
+          <span className="text-brand-gray-800" style={{ fontSize: "16px" }}>
+            까지
+          </span>
         </div>
 
         <div className="flex items-center mb-6 w-full max-w-xs">
@@ -244,7 +239,9 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
             <div
               onClick={() => setNotificationEnabled(!notificationEnabled)}
               className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
-                notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
+                notificationEnabled
+                  ? "bg-brand-primary-400"
+                  : "bg-brand-gray-400"
               }`}
             >
               <div
@@ -291,7 +288,9 @@ const MobileAddMedi: React.FC<MobileAddMediProps> = ({
         )}
 
         <div className="mb-6 w-full max-w-xs">
-          <label className="block text-brand-gray-600 text-sm font-bold mb-2">메모:</label>
+          <label className="block text-brand-gray-600 text-sm font-bold mb-2">
+            메모:
+          </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}

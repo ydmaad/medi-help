@@ -11,7 +11,6 @@ import {
   useEditStore,
   useEventsStore,
   useMedicinesStore,
-  useMediNameFilter,
   useValuesStore,
 } from "@/store/calendar";
 import { EventInput } from "@fullcalendar/core";

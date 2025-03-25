@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
@@ -19,7 +19,7 @@ interface MediRecord {
   user_id: string;
   day_of_week: string[];
   notification_time: string[];
-  repeat: boolean; 
+  repeat: boolean;
 }
 
 interface AddMediModalProps {
@@ -30,18 +30,19 @@ interface AddMediModalProps {
     success: (message: string) => void;
     error: (message: string) => void;
   };
+  mediNames: string[];
+  setMediNames: Dispatch<SetStateAction<string[]>>;
 }
 const AddMediModal: React.FC<AddMediModalProps> = ({
   isOpen,
   onRequestClose,
   onAdd,
   toast,
+  mediNames,
 }) => {
-
   const { user } = useAuthStore();
   const [mediName, setMediName] = useState("");
   const [mediNickname, setMediNickname] = useState("");
-  const [mediNames, setMediNames] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [times, setTimes] = useState({
     morning: false,
@@ -54,25 +55,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
   const [dayOfWeek, setDayOfWeek] = useState<string[]>([]);
   const [notificationTime, setNotificationTime] = useState<string[]>([""]);
   const [notificationEnabled, setNotificationEnabled] = useState(false);
-
-  useEffect(() => {
-    const fetchMediNames = async () => {
-      try {
-        const response = await axios.get("/api/calendar/medi/names");
-        setMediNames(
-          response.data.map((item: { itemName: string }) => item.itemName)
-        );
-      } catch (error) {
-        console.error("Failed to fetch medi names:", error);
-      }
-    };
-
-    fetchMediNames();
-  }, []);
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTimes({ ...times, [e.target.name]: e.target.checked });
-  };
 
   const validateForm = () => {
     if (!mediNickname.trim()) {
@@ -141,8 +123,7 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         setNotificationTime([""]);
         setNotificationEnabled(false);
         onRequestClose();
-      }
-      else {
+      } else {
         console.error("Failed to add record:", response.statusText);
         toast.error("약 등록에 실패했습니다.");
       }
@@ -305,11 +286,13 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
         {/* 알림 설정 */}
         <div className="flex items-center mb-4">
           <label className="flex items-center">
-          <span className="ml-2 text-brand-gray-600">알림 설정 </span>
+            <span className="ml-2 text-brand-gray-600">알림 설정 </span>
             <div
               onClick={() => setNotificationEnabled(!notificationEnabled)}
               className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
-                notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
+                notificationEnabled
+                  ? "bg-brand-primary-400"
+                  : "bg-brand-gray-400"
               }`}
             >
               <div
@@ -323,7 +306,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
 
         {notificationEnabled && (
           <div className="mb-4">
-           
             <div className="flex flex-wrap space-x-2 mb-5">
               {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
                 <button
@@ -341,7 +323,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
               ))}
             </div>
 
-        
             {notificationTime.map((time, index) => (
               <div key={index} className="flex mb-2">
                 <input
@@ -352,7 +333,6 @@ const AddMediModal: React.FC<AddMediModalProps> = ({
                   }
                   className="border rounded w-full py-2 px-3 text-brand-gray-1000 leading-tight focus:outline-none"
                 />
-                
               </div>
             ))}
           </div>

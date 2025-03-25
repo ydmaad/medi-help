@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EventInput } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
@@ -19,12 +19,15 @@ import { GoPlus } from "react-icons/go";
 import MobileAddMedi from "@/components/molecules/MobileAddMedi";
 import { useToast } from "@/hooks/useToast";
 import TimeColor from "@/components/atoms/TimeColor";
+import axios from "axios";
 
 const CalendarView = () => {
   const [openDetailModal, setOpenDetailModal] = useState<boolean>(false);
-  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false); // Add state for AddMediModal
-  const [hasEvents, setHasEvents] = useState<boolean>(false);
+  const [openAddMediModal, setOpenAddMediModal] = useState<boolean>(false);
   const [openMobileAddMedi, setOpenMobileAddMedi] = useState<boolean>(false);
+
+  const [hasEvents, setHasEvents] = useState<boolean>(false);
+  const [mediNames, setMediNames] = useState<string[]>([]);
 
   const { values, setValues } = useValuesStore();
   const { calendar } = useCalendarStore();
@@ -32,6 +35,21 @@ const CalendarView = () => {
   const { medicines, setMedicines } = useMedicinesStore();
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchMediNames = async () => {
+      try {
+        const response = await axios.get("/api/calendar/medi/names");
+        setMediNames(
+          response.data.map((item: { itemName: string }) => item.itemName)
+        );
+      } catch (error) {
+        console.error("Failed to fetch medi names:", error);
+      }
+    };
+
+    fetchMediNames();
+  }, []);
 
   // 날짜 클릭 시 , value 에 날짜 set
   const handleDateClick = (event: DateClickArg) => {
@@ -140,6 +158,8 @@ const CalendarView = () => {
           toast.success("약이 성공적으로 등록되었습니다.");
         }}
         toast={toast}
+        mediNames={mediNames}
+        setMediNames={setMediNames}
       />
       <MobileAddMedi
         isOpen={openMobileAddMedi}
@@ -156,6 +176,8 @@ const CalendarView = () => {
             },
           ]);
         }}
+        mediNames={mediNames}
+        setMediNames={setMediNames}
       />
       <div className="desktop:static w-full mx-auto flex flex-col items-center gap-4">
         <div className="relative min-w-[335px]">
