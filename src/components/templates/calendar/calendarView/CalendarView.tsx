@@ -157,9 +157,7 @@ const CalendarView = () => {
           ]);
           toast.success("약이 성공적으로 등록되었습니다.");
         }}
-        toast={toast}
         mediNames={mediNames}
-        setMediNames={setMediNames}
       />
       <MobileAddMedi
         isOpen={openMobileAddMedi}

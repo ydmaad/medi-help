@@ -2,6 +2,7 @@ import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
+import { useToast } from "@/hooks/useToast";
 
 interface MediRecord {
   id: string;
@@ -26,21 +27,17 @@ interface AddMediModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
   onAdd: (newMediRecord: MediRecord) => void;
-  toast: {
-    success: (message: string) => void;
-    error: (message: string) => void;
-  };
   mediNames: string[];
-  setMediNames: Dispatch<SetStateAction<string[]>>;
 }
 const AddMediModal: React.FC<AddMediModalProps> = ({
   isOpen,
   onRequestClose,
   onAdd,
-  toast,
   mediNames,
 }) => {
   const { user } = useAuthStore();
+  const { toast } = useToast();
+
   const [mediName, setMediName] = useState("");
   const [mediNickname, setMediNickname] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
