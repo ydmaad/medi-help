@@ -45,24 +45,30 @@ const EditMediModal: React.FC<EditMediModalProps> = ({
     notification_time: mediRecord.notification_time || [],
   });
   const [mediNames, setMediNames] = useState<{ itemName: string }[]>([]);
-  const [notificationEnabled, setNotificationEnabled] = useState(!!mediRecord.repeat);
+  const [notificationEnabled, setNotificationEnabled] = useState(
+    !!mediRecord.repeat
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-useEffect(() => {
-  const toastContainer = document.querySelector('.Toastify');
-  if (toastContainer) {
-    (toastContainer as HTMLElement).style.zIndex = '10000'; // 매우 높은 z-index 값 설정
-  }
-}, []);
+  useEffect(() => {
+    const toastContainer = document.querySelector(".Toastify");
+    if (toastContainer) {
+      (toastContainer as HTMLElement).style.zIndex = "10000"; // 매우 높은 z-index 값 설정
+    }
+  }, []);
 
-  const showToast = (message: string, type: 'success' | 'error') => {
+  const showToast = (message: string, type: "success" | "error") => {
     toast[type](message);
   };
-  
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    if (name === 'medi_nickname' && value.length > 6) {
+    if (name === "medi_nickname" && value.length > 6) {
       showToast("약 별명은 최대 6글자입니다.", "error");
       return;
     }
@@ -72,9 +78,7 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
     }));
   };
 
-
-  
-  const handleTimeChange = (time: 'morning' | 'afternoon' | 'evening') => {
+  const handleTimeChange = (time: "morning" | "afternoon" | "evening") => {
     setFormData((prevData) => ({
       ...prevData,
       times: {
@@ -129,10 +133,9 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
     return true;
   };
 
-
   const handleUpdateClick = async () => {
     if (!validateForm()) return;
-  
+
     try {
       await axios.put(`/api/mypage/medi/${formData.id}`, {
         ...formData,
@@ -145,20 +148,21 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
       showToast("약 정보 수정 중 오류가 발생했습니다.", "error");
     }
   };
-  const fetchMediNames = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get('/api/calendar/medi/names');
-      setMediNames(response.data);
-    } catch (error) {
-      console.error("Error fetching medication names:", error);
-      toast.error("약 이름 목록을 불러오는 데 실패했습니다.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
+    const fetchMediNames = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get("/api/calendar/medi/names");
+        setMediNames(response.data);
+      } catch (error) {
+        console.error("Error fetching medication names:", error);
+        toast.error("약 이름 목록을 불러오는 데 실패했습니다.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchMediNames();
   }, []);
 
@@ -201,7 +205,9 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
           </svg>
         </button>
 
-        <h2 className="text-[16px] font-bold mb-5 text-brand-gray-800">나의 약</h2>
+        <h2 className="text-[16px] font-bold mb-5 text-brand-gray-800">
+          나의 약
+        </h2>
 
         <div className="mb-2">
           <input
@@ -224,7 +230,9 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
           >
             <option value="">약 이름 선택</option>
             {isLoading ? (
-              <option value="" disabled>로딩 중...</option>
+              <option value="" disabled>
+                로딩 중...
+              </option>
             ) : (
               mediNames.map((item, index) => (
                 <option key={index} value={item.itemName}>
@@ -236,20 +244,28 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
         </div>
 
         <div className="mb-5">
-          <label className="block text-[14px] font-bold mb-2 text-brand-gray-600">나의 약 등록:</label>
+          <label className="block text-[14px] font-bold mb-2 text-brand-gray-600">
+            나의 약 등록:
+          </label>
           <div className="flex space-x-4 text-brand-gray-800 justify-between w-full">
-            {['morning', 'afternoon', 'evening'].map((time) => (
+            {["morning", "afternoon", "evening"].map((time) => (
               <button
                 key={time}
                 type="button"
-                onClick={() => handleTimeChange(time as 'morning' | 'afternoon' | 'evening')}
+                onClick={() =>
+                  handleTimeChange(time as "morning" | "afternoon" | "evening")
+                }
                 className={`px-4 py-2 rounded-full ${
-                  formData.times[time as 'morning' | 'afternoon' | 'evening']
+                  formData.times[time as "morning" | "afternoon" | "evening"]
                     ? "bg-brand-primary-500 text-white"
                     : "bg-brand-gray-50 text-brand-gray-800"
                 } w-1/3`}
               >
-                {time === 'morning' ? '아침' : time === 'afternoon' ? '점심' : '저녁'}
+                {time === "morning"
+                  ? "아침"
+                  : time === "afternoon"
+                    ? "점심"
+                    : "저녁"}
               </button>
             ))}
           </div>
@@ -288,7 +304,9 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
             <div
               onClick={() => setNotificationEnabled(!notificationEnabled)}
               className={`relative w-12 h-6 flex items-center rounded-full ml-3 cursor-pointer ${
-                notificationEnabled ? "bg-brand-primary-400" : "bg-brand-gray-400"
+                notificationEnabled
+                  ? "bg-brand-primary-400"
+                  : "bg-brand-gray-400"
               }`}
             >
               <div
@@ -322,7 +340,6 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
             </div>
 
             <div className="mb-5">
-              
               <input
                 type="time"
                 name="notification_time"
@@ -335,7 +352,9 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
         )}
 
         <div className="mb-10">
-          <label className="block text-[16px] font-bold mb-2 text-brand-gray-600">메모</label>
+          <label className="block text-[16px] font-bold mb-2 text-brand-gray-600">
+            메모
+          </label>
           <textarea
             name="notes"
             value={formData.notes}
