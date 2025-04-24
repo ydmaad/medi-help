@@ -249,7 +249,7 @@ const DetailModal = ({
     <Modal
       isOpen={openDetailModal}
       onRequestClose={handleCloseButtonClick}
-      className="fixed h-screen inset-0 m-20 outline-none "
+      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 outline-none"
       overlayClassName="fixed inset-0 bg-black/[0.6] z-20 "
       ariaHideApp={false}
     >
